@@ -1,5 +1,5 @@
 import Loader from "@/components/loaders/Loader";
 
-export default function SettingsLoading() {
+export default function AppliancesLoading() {
     return <Loader />;
 }

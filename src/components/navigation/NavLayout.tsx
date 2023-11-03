@@ -43,7 +43,7 @@ export default function NavLayout() {
                     <BiMenu className="text-2xl text-zinc-500" />
                 </Button>
                 <span className="flex-1" />
-                <Logo width={32} height={36} />
+                <Logo width={109} height={30} />
             </nav>
             {/* Sidebar */}
             <div
@@ -53,7 +53,7 @@ export default function NavLayout() {
                     (!showSidebar ? " -translate-x-full" : "")
                 }
             >
-                <Logo width={128} height={164} />
+                <Logo width={181} height={60} />
                 <Divider />
                 <div className="flex flex-col flex-grow overflow-x-hidden overflow-y-auto min-h-0">
                     <Listbox
@@ -73,7 +73,7 @@ export default function NavLayout() {
                                     className={
                                         "font-semibold" +
                                         (withoutLocale == p.path
-                                            ? " bg-zinc-100"
+                                            ? " bg-sky-100"
                                             : "")
                                     }
                                 >

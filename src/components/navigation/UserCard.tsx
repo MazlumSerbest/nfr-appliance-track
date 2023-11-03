@@ -26,12 +26,12 @@ export default function UserCard() {
                     <Avatar
                         icon={<AvatarIcon />}
                         classNames={{
-                            base: "bg-zinc-200",
-                            icon: "text-zinc-400",
+                            base: "bg-sky-200",
+                            icon: "text-sky-400",
                         }}
                     />
                     <div className="flex-1 min-w-0">
-                        <p className="truncate text-sm font-bold text-zinc-500">
+                        <p className="truncate text-sm font-bold text-sky-500">
                             {session?.user?.name}
                         </p>
                         <p className="truncate text-xs text-zinc-500">

@@ -11,9 +11,9 @@ export default function Loader() {
 
 export function MainLoader() {
     return (
-        <div className="flex animate-pulse w-screen h-screen items-center justify-center">
+        <div className="flex animate-pulse w-screen h-screen items-center justify-center bg-white rounded-full">
             <Image
-                src="/images/vercel.png"
+                src="/images/logo.png"
                 width={120}
                 height={50}
                 alt="Company"

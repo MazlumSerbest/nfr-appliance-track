@@ -1,5 +1,5 @@
-import { MainLoader } from "@/components/loaders/Loader";
+import Loader from "@/components/loaders/Loader";
 
-export default function Loading() {
-    return <MainLoader />;
+export default function DashboardLoading() {
+    return <Loader />;
 }

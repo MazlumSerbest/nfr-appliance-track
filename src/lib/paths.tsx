@@ -1,10 +1,7 @@
 import React from "react";
 import {
     BiCollection,
-    BiBuildingHouse,
-    BiShieldQuarter,
-    BiError,
-    BiSlider,
+    BiServer,
     BiCog,
 } from "react-icons/bi";
 
@@ -12,22 +9,33 @@ export const paths: Path[] = [
     {
         path: "/dashboard",
         key: "dashboard",
-        name: "Dashboard",
+        name: "Panel",
         icon: (
             <BiCollection
                 className="text-2xl text-zinc-500"
-                aria-label="Dashboard"
+                aria-label="Panel Sayfası"
+            />
+        ),
+    },
+    {
+        path: "/dashboard/appliances",
+        key: "appliances",
+        name: "Cihazlar",
+        icon: (
+            <BiServer
+                className="text-2xl text-zinc-500"
+                aria-label="Cihazlar Sayfası"
             />
         ),
     },
     {
         path: "/dashboard/settings",
         key: "settings",
-        name: "Settings",
+        name: "Ayarlar",
         icon: (
             <BiCog
                 className="text-2xl text-zinc-500"
-                aria-label="Settings Page"
+                aria-label="Ayarlar Sayfası"
             />
         ),
     },
