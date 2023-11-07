@@ -2,6 +2,7 @@ import React from "react";
 import {
     BiCollection,
     BiServer,
+    BiLink,
     BiCog,
 } from "react-icons/bi";
 
@@ -25,6 +26,17 @@ export const paths: Path[] = [
             <BiServer
                 className="text-2xl text-zinc-500"
                 aria-label="Cihazlar Sayfası"
+            />
+        ),
+    },
+    {
+        path: "/dashboard/connections",
+        key: "connections",
+        name: "Bağlantılar",
+        icon: (
+            <BiLink
+                className="text-2xl text-zinc-500"
+                aria-label="Bağlantılar Sayfası"
             />
         ),
     },
