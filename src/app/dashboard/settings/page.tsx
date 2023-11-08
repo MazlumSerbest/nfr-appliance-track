@@ -1,7 +1,6 @@
 "use client"
 import GeneralTab from "./tabs/General";
-import AppliancesTab from "./tabs/Appliances";
-import UsersTab from "./tabs/Users";
+import ProductsTab from "./tabs/Products";
 import { Tabs, Tab } from "@nextui-org/tabs";
 
 export default function SettingsPage() {
@@ -17,11 +16,8 @@ export default function SettingsPage() {
                 <Tab key="general" title="Genel" className="w-full">
                     {GeneralTab()}
                 </Tab>
-                <Tab key="appliances" title="Cihazlar" className="w-full">
-                    {AppliancesTab()}
-                </Tab>
-                <Tab key="users" title="Kullanıcılar" className="w-full">
-                    {UsersTab()}
+                <Tab key="models" title="Ürünler" className="w-full">
+                    {ProductsTab()}
                 </Tab>
             </Tabs>
         </div>
