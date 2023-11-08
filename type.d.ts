@@ -14,8 +14,9 @@ interface User {
     active: boolean;
 }
 
-interface ApplianceModel {
+interface Product {
     id: string;
+    customerId: string;
     name: string;
     modelNo: string;
     brand: string;
@@ -25,9 +26,8 @@ interface ApplianceModel {
 
 interface Appliance {
     id: string;
-    modelId: string;
+    productId: string;
     licenseId: string;
-    customerId: string;
     
     active: boolean;
 }
@@ -39,6 +39,19 @@ interface License {
     active: string;
 }
 
+interface Customer {
+    id: string;
+    name: string;
+
+    active: boolean;
+}
+
 interface Connection {
-    
+    id: string;
+    customerId: string;
+    ip: string;
+    login: string;
+    password: string;
+    note: string;
+    active: boolean;
 }

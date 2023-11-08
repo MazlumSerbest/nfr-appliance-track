@@ -14,8 +14,8 @@ export function MainLoader() {
         <div className="flex animate-pulse w-screen h-screen items-center justify-center bg-white rounded-full">
             <Image
                 src="/images/logo.png"
-                width={544}
-                height={180}
+                width={455}
+                height={150}
                 alt="Company"
             />
         </div>

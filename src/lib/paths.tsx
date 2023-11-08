@@ -4,6 +4,8 @@ import {
     BiServer,
     BiLink,
     BiCog,
+    BiGroup,
+    BiUserCircle,
 } from "react-icons/bi";
 
 export const paths: Path[] = [
@@ -30,6 +32,17 @@ export const paths: Path[] = [
         ),
     },
     {
+        path: "/dashboard/customers",
+        key: "customers",
+        name: "Müşteriler",
+        icon: (
+            <BiUserCircle
+                className="text-2xl text-zinc-500"
+                aria-label="Müşteriler Sayfası"
+            />
+        ),
+    },
+    {
         path: "/dashboard/connections",
         key: "connections",
         name: "Bağlantılar",
@@ -37,6 +50,17 @@ export const paths: Path[] = [
             <BiLink
                 className="text-2xl text-zinc-500"
                 aria-label="Bağlantılar Sayfası"
+            />
+        ),
+    },
+    {
+        path: "/dashboard/users",
+        key: "users",
+        name: "Kullanıcılar",
+        icon: (
+            <BiGroup
+                className="text-2xl text-zinc-500"
+                aria-label="Kullanıcılar Sayfası"
             />
         ),
     },
