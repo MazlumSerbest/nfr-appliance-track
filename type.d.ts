@@ -27,7 +27,7 @@ interface Product {
 interface Appliance {
     id: string;
     productId: string;
-    licenseId: string;
+    license: string;
     
     active: boolean;
 }
@@ -42,7 +42,7 @@ interface License {
 interface Customer {
     id: string;
     name: string;
-
+    city: string;
     active: boolean;
 }
 
@@ -52,6 +52,6 @@ interface Connection {
     ip: string;
     login: string;
     password: string;
-    note: string;
+    note?: string;
     active: boolean;
 }
