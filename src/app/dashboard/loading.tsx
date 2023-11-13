@@ -1,5 +1,9 @@
 import Loader from "@/components/loaders/Loader";
 
 export default function DashboardLoading() {
-    return <Loader />;
+    return (
+        <div className="h-screen">
+            <Loader />
+        </div>
+    );
 }
