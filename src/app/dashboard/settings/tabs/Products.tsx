@@ -128,8 +128,8 @@ export default function ProductsTab() {
             <Button
                 color="primary"
                 // onPress={onOpen}
-                endContent={<BiPlus className="text-xl text-zinc-50" />}
-                className="min-w-fit"
+                endContent={<BiPlus className="text-xl text-white" />}
+                className="ml-2 min-w-fit bg-sky-500"
             />
         </div>
     );
