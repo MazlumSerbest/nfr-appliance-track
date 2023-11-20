@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model connections {
+  id       Int     @id @default(autoincrement())
+  login    String? @db.VarChar
+  password String? @db.VarChar
+  note     String? @db.VarChar
+}
+
+model customers {
+  id     Int     @id @default(autoincrement())
+  active Boolean @default(false)
+  name   String? @db.VarChar
+  phone  String? @db.VarChar
+  email  String? @db.VarChar
+  city   String? @db.VarChar
+}
+
+model users {
+  username String?   @db.VarChar
+  name     String?   @db.VarChar
+  email    String?   @db.VarChar
+  id       String    @id @default(cuid())
+  session  session[]
+}
+
+model session {
+  id            String   @id @default(cuid())
+  session_token String   @unique
+  user_id       String
+  expires       DateTime
+  user          users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model products {
+  id       Int     @id
+  active   Boolean @default(false)
+  name     String? @db.VarChar
+  model_no String? @db.VarChar
+  brand    String? @db.VarChar
+  type     String? @db.VarChar
+}
+
+model appliances {
+  id          Int     @id @default(autoincrement())
+  customer_id Int?
+  product_id  Int?
+  active      Boolean @default(false)
+  license     String? @db.VarChar
+}
