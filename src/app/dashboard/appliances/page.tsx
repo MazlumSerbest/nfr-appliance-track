@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import useSWR from "swr";
+import { useRouter } from "next/navigation";
 import Loader from "@/components/loaders/Loader";
 import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
 import {
@@ -15,11 +16,13 @@ import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
 import { Pagination } from "@nextui-org/pagination";
 import { Tooltip } from "@nextui-org/tooltip";
-import { BiSearch, BiEdit, BiTrash, BiPlus } from "react-icons/bi";
+import { BiSearch, BiLinkExternal, BiTrash, BiPlus } from "react-icons/bi";
 import BoolChip from "@/components/BoolChip";
 import { faker } from "@faker-js/faker";
 
 export default function Appliances() {
+    const router = useRouter();
+
     const data = [
         {
             id: faker.string.uuid(),
@@ -73,18 +76,18 @@ export default function Appliances() {
                 case "actions":
                     return (
                         <div className="relative flex justify-start items-center gap-2">
-                            <Tooltip
-                                key={appliance.id}
-                                content="Modeli Düzenle"
-                            >
+                            <Tooltip key={appliance.id} content="Detay">
                                 <span className="text-xl text-green-600 active:opacity-50">
-                                    <BiEdit
-                                        onClick={() => {}}
-                                        onDoubleClick={() => {}}
+                                    <BiLinkExternal
+                                        onClick={() =>
+                                            router.push(
+                                                "appliances/" + appliance.id,
+                                            )
+                                        }
                                     />
                                 </span>
                             </Tooltip>
-                            <Tooltip key={appliance.id} content="Modeli Sil">
+                            <Tooltip key={appliance.id} content="Sil">
                                 <span className="text-xl text-red-500 active:opacity-50">
                                     <BiTrash onClick={() => {}} />
                                 </span>

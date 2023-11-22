@@ -209,7 +209,7 @@ export default function Connections() {
                     )}
                 </TableHeader>
                 <TableBody
-                    items={data || []}
+                    items={data ?? []}
                     emptyContent={<>Herhangi bir bağlantı bulunamadı!</>}
                     loadingContent={<Loader />}
                 >
