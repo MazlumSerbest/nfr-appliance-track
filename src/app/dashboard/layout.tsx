@@ -1,4 +1,6 @@
+"use client";
 import NavLayout from "@/components/navigation/NavLayout";
+import { SessionProvider } from "next-auth/react";
 
 export default function DashboardLayout({
     children,
@@ -6,11 +8,13 @@ export default function DashboardLayout({
     children: React.ReactNode;
 }) {
     return (
-        <main className="flex min-h-screen">
-            <NavLayout />
-            <main className="flex-1 flex flex-col min-w-0 h-screen gap-2 overflow-auto p-2 pb-4 pt-14 md:p-4 md:pt-4">
-                {children}
+        <SessionProvider>
+            <main className="flex min-h-screen">
+                <NavLayout />
+                <main className="flex-1 flex flex-col min-w-0 h-screen gap-2 overflow-auto p-2 pb-4 pt-14 md:p-4 md:pt-4">
+                    {children}
+                </main>
             </main>
-        </main>
+        </SessionProvider>
     );
 }

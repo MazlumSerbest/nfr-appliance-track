@@ -1,0 +1,73 @@
+import NextAuth from "next-auth";
+import type { NextAuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcrypt";
+
+const options: NextAuthOptions = {
+    session: {
+        maxAge: 30 * 24 * 60 * 60,
+        updateAge: 24 * 60 * 60,
+    },
+    // pages: {
+    //     signIn: "/auth/signin",
+    // },
+    theme: {
+        colorScheme: "light",
+        brandColor: "#0ea5e9",
+        logo: "https://nfrbilisim.com/wp-content/uploads/2022/04/nfr-logo.png",
+        buttonText: "#0ea5e9",
+    },
+    providers: [
+        CredentialsProvider({
+            name: "Username",
+            credentials: {
+                username: {
+                    label: "Kullanıcı Adı:",
+                    type: "text",
+                },
+                password: {
+                    label: "Şifre:",
+                    type: "password",
+                },
+            },
+            async authorize(credentials) {
+                const { username, password } = credentials as {
+                    username: string;
+                    password: string;
+                };
+                let isValid: boolean, authUser: User;
+                const prisma = new PrismaClient();
+
+                let user = await prisma.users.findFirst({
+                    where: {
+                        username: username,
+                    },
+                });
+
+                // if (!user) throw new Error("Kullanıcı mevcut değil!");
+                if (!user) return null;
+
+                isValid = await bcrypt.compare(password, user?.password);
+
+                // if (!isValid) throw new Error("Giriş bilgileri yanlış! Lütfen tekrar deneyiniz.");
+                if (!isValid) return null;
+
+                authUser = {
+                    id: user.id,
+                    username: user.username ?? "",
+                    name: user.name ?? "",
+                    email: user.email ?? "",
+                    role: user.role ?? "user",
+                    active: user.active ?? true,
+                };
+
+                return authUser;
+            },
+        }),
+    ],
+};
+
+const handler = NextAuth(options);
+
+export { handler as GET, handler as POST };
