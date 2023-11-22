@@ -6,6 +6,7 @@ import {
     BiCog,
     BiGroup,
     BiUserCircle,
+    BiDevices,
 } from "react-icons/bi";
 
 export const paths: Path[] = [
@@ -32,17 +33,6 @@ export const paths: Path[] = [
         ),
     },
     {
-        path: "/dashboard/customers",
-        key: "customers",
-        name: "Müşteriler",
-        icon: (
-            <BiUserCircle
-                className="text-2xl text-zinc-500"
-                aria-label="Müşteriler Sayfası"
-            />
-        ),
-    },
-    {
         path: "/dashboard/connections",
         key: "connections",
         name: "Bağlantılar",
@@ -64,15 +54,40 @@ export const paths: Path[] = [
             />
         ),
     },
+    // {
+    //     path: "/dashboard/settings",
+    //     key: "settings",
+    //     name: "Ayarlar",
+    //     icon: (
+    //         <BiCog
+    //             className="text-2xl text-zinc-500"
+    //             aria-label="Ayarlar Sayfası"
+    //         />
+    //     ),
+    // },
+];
+
+export const definitions: Path[] =[
     {
-        path: "/dashboard/settings",
-        key: "settings",
-        name: "Ayarlar",
+        path: "/dashboard/customers",
+        key: "customers",
+        name: "Müşteriler",
         icon: (
-            <BiCog
+            <BiUserCircle
                 className="text-2xl text-zinc-500"
-                aria-label="Ayarlar Sayfası"
+                aria-label="Müşteriler Sayfası"
             />
         ),
     },
-];
+    {
+        path: "/dashboard/products",
+        key: "products",
+        name: "Ürünler",
+        icon: (
+            <BiDevices
+                className="text-2xl text-zinc-500"
+                aria-label="Ürünler Sayfası"
+            />
+        ),
+    },
+]
