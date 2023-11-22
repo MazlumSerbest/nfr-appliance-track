@@ -15,43 +15,45 @@ model connections {
 }
 
 model customers {
-  id     Int     @id @default(autoincrement())
-  active Boolean @default(false)
-  name   String? @db.VarChar
-  phone  String? @db.VarChar
-  email  String? @db.VarChar
-  city   String? @db.VarChar
+  id        Int          @id @default(autoincrement())
+  active    Boolean      @default(false)
+  name      String?      @db.VarChar
+  phone     String?      @db.VarChar
+  email     String?      @db.VarChar
+  city      String?      @db.VarChar
+  appliance appliances[]
 }
 
 model users {
-  username String?   @db.VarChar
-  name     String?   @db.VarChar
-  email    String?   @db.VarChar
-  id       String    @id @default(cuid())
-  session  session[]
-}
-
-model session {
-  id            String   @id @default(cuid())
-  session_token String   @unique
-  user_id       String
-  expires       DateTime
-  user          users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  id       Int     @id @default(autoincrement())
+  active   Boolean @default(true)
+  password String  @db.VarChar
+  username String? @unique @db.VarChar
+  name     String? @db.VarChar
+  email    String? @unique @db.VarChar
+  role     String  @db.VarChar
 }
 
 model products {
-  id       Int     @id
-  active   Boolean @default(false)
-  name     String? @db.VarChar
-  model_no String? @db.VarChar
-  brand    String? @db.VarChar
-  type     String? @db.VarChar
+  id         Int          @id @default(autoincrement())
+  active     Boolean      @default(false)
+  name       String?      @db.VarChar
+  modelNo    String?      @db.VarChar
+  brand      String?      @db.VarChar
+  type       String?      @db.VarChar
+  appliances appliances[]
 }
 
 model appliances {
-  id          Int     @id @default(autoincrement())
-  customer_id Int?
-  product_id  Int?
-  active      Boolean @default(false)
-  license     String? @db.VarChar
+  id         Int        @id @default(autoincrement())
+  customerId Int?
+  productId  Int?
+  active     Boolean    @default(false)
+  license    String?    @db.VarChar
+  createdBy  String     @db.VarChar
+  createdAt  DateTime   @default(now()) @db.Timestamptz()
+  updatedBy  String     @db.VarChar
+  updateAt   DateTime   @updatedAt @db.Timestamptz()
+  customer   customers? @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  product    products?  @relation(fields: [productId], references: [id], onDelete: Cascade)
 }

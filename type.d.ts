@@ -6,9 +6,9 @@ interface Path {
 }
 
 interface User {
-    id: string;
+    id: int;
     username: string;
-    name: string;
+    name?: string;
     email: string;
     role: string;
     active: boolean;
