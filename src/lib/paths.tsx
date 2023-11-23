@@ -7,6 +7,9 @@ import {
     BiGroup,
     BiUserCircle,
     BiDevices,
+    BiBriefcase,
+    BiStoreAlt,
+    BiCheckShield,
 } from "react-icons/bi";
 
 export const paths: Path[] = [
@@ -33,24 +36,25 @@ export const paths: Path[] = [
         ),
     },
     {
-        path: "/dashboard/connections",
-        key: "connections",
-        name: "Bağlantılar",
+        path: "/dashboard/licenses",
+        key: "licenses",
+        name: "Lisanslar",
         icon: (
-            <BiLink
+            <BiCheckShield
                 className="text-2xl text-zinc-500"
-                aria-label="Bağlantılar Sayfası"
+                aria-label="Lisanslar Sayfası"
             />
         ),
     },
     {
-        path: "/dashboard/users",
-        key: "users",
-        name: "Kullanıcılar",
+        path: "/dashboard/connections",
+        key: "connections",
+        name: "Bağlantılar",
+        isAdmin: true,
         icon: (
-            <BiGroup
+            <BiLink
                 className="text-2xl text-zinc-500"
-                aria-label="Kullanıcılar Sayfası"
+                aria-label="Bağlantılar Sayfası"
             />
         ),
     },
@@ -69,13 +73,14 @@ export const paths: Path[] = [
 
 export const definitions: Path[] =[
     {
-        path: "/dashboard/customers",
-        key: "customers",
-        name: "Müşteriler",
+        path: "/dashboard/users",
+        key: "users",
+        name: "Kullanıcılar",
+        isAdmin: true,
         icon: (
-            <BiUserCircle
+            <BiGroup
                 className="text-2xl text-zinc-500"
-                aria-label="Müşteriler Sayfası"
+                aria-label="Kullanıcılar Sayfası"
             />
         ),
     },
@@ -87,6 +92,39 @@ export const definitions: Path[] =[
             <BiDevices
                 className="text-2xl text-zinc-500"
                 aria-label="Ürünler Sayfası"
+            />
+        ),
+    },
+    {
+        path: "/dashboard/customers",
+        key: "customers",
+        name: "Müşteriler",
+        icon: (
+            <BiUserCircle
+                className="text-2xl text-zinc-500"
+                aria-label="Müşteriler Sayfası"
+            />
+        ),
+    },
+    {
+        path: "/dashboard/dealers",
+        key: "dearlers",
+        name: "Bayiler",
+        icon: (
+            <BiBriefcase
+                className="text-2xl text-zinc-500"
+                aria-label="Bayiler Sayfası"
+            />
+        ),
+    },
+    {
+        path: "/dashboard/suppliers",
+        key: "suppliers",
+        name: "Tedarikçiler",
+        icon: (
+            <BiStoreAlt
+                className="text-2xl text-zinc-500"
+                aria-label="Tedarikçiler Sayfası"
             />
         ),
     },
