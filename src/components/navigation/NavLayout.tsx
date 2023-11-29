@@ -3,27 +3,28 @@ import { useState, useRef } from "react";
 
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
-// import { useTranslations } from "next-intl";
+import useUserStore from "@/store/user";
 
 import { useOnClickOutside } from "usehooks-ts";
 
 import UserCard from "./UserCard";
 import Logo from "./Logo";
-import { paths } from "@/lib/paths";
+import { paths, definitions } from "@/lib/paths";
 
 import { Button } from "@nextui-org/button";
 import { Divider } from "@nextui-org/divider";
-import { Listbox, ListboxItem } from "@nextui-org/listbox";
+import { Listbox, ListboxSection, ListboxItem } from "@nextui-org/listbox";
 
 import { BiMenu } from "react-icons/bi";
 
 export default function NavLayout() {
     const [showSidebar, setShowSidebar] = useState(false);
+    const { user } = useUserStore();
 
     // const t = useTranslations("General.Pages");
 
-    const sidebarPaths = paths;
     const pathName = usePathname();
+    let withoutFullLink = pathName.substring(pathName.indexOf("/panel"));
 
     const ref = useRef(null);
     useOnClickOutside(ref, (_) => {
@@ -62,32 +63,73 @@ export default function NavLayout() {
                         className="gap-1 text-md text-zinc-600"
                         aria-label="Menu listbox"
                     >
-                        {sidebarPaths.map((p, index) => {
-                            let withoutLocale = pathName.substring(
-                                pathName.indexOf("/panel"),
-                            );
-                            return (
-                                <ListboxItem
-                                    key={p.key}
-                                    startContent={p.icon}
-                                    className={
-                                        "font-semibold" +
-                                        (withoutLocale == p.path
-                                            ? " bg-sky-100"
-                                            : "")
-                                    }
-                                >
-                                    <NextLink
-                                        className="absolute inset-0 outline-none"
-                                        href={p.path}
-                                        onClick={() => setShowSidebar(false)}
-                                        onTouchEnd={() => setShowSidebar(false)}
-                                    />
-                                    {/* {t(p.key)} */}
-                                    {p.name}
-                                </ListboxItem>
-                            );
-                        })}
+                        <ListboxSection showDivider>
+                            {paths.map((p, index) => {
+                                return (
+                                    <ListboxItem
+                                        key={p.key}
+                                        startContent={p.icon}
+                                        className={
+                                            "font-semibold" +
+                                            (withoutFullLink == p.path
+                                                ? " bg-sky-100"
+                                                : "") +
+                                            (p.isAdmin && user?.role != "admin"
+                                                ? " hidden"
+                                                : "")
+                                        }
+                                    >
+                                        <NextLink
+                                            className="absolute inset-0 outline-none"
+                                            href={p.path}
+                                            onClick={() =>
+                                                setShowSidebar(false)
+                                            }
+                                            onTouchEnd={() =>
+                                                setShowSidebar(false)
+                                            }
+                                        />
+                                        {p.name}
+                                    </ListboxItem>
+                                );
+                            })}
+                        </ListboxSection>
+                        <ListboxSection
+                            title="Tanımlamalar"
+                            classNames={{
+                                heading: "text-zinc-500",
+                            }}
+                        >
+                            {definitions?.map((p, index) => {
+                                return (
+                                    <ListboxItem
+                                        key={p.key}
+                                        startContent={p.icon}
+                                        className={
+                                            "font-semibold" +
+                                            (withoutFullLink == p.path
+                                                ? " bg-sky-100"
+                                                : "") +
+                                            (p.isAdmin && user?.role != "admin"
+                                                ? " hidden"
+                                                : "")
+                                        }
+                                    >
+                                        <NextLink
+                                            className="absolute inset-0 outline-none"
+                                            href={p.path}
+                                            onClick={() =>
+                                                setShowSidebar(false)
+                                            }
+                                            onTouchEnd={() =>
+                                                setShowSidebar(false)
+                                            }
+                                        />
+                                        {p.name}
+                                    </ListboxItem>
+                                );
+                            })}
+                        </ListboxSection>
                     </Listbox>
                 </div>
                 <Divider />

@@ -1,27 +1,61 @@
-// import { useSession, signOut } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 
 import { useDisclosure } from "@nextui-org/react";
 import { Avatar, AvatarIcon } from "@nextui-org/avatar";
 import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/popover";
 import { Button } from "@nextui-org/button";
-// import { useTranslations } from "next-intl";
 
 import { BiLogOut } from "react-icons/bi";
+import useUserStore from "@/store/user";
+import { useEffect } from "react";
 
 export default function UserCard() {
     const { isOpen, onClose, onOpenChange } = useDisclosure();
-    // const t = useTranslations("General");
-    // const { data: session } = useSession();
-    const session = {
-        user: {
-            name: "Administrator",
-            email: "test@gmail.com",
-        },
-    };
-    
+    const { data: session } = useSession();
+    const { user, updateUser } = useUserStore();
+
+    useEffect(() => {
+        if (session?.user) {
+            fetch(`/api/user/${session?.user?.email ?? ""}`)
+                .then((res) => res.json())
+                .then((data) => {
+                    const currUser: User = {
+                        id: data?.id,
+                        username: data?.username,
+                        name: data?.name,
+                        email: data?.email,
+                        role: data?.role,
+                        active: data?.active,
+                    };
+
+                    updateUser(currUser);
+                    console.log("Fetched");
+                });
+            // const fetchData = async () => {
+            //     const res = await fetch(
+            //         `/api/user/${session?.user?.email ?? ""}`,
+            //     );
+            //     const data = await res.json();
+
+            //     const currUser: User = {
+            //         id: data?.id,
+            //         username: data?.username,
+            //         name: data?.name,
+            //         email: data?.email,
+            //         role: data?.role,
+            //         active: data?.active,
+            //     };
+
+            //     updateUser(currUser);
+            // };
+
+            // fetchData();
+        }
+    }, [session?.user, updateUser]);
+
     return (
         <>
-            {session?.user ? (
+            {user ? (
                 <div className="flex gap-2 items-center">
                     <Avatar
                         icon={<AvatarIcon />}
@@ -32,10 +66,10 @@ export default function UserCard() {
                     />
                     <div className="flex-1 min-w-0">
                         <p className="truncate text-sm font-bold text-sky-500">
-                            {session?.user?.name}
+                            {user?.name ?? user?.username}
                         </p>
                         <p className="truncate text-xs text-zinc-500">
-                            {session?.user?.email}
+                            {user?.email}
                         </p>
                     </div>
                     <Popover
@@ -44,18 +78,20 @@ export default function UserCard() {
                         onOpenChange={onOpenChange}
                     >
                         <PopoverTrigger>
-                            <Button isIconOnly variant="light" className="p-1 pl-0">
-                                <BiLogOut className="text-3xl text-zinc-400" />
+                            <Button
+                                isIconOnly
+                                variant="light"
+                                className="p-1 pl-0"
+                            >
+                                <BiLogOut className="text-2xl text-zinc-500" />
                             </Button>
                         </PopoverTrigger>
                         <PopoverContent className="flex flex-col gap-2 p-3">
                             <h2 className="text-lg font-semibold text-zinc-600">
-                                {/* {t("logout")} */}
-                                Log out
+                                Çıkış Yap
                             </h2>
                             <p className="text-sm text-zinc-500 pb-2">
-                                {/* {t("logoutMessage")} */}
-                                You are going to log out. Are you sure?
+                                Çıkış yapmak istediğinizden emin misiniz?
                             </p>
                             <div className="flex gap-2">
                                 <Button
@@ -63,17 +99,15 @@ export default function UserCard() {
                                     color="default"
                                     onPress={onClose}
                                 >
-                                    {/* {t("cancel")} */}
-                                    Cancel
+                                    Kapat
                                 </Button>
                                 <Button
                                     variant="solid"
                                     color="danger"
                                     className="bg-red-600"
-                                    // onClick={() => signOut()}
+                                    onClick={() => signOut()}
                                 >
-                                    {/* {t("logout")} */}
-                                    Log out
+                                    Çıkış Yap
                                 </Button>
                             </div>
                         </PopoverContent>
