@@ -1,6 +1,6 @@
 import { BiCheckCircle, BiXCircle } from "react-icons/bi";
 
-interface Props {
+type Props = {
     value: boolean;
     showText?: boolean;
 }
