@@ -1,57 +1,86 @@
-interface Path {
+type Entity = {
+    id: number;
+    active: boolean;
+    createdBy: string;
+    createdAt: Date;
+    updatedBy?: string;
+    updatedAt?: Date;
+};
+
+type Current = {
+    name: string;
+    phone?: string;
+    email?: string;
+};
+
+type Path = {
     path: string;
     key: string;
     name: string;
+    isAdmin?: boolean;
     icon: React.ReactNode;
-}
+};
 
-interface User {
-    id: int;
+//#region DataTable Component Types
+type Column = {
+    name: string;
+    key: string;
+    width?: number;
+    sortable?: boolean;
+    searchable?: boolean;
+};
+
+type ActiveOption = {
+    name: string;
+    key: string;
+};
+//#endregion
+
+//#region Data Types
+type Connection = Entity & {
+    customerId: number;
+    ip?: string;
+    login?: string;
+    password?: string;
+    note?: string;
+};
+
+type User = Entity & {
     username: string;
     name?: string;
     email: string;
     role: string;
-    active: boolean;
-}
+};
 
-interface Product {
-    id: string;
-    customerId: string;
-    name: string;
-    modelNo: string;
-    brand: string;
-    type: string;
-    active: boolean;
-}
+type Appliance = Entity & {
+    customerId: number;
+    productId: number;
+    licenseId: number;
+    dealerId: number;
+    supplierId: number;
+    serialNo?: string;
+    boughtAt?: Date;
+    soldAt?: Date;
+};
 
-interface Appliance {
-    id: string;
-    productId: string;
-    license: string;
-    
-    active: boolean;
-}
+type License = Entity & {
+    isStock: boolean;
+    startDate?: Date;
+    expiryDate?: Date;
+    boughtType?: string;
+    boughtAt?: Date;
+    soldAt?: Date;
+};
 
-interface License {
-    id: string;
-    key: string;
+type Product = Entity & {
+    brand?: string;
+    model?: string;
+    type?: string;
+};
 
-    active: string;
-}
+type Customer = Entity & Current;
 
-interface Customer {
-    id: string;
-    name: string;
-    city: string;
-    active: boolean;
-}
+type Dealer = Entity & Current;
 
-interface Connection {
-    id: string;
-    customerId: string;
-    ip: string;
-    login: string;
-    password: string;
-    note?: string;
-    active: boolean;
-}
+type Supplier = Entity & Current;
+//#endregion
