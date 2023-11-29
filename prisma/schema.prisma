@@ -8,45 +8,46 @@ datasource db {
 }
 
 model connections {
-  id        Int      @id @default(autoincrement())
-  login     String?  @db.VarChar
-  password  String?  @db.VarChar
-  note      String?  @db.VarChar
-  createdBy String   @db.VarChar
-  createdAt DateTime @default(now()) @db.Timestamptz()
-  updatedBy String   @db.VarChar
-  updateAt  DateTime @updatedAt @db.Timestamptz()
+  id        Int       @id @default(autoincrement())
+  ip        String?   @db.VarChar
+  login     String?   @db.VarChar
+  password  String?   @db.VarChar
+  note      String?   @db.VarChar
+  createdBy String    @db.VarChar
+  createdAt DateTime  @default(now()) @db.Timestamptz
+  updatedBy String?   @db.VarChar
+  updateAt  DateTime? @updatedAt @db.Timestamptz
 }
 
 model users {
-  id        Int      @id @default(autoincrement())
-  active    Boolean  @default(true)
-  password  String   @db.VarChar
-  username  String   @unique @db.VarChar
-  name      String?  @db.VarChar
-  email     String   @unique @db.VarChar
-  role      String   @db.VarChar
-  createdBy String?   @db.VarChar
-  createdAt DateTime? @default(now()) @db.Timestamptz()
+  id        Int       @id @default(autoincrement())
+  active    Boolean   @default(true)
+  password  String    @db.VarChar
+  username  String    @unique @db.VarChar
+  name      String?   @db.VarChar
+  email     String    @unique @db.VarChar
+  role      String    @db.VarChar
+  createdBy String    @db.VarChar
+  createdAt DateTime  @default(now()) @db.Timestamptz
   updatedBy String?   @db.VarChar
-  updateAt  DateTime? @updatedAt @db.Timestamptz()
+  updateAt  DateTime? @updatedAt @db.Timestamptz
 }
 
 model appliances {
   id         Int        @id @default(autoincrement())
+  active     Boolean    @default(true)
   customerId Int?
   productId  Int?
   licenseId  Int?
   dealerId   Int?
   supplierId Int?
-  active     Boolean    @default(false)
   serialNo   String?    @db.VarChar
-  boughtOn   DateTime   @db.Date()
-  soldOn     DateTime   @db.Date()
+  boughtAt   DateTime?  @db.Date
+  soldAt     DateTime?  @db.Date
   createdBy  String     @db.VarChar
-  createdAt  DateTime   @default(now()) @db.Timestamptz()
-  updatedBy  String     @db.VarChar
-  updateAt   DateTime   @updatedAt @db.Timestamptz()
+  createdAt  DateTime   @default(now()) @db.Timestamptz
+  updatedBy  String?    @db.VarChar
+  updateAt   DateTime?  @updatedAt @db.Timestamptz
   customer   customers? @relation(fields: [customerId], references: [id])
   product    products?  @relation(fields: [productId], references: [id])
   license    licenses?  @relation(fields: [licenseId], references: [id])
@@ -55,64 +56,69 @@ model appliances {
 }
 
 model licenses {
-  id         Int      @id @default(autoincrement())
-  active     Boolean  @default(false)
-  isStock    Boolean  @default(false)
-  startDate  DateTime @db.Date()
-  expiryDate DateTime @db.Date()
-
-  createdBy String       @db.VarChar
-  createdAt DateTime     @default(now()) @db.Timestamptz()
-  updatedBy String       @db.VarChar
-  updateAt  DateTime     @updatedAt @db.Timestamptz()
-  appliance appliances[]
-}
-
-model customers {
-  id        Int          @id @default(autoincrement())
-  active    Boolean      @default(false)
-  name      String?      @db.VarChar
-  phone     String?      @db.VarChar
-  email     String?      @db.VarChar
-  city      String?      @db.VarChar
-  createdBy String       @db.VarChar
-  createdAt DateTime     @default(now()) @db.Timestamptz()
-  updatedBy String       @db.VarChar
-  updateAt  DateTime     @updatedAt @db.Timestamptz()
-  appliance appliances[]
+  id         Int          @id @default(autoincrement())
+  active     Boolean      @default(true)
+  isStock    Boolean      @default(false)
+  startDate  DateTime?    @db.Date
+  expiryDate DateTime?    @db.Date
+  boughtType String?      @db.VarChar
+  boughtAt   DateTime?    @db.Date
+  soldAt     DateTime?    @db.Date
+  createdBy  String       @db.VarChar
+  createdAt  DateTime     @default(now()) @db.Timestamptz
+  updatedBy  String?      @db.VarChar
+  updateAt   DateTime?    @updatedAt @db.Timestamptz
+  appliance  appliances[]
 }
 
 model products {
   id         Int          @id @default(autoincrement())
-  active     Boolean      @default(false)
+  active     Boolean      @default(true)
   brand      String?      @db.VarChar
   model      String?      @db.VarChar
   type       String?      @db.VarChar
   createdBy  String       @db.VarChar
-  createdAt  DateTime     @default(now()) @db.Timestamptz()
-  updatedBy  String       @db.VarChar
-  updateAt   DateTime     @updatedAt @db.Timestamptz()
+  createdAt  DateTime     @default(now()) @db.Timestamptz
+  updatedBy  String?      @db.VarChar
+  updateAt   DateTime?    @updatedAt @db.Timestamptz
   appliances appliances[]
+}
+
+model customers {
+  id        Int          @id @default(autoincrement())
+  active    Boolean      @default(true)
+  name      String       @db.VarChar
+  phone     String?      @db.VarChar
+  email     String?      @db.VarChar
+  createdBy String       @db.VarChar
+  createdAt DateTime     @default(now()) @db.Timestamptz
+  updatedBy String?      @db.VarChar
+  updateAt  DateTime?    @updatedAt @db.Timestamptz
+  appliance appliances[]
 }
 
 model dealers {
   id        Int          @id @default(autoincrement())
-  active    Boolean      @default(false)
+  active    Boolean      @default(true)
   name      String       @db.VarChar
+  phone     String?      @db.VarChar
+  email     String?      @db.VarChar
   createdBy String       @db.VarChar
-  createdAt DateTime     @default(now()) @db.Timestamptz()
-  updatedBy String       @db.VarChar
-  updateAt  DateTime     @updatedAt @db.Timestamptz()
+  createdAt DateTime     @default(now()) @db.Timestamptz
+  updatedBy String?      @db.VarChar
+  updateAt  DateTime?    @updatedAt @db.Timestamptz
   appliance appliances[]
 }
 
 model suppliers {
   id        Int          @id @default(autoincrement())
-  active    Boolean      @default(false)
+  active    Boolean      @default(true)
   name      String       @db.VarChar
+  phone     String?      @db.VarChar
+  email     String?      @db.VarChar
   createdBy String       @db.VarChar
-  createdAt DateTime     @default(now()) @db.Timestamptz()
-  updatedBy String       @db.VarChar
-  updateAt  DateTime     @updatedAt @db.Timestamptz()
+  createdAt DateTime     @default(now()) @db.Timestamptz
+  updatedBy String?      @db.VarChar
+  updateAt  DateTime?    @updatedAt @db.Timestamptz
   appliance appliances[]
 }
