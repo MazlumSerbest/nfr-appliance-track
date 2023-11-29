@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
-import useSWR from "swr";
 import { useRouter } from "next/navigation";
+import useSWR from "swr";
 import Loader from "@/components/loaders/Loader";
 import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
 import {
@@ -20,42 +20,21 @@ import { BiSearch, BiLinkExternal, BiTrash, BiPlus } from "react-icons/bi";
 import BoolChip from "@/components/BoolChip";
 import { faker } from "@faker-js/faker";
 
-export default function Users() {
+export default function Customers() {
     const router = useRouter();
 
     const data = [
         {
             id: faker.string.uuid(),
-            name: faker.person.fullName(),
-            username: faker.person
-                .fullName()
-                .replace(" ", "")
-                .toLocaleLowerCase(),
-            email: faker.internet.exampleEmail(),
-            role: "admin",
+            name: faker.company.name(),
+            city: faker.location.city(),
             active: true,
         },
         {
             id: faker.string.uuid(),
-            name: faker.person.fullName(),
-            username: faker.person
-                .fullName()
-                .replace(" ", "")
-                .toLocaleLowerCase(),
-            email: faker.internet.exampleEmail(),
-            role: "user",
+            name: faker.company.name(),
+            city: faker.location.city(),
             active: false,
-        },
-        {
-            id: faker.string.uuid(),
-            name: faker.person.fullName(),
-            username: faker.person
-                .fullName()
-                .replace(" ", "")
-                .toLocaleLowerCase(),
-            email: faker.internet.exampleEmail(),
-            role: "user",
-            active: true,
         },
     ];
 
@@ -66,18 +45,8 @@ export default function Users() {
             width: 200,
         },
         {
-            key: "username",
-            label: "Kullanıcı Adı",
-            width: 200,
-        },
-        {
-            key: "email",
-            label: "E-Mail",
-            width: 200,
-        },
-        {
-            key: "role",
-            label: "Rol",
+            key: "city",
+            label: "Şehir",
             width: 100,
         },
         {
@@ -93,8 +62,9 @@ export default function Users() {
     ];
 
     const renderCell = React.useCallback(
-        (user: User, columnKey: React.Key) => {
-            const cellValue: any = user[columnKey as keyof typeof user];
+        (customer: Customer, columnKey: React.Key) => {
+            const cellValue: any =
+                customer[columnKey as keyof typeof customer];
 
             switch (columnKey) {
                 case "active":
@@ -102,16 +72,20 @@ export default function Users() {
                 case "actions":
                     return (
                         <div className="relative flex justify-start items-center gap-2">
-                            <Tooltip key={user.id} content="Detay">
+                            <Tooltip
+                                key={customer.id}
+                                content="Detay"
+                            >
                                 <span className="text-xl text-green-600 active:opacity-50">
                                     <BiLinkExternal
-                                        onClick={() =>
-                                            router.push("users/" + user.id)
-                                        }
+                                        onClick={() => router.push("customers/" + customer.id)}
                                     />
                                 </span>
                             </Tooltip>
-                            <Tooltip key={user.id} content="Sil">
+                            <Tooltip
+                                key={customer.id}
+                                content="Sil"
+                            >
                                 <span className="text-xl text-red-500 active:opacity-50">
                                     <BiTrash onClick={() => {}} />
                                 </span>
@@ -139,7 +113,7 @@ export default function Users() {
                 color="primary"
                 // onPress={onOpen}
                 endContent={<BiPlus className="text-xl text-white" />}
-                className="ml-2 min-w-fit bg-sky-500"
+                className="min-w-fit bg-sky-500"
             />
         </div>
     );
@@ -167,7 +141,7 @@ export default function Users() {
             topContent={topContent}
             topContentPlacement="outside"
             // bottomContent={bottomContent}
-            aria-label="Users table"
+            aria-label="Customers table"
             className="mt-4 mb-2"
         >
             <TableHeader columns={columns}>
@@ -190,14 +164,16 @@ export default function Users() {
             </TableHeader>
             <TableBody
                 items={data || []}
-                emptyContent={<>Herhangi bir kullanıcı bulunamadı!</>}
+                emptyContent={<>Herhangi bir müşteri bulunamadı!</>}
                 loadingContent={<Loader />}
             >
-                {(item: User) => (
+                {(item: Customer) => (
                     <TableRow
                         key={item.id}
                         className="cursor-pointer"
-                        onDoubleClick={() => {}}
+                        onDoubleClick={() => {
+                            router.push("customers/" + item.id);
+                        }}
                     >
                         {(columnKey) => (
                             <TableCell>{renderCell(item, columnKey)}</TableCell>
