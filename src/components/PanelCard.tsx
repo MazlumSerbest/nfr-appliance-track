@@ -1,6 +1,6 @@
 import { Card, CardBody } from "@nextui-org/card";
 
-interface Props {
+type Props = {
     content: React.ReactNode;
     header: string;
     icon?: React.ReactNode;

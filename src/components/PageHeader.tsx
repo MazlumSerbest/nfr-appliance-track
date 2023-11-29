@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import { Divider } from "@nextui-org/divider";
 import { BiX } from "react-icons/bi";
 
-interface Props {
+type Props = {
     title: string;
     close?: boolean;
 }
