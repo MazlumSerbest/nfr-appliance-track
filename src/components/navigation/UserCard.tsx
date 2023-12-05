@@ -21,15 +21,18 @@ export default function UserCard() {
                 .then((data) => {
                     const currUser: User = {
                         id: data?.id,
+                        active: data?.active,
                         username: data?.username,
                         name: data?.name,
                         email: data?.email,
                         role: data?.role,
-                        active: data?.active,
+                        createdBy: data?.createdBy,
+                        createdAt: data?.createdAt,
+                        updatedBy: data?.updatedBy,
+                        updatedAt: data?.updatedAt,
                     };
 
                     updateUser(currUser);
-                    console.log("Fetched");
                 });
             // const fetchData = async () => {
             //     const res = await fetch(

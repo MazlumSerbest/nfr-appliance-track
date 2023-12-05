@@ -19,6 +19,7 @@ import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
 import { Pagination } from "@nextui-org/pagination";
 import { BiPlus, BiSearch, BiChevronDown } from "react-icons/bi";
+import Loader from "./loaders/Loader";
 
 type Props = {
     columns: Column[];
@@ -78,8 +79,8 @@ export default function DataTable(props: Props) {
 
         if (hasSearchFilter) {
             filteredItems = filteredItems.filter((fitem) => {
-                debugger;
                 const filterColumns = columns.filter((e) => e.searchable);
+                
                 return filterColumns.some((e) =>
                     fitem[e.key]
                         ?.toLowerCase()
@@ -156,7 +157,7 @@ export default function DataTable(props: Props) {
                                 "border-0 ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500",
                             clearButton: "text-xl text-zinc-500",
                         }}
-                        placeholder="Search"
+                        placeholder="Arama"
                         size="sm"
                         startContent={
                             <BiSearch className="text-2xl text-zinc-300" />
@@ -176,7 +177,7 @@ export default function DataTable(props: Props) {
                                     size="sm"
                                     variant="flat"
                                 >
-                                    Active
+                                    Aktif
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu
@@ -206,7 +207,7 @@ export default function DataTable(props: Props) {
                                     size="sm"
                                     variant="flat"
                                 >
-                                    Columns
+                                    Kolonlar
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu
@@ -235,7 +236,7 @@ export default function DataTable(props: Props) {
                                 size="sm"
                                 onPress={onAddNew}
                             >
-                                Add New
+                                Ekle
                             </Button>
                         ) : (
                             <></>
@@ -244,10 +245,10 @@ export default function DataTable(props: Props) {
                 </div>
                 <div className="flex justify-between items-center">
                     <span className="text-zinc-400 text-sm">
-                        Total rows: {data.length}
+                        Toplam satır: {data.length}
                     </span>
                     <label className="flex items-center text-zinc-400 text-sm">
-                        Rows per page:
+                        Sayfa satır sayısı:
                         <select
                             className="bg-transparent outline-none text-zinc-400 text-sm ml-2"
                             onChange={onRowsPerPageChange}
@@ -308,7 +309,7 @@ export default function DataTable(props: Props) {
             className={className ?? ""}
             topContent={topContent}
             topContentPlacement="outside"
-            bottomContent={data.length ? bottomContent : <></>}
+            bottomContent={data.length > rowsPerPage ? bottomContent : <></>}
             bottomContentPlacement="outside"
             // checkboxesProps={{
             //     classNames: {
@@ -332,7 +333,7 @@ export default function DataTable(props: Props) {
                     </TableColumn>
                 )}
             </TableHeader>
-            <TableBody emptyContent={emptyContent} items={sortedItems}>
+            <TableBody emptyContent={emptyContent} items={sortedItems} loadingContent={<Loader/>}>
                 {(item) => (
                     <TableRow
                         key={item.id}

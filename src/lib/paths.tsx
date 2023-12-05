@@ -10,6 +10,7 @@ import {
     BiBriefcase,
     BiStoreAlt,
     BiCheckShield,
+    BiShield,
 } from "react-icons/bi";
 
 export const paths: Path[] = [
@@ -92,6 +93,17 @@ export const definitions: Path[] =[
             <BiDevices
                 className="text-2xl text-zinc-500"
                 aria-label="Ürünler Sayfası"
+            />
+        ),
+    },
+    {
+        path: "/dashboard/licenseTypes",
+        key: "licenseTypes",
+        name: "Lisans Tipleri",
+        icon: (
+            <BiShield
+                className="text-2xl text-zinc-500"
+                aria-label="Lisans Tipleri Sayfası"
             />
         ),
     },

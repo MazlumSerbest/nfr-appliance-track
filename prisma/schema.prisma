@@ -34,54 +34,76 @@ model users {
 }
 
 model appliances {
-  id         Int        @id @default(autoincrement())
-  active     Boolean    @default(true)
-  customerId Int?
-  productId  Int?
-  licenseId  Int?
-  dealerId   Int?
-  supplierId Int?
-  serialNo   String?    @db.VarChar
-  boughtAt   DateTime?  @db.Date
-  soldAt     DateTime?  @db.Date
-  createdBy  String     @db.VarChar
-  createdAt  DateTime   @default(now()) @db.Timestamptz
-  updatedBy  String?    @db.VarChar
-  updateAt   DateTime?  @updatedAt @db.Timestamptz
-  customer   customers? @relation(fields: [customerId], references: [id])
-  product    products?  @relation(fields: [productId], references: [id])
-  license    licenses?  @relation(fields: [licenseId], references: [id])
-  dealer     dealers?   @relation(fields: [dealerId], references: [id])
-  supplier   suppliers? @relation(fields: [supplierId], references: [id])
+  id            Int         @id @default(autoincrement())
+  active        Boolean     @default(true)
+  successor     appliances? @relation("ApplienceHistory")
+  predecessorId Int?        @unique
+  predecessor   appliances? @relation("ApplienceHistory", fields: [predecessorId], references: [id])
+  customerId    Int?
+  customer      customers?  @relation(fields: [customerId], references: [id])
+  productId     Int?
+  product       products?   @relation(fields: [productId], references: [id])
+  dealerId      Int?
+  dealer        dealers?    @relation(fields: [dealerId], references: [id])
+  supplierId    Int?
+  supplier      suppliers?  @relation(fields: [supplierId], references: [id])
+  licenseId     Int?
+  license       licenses?   @relation(fields: [licenseId], references: [id])
+  serialNo      String?     @db.VarChar
+  boughtAt      DateTime?   @db.Date
+  soldAt        DateTime?   @db.Date
+  createdBy     String      @db.VarChar
+  createdAt     DateTime    @default(now()) @db.Timestamptz
+  updatedBy     String?     @db.VarChar
+  updateAt      DateTime?   @updatedAt @db.Timestamptz
 }
 
 model licenses {
-  id         Int          @id @default(autoincrement())
-  active     Boolean      @default(true)
-  isStock    Boolean      @default(false)
-  startDate  DateTime?    @db.Date
-  expiryDate DateTime?    @db.Date
-  boughtType String?      @db.VarChar
-  boughtAt   DateTime?    @db.Date
-  soldAt     DateTime?    @db.Date
-  createdBy  String       @db.VarChar
-  createdAt  DateTime     @default(now()) @db.Timestamptz
-  updatedBy  String?      @db.VarChar
-  updateAt   DateTime?    @updatedAt @db.Timestamptz
-  appliance  appliances[]
+  id            Int          @id @default(autoincrement())
+  active        Boolean      @default(true)
+  successor     licenses?    @relation("LicenseHistory")
+  predecessorId Int?         @unique
+  predecessor   licenses?    @relation("LicenseHistory", fields: [predecessorId], references: [id])
+  licenseTypeId Int
+  dealerId      Int?
+  dealer        dealers?     @relation(fields: [dealerId], references: [id])
+  supplierId    Int?
+  supplier      suppliers?   @relation(fields: [supplierId], references: [id])
+  isStock       Boolean      @default(false)
+  startDate     DateTime?    @db.Date
+  expiryDate    DateTime?    @db.Date
+  boughtType    String?      @db.VarChar
+  boughtAt      DateTime?    @db.Date
+  soldAt        DateTime?    @db.Date
+  createdBy     String       @db.VarChar
+  createdAt     DateTime     @default(now()) @db.Timestamptz
+  updatedBy     String?      @db.VarChar
+  updateAt      DateTime?    @updatedAt @db.Timestamptz
+  appliance     appliances[]
 }
 
 model products {
-  id         Int          @id @default(autoincrement())
-  active     Boolean      @default(true)
-  brand      String?      @db.VarChar
-  model      String?      @db.VarChar
-  type       String?      @db.VarChar
-  createdBy  String       @db.VarChar
-  createdAt  DateTime     @default(now()) @db.Timestamptz
-  updatedBy  String?      @db.VarChar
-  updateAt   DateTime?    @updatedAt @db.Timestamptz
-  appliances appliances[]
+  id          Int           @id @default(autoincrement())
+  active      Boolean       @default(true)
+  brand       String?       @db.VarChar
+  model       String?       @db.VarChar
+  type        String?       @db.VarChar
+  createdBy   String        @db.VarChar
+  createdAt   DateTime      @default(now()) @db.Timestamptz
+  updatedBy   String?       @db.VarChar
+  updateAt    DateTime?     @updatedAt @db.Timestamptz
+  appliance   appliances[]
+  licenseType licenseTypes[]
+}
+
+model licenseTypes {
+  id        Int       @id @default(autoincrement())
+  active    Boolean   @default(true)
+  productId Int?
+  product   products? @relation(fields: [productId], references: [id])
+  duration  Int?
+  type      String?   @db.VarChar
+  price     Decimal   @db.Decimal(9, 2)
 }
 
 model customers {
@@ -108,6 +130,7 @@ model dealers {
   updatedBy String?      @db.VarChar
   updateAt  DateTime?    @updatedAt @db.Timestamptz
   appliance appliances[]
+  license   licenses[]
 }
 
 model suppliers {
@@ -121,4 +144,5 @@ model suppliers {
   updatedBy String?      @db.VarChar
   updateAt  DateTime?    @updatedAt @db.Timestamptz
   appliance appliances[]
+  license   licenses[]
 }
