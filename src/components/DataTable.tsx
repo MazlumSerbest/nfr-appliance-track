@@ -80,7 +80,7 @@ export default function DataTable(props: Props) {
         if (hasSearchFilter) {
             filteredItems = filteredItems.filter((fitem) => {
                 const filterColumns = columns.filter((e) => e.searchable);
-                
+
                 return filterColumns.some((e) =>
                     fitem[e.key]
                         ?.toLowerCase()
@@ -168,36 +168,40 @@ export default function DataTable(props: Props) {
                         onValueChange={onSearchChange}
                     />
                     <div className="flex gap-3">
-                        <Dropdown>
-                            <DropdownTrigger className="hidden sm:flex">
-                                <Button
-                                    endContent={
-                                        <BiChevronDown className="text-sm" />
-                                    }
-                                    size="sm"
-                                    variant="flat"
-                                >
-                                    Aktif
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                disallowEmptySelection
-                                aria-label="Table Columns"
-                                closeOnSelect={false}
-                                selectedKeys={activeFilter}
-                                selectionMode="multiple"
-                                onSelectionChange={setActiveFilter}
-                            >
-                                {(activeOptions || []).map((active) => (
-                                    <DropdownItem
-                                        key={active.key}
-                                        className="capitalize"
+                        {activeOptions?.length ? (
+                            <Dropdown>
+                                <DropdownTrigger className="hidden sm:flex">
+                                    <Button
+                                        endContent={
+                                            <BiChevronDown className="text-sm" />
+                                        }
+                                        size="sm"
+                                        variant="flat"
                                     >
-                                        {active.name}
-                                    </DropdownItem>
-                                ))}
-                            </DropdownMenu>
-                        </Dropdown>
+                                        Aktif
+                                    </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu
+                                    disallowEmptySelection
+                                    aria-label="Table Columns"
+                                    closeOnSelect={false}
+                                    selectedKeys={activeFilter}
+                                    selectionMode="multiple"
+                                    onSelectionChange={setActiveFilter}
+                                >
+                                    {(activeOptions || []).map((active) => (
+                                        <DropdownItem
+                                            key={active.key}
+                                            className="capitalize"
+                                        >
+                                            {active.name}
+                                        </DropdownItem>
+                                    ))}
+                                </DropdownMenu>
+                            </Dropdown>
+                        ) : (
+                            <></>
+                        )}
                         <Dropdown>
                             <DropdownTrigger className="hidden sm:flex">
                                 <Button
@@ -333,7 +337,11 @@ export default function DataTable(props: Props) {
                     </TableColumn>
                 )}
             </TableHeader>
-            <TableBody emptyContent={emptyContent} items={sortedItems} loadingContent={<Loader/>}>
+            <TableBody
+                emptyContent={emptyContent}
+                items={sortedItems}
+                loadingContent={<Loader />}
+            >
                 {(item) => (
                     <TableRow
                         key={item.id}
