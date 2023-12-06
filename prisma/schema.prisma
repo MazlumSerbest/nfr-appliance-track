@@ -16,7 +16,7 @@ model connections {
   createdBy String    @db.VarChar
   createdAt DateTime  @default(now()) @db.Timestamptz
   updatedBy String?   @db.VarChar
-  updateAt  DateTime? @updatedAt @db.Timestamptz
+  updatedAt DateTime? @updatedAt @db.Timestamptz
 }
 
 model users {
@@ -30,7 +30,7 @@ model users {
   createdBy String    @db.VarChar
   createdAt DateTime  @default(now()) @db.Timestamptz
   updatedBy String?   @db.VarChar
-  updateAt  DateTime? @updatedAt @db.Timestamptz
+  updatedAt DateTime? @updatedAt @db.Timestamptz
 }
 
 model appliances {
@@ -55,7 +55,8 @@ model appliances {
   createdBy     String      @db.VarChar
   createdAt     DateTime    @default(now()) @db.Timestamptz
   updatedBy     String?     @db.VarChar
-  updateAt      DateTime?   @updatedAt @db.Timestamptz
+  updatedAt     DateTime?   @updatedAt @db.Timestamptz
+  isDeleted     Boolean     @default(false)
 }
 
 model licenses {
@@ -78,20 +79,21 @@ model licenses {
   createdBy     String       @db.VarChar
   createdAt     DateTime     @default(now()) @db.Timestamptz
   updatedBy     String?      @db.VarChar
-  updateAt      DateTime?    @updatedAt @db.Timestamptz
+  updatedAt     DateTime?    @updatedAt @db.Timestamptz
+  isDeleted     Boolean      @default(false)
   appliance     appliances[]
 }
 
 model products {
-  id          Int           @id @default(autoincrement())
-  active      Boolean       @default(true)
-  brand       String?       @db.VarChar
-  model       String?       @db.VarChar
-  type        String?       @db.VarChar
-  createdBy   String        @db.VarChar
-  createdAt   DateTime      @default(now()) @db.Timestamptz
-  updatedBy   String?       @db.VarChar
-  updateAt    DateTime?     @updatedAt @db.Timestamptz
+  id          Int            @id @default(autoincrement())
+  active      Boolean        @default(true)
+  brand       String?        @db.VarChar
+  model       String?        @db.VarChar
+  type        String?        @db.VarChar
+  createdBy   String         @db.VarChar
+  createdAt   DateTime       @default(now()) @db.Timestamptz
+  updatedBy   String?        @db.VarChar
+  updatedAt   DateTime?      @updatedAt @db.Timestamptz
   appliance   appliances[]
   licenseType licenseTypes[]
 }
@@ -104,6 +106,10 @@ model licenseTypes {
   duration  Int?
   type      String?   @db.VarChar
   price     Decimal   @db.Decimal(9, 2)
+  createdBy String    @db.VarChar
+  createdAt DateTime  @default(now()) @db.Timestamptz
+  updatedBy String?   @db.VarChar
+  updatedAt DateTime? @updatedAt @db.Timestamptz
 }
 
 model customers {
@@ -115,7 +121,7 @@ model customers {
   createdBy String       @db.VarChar
   createdAt DateTime     @default(now()) @db.Timestamptz
   updatedBy String?      @db.VarChar
-  updateAt  DateTime?    @updatedAt @db.Timestamptz
+  updatedAt DateTime?    @updatedAt @db.Timestamptz
   appliance appliances[]
 }
 
@@ -128,7 +134,7 @@ model dealers {
   createdBy String       @db.VarChar
   createdAt DateTime     @default(now()) @db.Timestamptz
   updatedBy String?      @db.VarChar
-  updateAt  DateTime?    @updatedAt @db.Timestamptz
+  updatedAt DateTime?    @updatedAt @db.Timestamptz
   appliance appliances[]
   license   licenses[]
 }
@@ -142,7 +148,7 @@ model suppliers {
   createdBy String       @db.VarChar
   createdAt DateTime     @default(now()) @db.Timestamptz
   updatedBy String?      @db.VarChar
-  updateAt  DateTime?    @updatedAt @db.Timestamptz
+  updatedAt DateTime?    @updatedAt @db.Timestamptz
   appliance appliances[]
   license   licenses[]
 }
