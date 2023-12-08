@@ -4,7 +4,7 @@ type Entity = {
     createdBy: string;
     createdAt: Date;
     updatedBy?: string;
-    updatedAt?: Date;
+    updatedAt?: string;
 };
 
 type Current = {
@@ -73,9 +73,16 @@ type License = Entity & {
 };
 
 type Product = Entity & {
-    brand?: string;
-    model?: string;
+    brand: string;
+    model: string;
     type?: string;
+};
+
+type LicenseType = Entity & {
+    productId: number;
+    type: string;
+    duration: number?;
+    price: number?;
 };
 
 type Customer = Entity & Current;

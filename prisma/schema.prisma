@@ -87,8 +87,8 @@ model licenses {
 model products {
   id          Int            @id @default(autoincrement())
   active      Boolean        @default(true)
-  brand       String?        @db.VarChar
-  model       String?        @db.VarChar
+  brand       String         @db.VarChar
+  model       String         @db.VarChar
   type        String?        @db.VarChar
   createdBy   String         @db.VarChar
   createdAt   DateTime       @default(now()) @db.Timestamptz
@@ -101,11 +101,11 @@ model products {
 model licenseTypes {
   id        Int       @id @default(autoincrement())
   active    Boolean   @default(true)
-  productId Int?
-  product   products? @relation(fields: [productId], references: [id])
+  productId Int
+  product   products  @relation(fields: [productId], references: [id])
+  type      String    @db.VarChar
   duration  Int?
-  type      String?   @db.VarChar
-  price     Decimal   @db.Decimal(9, 2)
+  price     Decimal?  @db.Decimal(9, 2)
   createdBy String    @db.VarChar
   createdAt DateTime  @default(now()) @db.Timestamptz
   updatedBy String?   @db.VarChar
