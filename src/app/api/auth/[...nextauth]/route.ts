@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/utils/db";
 import bcrypt from "bcrypt";
 
 const options: NextAuthOptions = {
@@ -32,18 +32,27 @@ const options: NextAuthOptions = {
                 },
             },
             async authorize(credentials) {
+                let isValid: boolean, authUser: any;
+
                 const { username, password } = credentials as {
                     username: string;
                     password: string;
                 };
-                let isValid: boolean, authUser: User;
-                const prisma = new PrismaClient();
 
                 let user = await prisma.users.findFirst({
                     where: {
                         username: username,
                     },
+                    select: {
+                        active: true,
+                        username: true,
+                        email: true,
+                        password: true,
+                        name: true,
+                    },
                 });
+
+                if (!user?.active) return null;
 
                 // if (!user) throw new Error("Kullanıcı mevcut değil!");
                 if (!user) return null;
@@ -52,14 +61,16 @@ const options: NextAuthOptions = {
 
                 // if (!isValid) throw new Error("Giriş bilgileri yanlış! Lütfen tekrar deneyiniz.");
                 if (!isValid) return null;
-
+                
                 authUser = {
-                    id: user.id,
-                    username: user.username ?? "",
+                    // id: user.id,
+                    // active: user.active,
+                    username: user.username,
+                    email: user.email,
+                    // role: "",
                     name: user.name ?? "",
-                    email: user.email ?? "",
-                    role: user.role ?? "user",
-                    active: user.active ?? true,
+                    // createdBy: "",
+                    // createdAt: user.createdAt,
                 };
 
                 return authUser;
