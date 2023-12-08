@@ -1,204 +1,331 @@
-"use client"
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import useSWR from "swr";
-import { useRouter } from "next/navigation";
-import Loader from "@/components/loaders/Loader";
-import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
+import { useForm, SubmitHandler } from "react-hook-form";
+import toast from "react-hot-toast";
+
 import {
-    Table,
-    TableHeader,
-    TableBody,
-    TableColumn,
-    TableRow,
-    TableCell,
-} from "@nextui-org/table";
-import { Input } from "@nextui-org/input";
-import { Button } from "@nextui-org/button";
-import { Pagination } from "@nextui-org/pagination";
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalHeader,
+    useDisclosure,
+} from "@nextui-org/modal";
+import { SortDescriptor } from "@nextui-org/table";
 import { Tooltip } from "@nextui-org/tooltip";
-import { BiSearch, BiLinkExternal, BiTrash, BiPlus } from "react-icons/bi";
+import { Button } from "@nextui-org/button";
+
+import { BiTrash, BiEdit } from "react-icons/bi";
+import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
 import BoolChip from "@/components/BoolChip";
-import { faker } from "@faker-js/faker";
+import DataTable from "@/components/DataTable";
+import { DateTimeFormat } from "@/utils/date";
+import useUserStore from "@/store/user";
+
+type IFormInput = {
+    id: number;
+    brand: string;
+    model: string;
+    type: string;
+    createdBy: string;
+    updatedBy: string;
+};
 
 export default function Products() {
-    const router = useRouter()
+    const [isNew, setIsNew] = useState(false);
+    const { user: currUser } = useUserStore();
+    const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
 
-    const data = [
-        {
-            id: faker.string.uuid(),
-            name: "Distributed Edge",
-            modelNo: "2100",
-            brand: "Sophos",
-            type: "Firewall",
-            active: true
-        },
-        {
-            id: faker.string.uuid(),
-            name: "SMB",
-            modelNo: "2300",
-            brand: "Fortinet",
-            type: "Firewall",
-            active: false
-        },
+    const { register, reset, handleSubmit } = useForm<IFormInput>({});
+    const onSubmitNew: SubmitHandler<IFormInput> = async (data) => {
+        data.createdBy = currUser?.username ?? "";
+        await fetch("/api/product", {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: { "Content-Type": "application/json" },
+        })
+            .then(async (res) => {
+                const result = await res.json();
+                if (res.ok) {
+                    toast.success(result.message);
+                } else {
+                    toast.error(result.message);
+                }
+                return result;
+            })
+            .then(() => {
+                onClose();
+                reset();
+                mutate();
+            });
+    };
+    const onSubmitUpdate: SubmitHandler<IFormInput> = async (data) => {
+        data.updatedBy = currUser?.username ?? "";
+        console.log(data);
+        await fetch(`/api/product/${data.id}`, {
+            method: "PUT",
+            body: JSON.stringify(data),
+            headers: { "Content-Type": "application/json" },
+        })
+            .then(async (res) => {
+                const result = await res.json();
+                if (res.ok) {
+                    toast.success(result.message);
+                } else {
+                    toast.error(result.message);
+                }
+                return result;
+            })
+            .then(() => {
+                onClose();
+                reset();
+                mutate();
+            });
+    };
+
+    const visibleColumns = ["brand", "model", "type", "active", "actions"];
+
+    const sort: SortDescriptor = {
+        column: "createdAt",
+        direction: "descending",
+    };
+
+    const activeOptions = [
+        { name: "Yes", key: "true" },
+        { name: "No", key: "false" },
     ];
 
-    const columns = [
-        {
-            key: "name",
-            label: "Ürün Adı",
-            width: 200,
-        },
-        {
-            key: "modelNo",
-            label: "Model No",
-            width: 150,
-        },
+    const columns: Column[] = [
         {
             key: "brand",
-            label: "Marka",
+            name: "Marka",
             width: 150,
+            searchable: true,
+            sortable: true,
+        },
+        {
+            key: "model",
+            name: "Model",
+            width: 150,
+            searchable: true,
+            sortable: true,
         },
         {
             key: "type",
-            label: "Tip",
-            width: 100,
+            name: "Tip",
+            width: 150,
+            sortable: true,
         },
         {
             key: "active",
-            label: "Aktif",
+            name: "Aktif",
             width: 80,
         },
         {
             key: "actions",
-            label: "Aksiyonlar",
+            name: "Aksiyonlar",
             width: 100,
+        },
+        {
+            key: "createdBy",
+            name: "Oluşturan Kullanıcı",
+            width: 80,
+        },
+        {
+            key: "createdAt",
+            name: "Oluşturulma Tarihi",
+            width: 150,
+            sortable: true,
+        },
+        {
+            key: "updatedBy",
+            name: "Güncelleyen Kullanıcı",
+            width: 80,
+        },
+        {
+            key: "updatedAt",
+            name: "Güncellenme Tarihi",
+            width: 150,
+            sortable: true,
         },
     ];
 
     const renderCell = React.useCallback(
         (product: Product, columnKey: React.Key) => {
-            const cellValue: any =
-                product[columnKey as keyof typeof product];
+            const cellValue: any = product[columnKey as keyof typeof product];
 
             switch (columnKey) {
-                case "name":
-                    return (
-                        <h6 className="text-clip">
-                            {cellValue.length > 30
-                                ? cellValue.substring(0, 30) + "..."
-                                : cellValue}
-                        </h6>
-                    );
                 case "active":
                     return <BoolChip value={cellValue} />;
+                case "createdAt":
+                    return <p>{DateTimeFormat(cellValue)}</p>;
+                case "updatedAt":
+                    return <p>{DateTimeFormat(cellValue)}</p>;
                 case "actions":
                     return (
                         <div className="relative flex justify-start items-center gap-2">
-                        <Tooltip key={product.id} content="Detay">
-                            <span className="text-xl text-green-600 active:opacity-50">
-                                <BiLinkExternal
-                                    onClick={() =>
-                                        router.push(
-                                            "products/" + product.id,
-                                        )
-                                    }
-                                />
-                            </span>
-                        </Tooltip>
-                        <Tooltip key={product.id} content="Sil">
-                            <span className="text-xl text-red-500 active:opacity-50">
-                                <BiTrash onClick={() => {}} />
-                            </span>
-                        </Tooltip>
+                            <Tooltip
+                                key={product.id + "-edit"}
+                                content="Düzenle"
+                            >
+                                <span className="text-xl text-green-600 active:opacity-50 cursor-pointer">
+                                    <BiEdit
+                                        onClick={() => {
+                                            setIsNew(false);
+                                            reset(product);
+                                            onOpen();
+                                        }}
+                                    />
+                                </span>
+                            </Tooltip>
+                            <Tooltip key={product.id + "-del"} content="Sil">
+                                <span className="text-xl text-red-600 active:opacity-50 cursor-pointer">
+                                    <BiTrash onClick={() => {}} />
+                                </span>
+                            </Tooltip>
                         </div>
                     );
                 default:
                     return cellValue;
             }
         },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [],
+        [onOpen, reset],
     );
 
-    const topContent = (
-        <div className="flex justify-between">
-            <Input
-                isClearable
-                className="w-full sm:max-w-[44%]"
-                placeholder="Arama Yap"
-                startContent={<BiSearch className="text-2xl text-zinc-500" />}
-                value=""
-            />
-            <Button
-                color="primary"
-                // onPress={onOpen}
-                endContent={<BiPlus className="text-xl text-white" />}
-                className="ml-2 min-w-fit bg-sky-500"
-            />
-        </div>
-    );
+    const { data, error, mutate } = useSWR("/api/product");
 
-    // const fetcher = (url: string) => fetch(url).then((res) => res.json());
-    // const { data, error } = useSWR(
-    //     "/api/acronis/tenant/users/28a5db46-58eb-4a61-b064-122f07ddac6a",
-    //     fetcher,
-    // );
-
-    // if (error) return <div>failed to load</div>;
-    // if (!data)
-    //     return (
-    //         <Skeleton>
-    //             <TableSkeleton />
-    //         </Skeleton>
-    //     );
-
+    if (error) return <div>Yükleme Hatası!</div>;
+    if (!data)
+        return (
+            <div className="flex flex-col mt-4">
+                <Skeleton>
+                    <TableSkeleton />
+                </Skeleton>
+            </div>
+        );
     return (
-        <Table
-            isStriped
-            fullWidth
-            selectionMode="single"
-            color="primary"
-            topContent={topContent}
-            topContentPlacement="outside"
-            // bottomContent={bottomContent}
-            aria-label="Products table"
-            className="mt-4 mb-2"
-        >
-            <TableHeader columns={columns}>
-                {(column) => (
-                    <TableColumn
-                        key={column.key}
-                        width={column.width ? column.width : null}
-                        // align={
-                        //     column.align &&
-                        //     (column.align === "center" ||
-                        //         column.align === "start" ||
-                        //         column.align === "end")
-                        //         ? column.align
-                        //         : "start"
-                        // }
-                    >
-                        {column.label}
-                    </TableColumn>
-                )}
-            </TableHeader>
-            <TableBody
-                items={data ?? []}
-                emptyContent={<>Herhangi bir ürün bulunamadı!</>}
-                loadingContent={<Loader />}
+        <>
+            <DataTable
+                isCompact
+                isStriped
+                className="mt-4 mb-2"
+                emptyContent="Herhangi bir ürün bulunamadı!"
+                data={data || []}
+                columns={columns}
+                renderCell={renderCell}
+                sortOption={sort}
+                initialVisibleColumNames={visibleColumns}
+                activeOptions={activeOptions}
+                onAddNew={() => {
+                    setIsNew(true);
+                    reset({});
+                    reset({});
+                    onOpen();
+                }}
+            />
+            <Modal
+                isOpen={isOpen}
+                onOpenChange={onOpenChange}
+                placement="center"
+                backdrop="opaque"
+                shadow="lg"
+                isDismissable={false}
             >
-                {(item: Product) => (
-                    <TableRow
-                        key={item.id}
-                        className="cursor-pointer"
-                        onDoubleClick={() => {}}
-                    >
-                        {(columnKey) => (
-                            <TableCell>{renderCell(item, columnKey)}</TableCell>
-                        )}
-                    </TableRow>
-                )}
-            </TableBody>
-        </Table>
+                <ModalContent>
+                    <ModalHeader className="flex flex-col gap-1 text-zinc-600">
+                        {isNew ? "Yeni Ürün" : "Ürün Güncelle"}
+                    </ModalHeader>
+                    <ModalBody>
+                        <form
+                            action=""
+                            autoComplete="off"
+                            className="flex flex-col gap-3"
+                            onSubmit={handleSubmit(
+                                isNew ? onSubmitNew : onSubmitUpdate,
+                            )}
+                        >
+                            <div>
+                                <label
+                                    htmlFor="brand"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Marka{" "}
+                                    <span className="text-red-400">*</span>
+                                </label>
+                                <div className="mt-2">
+                                    <input
+                                        type="text"
+                                        id="brand"
+                                        required
+                                        className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                        {...register("brand", {
+                                            required: true,
+                                            maxLength: 40,
+                                        })}
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="model"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Model{" "}
+                                    <span className="text-red-400">*</span>
+                                </label>
+                                <div className="mt-2">
+                                    <input
+                                        type="text"
+                                        id="model"
+                                        required
+                                        className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                        {...register("model", {
+                                            required: true,
+                                            maxLength: 40,
+                                        })}
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="type"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Tip
+                                </label>
+                                <div className="mt-2">
+                                    <input
+                                        type="text"
+                                        id="type"
+                                        className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                        {...register("type", {
+                                            required: true,
+                                            maxLength: 40,
+                                        })}
+                                    />
+                                </div>
+                            </div>
+                            <div className="flex flex-row gap-2 mt-4">
+                                <div className="flex-1"></div>
+                                <Button
+                                    color="danger"
+                                    onPress={onClose}
+                                    className="bg-red-600"
+                                >
+                                    Kapat
+                                </Button>
+                                <Button
+                                    type="submit"
+                                    color="success"
+                                    className="text-white bg-green-600"
+                                >
+                                    Kaydet
+                                </Button>
+                            </div>
+                        </form>
+                    </ModalBody>
+                </ModalContent>
+            </Modal>
+        </>
     );
 }
