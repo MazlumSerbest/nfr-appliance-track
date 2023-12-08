@@ -1,91 +1,122 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
-import Loader from "@/components/loaders/Loader";
-import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
-import {
-    Table,
-    TableHeader,
-    TableBody,
-    TableColumn,
-    TableRow,
-    TableCell,
-} from "@nextui-org/table";
+import toast from "react-hot-toast";
+
 import {
     Modal,
     ModalContent,
     ModalHeader,
     ModalBody,
-    ModalFooter,
     useDisclosure,
 } from "@nextui-org/modal";
-import { Input } from "@nextui-org/input";
+import { SortDescriptor } from "@nextui-org/table";
 import { Button } from "@nextui-org/button";
-import { Pagination } from "@nextui-org/pagination";
 import { Tooltip } from "@nextui-org/tooltip";
-import {
-    BiSearch,
-    BiEdit,
-    BiTrash,
-    BiPlus,
-    BiLinkExternal,
-} from "react-icons/bi";
+
+import DataTable from "@/components/DataTable";
 import BoolChip from "@/components/BoolChip";
-import { faker } from "@faker-js/faker";
+import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
+import { BiLinkExternal, BiTrash } from "react-icons/bi";
+import useUserStore from "@/store/user";
+import { DateTimeFormat } from "@/utils/date";
+
+interface IFormInput {
+    ip: string;
+    login: string;
+    password: string;
+    note: string;
+    createdBy: string;
+}
 
 export default function Connections() {
-    const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
     const router = useRouter();
+    const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
+    const { user: currUser } = useUserStore();
 
-    const data = [
-        {
-            id: faker.string.uuid(),
-            ip: "1.1.1.1",
-            login: faker.internet.userName(),
-            password: "12368172",
-            active: true,
-            note: faker.lorem.paragraph(4),
+    const { register, reset, handleSubmit } = useForm<IFormInput>({
+        defaultValues: {
+            note: "",
         },
-        {
-            id: faker.string.uuid(),
-            ip: "1.10.10.1",
-            login: faker.internet.userName(),
-            password: "12314",
-            active: false,
-            note: faker.lorem.paragraph(1),
-        },
-    ];
+    });
+    const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+        data.createdBy = currUser?.username ?? "";
+        await fetch("/api/connection", {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: { "Content-Type": "application/json" },
+        })
+            .then(async (res) => {
+                const result = await res.json();
+                if (res.ok) {
+                    toast.success(result.message);
+                } else {
+                    toast.error(result.message);
+                }
+                return result;
+            })
+            .then(() => {
+                onClose();
+                reset();
+                mutate();
+            });
+    };
 
-    const columns = [
+    const visibleColumns = ["ip", "login", "note", "actions"];
+
+    const sort: SortDescriptor = {
+        column: "createdAt",
+        direction: "descending",
+    };
+
+    // const activeOptions = [
+    //     { name: "Yes", key: "true" },
+    //     { name: "No", key: "false" },
+    // ];
+
+    const columns: Column[] = [
         {
             key: "ip",
-            label: "IP",
+            name: "IP",
             width: 150,
+            searchable: true,
         },
         {
             key: "login",
-            label: "Kullanıcı",
+            name: "Kullanıcı",
             width: 150,
-        },
-        // {
-        //     key: "password",
-        //     label: "Şifre",
-        //     width: 150,
-        // },
-        {
-            key: "active",
-            label: "Aktif",
-            width: 80,
+            searchable: true,
         },
         {
             key: "note",
-            label: "Not",
-            // width: 80,
+            name: "Not",
+            width: 200,
+        },
+        {
+            key: "createdBy",
+            name: "Oluşturan Kullanıcı",
+            width: 80,
+        },
+        {
+            key: "createdAt",
+            name: "Oluşturulma Tarihi",
+            width: 150,
+        },
+        {
+            key: "updatedBy",
+            name: "Güncelleyen Kullanıcı",
+            width: 80,
+        },
+        {
+            key: "updatedAt",
+            name: "Güncellenme Tarihi",
+            width: 150,
         },
         {
             key: "actions",
-            label: "Aksiyonlar",
+            name: "Aksiyonlar",
             width: 100,
         },
     ];
@@ -110,16 +141,22 @@ export default function Connections() {
                     return <BoolChip value={cellValue} />;
                 case "note":
                     return (
-                        <h6>
-                            {cellValue.length > 40
-                                ? cellValue.substring(0, 40) + "..."
-                                : cellValue}
-                        </h6>
+                        <p>
+                            {cellValue
+                                ? cellValue.length > 40
+                                    ? cellValue.substring(0, 40) + "..."
+                                    : cellValue
+                                : "-"}
+                        </p>
                     );
+                case "createdAt":
+                    return <p>{DateTimeFormat(cellValue)}</p>;
+                case "updatedAt":
+                    return <p>{DateTimeFormat(cellValue)}</p>;
                 case "actions":
                     return (
-                        <div className="relative flex justify-start items-center gap-2">
-                            <Tooltip key={connection.id} content="Detay">
+                        <div className="flex justify-start items-center gap-2">
+                            <Tooltip key={connection.id + "-det"} content="Detay">
                                 <span className="text-xl text-green-600 active:opacity-50">
                                     <BiLinkExternal
                                         onClick={() =>
@@ -130,106 +167,49 @@ export default function Connections() {
                                     />
                                 </span>
                             </Tooltip>
-                            <Tooltip key={connection.id} content="Sil">
+                            {/* <Tooltip key={connection.id} content="Sil">
                                 <span className="text-xl text-red-500 active:opacity-50">
                                     <BiTrash onClick={() => {}} />
                                 </span>
-                            </Tooltip>
+                            </Tooltip> */}
                         </div>
                     );
                 default:
                     return cellValue;
             }
         },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [],
+        [router],
     );
 
-    const topContent = (
-        <div className="flex justify-between">
-            <Input
-                isClearable
-                className="w-full sm:max-w-[44%]"
-                placeholder="Arama Yap"
-                startContent={<BiSearch className="text-2xl text-zinc-500" />}
-                value=""
-            />
-            <Button
-                color="primary"
-                onPress={onOpen}
-                endContent={<BiPlus className="text-xl text-white" />}
-                className="ml-2 min-w-fit bg-sky-500"
-            />
-        </div>
-    );
+    const { data, error, mutate } = useSWR("/api/connection");
 
-    // const fetcher = (url: string) => fetch(url).then((res) => res.json());
-    // const { data, error } = useSWR(
-    //     "/api/acronis/tenant/users/28a5db46-58eb-4a61-b064-122f07ddac6a",
-    //     fetcher,
-    // );
-
-    // if (error) return <div>failed to load</div>;
-    // if (!data)
-    //     return (
-    //         <Skeleton>
-    //             <TableSkeleton />
-    //         </Skeleton>
-    //     );
-
+    if (error) return <div>Yükleme Hatası!</div>;
+    if (!data)
+        return (
+            <div className="flex flex-col mt-4">
+                <Skeleton>
+                    <TableSkeleton />
+                </Skeleton>
+            </div>
+        );
     return (
         <>
-            <Table
+            <DataTable
+                isCompact
                 isStriped
-                fullWidth
-                selectionMode="single"
-                color="primary"
-                topContent={topContent}
-                topContentPlacement="outside"
-                // bottomContent={bottomContent}
-                aria-label="Connections table"
                 className="mt-4 mb-2"
-            >
-                <TableHeader columns={columns}>
-                    {(column) => (
-                        <TableColumn
-                            key={column.key}
-                            width={column.width ? column.width : null}
-                            // align={
-                            //     column.align &&
-                            //     (column.align === "center" ||
-                            //         column.align === "start" ||
-                            //         column.align === "end")
-                            //         ? column.align
-                            //         : "start"
-                            // }
-                        >
-                            {column.label}
-                        </TableColumn>
-                    )}
-                </TableHeader>
-                <TableBody
-                    items={data ?? []}
-                    emptyContent={<>Herhangi bir bağlantı bulunamadı!</>}
-                    loadingContent={<Loader />}
-                >
-                    {(item: Connection) => (
-                        <TableRow
-                            key={item.id}
-                            className="cursor-pointer"
-                            onDoubleClick={() => {
-                                router.push("connections/" + item.id);
-                            }}
-                        >
-                            {(columnKey) => (
-                                <TableCell>
-                                    {renderCell(item, columnKey)}
-                                </TableCell>
-                            )}
-                        </TableRow>
-                    )}
-                </TableBody>
-            </Table>
+                emptyContent="Herhangi bir bağlantı bulunamadı!"
+                data={data || []}
+                columns={columns}
+                renderCell={renderCell}
+                sortOption={sort}
+                initialVisibleColumNames={visibleColumns}
+                // activeOptions={[]}
+                onAddNew={() => onOpen()}
+                onDoubleClick={(item) =>
+                    router.push("/dashboard/connections/" + item.id)
+                }
+            />
             <Modal
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}
@@ -247,6 +227,7 @@ export default function Connections() {
                             action=""
                             autoComplete="off"
                             className="flex flex-col gap-3"
+                            onSubmit={handleSubmit(onSubmit)}
                         >
                             <div>
                                 <label
@@ -262,12 +243,16 @@ export default function Connections() {
                                         </span>
                                         <input
                                             type="text"
-                                            name="ip"
+                                            // name="ip"
                                             id="ip"
                                             autoComplete="ip"
                                             required
                                             // placeholder="1.1.1.1"
                                             className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-zinc-700 placeholder:text-zinc-400 focus:ring-0 sm:text-sm sm:leading-6 outline-none"
+                                            {...register("ip", {
+                                                required: true,
+                                                maxLength: 40,
+                                            })}
                                         />
                                     </div>
                                 </div>
@@ -283,10 +268,13 @@ export default function Connections() {
                                 <div className="mt-2">
                                     <input
                                         type="text"
-                                        name="login"
                                         id="login"
                                         required
                                         className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                        {...register("login", {
+                                            required: true,
+                                            maxLength: 30,
+                                        })}
                                     />
                                 </div>
                             </div>
@@ -301,11 +289,14 @@ export default function Connections() {
                                 <div className="mt-2">
                                     <input
                                         type="password"
-                                        name="password"
                                         id="password"
                                         autoComplete="off"
                                         required
                                         className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                        {...register("password", {
+                                            required: true,
+                                            maxLength: 30,
+                                        })}
                                     />
                                 </div>
                             </div>
@@ -318,10 +309,12 @@ export default function Connections() {
                                 </label>
                                 <div className="mt-2">
                                     <textarea
-                                        name="note"
                                         id="note"
                                         rows={3}
                                         className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                        {...register("note", {
+                                            maxLength: 400,
+                                        })}
                                     />
                                 </div>
                             </div>
@@ -330,7 +323,7 @@ export default function Connections() {
                                 <Button
                                     color="danger"
                                     onPress={onClose}
-                                    className="bg-red-500"
+                                    className="bg-red-600"
                                 >
                                     Kapat
                                 </Button>

@@ -7,22 +7,26 @@ import {
     ModalContent,
     ModalHeader,
     ModalBody,
-    ModalFooter,
     useDisclosure,
 } from "@nextui-org/modal";
 import { Button } from "@nextui-org/button";
-import { Input, Textarea } from "@nextui-org/input";
-import { Switch } from "@nextui-org/switch";
-import BoolChip from "@/components/BoolChip";
-import {
-    BiLinkExternal,
-    BiX,
-    BiShow,
-    BiHide,
-    BiCopy,
-    BiCopyAlt,
-} from "react-icons/bi";
-import { faker } from "@faker-js/faker";
+import { BiLinkExternal, BiX, BiShow, BiHide, BiCopy } from "react-icons/bi";
+import useSWR from "swr";
+import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
+import { CopyToClipboard } from "@/utils/functions";
+import { SubmitHandler, useForm } from "react-hook-form";
+import useUserStore from "@/store/user";
+import toast from "react-hot-toast";
+
+interface IFormInput {
+    ip: string;
+    login: string;
+    password: string;
+    note: string;
+    createdBy: string;
+    updatedBy: string;
+    updatedAt: string;
+}
 
 export default function ConnectionDetail({
     params,
@@ -31,19 +35,62 @@ export default function ConnectionDetail({
 }) {
     const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
+    const [con, setCon] = useState();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
-    const pass = "12368172";
+    const { user: currUser } = useUserStore();
 
+    const { register, reset, handleSubmit } = useForm<IFormInput>({
+        defaultValues: con,
+    });
+    const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+        data.updatedBy = currUser?.username ?? "";
+        await fetch(`/api/connection/${params.id}`, {
+            method: "PUT",
+            body: JSON.stringify(data),
+            headers: { "Content-Type": "application/json" },
+        })
+            .then(async (res) => {
+                const result = await res.json();
+                if (res.ok) {
+                    toast.success(result.message);
+                } else {
+                    toast.error(result.message);
+                }
+                return result;
+            })
+            .then(() => {
+                onClose();
+                reset();
+                mutate();
+            });
+    };
+
+    const { data, error, mutate } = useSWR(`/api/connection/${params.id}`, null, {
+        onSuccess: (con) => {
+            setCon(con);
+            reset(con);
+        },
+    });
+
+    if (error) return <div>Yükleme Hatası!</div>;
+    if (!data)
+        return (
+            <div className="flex flex-col mt-4">
+                <Skeleton>
+                    <DefaultSkeleton />
+                </Skeleton>
+            </div>
+        );
     return (
         <div className="flex flex-col gap-4">
             <Card className="mt-4 mb-2 px-1 py-2">
                 <CardBody className="gap-3">
                     <div className="flex items-center gap-2 pb-2 pl-1">
                         <p className="text-3xl font-bold text-sky-500">
-                            111.11.12.100
+                            {data.ip}
                         </p>
                         <a
-                            href="http://1.1.1.1"
+                            href={`http://${data.ip}`}
                             target="_blank"
                             className="cursor-pointer"
                         >
@@ -59,14 +106,17 @@ export default function ConnectionDetail({
                         <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
                             <dt className="font-medium">ID</dt>
                             <dd className="flex flex-row col-span-1 md:col-span-2 font-light gap-2 items-center mt-1 sm:mt-0">
-                                {/* {faker.string.uuid()} */} Test
+                                {data.id}
                             </dd>
                         </div>
                         <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
                             <dt className="font-medium">Kullanıcı</dt>
                             <dd className="flex flex-row col-span-1 md:col-span-2 font-light gap-2 items-center mt-1 sm:mt-0">
-                                {/* {faker.internet.userName()} */} Test
-                                <BiCopy className="text-xl text-sky-500 cursor-pointer active:opacity-50" />
+                                {data.login}
+                                <BiCopy
+                                    className="text-xl text-sky-500 cursor-pointer active:opacity-50"
+                                    onClick={() => CopyToClipboard(data.login)}
+                                />
                             </dd>
                         </div>
 
@@ -81,8 +131,8 @@ export default function ConnectionDetail({
                                     }
                                 >
                                     {showPassword
-                                        ? pass
-                                        : pass.replace(/./g, "●")}
+                                        ? data.password
+                                        : data.password.replace(/./g, "●")}
                                 </p>
                                 {showPassword ? (
                                     <BiHide
@@ -95,19 +145,24 @@ export default function ConnectionDetail({
                                         onClick={() => setShowPassword(true)}
                                     />
                                 )}
-                                <BiCopy className="text-xl text-sky-500 cursor-pointer active:opacity-50" />
+                                <BiCopy
+                                    className="text-xl text-sky-500 cursor-pointer active:opacity-50"
+                                    onClick={() =>
+                                        CopyToClipboard(data.password)
+                                    }
+                                />
                             </dd>
                         </div>
-                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
+                        {/* <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
                             <dt className="font-medium">Aktif</dt>
                             <dd className="flex flex-row col-span-1 md:col-span-2 font-light gap-2 items-center mt-1 sm:mt-0">
                                 <BoolChip value={true} />
                             </dd>
-                        </div>
+                        </div> */}
                         <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
                             <dt className="font-medium">Not</dt>
                             <dd className="flex flex-row col-span-1 md:col-span-2 font-light gap-2 items-center mt-1 sm:mt-0">
-                                {/* {faker.lorem.paragraph(5)} */} Test
+                                {data.note || "-"}
                             </dd>
                         </div>
                     </div>
@@ -144,11 +199,11 @@ export default function ConnectionDetail({
                     </ModalHeader>
                     <ModalBody>
                         <form
-                            action=""
                             autoComplete="off"
                             className="flex flex-col gap-3"
+                            onSubmit={handleSubmit(onSubmit)}
                         >
-                            <div className="">
+                            {/* <div className="">
                                 <label
                                     htmlFor="active"
                                     className="block text-sm font-semibold leading-6 text-zinc-500"
@@ -158,7 +213,7 @@ export default function ConnectionDetail({
                                 <div className="mt-2">
                                     <Switch name="active" id="ip" />
                                 </div>
-                            </div>
+                            </div> */}
                             <div>
                                 <label
                                     htmlFor="ip"
@@ -173,11 +228,13 @@ export default function ConnectionDetail({
                                         </span>
                                         <input
                                             type="text"
-                                            name="ip"
                                             id="ip"
-                                            autoComplete="ip"
                                             required
                                             className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-zinc-700 placeholder:text-zinc-400 focus:ring-0 sm:text-sm sm:leading-6 outline-none"
+                                            {...register("ip", {
+                                                required: true,
+                                                maxLength: 40,
+                                            })}
                                         />
                                     </div>
                                 </div>
@@ -193,10 +250,12 @@ export default function ConnectionDetail({
                                 <div className="mt-2">
                                     <input
                                         type="text"
-                                        // name="login"
                                         id="login"
-                                        required
                                         className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                        {...register("login", {
+                                            required: true,
+                                            maxLength: 40,
+                                        })}
                                     />
                                 </div>
                             </div>
@@ -211,11 +270,13 @@ export default function ConnectionDetail({
                                 <div className="mt-2">
                                     <input
                                         type="password"
-                                        // name="password"
                                         id="password"
                                         autoComplete="off"
-                                        required
                                         className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                        {...register("password", {
+                                            required: true,
+                                            maxLength: 40,
+                                        })}
                                     />
                                 </div>
                             </div>
@@ -228,10 +289,13 @@ export default function ConnectionDetail({
                                 </label>
                                 <div className="mt-2">
                                     <textarea
-                                        name="note"
                                         id="note"
                                         rows={3}
                                         className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                        value={data.note}
+                                        {...register("note", {
+                                            maxLength: 400,
+                                        })}
                                     />
                                 </div>
                             </div>
