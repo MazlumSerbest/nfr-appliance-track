@@ -64,6 +64,12 @@ type Appliance = Entity & {
 };
 
 type License = Entity & {
+    customerId: number;
+    productId: number;
+    licenseId: number;
+    dealerId: number;
+    supplierId: number;
+    licenseTypeId: number;
     isStock: boolean;
     startDate?: Date;
     expiryDate?: Date;
@@ -82,7 +88,7 @@ type LicenseType = Entity & {
     productId: number;
     type: string;
     duration: number?;
-    price: number?;
+    price: Decimal?;
 };
 
 type Customer = Entity & Current;
