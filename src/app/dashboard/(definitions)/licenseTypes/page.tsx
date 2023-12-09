@@ -13,14 +13,15 @@ import {
 } from "@nextui-org/modal";
 import { SortDescriptor } from "@nextui-org/table";
 import { Tooltip } from "@nextui-org/tooltip";
+import { Button } from "@nextui-org/button";
+
+import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
 import DataTable from "@/components/DataTable";
 import BoolChip from "@/components/BoolChip";
-import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
 import { BiEdit, BiTrash } from "react-icons/bi";
 import { DateTimeFormat } from "@/utils/date";
 import useUserStore from "@/store/user";
-import { Button } from "@nextui-org/react";
-import Products from "../products/page";
+import { activeOptions } from "@/lib/constants";
 
 interface IFormInput {
     id: number;
@@ -44,6 +45,7 @@ export default function LicenseTypes() {
         data.productId = Number(data.productId);
         data.duration = Number(data.duration);
         data.price = 0;
+
         await fetch("/api/licenseType", {
             method: "POST",
             body: JSON.stringify(data),
@@ -70,7 +72,7 @@ export default function LicenseTypes() {
         data.duration = Number(data.duration);
         delete data.product;
         data.price = 0;
-        console.log(data);
+        
         await fetch(`/api/licenseType/${data.id}`, {
             method: "PUT",
             body: JSON.stringify(data),
@@ -99,11 +101,6 @@ export default function LicenseTypes() {
         direction: "descending",
     };
 
-    const activeOptions = [
-        { name: "Yes", key: "true" },
-        { name: "No", key: "false" },
-    ];
-
     const columns: Column[] = [
         {
             key: "product",
@@ -131,11 +128,6 @@ export default function LicenseTypes() {
             width: 80,
         },
         {
-            key: "actions",
-            name: "Aksiyonlar",
-            width: 100,
-        },
-        {
             key: "createdBy",
             name: "Oluşturan Kullanıcı",
             width: 80,
@@ -154,6 +146,11 @@ export default function LicenseTypes() {
             key: "updatedAt",
             name: "Güncellenme Tarihi",
             width: 150,
+        },
+        {
+            key: "actions",
+            name: "Aksiyonlar",
+            width: 100,
         },
     ];
 
