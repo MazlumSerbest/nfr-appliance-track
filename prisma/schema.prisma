@@ -66,6 +66,7 @@ model licenses {
   predecessorId Int?         @unique
   predecessor   licenses?    @relation("LicenseHistory", fields: [predecessorId], references: [id])
   licenseTypeId Int
+  licenseType   licenseTypes @relation(fields: [licenseTypeId], references: [id])
   dealerId      Int?
   dealer        dealers?     @relation(fields: [dealerId], references: [id])
   supplierId    Int?
@@ -99,17 +100,18 @@ model products {
 }
 
 model licenseTypes {
-  id        Int       @id @default(autoincrement())
-  active    Boolean   @default(true)
+  id        Int        @id @default(autoincrement())
+  active    Boolean    @default(true)
   productId Int
-  product   products  @relation(fields: [productId], references: [id])
-  type      String    @db.VarChar
+  product   products   @relation(fields: [productId], references: [id])
+  type      String     @db.VarChar
   duration  Int?
-  price     Decimal?  @db.Decimal(9, 2)
-  createdBy String    @db.VarChar
-  createdAt DateTime  @default(now()) @db.Timestamptz
-  updatedBy String?   @db.VarChar
-  updatedAt DateTime? @updatedAt @db.Timestamptz
+  price     Decimal?   @db.Decimal(9, 2)
+  createdBy String     @db.VarChar
+  createdAt DateTime   @default(now()) @db.Timestamptz
+  updatedBy String?    @db.VarChar
+  updatedAt DateTime?  @updatedAt @db.Timestamptz
+  licenses  licenses[]
 }
 
 model customers {
