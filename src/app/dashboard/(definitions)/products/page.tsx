@@ -61,7 +61,7 @@ export default function Products() {
     };
     const onSubmitUpdate: SubmitHandler<IFormInput> = async (data) => {
         data.updatedBy = currUser?.username ?? "";
-        console.log(data);
+        
         await fetch(`/api/product/${data.id}`, {
             method: "PUT",
             body: JSON.stringify(data),
@@ -122,11 +122,6 @@ export default function Products() {
             width: 80,
         },
         {
-            key: "actions",
-            name: "Aksiyonlar",
-            width: 100,
-        },
-        {
             key: "createdBy",
             name: "Oluşturan Kullanıcı",
             width: 80,
@@ -147,6 +142,11 @@ export default function Products() {
             name: "Güncellenme Tarihi",
             width: 150,
             sortable: true,
+        },
+        {
+            key: "actions",
+            name: "Aksiyonlar",
+            width: 100,
         },
     ];
 

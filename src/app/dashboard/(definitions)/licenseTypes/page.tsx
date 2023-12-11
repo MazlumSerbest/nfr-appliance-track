@@ -193,11 +193,6 @@ export default function LicenseTypes() {
                                     <BiTrash onClick={() => {}} />
                                 </span>
                             </Tooltip>
-                            {/* <Tooltip key={connection.id} content="Sil">
-                                <span className="text-xl text-red-500 active:opacity-50">
-                                    <BiTrash onClick={() => {}} />
-                                </span>
-                            </Tooltip> */}
                         </div>
                     );
                 default:
