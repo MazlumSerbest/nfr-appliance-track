@@ -34,25 +34,6 @@ export default function UserCard() {
 
                     updateUser(currUser);
                 });
-            // const fetchData = async () => {
-            //     const res = await fetch(
-            //         `/api/user/${session?.user?.email ?? ""}`,
-            //     );
-            //     const data = await res.json();
-
-            //     const currUser: User = {
-            //         id: data?.id,
-            //         username: data?.username,
-            //         name: data?.name,
-            //         email: data?.email,
-            //         role: data?.role,
-            //         active: data?.active,
-            //     };
-
-            //     updateUser(currUser);
-            // };
-
-            // fetchData();
         }
     }, [session?.user, updateUser]);
 
