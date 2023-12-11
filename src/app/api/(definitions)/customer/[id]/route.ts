@@ -14,6 +14,56 @@ export async function GET(
 
         return NextResponse.json(data);
     } catch (error) {
-        return NextResponse.json({ message: error });
+        return NextResponse.json({ message: error }, { status: 500 });
+    }
+}
+
+export async function PUT(
+    request: Request,
+    { params }: { params: { id: string } },
+) {
+    try {
+        const customer: Customer = await request.json();
+        customer.updatedAt = new Date().toISOString();
+
+        await prisma.customers.update({
+            where: {
+                id: Number(params.id),
+            },
+            data: customer,
+        });
+
+        return NextResponse.json(
+            {
+                message: "Müşteri başarıyla güncellendi!",
+            },
+            { status: 200 },
+        );
+    } catch (error) {
+        return NextResponse.json({ message: error }, { status: 500 });
+    }
+}
+
+export async function DELETE(
+    request: Request,
+    { params }: { params: { id: string } },
+) {
+    try {
+        const customer: Customer = await request.json();
+
+        await prisma.customers.delete({
+            where: {
+                id: Number(params.id),
+            },
+        });
+
+        return NextResponse.json(
+            {
+                message: "Müşteri silindi!",
+            },
+            { status: 200 },
+        );
+    } catch (error) {
+        return NextResponse.json({ message: error }, { status: 500 });
     }
 }

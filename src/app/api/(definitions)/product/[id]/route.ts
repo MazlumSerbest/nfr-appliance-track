@@ -49,12 +49,11 @@ export async function DELETE(
 ) {
     try {
         const product: Product = await request.json();
-        product.updatedAt = new Date().toISOString();
-        await prisma.products.update({
+        
+        await prisma.products.delete({
             where: {
                 id: Number(params.id),
             },
-            data: product,
         });
 
         return NextResponse.json(

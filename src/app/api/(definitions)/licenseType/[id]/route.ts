@@ -25,7 +25,7 @@ export async function PUT(
     try {
         const licenseType: LicenseType = await request.json();
         licenseType.updatedAt = new Date().toISOString();
-        const data = await prisma.licenseTypes.update({
+        await prisma.licenseTypes.update({
             where: {
                 id: Number(params.id),
             },
@@ -49,12 +49,11 @@ export async function DELETE(
 ) {
     try {
         const licenseType: LicenseType = await request.json();
-        licenseType.updatedAt = new Date().toISOString();
-        const data = await prisma.licenseTypes.update({
+
+        await prisma.licenseTypes.delete({
             where: {
                 id: Number(params.id),
             },
-            data: licenseType,
         });
 
         return NextResponse.json(
