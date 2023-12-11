@@ -9,8 +9,8 @@ type Entity = {
 
 type Current = {
     name: string;
-    phone?: string;
-    email?: string;
+    phone: string;
+    email: string;
 };
 
 type Path = {
@@ -53,9 +53,9 @@ type User = Entity & {
 };
 
 type Appliance = Entity & {
-    customerId: number;
     productId: number;
     licenseId: number;
+    customerId: number;
     dealerId: number;
     supplierId: number;
     serialNo?: string;
@@ -64,9 +64,9 @@ type Appliance = Entity & {
 };
 
 type License = Entity & {
-    customerId: number;
     productId: number;
     licenseId: number;
+    customerId: number;
     dealerId: number;
     supplierId: number;
     licenseTypeId: number;

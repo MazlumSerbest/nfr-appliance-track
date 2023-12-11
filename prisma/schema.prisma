@@ -39,10 +39,10 @@ model appliances {
   successor     appliances? @relation("ApplienceHistory")
   predecessorId Int?        @unique
   predecessor   appliances? @relation("ApplienceHistory", fields: [predecessorId], references: [id])
-  customerId    Int?
-  customer      customers?  @relation(fields: [customerId], references: [id])
   productId     Int?
   product       products?   @relation(fields: [productId], references: [id])
+  customerId    Int?
+  customer      customers?  @relation(fields: [customerId], references: [id])
   dealerId      Int?
   dealer        dealers?    @relation(fields: [dealerId], references: [id])
   supplierId    Int?
@@ -56,7 +56,7 @@ model appliances {
   createdAt     DateTime    @default(now()) @db.Timestamptz
   updatedBy     String?     @db.VarChar
   updatedAt     DateTime?   @updatedAt @db.Timestamptz
-  isDeleted     Boolean     @default(false)
+  deleted       Boolean     @default(false)
 }
 
 model licenses {
@@ -67,6 +67,8 @@ model licenses {
   predecessor   licenses?    @relation("LicenseHistory", fields: [predecessorId], references: [id])
   licenseTypeId Int
   licenseType   licenseTypes @relation(fields: [licenseTypeId], references: [id])
+  customerId    Int?
+  customer      customers?  @relation(fields: [customerId], references: [id])
   dealerId      Int?
   dealer        dealers?     @relation(fields: [dealerId], references: [id])
   supplierId    Int?
@@ -81,7 +83,7 @@ model licenses {
   createdAt     DateTime     @default(now()) @db.Timestamptz
   updatedBy     String?      @db.VarChar
   updatedAt     DateTime?    @updatedAt @db.Timestamptz
-  isDeleted     Boolean      @default(false)
+  deleted       Boolean      @default(false)
   appliance     appliances[]
 }
 
@@ -118,21 +120,22 @@ model customers {
   id        Int          @id @default(autoincrement())
   active    Boolean      @default(true)
   name      String       @db.VarChar
-  phone     String?      @db.VarChar
-  email     String?      @db.VarChar
+  phone     String       @db.VarChar
+  email     String       @db.VarChar
   createdBy String       @db.VarChar
   createdAt DateTime     @default(now()) @db.Timestamptz
   updatedBy String?      @db.VarChar
   updatedAt DateTime?    @updatedAt @db.Timestamptz
   appliance appliances[]
+  license   licenses[]
 }
 
 model dealers {
   id        Int          @id @default(autoincrement())
   active    Boolean      @default(true)
   name      String       @db.VarChar
-  phone     String?      @db.VarChar
-  email     String?      @db.VarChar
+  phone     String       @db.VarChar
+  email     String       @db.VarChar
   createdBy String       @db.VarChar
   createdAt DateTime     @default(now()) @db.Timestamptz
   updatedBy String?      @db.VarChar
@@ -145,8 +148,8 @@ model suppliers {
   id        Int          @id @default(autoincrement())
   active    Boolean      @default(true)
   name      String       @db.VarChar
-  phone     String?      @db.VarChar
-  email     String?      @db.VarChar
+  phone     String       @db.VarChar
+  email     String       @db.VarChar
   createdBy String       @db.VarChar
   createdAt DateTime     @default(now()) @db.Timestamptz
   updatedBy String?      @db.VarChar
