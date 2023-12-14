@@ -23,7 +23,7 @@ export default function BoolChip(props: Props) {
                 {props.showText ? (
                     <p
                         className={
-                            (props.value ? "text-green-600" : "text-red-500") +
+                            (props.value ? "text-green-600" : "text-red-600") +
                             " mx-1"
                         }
                     >

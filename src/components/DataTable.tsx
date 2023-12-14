@@ -25,6 +25,7 @@ type Props = {
     columns: Column[];
     data: any;
     emptyContent?: ReactNode;
+    defaultRowsPerPage?: 10 | 20 | 50;
     isCompact: boolean;
     isStriped: boolean;
     className?: string;
@@ -37,6 +38,16 @@ type Props = {
 };
 
 export default function DataTable(props: Props) {
+    const columns = props.columns;
+    const data = props.data;
+    const emptyContent = props.emptyContent;
+    const defRowsPerPage = props.defaultRowsPerPage;
+    const isCompact = props.isCompact;
+    const isStriped = props.isStriped;
+    const className = props.className;
+    const activeOptions = props.activeOptions;
+    const onAddNew = props.onAddNew;
+
     type DataType = (typeof props.data)[0];
     const [filterValue, setFilterValue] = React.useState("");
     // const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
@@ -46,21 +57,12 @@ export default function DataTable(props: Props) {
         new Set(props.initialVisibleColumNames),
     );
     const [activeFilter, setActiveFilter] = React.useState<Selection>("all");
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [rowsPerPage, setRowsPerPage] = React.useState(defRowsPerPage || 10);
     const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
         column: props.sortOption.column,
         direction: props.sortOption.direction,
     });
     const [page, setPage] = React.useState(1);
-
-    const columns = props.columns;
-    const data = props.data;
-    const emptyContent = props.emptyContent;
-    const isCompact = props.isCompact;
-    const isStriped = props.isStriped;
-    const className = props.className;
-    const activeOptions = props.activeOptions;
-    const onAddNew = props.onAddNew;
 
     const pages = Math.ceil(data.length / rowsPerPage);
 
@@ -257,9 +259,15 @@ export default function DataTable(props: Props) {
                             className="bg-transparent outline-none text-zinc-400 text-sm ml-2"
                             onChange={onRowsPerPageChange}
                         >
-                            <option value="10">10</option>
-                            <option value="20">20</option>
-                            <option value="50">50</option>
+                            <option value="10" selected={defRowsPerPage == 10}>
+                                10
+                            </option>
+                            <option value="20" selected={defRowsPerPage == 20}>
+                                20
+                            </option>
+                            <option value="50" selected={defRowsPerPage == 50}>
+                                50
+                            </option>
                         </select>
                     </label>
                 </div>
@@ -275,6 +283,7 @@ export default function DataTable(props: Props) {
         onRowsPerPageChange,
         onAddNew,
         data.length,
+        defRowsPerPage,
     ]);
     //#endregion
 
