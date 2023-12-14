@@ -6,7 +6,7 @@ export async function GET(
     { params }: { params: { id: string } },
 ) {
     try {
-        const data = await prisma.products.findFirst({
+        const data = await prisma.products.findUnique({
             where: {
                 id: Number(params.id),
             },

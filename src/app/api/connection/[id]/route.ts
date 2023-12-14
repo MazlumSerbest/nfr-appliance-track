@@ -6,7 +6,7 @@ export async function GET(
     { params }: { params: { id: string } },
 ) {
     try {
-        const data = await prisma.connections.findFirst({
+        const data = await prisma.connections.findUnique({
             where: {
                 id: Number(params.id),
             },
@@ -25,6 +25,7 @@ export async function PUT(
     try {
         const connection: Connection = await request.json();
         connection.updatedAt = new Date().toISOString();
+        
         const data = await prisma.connections.update({
             where: {
                 id: Number(params.id),
@@ -50,6 +51,7 @@ export async function DELETE(
     try {
         const connection: Connection = await request.json();
         connection.updatedAt = new Date().toISOString();
+
         const data = await prisma.connections.update({
             where: {
                 id: Number(params.id),

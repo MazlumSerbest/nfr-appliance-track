@@ -1,21 +1,28 @@
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
 import prisma from "@/utils/db";
 import bcrypt from "bcrypt";
 
 export async function GET(request: Request) {
     try {
-        const data = await prisma.users.findMany({
-            select: {
-                id: true,
-                username: true,
-                name: true,
-                email: true,
-                role: true,
-                active: true,
-            },
-        });
+        const session = await getServerSession();
 
-        return NextResponse.json(data);
+        if (session) {
+            const data = await prisma.users.findMany({
+                select: {
+                    id: true,
+                    username: true,
+                    name: true,
+                    email: true,
+                    role: true,
+                    active: true,
+                },
+            });
+
+            return NextResponse.json(data);
+        }
+
+        return NextResponse.json({ message: "Authorization needed", status: 401 });
     } catch (error) {
         return NextResponse.json({ message: error });
     }

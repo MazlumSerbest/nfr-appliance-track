@@ -62,6 +62,8 @@ type Appliance = Entity & {
     serialNo: string;
     boughtAt?: Date;
     soldAt?: Date;
+    productBrand?: string;
+    productModel?: string;
 };
 
 type License = Entity & {

@@ -6,24 +6,23 @@ export async function GET(
     { params }: { params: { id: string } },
 ) {
     try {
-        const data = await prisma.appliances.findUnique({
+        const data = await prisma.licenses.findUnique({
             where: {
                 id: Number(params.id),
             },
             include: {
-                product: {
+                licenseType: {
                     select: {
-                        brand: true,
-                        model: true
+                        type: true,
+                        duration: true,
+                        product: {
+                            select: {
+                                type: true,
+                                brand: true,
+                                model: true,
+                            },
+                        },
                     },
-                },
-                license: {
-                    select: {
-                        id: true,
-                        startDate: true,
-                        expiryDate: true,
-                        isStock: true
-                    }
                 },
                 customer: {
                     select: { name: true },
@@ -48,19 +47,19 @@ export async function PUT(
     { params }: { params: { id: string } },
 ) {
     try {
-        const appliance: Customer = await request.json();
-        appliance.updatedAt = new Date().toISOString();
+        const license: Customer = await request.json();
+        license.updatedAt = new Date().toISOString();
 
-        await prisma.appliances.update({
+        await prisma.licenses.update({
             where: {
                 id: Number(params.id),
             },
-            data: appliance,
+            data: license,
         });
 
         return NextResponse.json(
             {
-                message: "Cihaz başarıyla güncellendi!",
+                message: "Lisans başarıyla güncellendi!",
             },
             { status: 200 },
         );
@@ -74,10 +73,10 @@ export async function DELETE(
     { params }: { params: { id: string } },
 ) {
     try {
-        const appliance: Appliance = await request.json();
-        appliance.updatedAt = new Date().toISOString();
+        const license: License = await request.json();
+        license.updatedAt = new Date().toISOString();
 
-        await prisma.appliances.update({
+        await prisma.licenses.update({
             where: {
                 id: Number(params.id),
             },
@@ -88,7 +87,7 @@ export async function DELETE(
 
         return NextResponse.json(
             {
-                message: "Cihaz silindi!",
+                message: "Lisans silindi!",
             },
             { status: 200 },
         );

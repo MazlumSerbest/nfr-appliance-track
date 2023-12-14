@@ -6,7 +6,7 @@ export async function GET(
     { params }: { params: { id: string } },
 ) {
     try {
-        const data = await prisma.licenseTypes.findFirst({
+        const data = await prisma.licenseTypes.findUnique({
             where: {
                 id: Number(params.id),
             },
