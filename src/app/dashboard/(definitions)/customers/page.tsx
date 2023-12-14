@@ -177,7 +177,7 @@ export default function Customers() {
                         </div>
                     );
                 default:
-                    return cellValue;
+                    return cellValue ? cellValue : "-";
             }
         },
         [onOpen, reset],

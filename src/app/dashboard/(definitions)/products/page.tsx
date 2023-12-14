@@ -186,7 +186,7 @@ export default function Products() {
                         </div>
                     );
                 default:
-                    return cellValue;
+                    return cellValue ? cellValue : "-";
             }
         },
         [onOpen, reset],

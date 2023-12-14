@@ -196,7 +196,7 @@ export default function LicenseTypes() {
                         </div>
                     );
                 default:
-                    return cellValue;
+                    return cellValue ? cellValue : "-";
             }
         },
         [onOpen, reset],

@@ -177,7 +177,7 @@ export default function Suppliers() {
                         </div>
                     );
                 default:
-                    return cellValue;
+                    return cellValue ? cellValue : "-";
             }
         },
         [onOpen, reset],
