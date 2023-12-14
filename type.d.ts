@@ -53,19 +53,19 @@ type User = Entity & {
 };
 
 type Appliance = Entity & {
+    predecessorId?: number;
     productId: number;
     licenseId: number;
     customerId: number;
     dealerId: number;
     supplierId: number;
-    serialNo?: string;
+    serialNo: string;
     boughtAt?: Date;
     soldAt?: Date;
 };
 
 type License = Entity & {
-    productId: number;
-    licenseId: number;
+    predecessorId?: number;
     customerId: number;
     dealerId: number;
     supplierId: number;
