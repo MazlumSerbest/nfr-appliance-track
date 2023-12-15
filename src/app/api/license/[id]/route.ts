@@ -8,9 +8,17 @@ export async function GET(
     try {
         const data = await prisma.licenses.findUnique({
             where: {
-                id: Number(params.id),
+                id: Number(params.id)
             },
             include: {
+                appliance: {
+                    select: {
+                        id: true,
+                        serialNo: true,
+                        boughtAt: true,
+                        soldAt: true,
+                    },
+                },
                 licenseType: {
                     select: {
                         type: true,
