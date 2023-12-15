@@ -18,7 +18,7 @@ export default function BoolChip(props: Props) {
                 {props.value ? (
                     <BiCheckCircle className="text-xl text-green-600" />
                 ) : (
-                    <BiXCircle className="text-xl text-red-500" />
+                    <BiXCircle className="text-xl text-red-600" />
                 )}
                 {props.showText ? (
                     <p

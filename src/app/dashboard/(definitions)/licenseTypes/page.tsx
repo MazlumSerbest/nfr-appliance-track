@@ -189,7 +189,7 @@ export default function LicenseTypes() {
                                 key={licenseType.id + "-del"}
                                 content="Sil"
                             >
-                                <span className="text-xl text-red-500 active:opacity-50 cursor-pointer">
+                                <span className="text-xl text-red-600 active:opacity-50 cursor-pointer">
                                     <BiTrash onClick={() => {}} />
                                 </span>
                             </Tooltip>
