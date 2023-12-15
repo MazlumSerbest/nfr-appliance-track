@@ -1,6 +1,6 @@
 import toast from "react-hot-toast";
 
-export function CopyToClipboard(text: string) {
+export function CopyToClipboard(text: string, message?: string) {
     navigator.clipboard.writeText(text);
-    toast.success("Panoya Kopyalandı!")
+    toast.success(message ?? "Panoya Kopyalandı!");
 }
