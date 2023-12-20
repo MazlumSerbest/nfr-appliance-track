@@ -1,6 +1,7 @@
 SELECT
   l.id,
   l."isStock",
+  l."serialNo",
   l."startDate",
   l."expiryDate",
   l."boughtType",
@@ -18,6 +19,7 @@ SELECT
   d.name AS "dealerName",
   s.name AS "supplierName",
   CASE
+    WHEN (l."expiryDate" IS NULL) THEN 'undefined' :: text
     WHEN (l."expiryDate" < CURRENT_DATE) THEN 'ended' :: text
     WHEN (
       l."expiryDate" <= (CURRENT_DATE + '30 days' :: INTERVAL)
