@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import useSWR from "swr";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
 
 import {
@@ -22,6 +22,8 @@ import { BiEdit, BiTrash } from "react-icons/bi";
 import { DateTimeFormat } from "@/utils/date";
 import useUserStore from "@/store/user";
 import { activeOptions } from "@/lib/constants";
+import AutoComplete from "@/components/AutoComplete";
+import { getProducts } from "@/lib/data";
 
 interface IFormInput {
     id: number;
@@ -35,14 +37,13 @@ interface IFormInput {
 
 export default function LicenseTypes() {
     const [isNew, setIsNew] = useState(false);
-    const [productList, setProductList] = useState([]);
+    const [products, setProducts] = useState<ListBoxItem[] | null>(null);
     const { user: currUser } = useUserStore();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
 
-    const { register, reset, handleSubmit } = useForm<IFormInput>({});
+    const { register, reset, handleSubmit, control } = useForm<IFormInput>({});
     const onSubmitNew: SubmitHandler<IFormInput> = async (data) => {
         data.createdBy = currUser?.username ?? "";
-        data.productId = Number(data.productId);
         data.duration = Number(data.duration);
         data.price = 0;
 
@@ -68,11 +69,10 @@ export default function LicenseTypes() {
     };
     const onSubmitUpdate: SubmitHandler<IFormInput> = async (data) => {
         data.updatedBy = currUser?.username ?? "";
-        data.productId = Number(data.productId);
         data.duration = Number(data.duration);
         delete data.product;
         data.price = 0;
-        
+
         await fetch(`/api/licenseType/${data.id}`, {
             method: "PUT",
             body: JSON.stringify(data),
@@ -202,12 +202,14 @@ export default function LicenseTypes() {
         [onOpen, reset],
     );
 
+    async function getData() {
+        const pro: ListBoxItem[] = await getProducts(true);
+
+        setProducts(pro);
+    }
+
     useEffect(() => {
-        fetch("/api/product")
-            .then((res) => res.json())
-            .then((proList) => {
-                setProductList(proList);
-            });
+        getData();
     }, []);
 
     const { data, error, mutate } = useSWR("/api/licenseType");
@@ -248,6 +250,7 @@ export default function LicenseTypes() {
                 backdrop="opaque"
                 shadow="lg"
                 isDismissable={false}
+                scrollBehavior="outside"
             >
                 <ModalContent>
                     <ModalHeader className="flex flex-col gap-1 text-zinc-600">
@@ -265,38 +268,30 @@ export default function LicenseTypes() {
                             <div>
                                 <label
                                     htmlFor="productId"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500 mb-2"
                                 >
-                                    Ürün <span className="text-red-400">*</span>
+                                    Ürün
                                 </label>
-                                <select
-                                    id="productId"
-                                    required
-                                    className="block w-full h-10 rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
-                                    {...register("productId", {
-                                        required: true,
-                                    })}
-                                >
-                                    <option disabled selected value="">
-                                        Ürün Seçiniz...
-                                    </option>
-                                    {productList ? (
-                                        productList?.map((pro: Product) => (
-                                            <option key={pro.id} value={pro.id}>
-                                                {pro.brand + " " + pro.model}
-                                            </option>
-                                        ))
-                                    ) : (
-                                        <></>
+                                <Controller
+                                    control={control}
+                                    name="productId"
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <AutoComplete
+                                            onChange={onChange}
+                                            value={value}
+                                            data={products || []}
+                                        />
                                     )}
-                                </select>
+                                />
                             </div>
                             <div>
                                 <label
                                     htmlFor="type"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
                                 >
-                                    Tip <span className="text-red-400">*</span>
+                                    Tip
                                 </label>
                                 <input
                                     type="text"

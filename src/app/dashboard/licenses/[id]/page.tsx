@@ -18,33 +18,25 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
 import BoolChip from "@/components/BoolChip";
 import RegInfo from "@/components/RegInfo";
-import { BiX, BiCheckShield, BiChevronLeft } from "react-icons/bi";
+import { BiChevronLeft, BiServer, BiX } from "react-icons/bi";
 import useUserStore from "@/store/user";
 import toast from "react-hot-toast";
 import { boughtTypes } from "@/lib/constants";
-import { DateFormat, DateTimeFormat } from "@/utils/date";
+import { DateFormat } from "@/utils/date";
 
-export default function ApplianceDetail({
-    params,
-}: {
-    params: { id: string };
-}) {
+export default function LicenseDetail({ params }: { params: { id: string } }) {
     const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
     // const [con, setCon] = useState();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
     const { user: currUser } = useUserStore();
 
-    const { data, error, mutate } = useSWR(
-        `/api/appliance/${params.id}`,
-        null,
-        {
-            onSuccess: (lic) => {
-                // setCon(con);
-                // reset(con);
-            },
+    const { data, error, mutate } = useSWR(`/api/license/${params.id}`, null, {
+        onSuccess: (lic) => {
+            // setCon(con);
+            // reset(con);
         },
-    );
+    });
 
     if (error) return <div>Yükleme Hatası!</div>;
     if (!data)
@@ -61,7 +53,9 @@ export default function ApplianceDetail({
                 <CardBody className="gap-3">
                     <div className="flex items-center pb-2 pl-1">
                         <p className="text-3xl font-bold text-sky-500">
-                            {data.serialNo}
+                            {data.licenseType?.product?.brand +
+                                " " +
+                                data.licenseType.product?.model}
                         </p>
                         <div className="flex-1"></div>
                         <BiX
@@ -70,12 +64,51 @@ export default function ApplianceDetail({
                         />
                     </div>
                     <div className="divide-y divide-zinc-200">
-                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
-                            <dt className="font-medium">Ürün</dt>
-                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                {(data.product?.brand + " " + data.product?.model) || "-"}
+                        <div className="grid grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
+                            <dt className="font-medium">Stok Lisans</dt>
+                            <dd className="col-span-1 md:col-span-2">
+                                <BoolChip value={data.isStock} />
                             </dd>
                         </div>
+
+                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
+                            <dt className="font-medium">Alım Tipi</dt>
+                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
+                                {boughtTypes.find(
+                                    (e) => e.key == data.boughtType,
+                                )?.name || "-"}
+                            </dd>
+                        </div>
+
+                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
+                            <dt className="font-medium">Lisans Tipi</dt>
+                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
+                                {data.licenseType.type}
+                            </dd>
+                        </div>
+
+                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
+                            <dt className="font-medium">Lisans Süresi</dt>
+                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
+                                {data.licenseType?.duration
+                                    ? data.licenseType.duration + " ay"
+                                    : "-"}
+                            </dd>
+                        </div>
+
+                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
+                            <dt className="font-medium">Başlangıç Tarihi</dt>
+                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
+                                {DateFormat(data.startDate) || "-"}
+                            </dd>
+                        </div>
+                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
+                            <dt className="font-medium">Bitiş Tarihi</dt>
+                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
+                                {DateFormat(data.expiryDate) || "-"}
+                            </dd>
+                        </div>
+
                         <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
                             <dt className="font-medium">Alım Tarihi</dt>
                             <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
@@ -135,10 +168,11 @@ export default function ApplianceDetail({
                     </Button>
                 </CardFooter>
             </Card>
+
             <Accordion
                 selectionMode="multiple"
                 variant="splitted"
-                // defaultExpandedKeys={["license"]}
+                // defaultExpandedKeys={["appliance"]}
                 className="p-0"
                 itemClasses={{
                     title: "font-medium text-zinc-600",
@@ -146,43 +180,41 @@ export default function ApplianceDetail({
                 }}
             >
                 <AccordionItem
-                    key="license"
-                    aria-label="License"
-                    title="Lisans Bilgileri"
-                    subtitle="Bu cihaza tanımlanmış lisans bilgileri"
+                    key="appliance"
+                    aria-label="appliance"
+                    title="Cihaz Bilgileri"
+                    subtitle="Bu lisansın ait olduğu cihaz bilgileri"
                     indicator={<BiChevronLeft className="text-3xl text-zinc-500" />}
                     startContent={
-                        <BiCheckShield className="text-4xl text-green-600/60" />
+                        <BiServer className="text-4xl text-green-600/60" />
                     }
                 >
-                    {data.license ? (
+                    {data.appliance.length ? (
                         <>
                             <div className="divide-y divide-zinc-200 text-zinc-500">
-                                <div className="grid grid-cols-2 md:grid-cols-3 w-full text-base p-2">
-                                    <dt className="font-medium">Stok Lisans</dt>
-                                    <dd className="col-span-1 md:col-span-2">
-                                        <BoolChip
-                                            value={data.license?.isStock}
-                                        />
+                                <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base p-2">
+                                    <dt className="font-medium">Seri No</dt>
+                                    <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
+                                        {data.appliance[0]?.serialNo || "-"}
                                     </dd>
                                 </div>
 
                                 <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base p-2">
-                                    <dt className="font-medium">
-                                        Başlangıç Tarihi
-                                    </dt>
+                                    <dt className="font-medium">Alım Tarihi</dt>
                                     <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                        {DateFormat(data.license?.startDate) ||
-                                            "-"}
+                                        {DateFormat(
+                                            data.appliance[0]?.boughtAt,
+                                        ) || "-"}
                                     </dd>
                                 </div>
                                 <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base p-2">
                                     <dt className="font-medium">
-                                        Bitiş Tarihi
+                                        Satış Tarihi
                                     </dt>
                                     <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                        {DateFormat(data.license?.expiryDate) ||
-                                            "-"}
+                                        {DateFormat(
+                                            data.appliance[0]?.soldAt,
+                                        ) || "-"}
                                     </dd>
                                 </div>
                             </div>
@@ -193,18 +225,18 @@ export default function ApplianceDetail({
                                     className="bg-sky-500"
                                     onPress={() =>
                                         router.push(
-                                            `/dashboard/licenses/${data.license?.id}`,
+                                            `/dashboard/appliances/${data.appliance[0]?.id}`,
                                         )
                                     }
                                 >
-                                    Lisansa Git
+                                    Cihaza Git
                                 </Button>
                             </div>
                         </>
                     ) : (
                         <div className="w-full py-4 text-center">
                             <p className="text-zinc-400">
-                                Bu cihaza herhangi bir lisans tanımlanmamıştır.
+                                Bu lisans herhangi bir cihaza ait değildir.
                             </p>
                         </div>
                     )}

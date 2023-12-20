@@ -14,12 +14,10 @@ import {
 } from "@nextui-org/modal";
 import { SortDescriptor } from "@nextui-org/table";
 import { Button } from "@nextui-org/button";
-import { Tooltip } from "@nextui-org/tooltip";
 
 import DataTable from "@/components/DataTable";
 import BoolChip from "@/components/BoolChip";
 import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
-import { BiLinkExternal, BiTrash } from "react-icons/bi";
 import useUserStore from "@/store/user";
 import { DateTimeFormat } from "@/utils/date";
 
@@ -64,7 +62,7 @@ export default function Connections() {
             });
     };
 
-    const visibleColumns = ["ip", "login", "note", "actions"];
+    const visibleColumns = ["ip", "login", "note"];
 
     const sort: SortDescriptor = {
         column: "createdAt",
@@ -114,11 +112,11 @@ export default function Connections() {
             name: "Güncellenme Tarihi",
             width: 150,
         },
-        {
-            key: "actions",
-            name: "Aksiyonlar",
-            width: 100,
-        },
+        // {
+        //     key: "actions",
+        //     name: "Aksiyonlar",
+        //     width: 100,
+        // },
     ];
 
     const renderCell = React.useCallback(
@@ -153,32 +151,32 @@ export default function Connections() {
                     return <p>{DateTimeFormat(cellValue)}</p>;
                 case "updatedAt":
                     return <p>{DateTimeFormat(cellValue)}</p>;
-                case "actions":
-                    return (
-                        <div className="flex justify-start items-center gap-2">
-                            <Tooltip key={connection.id + "-det"} content="Detay">
-                                <span className="text-xl text-green-600 active:opacity-50">
-                                    <BiLinkExternal
-                                        onClick={() =>
-                                            router.push(
-                                                "connections/" + connection.id,
-                                            )
-                                        }
-                                    />
-                                </span>
-                            </Tooltip>
-                            {/* <Tooltip key={connection.id} content="Sil">
-                                <span className="text-xl text-red-500 active:opacity-50">
-                                    <BiTrash onClick={() => {}} />
-                                </span>
-                            </Tooltip> */}
-                        </div>
-                    );
+                // case "actions":
+                //     return (
+                //         <div className="flex justify-start items-center gap-2">
+                //             <Tooltip key={connection.id + "-det"} content="Detay">
+                //                 <span className="text-xl text-green-600 active:opacity-50">
+                //                     <BiLinkExternal
+                //                         onClick={() =>
+                //                             router.push(
+                //                                 "connections/" + connection.id,
+                //                             )
+                //                         }
+                //                     />
+                //                 </span>
+                //             </Tooltip>
+                //             {/* <Tooltip key={connection.id} content="Sil">
+                //                 <span className="text-xl text-red-600 active:opacity-50">
+                //                     <BiTrash onClick={() => {}} />
+                //                 </span>
+                //             </Tooltip> */}
+                //         </div>
+                //     );
                 default:
-                    return cellValue;
+                    return cellValue ? cellValue : "-";
             }
         },
-        [router],
+        [],
     );
 
     const { data, error, mutate } = useSWR("/api/connection");
@@ -217,6 +215,7 @@ export default function Connections() {
                 backdrop="opaque"
                 shadow="lg"
                 isDismissable={false}
+                scrollBehavior="outside"
             >
                 <ModalContent>
                     <ModalHeader className="flex flex-col gap-1 text-zinc-600">

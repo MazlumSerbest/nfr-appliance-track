@@ -65,12 +65,16 @@ export default function ConnectionDetail({
             });
     };
 
-    const { data, error, mutate } = useSWR(`/api/connection/${params.id}`, null, {
-        onSuccess: (con) => {
-            setCon(con);
-            reset(con);
+    const { data, error, mutate } = useSWR(
+        `/api/connection/${params.id}`,
+        null,
+        {
+            onSuccess: (con) => {
+                setCon(con);
+                reset(con);
+            },
         },
-    });
+    );
 
     if (error) return <div>Yükleme Hatası!</div>;
     if (!data)
@@ -115,7 +119,7 @@ export default function ConnectionDetail({
                                 {data.login}
                                 <BiCopy
                                     className="text-xl text-sky-500 cursor-pointer active:opacity-50"
-                                    onClick={() => CopyToClipboard(data.login)}
+                                    onClick={() => CopyToClipboard(data.login, "Kullanıcı panoya kopyalandı!")}
                                 />
                             </dd>
                         </div>
@@ -148,7 +152,7 @@ export default function ConnectionDetail({
                                 <BiCopy
                                     className="text-xl text-sky-500 cursor-pointer active:opacity-50"
                                     onClick={() =>
-                                        CopyToClipboard(data.password)
+                                        CopyToClipboard(data.password, "Şifre panoya kopyalandı!")
                                     }
                                 />
                             </dd>
@@ -192,6 +196,7 @@ export default function ConnectionDetail({
                 backdrop="opaque"
                 shadow="lg"
                 isDismissable={false}
+                scrollBehavior="outside"
             >
                 <ModalContent>
                     <ModalHeader className="flex flex-col gap-1 text-zinc-600">

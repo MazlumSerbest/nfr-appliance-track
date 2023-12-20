@@ -230,6 +230,7 @@ export default function Products() {
                 backdrop="opaque"
                 shadow="lg"
                 isDismissable={false}
+                scrollBehavior="outside"
             >
                 <ModalContent>
                     <ModalHeader className="flex flex-col gap-1 text-zinc-600">
