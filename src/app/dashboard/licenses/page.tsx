@@ -19,47 +19,56 @@ import { Divider } from "@nextui-org/divider";
 import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
 import DataTable from "@/components/DataTable";
 import BoolChip from "@/components/BoolChip";
-import { BiCheckCircle, BiErrorCircle, BiInfoCircle } from "react-icons/bi";
+import { BiCheckCircle, BiErrorCircle, BiHelpCircle, BiInfoCircle } from "react-icons/bi";
 import { DateFormat, DateTimeFormat } from "@/utils/date";
 import useUserStore from "@/store/user";
 import IconChip from "@/components/IconChip";
 import AutoComplete from "@/components/AutoComplete";
 import {
     getProducts,
+    getLicenseTypes,
     getCustomers,
     getDealers,
     getSuppliers,
 } from "@/lib/data";
+import { boughtTypes } from "@/lib/constants";
 
 interface IFormInput {
     id: number;
+    isStock: boolean;
     serialNo: string;
+    startDate: string;
+    expiryDate: string;
+    boughtType: string;
     boughtAt: string;
     soldAt: string;
-    productId: any;
-    licenseId: number;
+    licenseTypeId: number;
     customerId: number;
     dealerId: number;
     supplierId: number;
-
     createdBy: string;
     updatedBy: string;
 }
 
-export default function Appliances() {
+export default function Licenses() {
     const router = useRouter();
     const { user: currUser } = useUserStore();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
     const [products, setProducts] = useState<ListBoxItem[] | null>(null);
+    const [licenseTypes, setLicenseTypes] = useState<ListBoxItem[] | null>(
+        null,
+    );
     const [customers, setCustomers] = useState<ListBoxItem[] | null>(null);
     const [dealers, setDealers] = useState<ListBoxItem[] | null>(null);
     const [suppliers, setSuppliers] = useState<ListBoxItem[] | null>(null);
 
-    const { register, reset, handleSubmit, control } = useForm<IFormInput>({});
+    const { register, reset, resetField, handleSubmit, control } =
+        useForm<IFormInput>({ defaultValues: { isStock: false } });
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         data.createdBy = currUser?.username ?? "";
+        console.log(data);
 
-        await fetch("/api/appliance", {
+        await fetch("/api/license", {
             method: "POST",
             body: JSON.stringify(data),
             headers: { "Content-Type": "application/json" },
@@ -83,11 +92,15 @@ export default function Appliances() {
     const visibleColumns = [
         "serialNo",
         "product",
+        "licenseType",
         "customerName",
-        "dealerName",
+        // "dealerName",
         "supplierName",
-        "boughtAt",
-        "soldAt",
+        "isStock",
+        "boughtType",
+        // "boughtAt",
+        // "soldAt",
+        "expiryStatus",
         // "actions",
     ];
 
@@ -106,8 +119,19 @@ export default function Appliances() {
         {
             key: "product",
             name: "Ürün",
-            width: 150,
+            width: 200,
             searchable: true,
+        },
+        {
+            key: "licenseType",
+            name: "Lisans Tipi",
+            width: 200,
+            searchable: true,
+        },
+        {
+            key: "boughtType",
+            name: "Alım Türü",
+            width: 100,
         },
         {
             key: "customerName",
@@ -131,6 +155,11 @@ export default function Appliances() {
             sortable: true,
         },
         {
+            key: "isStock",
+            name: "Stok",
+            width: 80,
+        },
+        {
             key: "boughtAt",
             name: "Alım Tarihi",
             width: 150,
@@ -139,6 +168,23 @@ export default function Appliances() {
             key: "soldAt",
             name: "Satış Tarihi",
             width: 150,
+        },
+        {
+            key: "startDate",
+            name: "Başlangıç Tarihi",
+            width: 150,
+            sortable: true,
+        },
+        {
+            key: "expiryDate",
+            name: "Bitiş Tarihi",
+            width: 150,
+            sortable: true,
+        },
+        {
+            key: "expiryStatus",
+            name: "Süre",
+            width: 80,
         },
         {
             key: "createdBy",
@@ -162,25 +208,86 @@ export default function Appliances() {
         },
         // {
         //     key: "actions",
-        //     label: "Aksiyonlar",
+        //     name: "Aksiyonlar",
         //     width: 100,
         // },
     ];
 
     const renderCell = React.useCallback(
-        (appliance: Appliance, columnKey: React.Key) => {
-            const cellValue: any =
-                appliance[columnKey as keyof typeof appliance];
+        (license: License, columnKey: React.Key) => {
+            const cellValue: any = license[columnKey as keyof typeof license];
 
             switch (columnKey) {
+                // case "customerName":
+                //     return (
+                //         <p>
+                //             {cellValue.length > 20
+                //                 ? cellValue.substring(0, 20) + "..."
+                //                 : cellValue}
+                //         </p>
+                //     );
                 case "product":
+                    return license.productModel;
+                case "licenseType":
+                    return license.licenseType + " " + license.licenseDuration;
+                case "isStock":
+                    return <BoolChip value={cellValue} />;
+                case "expiryStatus":
+                    return (
+                        <>
+                            {!cellValue ? (
+                                "-"
+                            ) : cellValue == "ended" ? (
+                                <IconChip
+                                    icon={
+                                        <BiErrorCircle className="text-xl text-red-600" />
+                                    }
+                                    color="bg-red-100"
+                                    content="Süresi Doldu"
+                                />
+                            ) : cellValue == "ending" ? (
+                                <IconChip
+                                    icon={
+                                        <BiInfoCircle className="text-xl text-yellow-600" />
+                                    }
+                                    color="bg-yellow-100"
+                                    content="30 Günden Az Süre Kaldı"
+                                />
+                            ) : cellValue == "continues" ? (
+                                <IconChip
+                                    icon={
+                                        <BiCheckCircle className="text-xl text-green-600" />
+                                    }
+                                    color="bg-green-100"
+                                    content="Devam Ediyor"
+                                />
+                            ) : cellValue == "undefined" ? (
+                                <IconChip
+                                    icon={
+                                        <BiHelpCircle className="text-xl text-zinc-600" />
+                                    }
+                                    color="bg-zinc-100"
+                                    content="Lisans Bitiş Tarihi Girilmemiş"
+                                />
+                            ) : (
+                                "-"
+                            )}
+                        </>
+                    );
+                case "boughtType":
                     return (
                         <p>
-                            {appliance.productBrand +
-                                " " +
-                                appliance.productModel}
+                            {cellValue
+                                ? cellValue == "first"
+                                    ? "İlk Alım"
+                                    : "İkinci Alım"
+                                : "-"}
                         </p>
                     );
+                case "startDate":
+                    return <p>{DateFormat(cellValue)}</p>;
+                case "expiryDate":
+                    return <p>{DateFormat(cellValue)}</p>;
                 case "boughtAt":
                     return <p>{DateFormat(cellValue)}</p>;
                 case "soldAt":
@@ -192,12 +299,12 @@ export default function Appliances() {
                 // case "actions":
                 //     return (
                 //         <div className="relative flex justify-start items-center gap-2">
-                //             <Tooltip key={appliance.id} content="Detay">
+                //             <Tooltip key={license.id} content="Detay">
                 //                 <span className="text-xl text-green-600 active:opacity-50">
                 //                     <BiLinkExternal
                 //                         onClick={() =>
                 //                             router.push(
-                //                                 "appliances/" + appliance.id,
+                //                                 "appliances/" + license.id,
                 //                             )
                 //                         }
                 //                     />
@@ -214,11 +321,13 @@ export default function Appliances() {
 
     async function getData() {
         const pro: ListBoxItem[] = await getProducts(true);
+        // const lit: ListBoxItem[] = await getLicenseTypes(true, 1);
         const cus: ListBoxItem[] = await getCustomers(true);
         const deal: ListBoxItem[] = await getDealers(true);
         const sup: ListBoxItem[] = await getSuppliers(true);
 
         setProducts(pro);
+        // setLicenseTypes(lit);
         setCustomers(cus);
         setDealers(deal);
         setSuppliers(sup);
@@ -228,7 +337,7 @@ export default function Appliances() {
         getData();
     }, []);
 
-    const { data, error, mutate } = useSWR("/api/appliance");
+    const { data, error, mutate } = useSWR("/api/license");
 
     if (error) return <div>Yükleme Hatası!</div>;
     if (!data) {
@@ -246,7 +355,7 @@ export default function Appliances() {
                 isCompact
                 isStriped
                 className="mt-4 mb-2"
-                emptyContent="Herhangi bir cihaz bulunamadı!"
+                emptyContent="Herhangi bir lisans bulunamadı!"
                 defaultRowsPerPage={20}
                 data={data || []}
                 columns={columns}
@@ -259,7 +368,7 @@ export default function Appliances() {
                     onOpen();
                 }}
                 onDoubleClick={(item) => {
-                    router.push(`/dashboard/appliances/${item.id}`);
+                    router.push(`/dashboard/licenses/${item.id}`);
                 }}
             />
             <Modal
@@ -274,7 +383,7 @@ export default function Appliances() {
             >
                 <ModalContent>
                     <ModalHeader className="flex flex-col gap-1 text-zinc-600">
-                        Yeni Cihaz
+                        Yeni Lisans
                     </ModalHeader>
                     <ModalBody>
                         <form
@@ -283,6 +392,30 @@ export default function Appliances() {
                             className="flex flex-col gap-2"
                             onSubmit={handleSubmit(onSubmit)}
                         >
+                            <div>
+                                <div className="relative flex flex-col gap-x-3">
+                                    <div className="flex flex-row">
+                                        <label
+                                            htmlFor="isStock"
+                                            className="text-sm font-semibold leading-6 text-zinc-500"
+                                        >
+                                            Stok Lisans
+                                        </label>
+                                        <div className="flex h-6 ml-3 items-center">
+                                            <input
+                                                id="isStock"
+                                                type="checkbox"
+                                                className="h-4 w-4 rounded border-zinc-300 ring-offset-1 focus:ring-2 focus:ring-sky-500 outline-none cursor-pointer accent-sky-600"
+                                                {...register("isStock", {})}
+                                            />
+                                        </div>
+                                    </div>
+                                    <span className="flex flex-row font-normal text-xs text-zinc-400 items-center gap-1 mb-1">
+                                        <BiInfoCircle />
+                                        Lisans stok kontrolü için gereklidir!
+                                    </span>
+                                </div>
+                            </div>
                             <div>
                                 <label
                                     htmlFor="serialNo"
@@ -304,28 +437,104 @@ export default function Appliances() {
 
                             <div>
                                 <label
-                                    htmlFor="productId"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                    htmlFor="product"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2 after:content-['*'] after:ml-0.5 after:text-red-500"
                                 >
                                     Ürün
                                 </label>
+                                <AutoComplete
+                                    onChange={async (e) => {
+                                        resetField("licenseTypeId");
+                                        const licenseTypes: ListBoxItem[] =
+                                            await getLicenseTypes(true, e);
+                                        setLicenseTypes(licenseTypes);
+                                    }}
+                                    data={products || []}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="licenseTypeId"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                >
+                                    Lisans Tipi
+                                </label>
+                                <span className="flex flex-row font-normal text-xs text-zinc-400 items-center gap-1 mb-1">
+                                    <BiInfoCircle />
+                                    Lisans tipi seçmek için ürün seçimi yapmanız
+                                    gereklidir!
+                                </span>
                                 <Controller
                                     control={control}
-                                    name="productId"
+                                    name="licenseTypeId"
+                                    rules={{ required: true }}
                                     render={({
                                         field: { onChange, value },
                                     }) => (
                                         <AutoComplete
                                             onChange={onChange}
                                             value={value}
-                                            data={products || []}
+                                            data={licenseTypes || []}
                                         />
                                     )}
                                 />
                             </div>
 
+                            <div>
+                                <label
+                                    htmlFor="startDate"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Başlangıç Tarihi
+                                </label>
+                                <input
+                                    type="date"
+                                    id="startDate"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    {...register("startDate", {})}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="expiryDate"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Bitiş Tarihi
+                                </label>
+                                <input
+                                    type="date"
+                                    id="expiryDate"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    {...register("expiryDate", {})}
+                                />
+                            </div>
+
                             <Divider className="my-3" />
 
+                            <div>
+                                <label
+                                    htmlFor="boughtType"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Tip
+                                </label>
+                                <div className="block w-full h-10 rounded-md border-0 px-3 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2">
+                                    <select
+                                        id="boughtType"
+                                        className="w-full border-none text-sm text-zinc-700 outline-none"
+                                        {...register("boughtType", {})}
+                                    >
+                                        <option disabled selected value="">
+                                            Satın alım tipi Seçiniz...
+                                        </option>
+                                        {boughtTypes?.map((t) => (
+                                            <option key={t.key} value={t.key}>
+                                                {t.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
                             <div>
                                 <label
                                     htmlFor="boughtAt"
@@ -399,7 +608,6 @@ export default function Appliances() {
                                     )}
                                 />
                             </div>
-
                             <div>
                                 <label
                                     htmlFor="supplierId"
@@ -421,6 +629,7 @@ export default function Appliances() {
                                     )}
                                 />
                             </div>
+
                             <div className="flex flex-row gap-2 mt-4">
                                 <div className="flex-1"></div>
                                 <Button
