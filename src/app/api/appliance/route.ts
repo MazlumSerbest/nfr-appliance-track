@@ -24,6 +24,8 @@ export async function POST(request: Request) {
     if (request) {
         try {
             const appliance: Appliance = await request.json();
+            appliance.boughtAt = appliance.boughtAt ? new Date(appliance.boughtAt).toISOString() : undefined;
+            appliance.soldAt = appliance.soldAt ? new Date(appliance.soldAt).toISOString() : undefined;
 
             const newAppliance = await prisma.appliances.create({
                 data: appliance,

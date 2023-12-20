@@ -25,6 +25,7 @@ export async function PUT(
     try {
         const licenseType: LicenseType = await request.json();
         licenseType.updatedAt = new Date().toISOString();
+        
         await prisma.licenseTypes.update({
             where: {
                 id: Number(params.id),
