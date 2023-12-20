@@ -154,12 +154,12 @@ export default function DataTable(props: Props) {
                         isClearable
                         classNames={{
                             base: "w-full sm:max-w-[44%]",
-                            // mainWrapper: "focus:ring-2 focus:ring-inset focus:ring-sky-500",
                             inputWrapper:
-                                "border-0 ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500",
+                                "border-0 ring-1 ring-inset ring-zinc-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500",
                             clearButton: "text-xl text-zinc-500",
+                            input: "placeholder:italic placeholder:text-zinc-400",
                         }}
-                        placeholder="Arama"
+                        placeholder="Arama Yap..."
                         size="sm"
                         startContent={
                             <BiSearch className="text-2xl text-zinc-300" />
