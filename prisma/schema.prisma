@@ -181,6 +181,7 @@ view vLicenses {
   dealerName      String?   @db.VarChar
   supplierName    String?   @db.VarChar
   expiryStatus    String?
+  productId       Int?
 }
 
 view vAppliances {

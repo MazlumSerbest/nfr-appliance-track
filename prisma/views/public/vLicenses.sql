@@ -25,7 +25,8 @@ SELECT
       l."expiryDate" <= (CURRENT_DATE + '30 days' :: INTERVAL)
     ) THEN 'ending' :: text
     ELSE 'continues' :: text
-  END AS "expiryStatus"
+  END AS "expiryStatus",
+  p.id AS "productId"
 FROM
   (
     (

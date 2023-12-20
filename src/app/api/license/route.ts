@@ -1,11 +1,14 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/utils/db";
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
     try {
+        let productId = Number(request.nextUrl.searchParams.get("productId"));
+
         const data = await prisma.vLicenses.findMany({
             where: {
-                deleted: false
+                deleted: false,
+                ...(productId ? { productId: productId } : {}),
             },
             orderBy: [
                 {
@@ -24,6 +27,18 @@ export async function POST(request: Request) {
     if (request) {
         try {
             const license: License = await request.json();
+            license.startDate = license.startDate
+                ? new Date(license.startDate).toISOString()
+                : undefined;
+            license.expiryDate = license.expiryDate
+                ? new Date(license.expiryDate).toISOString()
+                : undefined;
+            license.boughtAt = license.boughtAt
+                ? new Date(license.boughtAt).toISOString()
+                : undefined;
+            license.soldAt = license.soldAt
+                ? new Date(license.soldAt).toISOString()
+                : undefined;
 
             const newLicense = await prisma.licenses.create({
                 data: license,
