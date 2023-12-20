@@ -2,7 +2,7 @@ type Entity = {
     id: number;
     active: boolean;
     createdBy: string;
-    createdAt: Date;
+    createdAt: string;
     updatedBy?: string;
     updatedAt?: string;
 };
@@ -19,6 +19,11 @@ type Path = {
     name: string;
     isAdmin?: boolean;
     icon: React.ReactNode;
+};
+
+type ListBoxItem = {
+    id: number;
+    name: string;
 };
 
 //#region DataTable Component Types
@@ -60,24 +65,25 @@ type Appliance = Entity & {
     dealerId: number;
     supplierId: number;
     serialNo: string;
-    boughtAt?: Date;
-    soldAt?: Date;
+    boughtAt?: string;
+    soldAt?: string;
     productBrand?: string;
     productModel?: string;
 };
 
 type License = Entity & {
+    isStock: boolean;
+    serialNo: string;
     predecessorId?: number;
     customerId: number;
     dealerId: number;
     supplierId: number;
     licenseTypeId: number;
-    isStock: boolean;
-    startDate?: Date;
-    expiryDate?: Date;
+    startDate?: string;
+    expiryDate?: string;
     boughtType?: string;
-    boughtAt?: Date;
-    soldAt?: Date;
+    boughtAt?: string;
+    soldAt?: string;
 };
 
 type Product = Entity & {
