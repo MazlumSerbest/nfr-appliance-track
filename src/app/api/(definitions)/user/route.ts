@@ -31,8 +31,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
     if (request) {
         try {
-            const req = await request.json();
-            const user = req.user[0];
+            const user = await request.json();
 
             const checkUsername = await prisma.users.findUnique({
                 where: {
@@ -69,7 +68,7 @@ export async function POST(request: Request) {
             bcrypt.hash(
                 user.password,
                 10,
-                async function (err: string, hash: string) {
+                async function (err: Error | undefined, hash: string) {
                     if (!err) {
                         user.password = hash;
 

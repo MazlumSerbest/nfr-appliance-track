@@ -4,10 +4,9 @@ export async function getLicenses(forListBox?: boolean, productId?: number) {
 
     if (forListBox)
         return licenses
-            .filter((l: License) => l.active)
-            .map((l: License) => ({
+            .map((l: vLicense) => ({
                 id: l.id,
-                name: l.serialNo
+                name: l.serialNo + " - " + l.licenseType + " " + l.licenseDuration + " Ay" + (l.isStock ? " (Stok)" : "")
             }));
     return licenses.filter((l: License) => l.active);
 }

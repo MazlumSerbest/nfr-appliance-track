@@ -57,7 +57,7 @@ export default function DataTable(props: Props) {
         new Set(props.initialVisibleColumNames),
     );
     const [activeFilter, setActiveFilter] = React.useState<Selection>("all");
-    const [rowsPerPage, setRowsPerPage] = React.useState(defRowsPerPage || 10);
+    const [rowsPerPage, setRowsPerPage] = React.useState<number>(defRowsPerPage || 10);
     const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
         column: props.sortOption.column,
         direction: props.sortOption.direction,

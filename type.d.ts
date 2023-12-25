@@ -86,6 +86,12 @@ type License = Entity & {
     soldAt?: string;
 };
 
+type vLicense = License & {
+    productModel?: string;
+    licenseType?: string;
+    licenseDuration?: string;
+};
+
 type Product = Entity & {
     brand: string;
     model: string;

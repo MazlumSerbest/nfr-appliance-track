@@ -18,14 +18,12 @@ import { Divider } from "@nextui-org/divider";
 
 import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
 import DataTable from "@/components/DataTable";
-import BoolChip from "@/components/BoolChip";
-import { BiCheckCircle, BiErrorCircle, BiInfoCircle } from "react-icons/bi";
 import { DateFormat, DateTimeFormat } from "@/utils/date";
 import useUserStore from "@/store/user";
-import IconChip from "@/components/IconChip";
 import AutoComplete from "@/components/AutoComplete";
 import {
     getProducts,
+    getLicenses,
     getCustomers,
     getDealers,
     getSuppliers,
@@ -41,7 +39,6 @@ interface IFormInput {
     customerId: number;
     dealerId: number;
     supplierId: number;
-
     createdBy: string;
     updatedBy: string;
 }
@@ -51,6 +48,7 @@ export default function Appliances() {
     const { user: currUser } = useUserStore();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
     const [products, setProducts] = useState<ListBoxItem[] | null>(null);
+    const [licenses, setLicenses] = useState<ListBoxItem[] | null>(null);
     const [customers, setCustomers] = useState<ListBoxItem[] | null>(null);
     const [dealers, setDealers] = useState<ListBoxItem[] | null>(null);
     const [suppliers, setSuppliers] = useState<ListBoxItem[] | null>(null);
@@ -189,22 +187,6 @@ export default function Appliances() {
                     return <p>{DateTimeFormat(cellValue)}</p>;
                 case "updatedAt":
                     return <p>{DateTimeFormat(cellValue)}</p>;
-                // case "actions":
-                //     return (
-                //         <div className="relative flex justify-start items-center gap-2">
-                //             <Tooltip key={appliance.id} content="Detay">
-                //                 <span className="text-xl text-green-600 active:opacity-50">
-                //                     <BiLinkExternal
-                //                         onClick={() =>
-                //                             router.push(
-                //                                 "appliances/" + appliance.id,
-                //                             )
-                //                         }
-                //                     />
-                //                 </span>
-                //             </Tooltip>
-                //         </div>
-                //     );
                 default:
                     return cellValue ? cellValue : "-";
             }
@@ -214,11 +196,13 @@ export default function Appliances() {
 
     async function getData() {
         const pro: ListBoxItem[] = await getProducts(true);
+        const lic: ListBoxItem[] = await getLicenses(true);
         const cus: ListBoxItem[] = await getCustomers(true);
         const deal: ListBoxItem[] = await getDealers(true);
         const sup: ListBoxItem[] = await getSuppliers(true);
 
         setProducts(pro);
+        setLicenses(lic);
         setCustomers(cus);
         setDealers(deal);
         setSuppliers(sup);
@@ -273,7 +257,7 @@ export default function Appliances() {
                 scrollBehavior="outside"
             >
                 <ModalContent>
-                    <ModalHeader className="flex flex-col gap-1 text-zinc-600">
+                    <ModalHeader className="flex flex-col gap-1 text-zinc-500">
                         Yeni Cihaz
                     </ModalHeader>
                     <ModalBody>
@@ -301,7 +285,6 @@ export default function Appliances() {
                                     })}
                                 />
                             </div>
-
                             <div>
                                 <label
                                     htmlFor="productId"
@@ -316,9 +299,35 @@ export default function Appliances() {
                                         field: { onChange, value },
                                     }) => (
                                         <AutoComplete
-                                            onChange={onChange}
+                                            onChange={async (e) => {
+                                                onChange;
+                                                const lic: ListBoxItem[] =
+                                                    await getLicenses(true, e);
+                                                setLicenses(lic);
+                                            }}
                                             value={value}
                                             data={products || []}
+                                        />
+                                    )}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="licenseId"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                >
+                                    Lisans
+                                </label>
+                                <Controller
+                                    control={control}
+                                    name="licenseId"
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <AutoComplete
+                                            onChange={onChange}
+                                            value={value}
+                                            data={licenses || []}
                                         />
                                     )}
                                 />

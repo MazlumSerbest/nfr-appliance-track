@@ -66,7 +66,6 @@ export default function Licenses() {
         useForm<IFormInput>({ defaultValues: { isStock: false } });
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         data.createdBy = currUser?.username ?? "";
-        console.log(data);
 
         await fetch("/api/license", {
             method: "POST",
@@ -214,18 +213,10 @@ export default function Licenses() {
     ];
 
     const renderCell = React.useCallback(
-        (license: License, columnKey: React.Key) => {
+        (license: vLicense, columnKey: React.Key) => {
             const cellValue: any = license[columnKey as keyof typeof license];
 
             switch (columnKey) {
-                // case "customerName":
-                //     return (
-                //         <p>
-                //             {cellValue.length > 20
-                //                 ? cellValue.substring(0, 20) + "..."
-                //                 : cellValue}
-                //         </p>
-                //     );
                 case "product":
                     return license.productModel;
                 case "licenseType":
@@ -296,22 +287,6 @@ export default function Licenses() {
                     return <p>{DateTimeFormat(cellValue)}</p>;
                 case "updatedAt":
                     return <p>{DateTimeFormat(cellValue)}</p>;
-                // case "actions":
-                //     return (
-                //         <div className="relative flex justify-start items-center gap-2">
-                //             <Tooltip key={license.id} content="Detay">
-                //                 <span className="text-xl text-green-600 active:opacity-50">
-                //                     <BiLinkExternal
-                //                         onClick={() =>
-                //                             router.push(
-                //                                 "appliances/" + license.id,
-                //                             )
-                //                         }
-                //                     />
-                //                 </span>
-                //             </Tooltip>
-                //         </div>
-                //     );
                 default:
                     return cellValue ? cellValue : "-";
             }
@@ -382,7 +357,7 @@ export default function Licenses() {
                 scrollBehavior="outside"
             >
                 <ModalContent>
-                    <ModalHeader className="flex flex-col gap-1 text-zinc-600">
+                    <ModalHeader className="flex flex-col gap-1 text-zinc-500">
                         Yeni Lisans
                     </ModalHeader>
                     <ModalBody>
@@ -438,7 +413,7 @@ export default function Licenses() {
                             <div>
                                 <label
                                     htmlFor="product"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
                                 >
                                     Ürün
                                 </label>

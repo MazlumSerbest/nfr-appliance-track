@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
 import useUserStore from "@/store/user";
+import toast from "react-hot-toast";
 
 import {
     Modal,
@@ -30,9 +31,13 @@ import { activeOptions, userTypes } from "@/lib/constants";
 
 interface IFormInput {
     username: string;
-    name: string;
+    name?: string;
     email: string;
     role: string;
+    password: string;
+    confirmPassword: string;
+    createdBy: string;
+    updatedBy?: string;
 }
 
 export default function Users() {
@@ -41,8 +46,30 @@ export default function Users() {
     const { user: currUser } = useUserStore();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
 
-    const { register, handleSubmit } = useForm<IFormInput>();
-    const onSubmit: SubmitHandler<IFormInput> = (data) => console.log(data);
+    const { register, reset, handleSubmit, getValues, formState: { errors } } = useForm<IFormInput>();
+    const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+        data.createdBy = currUser?.username ?? "";
+
+        await fetch("/api/user", {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: { "Content-Type": "application/json" },
+        })
+            .then(async (res) => {
+                const result = await res.json();
+                if (res.ok) {
+                    toast.success(result.message);
+                } else {
+                    toast.error(result.message);
+                }
+                return result;
+            })
+            .then(() => {
+                onClose();
+                reset();
+                // mutate();
+            });
+    };
 
     const visibleColumns = [
         "username",
@@ -247,9 +274,69 @@ export default function Users() {
                         scrollBehavior="outside"
                     >
                         <ModalContent>
-                            <ModalHeader>Yeni Kullanıcı</ModalHeader>
+                            <ModalHeader className="flex flex-col gap-1 text-zinc-500">
+                                Yeni Kullanıcı
+                            </ModalHeader>
                             <ModalBody>
-                                <form onSubmit={handleSubmit(onSubmit)}>
+                                <form
+                                    action=""
+                                    autoComplete="off"
+                                    className="flex flex-col gap-2"
+                                    onSubmit={handleSubmit(onSubmit)}
+                                >
+                                    <div>
+                                        <label
+                                            htmlFor="username"
+                                            className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                        >
+                                            Kullanıcı Adı
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="username"
+                                            required
+                                            className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                            {...register("username", {
+                                                required: true,
+                                                maxLength: 20,
+                                            })}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label
+                                            htmlFor="name"
+                                            className="block text-sm font-semibold leading-6 text-zinc-500"
+                                        >
+                                            Ad
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="name"
+                                            className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                            {...register("username", {
+                                                maxLength: 50,
+                                            })}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label
+                                            htmlFor="email"
+                                            className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                        >
+                                            E-Posta
+                                        </label>
+                                        <input
+                                            type="email"
+                                            id="email"
+                                            required
+                                            className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                            {...register("email", {
+                                                required: true,
+                                                maxLength: 50,
+                                            })}
+                                        />
+                                    </div>
+
                                     <div>
                                         <label
                                             htmlFor="role"
@@ -284,6 +371,52 @@ export default function Users() {
                                             </select>
                                         </div>
                                     </div>
+
+                                    <div>
+                                        <label
+                                            htmlFor="password"
+                                            className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                        >
+                                            Şifre
+                                        </label>
+                                        <input
+                                            type="password"
+                                            id="password"
+                                            required
+                                            className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                            {...register("password", {
+                                                required: true,
+                                                maxLength: 30,
+                                            })}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label
+                                            htmlFor="confirmPassword"
+                                            className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                        >
+                                            Şifre Tekrar
+                                        </label>
+                                        <input
+                                            type="password"
+                                            id="confirmPassword"
+                                            required
+                                            className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                            {...register("confirmPassword", {
+                                                required: true,
+                                                maxLength: 30,
+                                                validate: (value) => {
+                                                    const { password } =
+                                                        getValues();
+                                                    return (
+                                                        password === value ||
+                                                        "Girilen şifreler uyuşmuyor!"
+                                                    );
+                                                },
+                                            })}
+                                        />
+                                    </div>
+                                            {errors.confirmPassword?.message}
                                     <div className="flex flex-row gap-2 mt-4">
                                         <div className="flex-1"></div>
                                         <Button
