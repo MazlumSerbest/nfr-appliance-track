@@ -218,7 +218,7 @@ export default function Connections() {
                 scrollBehavior="outside"
             >
                 <ModalContent>
-                    <ModalHeader className="flex flex-col gap-1 text-zinc-600">
+                    <ModalHeader className="flex flex-col gap-1 text-zinc-500">
                         Yeni Bağlantı
                     </ModalHeader>
                     <ModalBody>

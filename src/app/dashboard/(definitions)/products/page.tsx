@@ -233,7 +233,7 @@ export default function Products() {
                 scrollBehavior="outside"
             >
                 <ModalContent>
-                    <ModalHeader className="flex flex-col gap-1 text-zinc-600">
+                    <ModalHeader className="flex flex-col gap-1 text-zinc-500">
                         {isNew ? "Yeni Ürün" : "Ürün Güncelle"}
                     </ModalHeader>
                     <ModalBody>

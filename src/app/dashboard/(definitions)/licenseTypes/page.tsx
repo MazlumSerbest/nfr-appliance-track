@@ -29,10 +29,11 @@ interface IFormInput {
     id: number;
     productId: number;
     type: string;
-    duration: number | null;
-    price: number | null;
+    duration?: number | null;
+    price?: number | null;
     createdBy: string;
-    updatedBy: string;
+    updatedBy?: string;
+    product?: Product;
 }
 
 export default function LicenseTypes() {
@@ -253,7 +254,7 @@ export default function LicenseTypes() {
                 scrollBehavior="outside"
             >
                 <ModalContent>
-                    <ModalHeader className="flex flex-col gap-1 text-zinc-600">
+                    <ModalHeader className="flex flex-col gap-1 text-zinc-500">
                         {isNew ? "Yeni Ürün" : "Ürün Güncelle"}
                     </ModalHeader>
                     <ModalBody>

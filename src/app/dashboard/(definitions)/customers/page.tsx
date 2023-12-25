@@ -224,7 +224,7 @@ export default function Customers() {
                 scrollBehavior="outside"
             >
                 <ModalContent>
-                    <ModalHeader className="flex flex-col gap-1 text-zinc-600">
+                    <ModalHeader className="flex flex-col gap-1 text-zinc-500">
                         {isNew ? "Yeni Müşteri" : "Müşteri Güncelle"}
                     </ModalHeader>
                     <ModalBody>
