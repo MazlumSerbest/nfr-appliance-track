@@ -67,6 +67,9 @@ type Appliance = Entity & {
     serialNo: string;
     boughtAt?: string;
     soldAt?: string;
+};
+
+type vAppliance = Appliance & {
     productBrand?: string;
     productModel?: string;
 };
@@ -74,7 +77,6 @@ type Appliance = Entity & {
 type License = Entity & {
     isStock: boolean;
     serialNo: string;
-    predecessorId?: number;
     customerId: number;
     dealerId: number;
     supplierId: number;
@@ -84,10 +86,13 @@ type License = Entity & {
     boughtType?: string;
     boughtAt?: string;
     soldAt?: string;
+    licenseType: LicenseType;
 };
 
 type vLicense = License & {
+    applianceSerialNo?: string;
     productModel?: string;
+    productBrand?: string;
     licenseType?: string;
     licenseDuration?: string;
 };
@@ -103,6 +108,10 @@ type LicenseType = Entity & {
     type: string;
     duration: number?;
     price: Decimal?;
+};
+
+type BoughtType = Entity & {
+    type: string;
 };
 
 type Customer = Entity & Current;

@@ -12,11 +12,14 @@ SELECT
   l."updatedBy",
   l."updatedAt",
   l.deleted,
+  a."serialNo" AS "applianceSerialNo",
+  a."productModel",
+  a."productBrand",
   lt.type AS "licenseType",
   lt.duration AS "licenseDuration",
-  p.model AS "productModel",
   c.name AS "customerName",
   d.name AS "dealerName",
+  sd.name AS "subDealerName",
   s.name AS "supplierName",
   CASE
     WHEN (l."expiryDate" IS NULL) THEN 'undefined' :: text
@@ -25,22 +28,24 @@ SELECT
       l."expiryDate" <= (CURRENT_DATE + '30 days' :: INTERVAL)
     ) THEN 'ending' :: text
     ELSE 'continues' :: text
-  END AS "expiryStatus",
-  p.id AS "productId"
+  END AS "expiryStatus"
 FROM
   (
     (
       (
         (
           (
-            licenses l
+            (
+              licenses l
+              LEFT JOIN "vAppliances" a ON ((l."applianceId" = a.id))
+            )
             LEFT JOIN "licenseTypes" lt ON ((l."licenseTypeId" = lt.id))
           )
-          LEFT JOIN products p ON ((lt."productId" = p.id))
+          LEFT JOIN customers c ON ((l."customerId" = c.id))
         )
-        LEFT JOIN customers c ON ((l."customerId" = c.id))
+        LEFT JOIN dealers d ON ((l."dealerId" = d.id))
       )
-      LEFT JOIN dealers d ON ((l."dealerId" = d.id))
+      LEFT JOIN dealers sd ON ((l."subDealerId" = sd.id))
     )
     LEFT JOIN suppliers s ON ((l."supplierId" = s.id))
   );
