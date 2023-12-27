@@ -11,6 +11,7 @@ import {
     BiStoreAlt,
     BiCheckShield,
     BiShield,
+    BiBarcode,
 } from "react-icons/bi";
 
 export const paths: Path[] = [
@@ -104,6 +105,17 @@ export const definitions: Path[] =[
             <BiShield
                 className="text-2xl text-zinc-500"
                 aria-label="Lisans Tipleri Sayfası"
+            />
+        ),
+    },
+    {
+        path: "/dashboard/boughtTypes",
+        key: "boughtTypes",
+        name: "Alım Tipleri",
+        icon: (
+            <BiBarcode
+                className="text-2xl text-zinc-500"
+                aria-label="Alım Tipleri Sayfası"
             />
         ),
     },
