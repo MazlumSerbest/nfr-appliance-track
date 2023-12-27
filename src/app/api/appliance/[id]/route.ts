@@ -14,16 +14,27 @@ export async function GET(
                 product: {
                     select: {
                         brand: true,
-                        model: true
+                        model: true,
                     },
                 },
-                license: {
+                licenses: {
                     select: {
                         id: true,
                         startDate: true,
                         expiryDate: true,
-                        isStock: true
-                    }
+                        isStock: true,
+                        licenseType: {
+                            select: {
+                                type: true,
+                                duration: true,
+                            },
+                        },
+                    },
+                    orderBy: [
+                        {
+                            expiryDate: "desc",
+                        },
+                    ],
                 },
                 customer: {
                     select: { name: true },

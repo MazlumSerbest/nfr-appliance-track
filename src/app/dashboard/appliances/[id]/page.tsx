@@ -16,12 +16,15 @@ import { Button } from "@nextui-org/button";
 
 import { SubmitHandler, useForm } from "react-hook-form";
 import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
-import BoolChip from "@/components/BoolChip";
 import RegInfo from "@/components/RegInfo";
-import { BiX, BiCheckShield, BiChevronLeft } from "react-icons/bi";
+import {
+    BiX,
+    BiCheckShield,
+    BiChevronLeft,
+    BiChevronRight,
+} from "react-icons/bi";
 import useUserStore from "@/store/user";
 import toast from "react-hot-toast";
-import { boughtTypes } from "@/lib/constants";
 import { DateFormat, DateTimeFormat } from "@/utils/date";
 
 export default function ApplianceDetail({
@@ -30,8 +33,6 @@ export default function ApplianceDetail({
     params: { id: string };
 }) {
     const router = useRouter();
-    const [showPassword, setShowPassword] = useState(false);
-    // const [con, setCon] = useState();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
     const { user: currUser } = useUserStore();
 
@@ -73,7 +74,9 @@ export default function ApplianceDetail({
                         <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
                             <dt className="font-medium">Ürün</dt>
                             <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                {(data.product?.brand + " " + data.product?.model) || "-"}
+                                {data.product?.brand +
+                                    " " +
+                                    data.product?.model || "-"}
                             </dd>
                         </div>
                         <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
@@ -142,7 +145,7 @@ export default function ApplianceDetail({
                 className="p-0"
                 itemClasses={{
                     title: "font-medium text-zinc-600",
-                    base: "px-1 py-2",
+                    // base: "px-1",
                 }}
             >
                 <AccordionItem
@@ -150,59 +153,77 @@ export default function ApplianceDetail({
                     aria-label="License"
                     title="Lisans Bilgileri"
                     subtitle="Bu cihaza tanımlanmış lisans bilgileri"
-                    indicator={<BiChevronLeft className="text-3xl text-zinc-500" />}
+                    indicator={
+                        <BiChevronLeft className="text-3xl text-zinc-500" />
+                    }
                     startContent={
                         <BiCheckShield className="text-4xl text-green-600/60" />
                     }
                 >
-                    {data.license ? (
+                    {data.licenses.length > 0 ? (
                         <>
-                            <div className="divide-y divide-zinc-200 text-zinc-500">
-                                <div className="grid grid-cols-2 md:grid-cols-3 w-full text-base p-2">
-                                    <dt className="font-medium">Stok Lisans</dt>
-                                    <dd className="col-span-1 md:col-span-2">
-                                        <BoolChip
-                                            value={data.license?.isStock}
-                                        />
-                                    </dd>
-                                </div>
-
-                                <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base p-2">
-                                    <dt className="font-medium">
-                                        Başlangıç Tarihi
-                                    </dt>
-                                    <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                        {DateFormat(data.license?.startDate) ||
-                                            "-"}
-                                    </dd>
-                                </div>
-                                <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base p-2">
-                                    <dt className="font-medium">
-                                        Bitiş Tarihi
-                                    </dt>
-                                    <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                        {DateFormat(data.license?.expiryDate) ||
-                                            "-"}
-                                    </dd>
-                                </div>
-                            </div>
-                            <div className="flex gap-2">
-                                <div className="flex-1"></div>
-                                <Button
-                                    color="primary"
-                                    className="bg-sky-500"
-                                    onPress={() =>
-                                        router.push(
-                                            `/dashboard/licenses/${data.license?.id}`,
-                                        )
-                                    }
-                                >
-                                    Lisansa Git
-                                </Button>
-                            </div>
+                            <ul
+                                role="list"
+                                className="divide-y divide-zinc-200"
+                            >
+                                <li></li>
+                                {data?.licenses.map((lic: License) => (
+                                    <li
+                                        onClick={() =>
+                                            router.push(
+                                                `/dashboard/licenses/${lic?.id}`,
+                                            )
+                                        }
+                                        key={lic.id}
+                                        className="flex justify-between py-2 items-center cursor-pointer"
+                                    >
+                                        <div className="flex flex-1 gap-x-4">
+                                            <div className="min-w-0 flex-auto">
+                                                <p className="text-sm font-semibold leading-6 text-zinc-600">
+                                                    {`${
+                                                        lic.licenseType?.type
+                                                    } - ${
+                                                        lic.licenseType
+                                                            ?.duration
+                                                    } ay${
+                                                        lic.isStock
+                                                            ? " (Stok)"
+                                                            : ""
+                                                    }`}
+                                                </p>
+                                                <div className="max-w-fit text-xs leading-5 text-zinc-400">
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        <dt className="font-semibold text-zinc-500">
+                                                            {
+                                                                "Başlangıç Tarihi:"
+                                                            }
+                                                        </dt>
+                                                        <dd>
+                                                            {DateFormat(
+                                                                lic.startDate,
+                                                            ) || " -"}
+                                                        </dd>
+                                                    </div>
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        <dt className="font-semibold text-zinc-500">
+                                                            {"Bitiş Tarihi:"}
+                                                        </dt>
+                                                        <dd>
+                                                            {DateFormat(
+                                                                lic.expiryDate,
+                                                            ) || " -"}
+                                                        </dd>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <BiChevronRight className="text-2xl text-zinc-500" />
+                                    </li>
+                                ))}
+                            </ul>
                         </>
                     ) : (
-                        <div className="w-full py-4 text-center">
+                        <div className="w-full py-6 text-center">
                             <p className="text-zinc-400">
                                 Bu cihaza herhangi bir lisans tanımlanmamıştır.
                             </p>

@@ -35,9 +35,9 @@ interface IFormInput {
     boughtAt: string;
     soldAt: string;
     productId: any;
-    licenseId: number;
     customerId: number;
     dealerId: number;
+    subDealerId: number;
     supplierId: number;
     createdBy: string;
     updatedBy: string;
@@ -83,10 +83,10 @@ export default function Appliances() {
         "product",
         "customerName",
         "dealerName",
+        "subDealerName",
         "supplierName",
         "boughtAt",
         "soldAt",
-        // "actions",
     ];
 
     const sort: SortDescriptor = {
@@ -117,6 +117,13 @@ export default function Appliances() {
         {
             key: "dealerName",
             name: "Bayi",
+            width: 120,
+            searchable: true,
+            sortable: true,
+        },
+        {
+            key: "subDealerName",
+            name: "Alt Bayi",
             width: 120,
             searchable: true,
             sortable: true,
@@ -158,15 +165,10 @@ export default function Appliances() {
             name: "Güncellenme Tarihi",
             width: 150,
         },
-        // {
-        //     key: "actions",
-        //     label: "Aksiyonlar",
-        //     width: 100,
-        // },
     ];
 
     const renderCell = React.useCallback(
-        (appliance: Appliance, columnKey: React.Key) => {
+        (appliance: vAppliance, columnKey: React.Key) => {
             const cellValue: any =
                 appliance[columnKey as keyof typeof appliance];
 
@@ -302,32 +304,11 @@ export default function Appliances() {
                                             onChange={async (e) => {
                                                 onChange;
                                                 const lic: ListBoxItem[] =
-                                                    await getLicenses(true, e);
+                                                    await getLicenses(true);
                                                 setLicenses(lic);
                                             }}
                                             value={value}
                                             data={products || []}
-                                        />
-                                    )}
-                                />
-                            </div>
-                            <div>
-                                <label
-                                    htmlFor="licenseId"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
-                                >
-                                    Lisans
-                                </label>
-                                <Controller
-                                    control={control}
-                                    name="licenseId"
-                                    render={({
-                                        field: { onChange, value },
-                                    }) => (
-                                        <AutoComplete
-                                            onChange={onChange}
-                                            value={value}
-                                            data={licenses || []}
                                         />
                                     )}
                                 />
@@ -408,7 +389,27 @@ export default function Appliances() {
                                     )}
                                 />
                             </div>
-
+                            <div>
+                                <label
+                                    htmlFor="subDealerId"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                >
+                                    Alt Bayi
+                                </label>
+                                <Controller
+                                    control={control}
+                                    name="subDealerId"
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <AutoComplete
+                                            onChange={onChange}
+                                            value={value}
+                                            data={dealers || []}
+                                        />
+                                    )}
+                                />
+                            </div>
                             <div>
                                 <label
                                     htmlFor="supplierId"
@@ -430,6 +431,7 @@ export default function Appliances() {
                                     )}
                                 />
                             </div>
+
                             <div className="flex flex-row gap-2 mt-4">
                                 <div className="flex-1"></div>
                                 <Button

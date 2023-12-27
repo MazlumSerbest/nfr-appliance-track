@@ -1,11 +1,14 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/utils/db";
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
     try {
+        let productId = Number(request.nextUrl.searchParams.get("productId"));
+
         const data = await prisma.vAppliances.findMany({
             where: {
-                deleted: false
+                deleted: false,
+                ...(productId ? { productId: productId } : {}),
             },
             orderBy: [
                 {
