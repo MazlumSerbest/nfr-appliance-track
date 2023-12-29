@@ -43,11 +43,12 @@ type ActiveOption = {
 
 //#region Data Types
 type Connection = Entity & {
-    customerId: number;
-    ip?: string;
+    customerId?: number;
+    ip: string;
     login?: string;
     password?: string;
     note?: string;
+    customer: any;
 };
 
 type User = Entity & {
@@ -63,6 +64,7 @@ type Appliance = Entity & {
     licenseId: number;
     customerId: number;
     dealerId: number;
+    subDealerId: number;
     supplierId: number;
     serialNo: string;
     boughtAt?: string;
@@ -79,14 +81,16 @@ type License = Entity & {
     serialNo: string;
     customerId: number;
     dealerId: number;
+    subDealerId: number;
     supplierId: number;
     licenseTypeId: number;
+    boughtTypeId?: number;
     startDate?: string;
     expiryDate?: string;
-    boughtType?: string;
     boughtAt?: string;
     soldAt?: string;
-    licenseType: LicenseType;
+    licenseType: any;
+    boughtType: any;
 };
 
 type vLicense = License & {

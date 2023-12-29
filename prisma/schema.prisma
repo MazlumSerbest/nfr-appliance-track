@@ -9,17 +9,17 @@ datasource db {
 }
 
 model connections {
-  id        Int       @id @default(autoincrement())
-  login     String?   @db.VarChar
-  password  String?   @db.VarChar
-  note      String?   @db.VarChar
-  createdAt DateTime  @default(now()) @db.Timestamptz(6)
-  createdBy String    @db.VarChar
-  updatedBy String?   @db.VarChar
-  ip        String?   @db.VarChar
-  updatedAt DateTime? @updatedAt @db.Timestamptz(6)
-  customerId    Int?
-  customer      customers?   @relation(fields: [customerId], references: [id])
+  id         Int        @id @default(autoincrement())
+  login      String?    @db.VarChar
+  password   String?    @db.VarChar
+  note       String?    @db.VarChar
+  createdAt  DateTime   @default(now()) @db.Timestamptz(6)
+  createdBy  String     @db.VarChar
+  updatedBy  String?    @db.VarChar
+  ip         String?    @db.VarChar
+  updatedAt  DateTime?  @updatedAt @db.Timestamptz(6)
+  customerId Int?
+  customer   customers? @relation(fields: [customerId], references: [id])
 }
 
 model users {
@@ -73,7 +73,6 @@ model licenses {
   createdAt     DateTime     @default(now()) @db.Timestamptz(6)
   updatedBy     String?      @db.VarChar
   boughtAt      DateTime?    @db.Date
-  boughtType    String?      @db.VarChar
   soldAt        DateTime?    @db.Date
   dealerId      Int?
   licenseTypeId Int
@@ -84,7 +83,9 @@ model licenses {
   serialNo      String?      @unique @db.VarChar
   applianceId   Int?
   subDealerId   Int?
+  boughtTypeId  Int?
   appliance     appliances?  @relation(fields: [applianceId], references: [id])
+  boughtType    boughtTypes? @relation(fields: [boughtTypeId], references: [id])
   customer      customers?   @relation(fields: [customerId], references: [id])
   dealer        dealers?     @relation("Dealer", fields: [dealerId], references: [id])
   licenseType   licenseTypes @relation(fields: [licenseTypeId], references: [id])
@@ -120,28 +121,29 @@ model licenseTypes {
 }
 
 model boughtTypes {
-  id        Int       @id @default(autoincrement())
-  active    Boolean   @default(true)
-  type      String    @db.VarChar
-  createdAt DateTime  @default(now()) @db.Timestamptz(6)
-  createdBy String    @db.VarChar
-  updatedAt DateTime? @updatedAt @db.Timestamptz(6)
-  updatedBy String?   @db.VarChar
+  id        Int        @id @default(autoincrement())
+  active    Boolean    @default(true)
+  type      String     @db.VarChar
+  createdAt DateTime   @default(now()) @db.Timestamptz(6)
+  createdBy String     @db.VarChar
+  updatedAt DateTime?  @updatedAt @db.Timestamptz(6)
+  updatedBy String?    @db.VarChar
+  licenses  licenses[]
 }
 
 model customers {
-  id         Int          @id @default(autoincrement())
-  active     Boolean      @default(true)
-  name       String       @db.VarChar
-  phone      String       @db.VarChar
-  email      String       @db.VarChar
-  createdAt  DateTime     @default(now()) @db.Timestamptz(6)
-  createdBy  String       @db.VarChar
-  updatedBy  String?      @db.VarChar
-  updatedAt  DateTime?    @updatedAt @db.Timestamptz(6)
-  appliances appliances[]
-  licenses   licenses[]
+  id          Int           @id @default(autoincrement())
+  active      Boolean       @default(true)
+  name        String        @db.VarChar
+  phone       String        @db.VarChar
+  email       String        @db.VarChar
+  createdAt   DateTime      @default(now()) @db.Timestamptz(6)
+  createdBy   String        @db.VarChar
+  updatedBy   String?       @db.VarChar
+  updatedAt   DateTime?     @updatedAt @db.Timestamptz(6)
+  appliances  appliances[]
   connections connections[]
+  licenses    licenses[]
 }
 
 model dealers {
@@ -174,13 +176,31 @@ model suppliers {
   licenses   licenses[]
 }
 
+view vAppliances {
+  id            Int       @unique
+  serialNo      String?   @db.VarChar
+  boughtAt      DateTime? @db.Date
+  soldAt        DateTime? @db.Date
+  createdBy     String?   @db.VarChar
+  createdAt     DateTime? @db.Timestamptz(6)
+  updatedBy     String?   @db.VarChar
+  updatedAt     DateTime? @db.Timestamptz(6)
+  deleted       Boolean?
+  productId     Int?
+  productModel  String?   @db.VarChar
+  productBrand  String?   @db.VarChar
+  customerName  String?   @db.VarChar
+  dealerName    String?   @db.VarChar
+  subDealerName String?   @db.VarChar
+  supplierName  String?   @db.VarChar
+}
+
 view vLicenses {
   id                Int       @unique
   isStock           Boolean?
   serialNo          String?   @db.VarChar
   startDate         DateTime? @db.Date
   expiryDate        DateTime? @db.Date
-  boughtType        String?   @db.VarChar
   boughtAt          DateTime? @db.Date
   soldAt            DateTime? @db.Date
   createdBy         String?   @db.VarChar
@@ -193,27 +213,10 @@ view vLicenses {
   productBrand      String?   @db.VarChar
   licenseType       String?   @db.VarChar
   licenseDuration   Int?
+  boughtType        String?   @db.VarChar
   customerName      String?   @db.VarChar
   dealerName        String?   @db.VarChar
   subDealerName     String?   @db.VarChar
   supplierName      String?   @db.VarChar
   expiryStatus      String?
-}
-
-view vAppliances {
-  id            Int       @unique
-  serialNo      String?   @db.VarChar
-  boughtAt      DateTime? @db.Date
-  soldAt        DateTime? @db.Date
-  createdBy     String?   @db.VarChar
-  createdAt     DateTime? @db.Timestamptz(6)
-  updatedBy     String?   @db.VarChar
-  updatedAt     DateTime? @db.Timestamptz(6)
-  deleted       Boolean?
-  productModel  String?   @db.VarChar
-  productBrand  String?   @db.VarChar
-  customerName  String?   @db.VarChar
-  dealerName    String?   @db.VarChar
-  subDealerName String?   @db.VarChar
-  supplierName  String?   @db.VarChar
 }
