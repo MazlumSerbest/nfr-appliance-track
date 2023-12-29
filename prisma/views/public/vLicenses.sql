@@ -4,7 +4,6 @@ SELECT
   l."serialNo",
   l."startDate",
   l."expiryDate",
-  l."boughtType",
   l."boughtAt",
   l."soldAt",
   l."createdBy",
@@ -17,6 +16,7 @@ SELECT
   a."productBrand",
   lt.type AS "licenseType",
   lt.duration AS "licenseDuration",
+  bt.type AS "boughtType",
   c.name AS "customerName",
   d.name AS "dealerName",
   sd.name AS "subDealerName",
@@ -36,10 +36,13 @@ FROM
         (
           (
             (
-              licenses l
-              LEFT JOIN "vAppliances" a ON ((l."applianceId" = a.id))
+              (
+                licenses l
+                LEFT JOIN "vAppliances" a ON ((l."applianceId" = a.id))
+              )
+              LEFT JOIN "licenseTypes" lt ON ((l."licenseTypeId" = lt.id))
             )
-            LEFT JOIN "licenseTypes" lt ON ((l."licenseTypeId" = lt.id))
+            LEFT JOIN "boughtTypes" bt ON ((l."boughtTypeId" = bt.id))
           )
           LEFT JOIN customers c ON ((l."customerId" = c.id))
         )

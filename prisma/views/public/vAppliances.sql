@@ -8,6 +8,7 @@ SELECT
   a."updatedBy",
   a."updatedAt",
   a.deleted,
+  a."productId",
   p.model AS "productModel",
   p.brand AS "productBrand",
   c.name AS "customerName",
