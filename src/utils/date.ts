@@ -1,4 +1,4 @@
-export function DateFormat(date: Date) {
+export function DateFormat(date?: string) {
     let formattedDate;
 
     date
@@ -8,7 +8,7 @@ export function DateFormat(date: Date) {
     return formattedDate;
 }
 
-export function DateTimeFormat(date: Date) {
+export function DateTimeFormat(date?: string) {
     let formattedDate;
     date
         ? (formattedDate = new Date(date).toLocaleString("tr-TR", {
