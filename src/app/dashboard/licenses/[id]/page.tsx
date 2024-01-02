@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
 
@@ -14,29 +14,117 @@ import {
 import { Accordion, AccordionItem } from "@nextui-org/accordion";
 import { Button } from "@nextui-org/button";
 
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
 import BoolChip from "@/components/BoolChip";
 import RegInfo from "@/components/RegInfo";
-import { BiChevronLeft, BiServer, BiX } from "react-icons/bi";
+import AutoComplete from "@/components/AutoComplete";
+import {
+    BiChevronLeft,
+    BiInfoCircle,
+    BiPlus,
+    BiServer,
+    BiX,
+} from "react-icons/bi";
 import useUserStore from "@/store/user";
 import toast from "react-hot-toast";
-import { boughtTypes } from "@/lib/constants";
 import { DateFormat } from "@/utils/date";
+import { getAppliances, getProducts } from "@/lib/data";
+import { setLicenseAppliance } from "@/lib/prisma";
+
+interface IFormInput {
+    id: number;
+    isStock: boolean;
+    serialNo: string;
+    startDate: string;
+    expiryDate: string;
+    boughtTypeId: string;
+    boughtAt: string;
+    soldAt: string;
+    licenseTypeId: number;
+    customerId: number;
+    dealerId: number;
+    subDealerId: number;
+    supplierId: number;
+    applianceId: number;
+    updatedBy: string;
+}
 
 export default function LicenseDetail({ params }: { params: { id: string } }) {
     const router = useRouter();
-    const [showPassword, setShowPassword] = useState(false);
-    // const [con, setCon] = useState();
+    const [products, setProducts] = useState<ListBoxItem[] | null>(null);
+    const [appliances, setAppliances] = useState<ListBoxItem[] | null>(null);
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
+    const {
+        isOpen: isAppOpen,
+        onClose: onAppClose,
+        onOpen: onAppOpen,
+        onOpenChange: onAppOpenChange,
+    } = useDisclosure();
     const { user: currUser } = useUserStore();
 
-    const { data, error, mutate } = useSWR(`/api/license/${params.id}`, null, {
-        onSuccess: (lic) => {
-            // setCon(con);
-            // reset(con);
-        },
-    });
+    //#region Form
+    const { register, reset, resetField, handleSubmit, control } =
+        useForm<IFormInput>();
+
+    const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+        if (currUser) {
+            data.updatedBy = currUser?.username ?? "";
+
+            await fetch("/api/license", {
+                method: "POST",
+                body: JSON.stringify(data),
+                headers: { "Content-Type": "application/json" },
+            })
+                .then(async (res) => {
+                    const result = await res.json();
+                    if (res.ok) {
+                        toast.success(result.message);
+                    } else {
+                        toast.error(result.message);
+                    }
+                    return result;
+                })
+                .then(() => {
+                    onClose();
+                    reset();
+                    mutate();
+                });
+        }
+    };
+
+    const onAppSubmit: SubmitHandler<IFormInput> = async (data) => {
+        if (currUser) {
+            const updatedBy = currUser?.username ?? "";
+
+            const lic = await setLicenseAppliance(
+                Number(params.id),
+                data.applianceId,
+                updatedBy,
+            );
+            if (lic) {
+                toast.success("Lisans cihaza eklendi!");
+                onAppClose();
+                reset();
+                mutate();
+            } else toast.error("Bir hata oluştu! Lütfen tekrar deneyiniz.");
+        }
+    };
+
+    //#endregion
+
+    //#region Data
+    async function getData() {
+        const pro: ListBoxItem[] = await getProducts(true);
+        setProducts(pro);
+    }
+
+    useEffect(() => {
+        getData();
+    }, []);
+    //#endregion
+
+    const { data, error, mutate } = useSWR(`/api/license/${params.id}`);
 
     if (error) return <div>Yükleme Hatası!</div>;
     if (!data)
@@ -53,9 +141,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                 <CardBody className="gap-3">
                     <div className="flex items-center pb-2 pl-1">
                         <p className="text-3xl font-bold text-sky-500">
-                            {data.licenseType?.product?.brand +
-                                " " +
-                                data.licenseType.product?.model}
+                            {data.serialNo || "Seri Numarasız Lisans"}
                         </p>
                         <div className="flex-1"></div>
                         <BiX
@@ -72,18 +158,9 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                         </div>
 
                         <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
-                            <dt className="font-medium">Alım Tipi</dt>
-                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                {boughtTypes.find(
-                                    (e) => e.key == data.boughtType,
-                                )?.name || "-"}
-                            </dd>
-                        </div>
-
-                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
                             <dt className="font-medium">Lisans Tipi</dt>
                             <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                {data.licenseType.type}
+                                {data.licenseType?.type}
                             </dd>
                         </div>
 
@@ -91,7 +168,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                             <dt className="font-medium">Lisans Süresi</dt>
                             <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
                                 {data.licenseType?.duration
-                                    ? data.licenseType.duration + " ay"
+                                    ? data.licenseType?.duration + " ay"
                                     : "-"}
                             </dd>
                         </div>
@@ -109,6 +186,12 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                             </dd>
                         </div>
 
+                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
+                            <dt className="font-medium">Alım Tipi</dt>
+                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
+                                {data.boughtType?.type || "-"}
+                            </dd>
+                        </div>
                         <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
                             <dt className="font-medium">Alım Tarihi</dt>
                             <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
@@ -135,6 +218,12 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                             </dd>
                         </div>
                         <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
+                            <dt className="font-medium">Alt Bayi</dt>
+                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
+                                {data.subDealer?.name || "-"}
+                            </dd>
+                        </div>
+                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
                             <dt className="font-medium">Tedarikçi</dt>
                             <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
                                 {data.supplier?.name || "-"}
@@ -152,11 +241,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                             </Button>
                         }
                     />
-                    <Button
-                        color="primary"
-                        className="bg-red-600"
-                        // onPress={onOpen}
-                    >
+                    <Button color="primary" className="bg-red-600">
                         Sil
                     </Button>
                     <Button
@@ -172,7 +257,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
             <Accordion
                 selectionMode="multiple"
                 variant="splitted"
-                // defaultExpandedKeys={["appliance"]}
+                defaultExpandedKeys={data.appliance ? ["appliance"] : []}
                 className="p-0"
                 itemClasses={{
                     title: "font-medium text-zinc-600",
@@ -184,27 +269,28 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                     aria-label="appliance"
                     title="Cihaz Bilgileri"
                     subtitle="Bu lisansın ait olduğu cihaz bilgileri"
-                    indicator={<BiChevronLeft className="text-3xl text-zinc-500" />}
+                    indicator={
+                        <BiChevronLeft className="text-3xl text-zinc-500" />
+                    }
                     startContent={
                         <BiServer className="text-4xl text-green-600/60" />
                     }
                 >
-                    {data.appliance.length ? (
+                    {data?.appliance ? (
                         <>
                             <div className="divide-y divide-zinc-200 text-zinc-500">
                                 <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base p-2">
                                     <dt className="font-medium">Seri No</dt>
                                     <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                        {data.appliance[0]?.serialNo || "-"}
+                                        {data.appliance?.serialNo || "-"}
                                     </dd>
                                 </div>
 
                                 <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base p-2">
                                     <dt className="font-medium">Alım Tarihi</dt>
                                     <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                        {DateFormat(
-                                            data.appliance[0]?.boughtAt,
-                                        ) || "-"}
+                                        {DateFormat(data.appliance?.boughtAt) ||
+                                            "-"}
                                     </dd>
                                 </div>
                                 <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base p-2">
@@ -212,9 +298,8 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                         Satış Tarihi
                                     </dt>
                                     <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                        {DateFormat(
-                                            data.appliance[0]?.soldAt,
-                                        ) || "-"}
+                                        {DateFormat(data.appliance?.soldAt) ||
+                                            "-"}
                                     </dd>
                                 </div>
                             </div>
@@ -223,9 +308,16 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                 <Button
                                     color="primary"
                                     className="bg-sky-500"
+                                    onPress={onAppOpen}
+                                >
+                                    Cihaz Değiştir
+                                </Button>
+                                <Button
+                                    color="primary"
+                                    className="bg-green-600"
                                     onPress={() =>
                                         router.push(
-                                            `/dashboard/appliances/${data.appliance[0]?.id}`,
+                                            `/dashboard/appliances/${data.appliance?.id}`,
                                         )
                                     }
                                 >
@@ -234,14 +326,109 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                             </div>
                         </>
                     ) : (
-                        <div className="w-full py-4 text-center">
+                        <div className="w-full py-3 text-center">
                             <p className="text-zinc-400">
                                 Bu lisans herhangi bir cihaza ait değildir.
                             </p>
+                            <Button
+                                color="primary"
+                                className="bg-sky-500 mt-3"
+                                endContent={<BiPlus />}
+                                onPress={onAppOpen}
+                            >
+                                Cihaz Ekle
+                            </Button>
                         </div>
                     )}
                 </AccordionItem>
             </Accordion>
+            <Modal
+                isOpen={isAppOpen}
+                onOpenChange={onAppOpenChange}
+                size="lg"
+                placement="center"
+                backdrop="opaque"
+                shadow="lg"
+                isDismissable={false}
+                scrollBehavior="outside"
+            >
+                <ModalContent>
+                    <ModalHeader className="flex flex-col gap-1 text-zinc-500">
+                        Cihaz Ekle
+                    </ModalHeader>
+                    <ModalBody>
+                        <form
+                            action=""
+                            autoComplete="off"
+                            className="flex flex-col gap-2"
+                            onSubmit={handleSubmit(onAppSubmit)}
+                        >
+                            <div>
+                                <label
+                                    htmlFor="product"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                >
+                                    Ürün
+                                </label>
+                                <AutoComplete
+                                    onChange={async (e) => {
+                                        resetField("applianceId");
+                                        const appliances: ListBoxItem[] =
+                                            await getAppliances(true, e);
+                                        setAppliances(appliances);
+                                    }}
+                                    data={products || []}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="applianceId"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                >
+                                    Cihaz
+                                </label>
+                                <span className="flex flex-row font-normal text-xs text-zinc-400 items-center gap-1 mb-1">
+                                    <BiInfoCircle />
+                                    Cihaz seçmek için ürün seçimi yapmanız
+                                    gereklidir!
+                                </span>
+                                <Controller
+                                    control={control}
+                                    name="applianceId"
+                                    rules={{ required: true }}
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <AutoComplete
+                                            onChange={onChange}
+                                            value={value}
+                                            data={appliances || []}
+                                        />
+                                    )}
+                                />
+                            </div>
+
+                            <div className="flex flex-row gap-2 mt-4">
+                                <div className="flex-1"></div>
+                                <Button
+                                    color="danger"
+                                    onPress={onAppClose}
+                                    className="bg-red-600"
+                                >
+                                    Kapat
+                                </Button>
+                                <Button
+                                    type="submit"
+                                    color="success"
+                                    className="text-white bg-green-600"
+                                >
+                                    Kaydet
+                                </Button>
+                            </div>
+                        </form>
+                    </ModalBody>
+                </ModalContent>
+            </Modal>
         </div>
     );
 }

@@ -19,19 +19,23 @@ import { Divider } from "@nextui-org/divider";
 import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
 import DataTable from "@/components/DataTable";
 import BoolChip from "@/components/BoolChip";
-import { BiCheckCircle, BiErrorCircle, BiHelpCircle, BiInfoCircle } from "react-icons/bi";
-import { DateFormat, DateTimeFormat } from "@/utils/date";
-import useUserStore from "@/store/user";
 import IconChip from "@/components/IconChip";
 import AutoComplete from "@/components/AutoComplete";
 import {
-    getProducts,
+    BiCheckCircle,
+    BiErrorCircle,
+    BiHelpCircle,
+    BiInfoCircle,
+} from "react-icons/bi";
+import { DateFormat, DateTimeFormat } from "@/utils/date";
+import useUserStore from "@/store/user";
+import {
     getLicenseTypes,
     getCustomers,
     getDealers,
     getSuppliers,
+    getBoughtTypes,
 } from "@/lib/data";
-import { boughtTypes } from "@/lib/constants";
 
 interface IFormInput {
     id: number;
@@ -39,29 +43,30 @@ interface IFormInput {
     serialNo: string;
     startDate: string;
     expiryDate: string;
-    boughtType: string;
+    boughtTypeId: string;
     boughtAt: string;
     soldAt: string;
     licenseTypeId: number;
     customerId: number;
     dealerId: number;
+    subDealerId: number;
     supplierId: number;
     createdBy: string;
-    updatedBy: string;
 }
 
 export default function Licenses() {
     const router = useRouter();
     const { user: currUser } = useUserStore();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
-    const [products, setProducts] = useState<ListBoxItem[] | null>(null);
     const [licenseTypes, setLicenseTypes] = useState<ListBoxItem[] | null>(
         null,
     );
+    const [boughtTypes, setBoughtTypes] = useState<ListBoxItem[] | null>(null);
     const [customers, setCustomers] = useState<ListBoxItem[] | null>(null);
     const [dealers, setDealers] = useState<ListBoxItem[] | null>(null);
     const [suppliers, setSuppliers] = useState<ListBoxItem[] | null>(null);
 
+    //#region Form
     const { register, reset, resetField, handleSubmit, control } =
         useForm<IFormInput>({ defaultValues: { isStock: false } });
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
@@ -87,20 +92,22 @@ export default function Licenses() {
                 mutate();
             });
     };
+    //#endregion
 
+    //#region Table
     const visibleColumns = [
         "serialNo",
-        "product",
+        "applianceSerialNo",
         "licenseType",
         "customerName",
-        // "dealerName",
+        "dealerName",
+        "subDealerId",
         "supplierName",
         "isStock",
         "boughtType",
         // "boughtAt",
         // "soldAt",
         "expiryStatus",
-        // "actions",
     ];
 
     const sort: SortDescriptor = {
@@ -116,10 +123,15 @@ export default function Licenses() {
             searchable: true,
         },
         {
-            key: "product",
-            name: "Ürün",
+            key: "applianceSerialNo",
+            name: "Cihaz Seri Numarası",
             width: 200,
             searchable: true,
+        },
+        {
+            key: "isStock",
+            name: "Stok",
+            width: 80,
         },
         {
             key: "licenseType",
@@ -129,34 +141,8 @@ export default function Licenses() {
         },
         {
             key: "boughtType",
-            name: "Alım Türü",
+            name: "Alım Tipi",
             width: 100,
-        },
-        {
-            key: "customerName",
-            name: "Müşteri",
-            width: 120,
-            searchable: true,
-            sortable: true,
-        },
-        {
-            key: "dealerName",
-            name: "Bayi",
-            width: 120,
-            searchable: true,
-            sortable: true,
-        },
-        {
-            key: "supplierName",
-            name: "Tedarikçi",
-            width: 120,
-            searchable: true,
-            sortable: true,
-        },
-        {
-            key: "isStock",
-            name: "Stok",
-            width: 80,
         },
         {
             key: "boughtAt",
@@ -186,6 +172,34 @@ export default function Licenses() {
             width: 80,
         },
         {
+            key: "customerName",
+            name: "Müşteri",
+            width: 120,
+            searchable: true,
+            sortable: true,
+        },
+        {
+            key: "dealerName",
+            name: "Bayi",
+            width: 120,
+            searchable: true,
+            sortable: true,
+        },
+        {
+            key: "subDealerName",
+            name: "Alt Bayi",
+            width: 120,
+            searchable: true,
+            sortable: true,
+        },
+        {
+            key: "supplierName",
+            name: "Tedarikçi",
+            width: 120,
+            searchable: true,
+            sortable: true,
+        },
+        {
             key: "createdBy",
             name: "Oluşturan Kullanıcı",
             width: 80,
@@ -205,11 +219,6 @@ export default function Licenses() {
             name: "Güncellenme Tarihi",
             width: 150,
         },
-        // {
-        //     key: "actions",
-        //     name: "Aksiyonlar",
-        //     width: 100,
-        // },
     ];
 
     const renderCell = React.useCallback(
@@ -218,7 +227,7 @@ export default function Licenses() {
 
             switch (columnKey) {
                 case "product":
-                    return license.productModel;
+                    return license.productBrand + " " + license.productModel;
                 case "licenseType":
                     return license.licenseType + " " + license.licenseDuration;
                 case "isStock":
@@ -265,16 +274,6 @@ export default function Licenses() {
                             )}
                         </>
                     );
-                case "boughtType":
-                    return (
-                        <p>
-                            {cellValue
-                                ? cellValue == "first"
-                                    ? "İlk Alım"
-                                    : "İkinci Alım"
-                                : "-"}
-                        </p>
-                    );
                 case "startDate":
                     return <p>{DateFormat(cellValue)}</p>;
                 case "expiryDate":
@@ -293,16 +292,20 @@ export default function Licenses() {
         },
         [],
     );
+    //#endregion
 
+    //#region Data
     async function getData() {
-        const pro: ListBoxItem[] = await getProducts(true);
-        // const lit: ListBoxItem[] = await getLicenseTypes(true, 1);
+        // const pro: ListBoxItem[] = await getProducts(true);
+        const lit: ListBoxItem[] = await getLicenseTypes(true);
+        const bou: ListBoxItem[] = await getBoughtTypes(true);
         const cus: ListBoxItem[] = await getCustomers(true);
         const deal: ListBoxItem[] = await getDealers(true);
         const sup: ListBoxItem[] = await getSuppliers(true);
 
-        setProducts(pro);
-        // setLicenseTypes(lit);
+        // setProducts(pro);
+        setLicenseTypes(lit);
+        setBoughtTypes(bou);
         setCustomers(cus);
         setDealers(deal);
         setSuppliers(sup);
@@ -311,6 +314,7 @@ export default function Licenses() {
     useEffect(() => {
         getData();
     }, []);
+    //#endregion
 
     const { data, error, mutate } = useSWR("/api/license");
 
@@ -410,7 +414,7 @@ export default function Licenses() {
                                 />
                             </div>
 
-                            <div>
+                            {/* <div>
                                 <label
                                     htmlFor="product"
                                     className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
@@ -426,7 +430,7 @@ export default function Licenses() {
                                     }}
                                     data={products || []}
                                 />
-                            </div>
+                            </div> */}
                             <div>
                                 <label
                                     htmlFor="licenseTypeId"
@@ -488,23 +492,23 @@ export default function Licenses() {
 
                             <div>
                                 <label
-                                    htmlFor="boughtType"
+                                    htmlFor="boughtTypeId"
                                     className="block text-sm font-semibold leading-6 text-zinc-500"
                                 >
-                                    Tip
+                                    Alım Tipi
                                 </label>
                                 <div className="block w-full h-10 rounded-md border-0 px-3 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2">
                                     <select
                                         id="boughtType"
                                         className="w-full border-none text-sm text-zinc-700 outline-none"
-                                        {...register("boughtType", {})}
+                                        {...register("boughtTypeId", {})}
                                     >
                                         <option disabled selected value="">
                                             Satın alım tipi Seçiniz...
                                         </option>
-                                        {boughtTypes?.map((t) => (
-                                            <option key={t.key} value={t.key}>
-                                                {t.name}
+                                        {boughtTypes?.map((bt) => (
+                                            <option key={bt.id} value={bt.id}>
+                                                {bt.name}
                                             </option>
                                         ))}
                                     </select>
@@ -572,6 +576,27 @@ export default function Licenses() {
                                 <Controller
                                     control={control}
                                     name="dealerId"
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <AutoComplete
+                                            onChange={onChange}
+                                            value={value}
+                                            data={dealers || []}
+                                        />
+                                    )}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="subDealerId"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                >
+                                    Alt Bayi
+                                </label>
+                                <Controller
+                                    control={control}
+                                    name="subDealerId"
                                     render={({
                                         field: { onChange, value },
                                     }) => (
