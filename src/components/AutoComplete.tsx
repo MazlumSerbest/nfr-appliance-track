@@ -29,7 +29,7 @@ export default function AutoComplete(props: Props) {
                     <Combobox.Input
                         className="w-full border-none text-sm text-zinc-700 outline-none"
                         displayValue={(item: ListBoxItem) =>
-                            data.find((e) => e.id.toString() == item.toString())
+                            data.find((e) => e.id.toString() == item?.toString())
                                 ?.name || ""
                         }
                         onChange={(event) => setQuery(event.target.value)}

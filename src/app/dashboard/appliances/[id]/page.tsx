@@ -201,7 +201,7 @@ export default function ApplianceDetail({
                                                         <dd>
                                                             {DateFormat(
                                                                 lic.startDate,
-                                                            ) || " -"}
+                                                            )}
                                                         </dd>
                                                     </div>
                                                     <div className="grid grid-cols-2 gap-4">
@@ -211,7 +211,7 @@ export default function ApplianceDetail({
                                                         <dd>
                                                             {DateFormat(
                                                                 lic.expiryDate,
-                                                            ) || " -"}
+                                                            )}
                                                         </dd>
                                                     </div>
                                                 </div>

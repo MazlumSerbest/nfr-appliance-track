@@ -4,6 +4,13 @@ import prisma from "@/utils/db";
 export async function GET(request: Request) {
     try {
         const data = await prisma.connections.findMany({
+            include: {
+                customer: {
+                    select: {
+                        name: true
+                    }
+                }
+            },
             orderBy: [
                 {
                     createdAt: "desc",

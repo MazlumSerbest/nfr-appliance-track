@@ -3,12 +3,9 @@ import prisma from "@/utils/db";
 
 export async function GET(request: NextRequest) {
     try {
-        let productId = Number(request.nextUrl.searchParams.get("productId"));
-
         const data = await prisma.vLicenses.findMany({
             where: {
-                deleted: false,
-                ...(productId ? { productId: productId } : {}),
+                deleted: false
             },
             orderBy: [
                 {

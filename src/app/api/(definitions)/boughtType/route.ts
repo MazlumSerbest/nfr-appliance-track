@@ -6,7 +6,7 @@ export async function GET(request: NextRequest) {
         const data = await prisma.boughtTypes.findMany({
             orderBy: [
                 {
-                    createdAt: "desc",
+                    createdAt: "asc",
                 },
             ],
         });
