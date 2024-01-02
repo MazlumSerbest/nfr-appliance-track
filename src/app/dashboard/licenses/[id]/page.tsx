@@ -56,10 +56,10 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
     const [appliances, setAppliances] = useState<ListBoxItem[] | null>(null);
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
     const {
-        isOpen: isAppOpen,
-        onClose: onAppClose,
-        onOpen: onAppOpen,
-        onOpenChange: onAppOpenChange,
+        isOpen: isOpenApp,
+        onClose: onCloseApp,
+        onOpen: onOpenApp,
+        onOpenChange: onOpenChangeApp,
     } = useDisclosure();
     const { user: currUser } = useUserStore();
 
@@ -93,7 +93,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
         }
     };
 
-    const onAppSubmit: SubmitHandler<IFormInput> = async (data) => {
+    const onSubmitApp: SubmitHandler<IFormInput> = async (data) => {
         if (currUser) {
             const updatedBy = currUser?.username ?? "";
 
@@ -104,7 +104,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
             );
             if (lic) {
                 toast.success("Lisans cihaza eklendi!");
-                onAppClose();
+                onCloseApp();
                 reset();
                 mutate();
             } else toast.error("Bir hata oluştu! Lütfen tekrar deneyiniz.");
@@ -308,7 +308,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                 <Button
                                     color="primary"
                                     className="bg-sky-500"
-                                    onPress={onAppOpen}
+                                    onPress={onOpenApp}
                                 >
                                     Cihaz Değiştir
                                 </Button>
@@ -334,7 +334,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                 color="primary"
                                 className="bg-sky-500 mt-3"
                                 endContent={<BiPlus />}
-                                onPress={onAppOpen}
+                                onPress={onOpenApp}
                             >
                                 Cihaz Ekle
                             </Button>
@@ -343,8 +343,8 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                 </AccordionItem>
             </Accordion>
             <Modal
-                isOpen={isAppOpen}
-                onOpenChange={onAppOpenChange}
+                isOpen={isOpenApp}
+                onOpenChange={onOpenChangeApp}
                 size="lg"
                 placement="center"
                 backdrop="opaque"
@@ -361,7 +361,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                             action=""
                             autoComplete="off"
                             className="flex flex-col gap-2"
-                            onSubmit={handleSubmit(onAppSubmit)}
+                            onSubmit={handleSubmit(onSubmitApp)}
                         >
                             <div>
                                 <label
@@ -412,7 +412,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                 <div className="flex-1"></div>
                                 <Button
                                     color="danger"
-                                    onPress={onAppClose}
+                                    onPress={onCloseApp}
                                     className="bg-red-600"
                                 >
                                     Kapat
