@@ -1,11 +1,18 @@
-export async function getAppliance(forListBox?: boolean, productId?: number) {
+import toast from "react-hot-toast";
+
+export async function getAppliances(forListBox?: boolean, productId?: number) {
     const res = await fetch(
         `/api/appliance${productId ? `?productId=${productId}` : ""}`,
     );
     const appliances = await res.json();
-
+    console.log(appliances);
+    console.log(productId);
+    if (!appliances.length) {
+        toast.error("Cihaz bulunamadı!");
+        return [];
+    }
     if (forListBox)
-        return appliances.map((a: vAppliance) => ({
+        return appliances?.map((a: vAppliance) => ({
             id: a.id,
             name: a.serialNo + " - " + a.productBrand + " " + a.productModel,
         }));
@@ -17,7 +24,7 @@ export async function getLicenses(forListBox?: boolean) {
     const licenses = await res.json();
 
     if (forListBox)
-        return licenses.map((l: vLicense) => ({
+        return licenses?.map((l: vLicense) => ({
             id: l.id,
             name:
                 l.serialNo +
@@ -35,6 +42,7 @@ export async function getProducts(forListBox?: boolean) {
     const res = await fetch("/api/product");
     const products = await res.json();
 
+    if (!products) return toast.error("Ürün bulunamadı!");
     if (forListBox)
         return products
             .filter((p: Product) => p.active)

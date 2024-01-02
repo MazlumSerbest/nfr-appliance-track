@@ -8,7 +8,7 @@ export async function GET(
     try {
         const data = await prisma.licenses.findUnique({
             where: {
-                id: Number(params.id)
+                id: Number(params.id),
             },
             include: {
                 appliance: {
@@ -23,19 +23,20 @@ export async function GET(
                     select: {
                         type: true,
                         duration: true,
-                        product: {
-                            select: {
-                                type: true,
-                                brand: true,
-                                model: true,
-                            },
-                        },
+                    },
+                },
+                boughtType: {
+                    select: {
+                        type: true,
                     },
                 },
                 customer: {
                     select: { name: true },
                 },
                 dealer: {
+                    select: { name: true },
+                },
+                subDealer: {
                     select: { name: true },
                 },
                 supplier: {
