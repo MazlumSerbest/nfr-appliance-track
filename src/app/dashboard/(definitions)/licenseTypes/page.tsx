@@ -22,12 +22,10 @@ import { BiEdit, BiTrash } from "react-icons/bi";
 import { DateTimeFormat } from "@/utils/date";
 import useUserStore from "@/store/user";
 import { activeOptions } from "@/lib/constants";
-import AutoComplete from "@/components/AutoComplete";
-import { getProducts } from "@/lib/data";
 
 interface IFormInput {
     id: number;
-    productId: number;
+    brand: string;
     type: string;
     duration?: number | null;
     price?: number | null;
@@ -38,7 +36,6 @@ interface IFormInput {
 
 export default function LicenseTypes() {
     const [isNew, setIsNew] = useState(false);
-    const [products, setProducts] = useState<ListBoxItem[] | null>(null);
     const { user: currUser } = useUserStore();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
 
@@ -71,7 +68,6 @@ export default function LicenseTypes() {
     const onSubmitUpdate: SubmitHandler<IFormInput> = async (data) => {
         data.updatedBy = currUser?.username ?? "";
         data.duration = Number(data.duration);
-        delete data.product;
         data.price = 0;
 
         await fetch(`/api/licenseType/${data.id}`, {
@@ -95,7 +91,7 @@ export default function LicenseTypes() {
             });
     };
 
-    const visibleColumns = ["product", "type", "duration", "active", "actions"];
+    const visibleColumns = ["brand", "type", "duration", "active", "actions"];
 
     const sort: SortDescriptor = {
         column: "createdAt",
@@ -104,10 +100,11 @@ export default function LicenseTypes() {
 
     const columns: Column[] = [
         {
-            key: "product",
-            name: "Ürün",
+            key: "brand",
+            name: "Marka",
             width: 150,
-            // searchable: true,
+            searchable: true,
+            sortable: true,
         },
         {
             key: "type",
@@ -120,8 +117,8 @@ export default function LicenseTypes() {
             key: "duration",
             name: "Süre",
             width: 80,
+            searchable: true,
             sortable: true,
-            // searchable: true,
         },
         {
             key: "active",
@@ -161,8 +158,6 @@ export default function LicenseTypes() {
                 licenseType[columnKey as keyof typeof licenseType];
 
             switch (columnKey) {
-                case "product":
-                    return <p>{cellValue.brand + " " + cellValue.model}</p>;
                 case "active":
                     return <BoolChip value={cellValue} />;
                 case "createdAt":
@@ -202,16 +197,6 @@ export default function LicenseTypes() {
         },
         [onOpen, reset],
     );
-
-    async function getData() {
-        const pro: ListBoxItem[] = await getProducts(true);
-
-        setProducts(pro);
-    }
-
-    useEffect(() => {
-        getData();
-    }, []);
 
     const { data, error, mutate } = useSWR("/api/licenseType");
 
@@ -255,7 +240,7 @@ export default function LicenseTypes() {
             >
                 <ModalContent>
                     <ModalHeader className="flex flex-col gap-1 text-zinc-500">
-                        {isNew ? "Yeni Ürün" : "Ürün Güncelle"}
+                        {isNew ? "Yeni Lisans Tipi" : "Lisans Tipi Güncelle"}
                     </ModalHeader>
                     <ModalBody>
                         <form
@@ -268,23 +253,18 @@ export default function LicenseTypes() {
                         >
                             <div>
                                 <label
-                                    htmlFor="productId"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500 mb-2"
+                                    htmlFor="brand"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
                                 >
-                                    Ürün
+                                    Marka
                                 </label>
-                                <Controller
-                                    control={control}
-                                    name="productId"
-                                    render={({
-                                        field: { onChange, value },
-                                    }) => (
-                                        <AutoComplete
-                                            onChange={onChange}
-                                            value={value}
-                                            data={products || []}
-                                        />
-                                    )}
+                                <input
+                                    type="text"
+                                    id="brand"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    {...register("brand", {
+                                        maxLength: 50,
+                                    })}
                                 />
                             </div>
                             <div>
@@ -301,7 +281,7 @@ export default function LicenseTypes() {
                                     className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
                                     {...register("type", {
                                         required: true,
-                                        maxLength: 40,
+                                        maxLength: 50,
                                     })}
                                 />
                             </div>
