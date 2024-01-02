@@ -1,6 +1,6 @@
 "use client";
-import React, { useState } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import React, { useEffect, useState } from "react";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
 import toast from "react-hot-toast";
@@ -20,10 +20,13 @@ import BoolChip from "@/components/BoolChip";
 import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
 import useUserStore from "@/store/user";
 import { DateTimeFormat } from "@/utils/date";
+import AutoComplete from "@/components/AutoComplete";
+import { getCustomers } from "@/lib/data";
 
 interface IFormInput {
     ip: string;
     login: string;
+    customerId: number;
     password: string;
     note: string;
     createdBy: string;
@@ -32,9 +35,10 @@ interface IFormInput {
 export default function Connections() {
     const router = useRouter();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
+    const [customers, setCustomers] = useState<ListBoxItem[] | null>(null);
     const { user: currUser } = useUserStore();
 
-    const { register, reset, handleSubmit } = useForm<IFormInput>({
+    const { register, reset, handleSubmit, control } = useForm<IFormInput>({
         defaultValues: {
             note: "",
         },
@@ -62,17 +66,12 @@ export default function Connections() {
             });
     };
 
-    const visibleColumns = ["ip", "login", "note"];
+    const visibleColumns = ["ip", "login", "customer", "note"];
 
     const sort: SortDescriptor = {
         column: "createdAt",
         direction: "descending",
     };
-
-    // const activeOptions = [
-    //     { name: "Yes", key: "true" },
-    //     { name: "No", key: "false" },
-    // ];
 
     const columns: Column[] = [
         {
@@ -86,6 +85,13 @@ export default function Connections() {
             name: "Kullanıcı",
             width: 150,
             searchable: true,
+        },
+        {
+            key: "customer",
+            name: "Müşteri",
+            width: 120,
+            searchable: true,
+            sortable: true,
         },
         {
             key: "note",
@@ -112,11 +118,6 @@ export default function Connections() {
             name: "Güncellenme Tarihi",
             width: 150,
         },
-        // {
-        //     key: "actions",
-        //     name: "Aksiyonlar",
-        //     width: 100,
-        // },
     ];
 
     const renderCell = React.useCallback(
@@ -125,10 +126,12 @@ export default function Connections() {
                 connection[columnKey as keyof typeof connection];
 
             switch (columnKey) {
+                case "customer":
+                    return <p>{connection?.customer?.name || "-"}</p>;
                 case "ip":
                     return (
                         <a
-                            href={"http://" + cellValue}
+                            href={"https://" + cellValue}
                             target="_blank"
                             className="underline text-sky-400"
                         >
@@ -151,33 +154,22 @@ export default function Connections() {
                     return <p>{DateTimeFormat(cellValue)}</p>;
                 case "updatedAt":
                     return <p>{DateTimeFormat(cellValue)}</p>;
-                // case "actions":
-                //     return (
-                //         <div className="flex justify-start items-center gap-2">
-                //             <Tooltip key={connection.id + "-det"} content="Detay">
-                //                 <span className="text-xl text-green-600 active:opacity-50">
-                //                     <BiLinkExternal
-                //                         onClick={() =>
-                //                             router.push(
-                //                                 "connections/" + connection.id,
-                //                             )
-                //                         }
-                //                     />
-                //                 </span>
-                //             </Tooltip>
-                //             {/* <Tooltip key={connection.id} content="Sil">
-                //                 <span className="text-xl text-red-600 active:opacity-50">
-                //                     <BiTrash onClick={() => {}} />
-                //                 </span>
-                //             </Tooltip> */}
-                //         </div>
-                //     );
                 default:
                     return cellValue ? cellValue : "-";
             }
         },
         [],
     );
+
+    async function getData() {
+        const cus: ListBoxItem[] = await getCustomers(true);
+
+        setCustomers(cus);
+    }
+
+    useEffect(() => {
+        getData();
+    }, []);
 
     const { data, error, mutate } = useSWR("/api/connection");
 
@@ -238,7 +230,7 @@ export default function Connections() {
                                 <div className="mt-2">
                                     <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:max-w-md">
                                         <span className="flex select-none items-center pl-3 text-zinc-400 sm:text-sm">
-                                            http://
+                                            https://
                                         </span>
                                         <input
                                             type="text"
@@ -298,6 +290,28 @@ export default function Connections() {
                                         })}
                                     />
                                 </div>
+                            </div>
+
+                            <div>
+                                <label
+                                    htmlFor="customerId"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                >
+                                    Müşteri
+                                </label>
+                                <Controller
+                                    control={control}
+                                    name="customerId"
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <AutoComplete
+                                            onChange={onChange}
+                                            value={value}
+                                            data={customers || []}
+                                        />
+                                    )}
+                                />
                             </div>
                             <div>
                                 <label

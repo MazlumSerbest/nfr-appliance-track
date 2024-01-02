@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardBody, CardFooter } from "@nextui-org/card";
 import {
@@ -14,13 +14,16 @@ import { BiLinkExternal, BiX, BiShow, BiHide, BiCopy } from "react-icons/bi";
 import useSWR from "swr";
 import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
 import { CopyToClipboard } from "@/utils/functions";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import useUserStore from "@/store/user";
 import toast from "react-hot-toast";
+import AutoComplete from "@/components/AutoComplete";
+import { getCustomers } from "@/lib/data";
 
 interface IFormInput {
     ip: string;
     login: string;
+    customerId: number;
     password: string;
     note: string;
     createdBy: string;
@@ -37,9 +40,10 @@ export default function ConnectionDetail({
     const [showPassword, setShowPassword] = useState(false);
     const [con, setCon] = useState();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
+    const [customers, setCustomers] = useState<ListBoxItem[] | null>(null);
     const { user: currUser } = useUserStore();
 
-    const { register, reset, handleSubmit } = useForm<IFormInput>({
+    const { register, reset, handleSubmit, control } = useForm<IFormInput>({
         defaultValues: con,
     });
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
@@ -64,6 +68,16 @@ export default function ConnectionDetail({
                 mutate();
             });
     };
+
+    async function getData() {
+        const cus: ListBoxItem[] = await getCustomers(true);
+
+        setCustomers(cus);
+    }
+
+    useEffect(() => {
+        getData();
+    }, []);
 
     const { data, error, mutate } = useSWR(
         `/api/connection/${params.id}`,
@@ -94,7 +108,7 @@ export default function ConnectionDetail({
                             {data.ip}
                         </p>
                         <a
-                            href={`http://${data.ip}`}
+                            href={`https://${data.ip}`}
                             target="_blank"
                             className="cursor-pointer"
                         >
@@ -229,7 +243,7 @@ export default function ConnectionDetail({
                                 <div className="mt-2">
                                     <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:max-w-md">
                                         <span className="flex select-none items-center pl-3 text-zinc-400 sm:text-sm">
-                                            http://
+                                            https://
                                         </span>
                                         <input
                                             type="text"
@@ -284,6 +298,27 @@ export default function ConnectionDetail({
                                         })}
                                     />
                                 </div>
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="customerId"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                >
+                                    Müşteri
+                                </label>
+                                <Controller
+                                    control={control}
+                                    name="customerId"
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <AutoComplete
+                                            onChange={onChange}
+                                            value={value}
+                                            data={customers || []}
+                                        />
+                                    )}
+                                />
                             </div>
                             <div>
                                 <label
