@@ -1,32 +1,44 @@
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
 import prisma from "@/utils/db";
 
 export async function GET(request: Request) {
     try {
-        const data = await prisma.connections.findMany({
-            include: {
-                customer: {
-                    select: {
-                        name: true
-                    }
-                }
-            },
-            orderBy: [
-                {
-                    createdAt: "desc",
-                },
-            ],
-        });
+        const session = await getServerSession();
 
-        return NextResponse.json(data);
+        if (session) {
+            const data = await prisma.connections.findMany({
+                include: {
+                    customer: {
+                        select: {
+                            name: true,
+                        },
+                    },
+                },
+                orderBy: [
+                    {
+                        createdAt: "desc",
+                    },
+                ],
+            });
+
+            return NextResponse.json(data);
+        }
+
+        return NextResponse.json({
+            message: "Authorization Needed!",
+            status: 401,
+        });
     } catch (error) {
         return NextResponse.json({ message: error }, { status: 500 });
     }
 }
 
 export async function POST(request: Request) {
-    if (request) {
-        try {
+    try {
+        const session = await getServerSession();
+
+        if (session) {
             const connection: Connection = await request.json();
 
             const newConnection = await prisma.connections.create({
@@ -48,8 +60,13 @@ export async function POST(request: Request) {
                     { status: 400 },
                 );
             }
-        } catch (error) {
-            return NextResponse.json({ message: error }, { status: 500 });
         }
+
+        return NextResponse.json({
+            message: "Authorization Needed!",
+            status: 401,
+        });
+    } catch (error) {
+        return NextResponse.json({ message: error }, { status: 500 });
     }
 }

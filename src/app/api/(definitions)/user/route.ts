@@ -22,15 +22,20 @@ export async function GET(request: Request) {
             return NextResponse.json(data);
         }
 
-        return NextResponse.json({ message: "Authorization needed", status: 401 });
+        return NextResponse.json({
+            message: "Authorization Needed!",
+            status: 401,
+        });
     } catch (error) {
         return NextResponse.json({ message: error });
     }
 }
 
 export async function POST(request: Request) {
-    if (request) {
-        try {
+    try {
+        const session = await getServerSession();
+
+        if (session) {
             const user = await request.json();
 
             const checkUsername = await prisma.users.findUnique({
@@ -90,8 +95,13 @@ export async function POST(request: Request) {
                     }
                 },
             );
-        } catch (err) {
-            return NextResponse.json({ message: err });
         }
+
+        return NextResponse.json({
+            message: "Authorization Needed!",
+            status: 401,
+        });
+    } catch (err) {
+        return NextResponse.json({ message: err });
     }
 }

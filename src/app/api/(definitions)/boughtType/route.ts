@@ -1,25 +1,37 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
 import prisma from "@/utils/db";
 
 export async function GET(request: NextRequest) {
     try {
-        const data = await prisma.boughtTypes.findMany({
-            orderBy: [
-                {
-                    createdAt: "asc",
-                },
-            ],
-        });
+        const session = await getServerSession();
 
-        return NextResponse.json(data);
+        if (session) {
+            const data = await prisma.boughtTypes.findMany({
+                orderBy: [
+                    {
+                        createdAt: "asc",
+                    },
+                ],
+            });
+
+            return NextResponse.json(data);
+        }
+
+        return NextResponse.json({
+            message: "Authorization Needed!",
+            status: 401,
+        });
     } catch (error) {
         return NextResponse.json({ message: error }, { status: 500 });
     }
 }
 
 export async function POST(request: Request) {
-    if (request) {
-        try {
+    try {
+        const session = await getServerSession();
+
+        if (session) {
             const boughtType: BoughtType = await request.json();
 
             const newBoughtType = await prisma.boughtTypes.create({
@@ -41,8 +53,13 @@ export async function POST(request: Request) {
                     { status: 400 },
                 );
             }
-        } catch (error) {
-            return NextResponse.json({ message: error }, { status: 500 });
         }
+
+        return NextResponse.json({
+            message: "Authorization Needed!",
+            status: 401,
+        });
+    } catch (error) {
+        return NextResponse.json({ message: error }, { status: 500 });
     }
 }

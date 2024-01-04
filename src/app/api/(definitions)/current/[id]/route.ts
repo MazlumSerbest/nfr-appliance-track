@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import prisma from "@/utils/db";
+import { currentTypes } from "@/lib/constants";
 
 export async function GET(
     request: Request,
@@ -10,42 +11,21 @@ export async function GET(
         const session = await getServerSession();
 
         if (session) {
-            const data = await prisma.licenses.findUnique({
-                include: {
-                    appliance: {
-                        select: {
-                            id: true,
-                            serialNo: true,
-                            boughtAt: true,
-                            soldAt: true,
-                        },
-                    },
-                    licenseType: {
-                        select: {
-                            type: true,
-                            duration: true,
-                        },
-                    },
-                    boughtType: {
-                        select: {
-                            type: true,
-                        },
-                    },
-                    customer: {
-                        select: { name: true },
-                    },
-                    dealer: {
-                        select: { name: true },
-                    },
-                    subDealer: {
-                        select: { name: true },
-                    },
-                    supplier: {
-                        select: { name: true },
-                    },
-                },
+            const data = await prisma.currents.findUnique({
                 where: {
                     id: Number(params.id),
+                },
+                include: {
+                    authorizedPersons: {
+                        select: {
+                            id: true,
+                            isMain: true,
+                            name: true,
+                            title: true,
+                            phone: true,
+                            email: true,
+                        },
+                    },
                 },
             });
 
@@ -69,19 +49,22 @@ export async function PUT(
         const session = await getServerSession();
 
         if (session) {
-            const license: License = await request.json();
-            license.updatedAt = new Date().toISOString();
+            const current: Current = await request.json();
+            const currType = current.type;
+            current.updatedAt = new Date().toISOString();
 
-            await prisma.licenses.update({
-                data: license,
+            await prisma.currents.update({
                 where: {
                     id: Number(params.id),
                 },
+                data: current,
             });
 
             return NextResponse.json(
                 {
-                    message: "Lisans başarıyla güncellendi!",
+                    message: `${
+                        currentTypes.find((e) => e.key == currType)?.name
+                    } başarıyla güncellendi!`,
                 },
                 { status: 200 },
             );
@@ -104,13 +87,10 @@ export async function DELETE(
         const session = await getServerSession();
 
         if (session) {
-            const license: License = await request.json();
-            license.updatedAt = new Date().toISOString();
+            const current: Current = await request.json();
+            const currType = current.type;
 
-            await prisma.licenses.update({
-                data: {
-                    deleted: true,
-                },
+            await prisma.currents.delete({
                 where: {
                     id: Number(params.id),
                 },
@@ -118,7 +98,9 @@ export async function DELETE(
 
             return NextResponse.json(
                 {
-                    message: "Lisans silindi!",
+                    message: `${
+                        currentTypes.find((e) => e.key == currType)?.name
+                    } silindi!`,
                 },
                 { status: 200 },
             );

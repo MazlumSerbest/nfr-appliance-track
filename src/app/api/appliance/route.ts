@@ -1,34 +1,52 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
 import prisma from "@/utils/db";
 
 export async function GET(request: NextRequest) {
     try {
-        let productId = Number(request.nextUrl.searchParams.get("productId"));
+        const session = await getServerSession();
 
-        const data = await prisma.vAppliances.findMany({
-            where: {
-                deleted: false,
-                ...(productId ? { productId: productId } : {}),
-            },
-            orderBy: [
-                {
-                    createdAt: "desc",
+        if (session) {
+            let productId = Number(
+                request.nextUrl.searchParams.get("productId"),
+            );
+
+            const data = await prisma.vAppliances.findMany({
+                where: {
+                    deleted: false,
+                    ...(productId ? { productId: productId } : {}),
                 },
-            ],
-        });
+                orderBy: [
+                    {
+                        createdAt: "desc",
+                    },
+                ],
+            });
 
-        return NextResponse.json(data);
+            return NextResponse.json(data);
+        }
+
+        return NextResponse.json({
+            message: "Authorization Needed!",
+            status: 401,
+        });
     } catch (error) {
         return NextResponse.json({ message: error }, { status: 500 });
     }
 }
 
 export async function POST(request: Request) {
-    if (request) {
-        try {
+    try {
+        const session = await getServerSession();
+
+        if (session) {
             const appliance: Appliance = await request.json();
-            appliance.boughtAt = appliance.boughtAt ? new Date(appliance.boughtAt).toISOString() : undefined;
-            appliance.soldAt = appliance.soldAt ? new Date(appliance.soldAt).toISOString() : undefined;
+            appliance.boughtAt = appliance.boughtAt
+                ? new Date(appliance.boughtAt).toISOString()
+                : undefined;
+            appliance.soldAt = appliance.soldAt
+                ? new Date(appliance.soldAt).toISOString()
+                : undefined;
 
             const newAppliance = await prisma.appliances.create({
                 data: appliance,
@@ -49,8 +67,13 @@ export async function POST(request: Request) {
                     { status: 400 },
                 );
             }
-        } catch (error) {
-            return NextResponse.json({ message: error }, { status: 500 });
         }
+
+        return NextResponse.json({
+            message: "Authorization Needed!",
+            status: 401,
+        });
+    } catch (error) {
+        return NextResponse.json({ message: error }, { status: 500 });
     }
 }

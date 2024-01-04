@@ -10,9 +10,17 @@ export async function GET(
         const session = await getServerSession();
 
         if (session) {
-            const data = await prisma.licenseTypes.findUnique({
+            const data = await prisma.users.findUnique({
                 where: {
-                    id: Number(params.id),
+                    email: params.id,
+                },
+                select: {
+                    id: true,
+                    username: true,
+                    name: true,
+                    email: true,
+                    role: true,
+                    active: true,
                 },
             });
 
@@ -24,7 +32,7 @@ export async function GET(
             status: 401,
         });
     } catch (error) {
-        return NextResponse.json({ message: error }, { status: 500 });
+        return NextResponse.json({ message: error });
     }
 }
 
@@ -36,19 +44,19 @@ export async function PUT(
         const session = await getServerSession();
 
         if (session) {
-            const licenseType: LicenseType = await request.json();
-            licenseType.updatedAt = new Date().toISOString();
+            const user: User = await request.json();
+            user.updatedAt = new Date().toISOString();
 
-            await prisma.licenseTypes.update({
+            await prisma.users.update({
                 where: {
                     id: Number(params.id),
                 },
-                data: licenseType,
+                data: user,
             });
 
             return NextResponse.json(
                 {
-                    message: "Lisans tipi başarıyla güncellendi!",
+                    message: "Kullanıcı başarıyla güncellendi!",
                 },
                 { status: 200 },
             );

@@ -1,15 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import prisma from "@/utils/db";
+import { currentTypes } from "@/lib/constants";
 
 export async function GET(request: NextRequest) {
     try {
         const session = await getServerSession();
 
         if (session) {
-            const data = await prisma.vLicenses.findMany({
+            const currentType: any =
+                request.nextUrl.searchParams.get("currentType");
+
+            const data = await prisma.currents.findMany({
                 where: {
-                    deleted: false,
+                    type: currentType,
                 },
                 orderBy: [
                     {
@@ -35,35 +39,28 @@ export async function POST(request: Request) {
         const session = await getServerSession();
 
         if (session) {
-            const license: License = await request.json();
-            license.startDate = license.startDate
-                ? new Date(license.startDate).toISOString()
-                : undefined;
-            license.expiryDate = license.expiryDate
-                ? new Date(license.expiryDate).toISOString()
-                : undefined;
-            license.boughtAt = license.boughtAt
-                ? new Date(license.boughtAt).toISOString()
-                : undefined;
-            license.soldAt = license.soldAt
-                ? new Date(license.soldAt).toISOString()
-                : undefined;
+            const current: Current = await request.json();
+            const currType = current.type;
 
-            const newLicense = await prisma.licenses.create({
-                data: license,
+            const newDealer = await prisma.currents.create({
+                data: current,
             });
 
-            if (newLicense.id) {
+            if (newDealer.id) {
                 return NextResponse.json(
                     {
-                        message: "Lisans başarıyla kaydedildi!",
+                        message: `${
+                            currentTypes.find((e) => e.key == currType)?.name
+                        } başarıyla kaydedildi!`,
                     },
                     { status: 200 },
                 );
             } else {
                 return NextResponse.json(
                     {
-                        message: "Lisans kaydedilemedi!",
+                        message: `${
+                            currentTypes.find((e) => e.key == currType)?.name
+                        } kaydedilemedi!`,
                     },
                     { status: 400 },
                 );
