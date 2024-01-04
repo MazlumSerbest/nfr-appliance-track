@@ -7,12 +7,6 @@ type Entity = {
     updatedAt?: string;
 };
 
-type Current = {
-    name: string;
-    phone: string;
-    email: string;
-};
-
 type Path = {
     path: string;
     key: string;
@@ -55,7 +49,7 @@ type User = Entity & {
     username: string;
     name?: string;
     email: string;
-    role: string;
+    role: "admin" | "user";
 };
 
 type Appliance = Entity & {
@@ -110,17 +104,31 @@ type Product = Entity & {
 type LicenseType = Entity & {
     productId: number;
     type: string;
-    duration: number?;
-    price: Decimal?;
+    duration?: number;
+    price?: Decimal;
 };
 
 type BoughtType = Entity & {
     type: string;
 };
 
-type Customer = Entity & Current;
+type Current =  Entity & {
+    name: string;
+    type: "customer" | "dealer" | "supplier";
+    phone?: string;
+    email?: string;
+    address?: string;
+    city?: string;
+    taxOffice?: string;
+    taxNo?: string;
+};
 
-type Dealer = Entity & Current;
-
-type Supplier = Entity & Current;
+type AuthorizedPerson = Entity & {
+    currentId: number;
+    name: string;
+    isMain: boolean;
+    title?: string;
+    phone?: string;
+    email?: string;
+}
 //#endregion

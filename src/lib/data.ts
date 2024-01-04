@@ -87,43 +87,43 @@ export async function getBoughtTypes(forListBox?: boolean) {
 }
 
 export async function getCustomers(forListBox?: boolean) {
-    const res = await fetch("/api/customer");
+    const res = await fetch("/api/current?currentType=customer");
     const customers = await res.json();
 
     if (forListBox)
         return customers
-            .filter((c: Customer) => c.active)
-            .map((c: Customer) => ({
+            .filter((c: Current) => c.active)
+            .map((c: Current) => ({
                 id: c.id,
                 name: c.name,
             }));
-    return customers.filter((c: Customer) => c.active);
+    return customers.filter((c: Current) => c.active);
 }
 
 export async function getDealers(forListBox?: boolean) {
-    const res = await fetch("/api/dealer");
+    const res = await fetch("/api/current?currentType=dealer");
     const dealers = await res.json();
 
     if (forListBox)
         return dealers
-            .filter((d: Dealer) => d.active)
-            .map((d: Dealer) => ({
+            .filter((d: Current) => d.active)
+            .map((d: Current) => ({
                 id: d.id,
                 name: d.name,
             }));
-    return dealers.filter((d: Dealer) => d.active);
+    return dealers.filter((d: Current) => d.active);
 }
 
 export async function getSuppliers(forListBox?: boolean) {
-    const res = await fetch("/api/supplier");
+    const res = await fetch("/api/current?currentType=supplier");
     const suppliers = await res.json();
 
     if (forListBox)
         return suppliers
-            .filter((s: Supplier) => s.active)
-            .map((s: Supplier) => ({
+            .filter((s: Current) => s.active)
+            .map((s: Current) => ({
                 id: s.id,
                 name: s.name,
             }));
-    return suppliers.filter((s: Supplier) => s.active);
+    return suppliers.filter((s: Current) => s.active);
 }

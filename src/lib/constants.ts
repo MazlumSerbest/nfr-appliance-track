@@ -8,7 +8,8 @@ export const activeOptions = [
     { name: "Hayır", key: "false" },
 ];
 
-export const boughtTypes = [
-    { name: "İlk Alım", key: "first" },
-    { name: "İkinci Alım", key: "second" },
+export const currentTypes = [
+    { name: "Müşteri", key: "customer" },
+    { name: "Bayi", key: "dealer" },
+    { name: "Tedarikçi", key: "supplier" },
 ];

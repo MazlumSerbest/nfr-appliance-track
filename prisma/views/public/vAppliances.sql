@@ -24,11 +24,11 @@ FROM
             appliances a
             LEFT JOIN products p ON ((a."productId" = p.id))
           )
-          LEFT JOIN customers c ON ((a."customerId" = c.id))
+          LEFT JOIN currents c ON ((a."customerId" = c.id))
         )
-        LEFT JOIN dealers d ON ((a."dealerId" = d.id))
+        LEFT JOIN currents d ON ((a."dealerId" = d.id))
       )
-      LEFT JOIN dealers sd ON ((a."subDealerId" = sd.id))
+      LEFT JOIN currents sd ON ((a."subDealerId" = sd.id))
     )
-    LEFT JOIN suppliers s ON ((a."supplierId" = s.id))
+    LEFT JOIN currents s ON ((a."supplierId" = s.id))
   );
