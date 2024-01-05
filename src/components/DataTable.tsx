@@ -38,15 +38,17 @@ type Props = {
 };
 
 export default function DataTable(props: Props) {
-    const columns = props.columns;
-    const data = props.data;
-    const emptyContent = props.emptyContent;
-    const defRowsPerPage = props.defaultRowsPerPage;
-    const isCompact = props.isCompact;
-    const isStriped = props.isStriped;
-    const className = props.className;
-    const activeOptions = props.activeOptions;
-    const onAddNew = props.onAddNew;
+    const {
+        columns,
+        data,
+        emptyContent,
+        defaultRowsPerPage,
+        isCompact,
+        isStriped,
+        className,
+        activeOptions,
+        onAddNew,
+    } = props;
 
     type DataType = (typeof props.data)[0];
     const [filterValue, setFilterValue] = React.useState("");
@@ -57,7 +59,9 @@ export default function DataTable(props: Props) {
         new Set(props.initialVisibleColumNames),
     );
     const [activeFilter, setActiveFilter] = React.useState<Selection>("all");
-    const [rowsPerPage, setRowsPerPage] = React.useState<number>(defRowsPerPage || 10);
+    const [rowsPerPage, setRowsPerPage] = React.useState<number>(
+        defaultRowsPerPage || 10,
+    );
     const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
         column: props.sortOption.column,
         direction: props.sortOption.direction,
@@ -259,13 +263,22 @@ export default function DataTable(props: Props) {
                             className="bg-transparent outline-none text-zinc-400 text-sm ml-2"
                             onChange={onRowsPerPageChange}
                         >
-                            <option value="10" selected={defRowsPerPage == 10}>
+                            <option
+                                value="10"
+                                selected={defaultRowsPerPage == 10}
+                            >
                                 10
                             </option>
-                            <option value="20" selected={defRowsPerPage == 20}>
+                            <option
+                                value="20"
+                                selected={defaultRowsPerPage == 20}
+                            >
                                 20
                             </option>
-                            <option value="50" selected={defRowsPerPage == 50}>
+                            <option
+                                value="50"
+                                selected={defaultRowsPerPage == 50}
+                            >
                                 50
                             </option>
                         </select>
@@ -283,7 +296,7 @@ export default function DataTable(props: Props) {
         onRowsPerPageChange,
         onAddNew,
         data.length,
-        defRowsPerPage,
+        defaultRowsPerPage,
     ]);
     //#endregion
 
