@@ -1,7 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
+import useSWR from "swr";
 import { useRouter } from "next/navigation";
-import { Card, CardBody, CardFooter } from "@nextui-org/card";
+import { SubmitHandler, useForm, Controller } from "react-hook-form";
+
 import {
     Modal,
     ModalContent,
@@ -9,16 +11,18 @@ import {
     ModalBody,
     useDisclosure,
 } from "@nextui-org/modal";
+import { Card, CardBody, CardFooter } from "@nextui-org/card";
 import { Button } from "@nextui-org/button";
-import { BiLinkExternal, BiX, BiShow, BiHide, BiCopy } from "react-icons/bi";
-import useSWR from "swr";
+
 import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
-import { CopyToClipboard } from "@/utils/functions";
-import { SubmitHandler, useForm, Controller } from "react-hook-form";
-import useUserStore from "@/store/user";
-import toast from "react-hot-toast";
 import AutoComplete from "@/components/AutoComplete";
+import RegInfo from "@/components/buttons/RegInfo";
+import DeleteButton from "@/components/buttons/DeleteButton";
+import { CopyToClipboard } from "@/utils/functions";
+import { BiLinkExternal, BiX, BiShow, BiHide, BiCopy } from "react-icons/bi";
+import useUserStore from "@/store/user";
 import { getCustomers } from "@/lib/data";
+import toast from "react-hot-toast";
 
 interface IFormInput {
     ip: string;
@@ -29,6 +33,7 @@ interface IFormInput {
     createdBy: string;
     updatedBy: string;
     updatedAt: string;
+    customer?: Current;
 }
 
 export default function ConnectionDetail({
@@ -49,6 +54,8 @@ export default function ConnectionDetail({
     });
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         data.updatedBy = currUser?.username ?? "";
+        delete data["customer"];
+
         await fetch(`/api/connection/${params.id}`, {
             method: "PUT",
             body: JSON.stringify(data),
@@ -137,7 +144,12 @@ export default function ConnectionDetail({
                                 {data.login}
                                 <BiCopy
                                     className="text-xl text-sky-500 cursor-pointer active:opacity-50"
-                                    onClick={() => CopyToClipboard(data.login, "Kullanıcı panoya kopyalandı!")}
+                                    onClick={() =>
+                                        CopyToClipboard(
+                                            data.login,
+                                            "Kullanıcı panoya kopyalandı!",
+                                        )
+                                    }
                                 />
                             </dd>
                         </div>
@@ -170,17 +182,20 @@ export default function ConnectionDetail({
                                 <BiCopy
                                     className="text-xl text-sky-500 cursor-pointer active:opacity-50"
                                     onClick={() =>
-                                        CopyToClipboard(data.password, "Şifre panoya kopyalandı!")
+                                        CopyToClipboard(
+                                            data.password,
+                                            "Şifre panoya kopyalandı!",
+                                        )
                                     }
                                 />
                             </dd>
                         </div>
-                        {/* <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
-                            <dt className="font-medium">Aktif</dt>
+                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
+                            <dt className="font-medium">Müşteri</dt>
                             <dd className="flex flex-row col-span-1 md:col-span-2 font-light gap-2 items-center mt-1 sm:mt-0">
-                                <BoolChip value={true} />
+                                {data.customer.name || "-"}
                             </dd>
-                        </div> */}
+                        </div>
                         <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
                             <dt className="font-medium">Not</dt>
                             <dd className="flex flex-row col-span-1 md:col-span-2 font-light gap-2 items-center mt-1 sm:mt-0">
@@ -191,13 +206,30 @@ export default function ConnectionDetail({
                 </CardBody>
                 <CardFooter className="flex gap-2">
                     <div className="flex-1"></div>
-                    <Button
-                        color="primary"
-                        className="bg-red-500"
-                        // onPress={onOpen}
-                    >
-                        Sil
-                    </Button>
+                    <RegInfo
+                        data={data}
+                        trigger={
+                            <Button color="primary" className="bg-green-600">
+                                Kayıt Bilgisi
+                            </Button>
+                        }
+                    />
+                    <DeleteButton
+                        table="connections"
+                        data={data}
+                        mutate={mutate}
+                        isButton={true}
+                        router={router}
+                        trigger={
+                            <Button
+                                color="primary"
+                                className="bg-red-500"
+                            >
+                                Sil
+                            </Button>
+                        }
+                    />
+
                     <Button
                         color="primary"
                         className="bg-sky-500"
@@ -323,7 +355,6 @@ export default function ConnectionDetail({
                                         id="note"
                                         rows={3}
                                         className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
-                                        value={data.note}
                                         {...register("note", {
                                             maxLength: 400,
                                         })}
