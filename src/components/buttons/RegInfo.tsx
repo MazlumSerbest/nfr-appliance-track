@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
-
 import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/popover";
+import { Tooltip } from "@nextui-org/tooltip";
 import { DateTimeFormat } from "@/utils/date";
 
 type Props = {
@@ -9,7 +9,7 @@ type Props = {
 };
 
 export default function RegInfo(props: Props) {
-    let {data, trigger} = props;
+    let { data, trigger } = props;
 
     return (
         <Popover
@@ -18,9 +18,11 @@ export default function RegInfo(props: Props) {
             color="default"
             backdrop="opaque"
         >
-            <PopoverTrigger>
-                {trigger}
-            </PopoverTrigger>
+            <Tooltip key={data.id + "-info"} content="Kayıt Bilgisi">
+                <span className="text-xl text-sky-500 active:opacity-50 cursor-pointer flex items-center">
+                    <PopoverTrigger>{trigger}</PopoverTrigger>
+                </span>
+            </Tooltip>
             <PopoverContent>
                 <div className="flex flex-col px-1 py-2 divide-y divide-zinc-200 text-zinc-700 text-sm">
                     <div className="grid grid-cols-2">
