@@ -39,6 +39,7 @@ export default function LicenseTypes() {
     const { user: currUser } = useUserStore();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
 
+    //#region Form
     const { register, reset, handleSubmit, control } = useForm<IFormInput>({});
     const onSubmitNew: SubmitHandler<IFormInput> = async (data) => {
         data.createdBy = currUser?.username ?? "";
@@ -90,7 +91,9 @@ export default function LicenseTypes() {
                 mutate();
             });
     };
+    //#endregion
 
+    //#region Table
     const visibleColumns = ["brand", "type", "duration", "active", "actions"];
 
     const sort: SortDescriptor = {
@@ -197,6 +200,7 @@ export default function LicenseTypes() {
         },
         [onOpen, reset],
     );
+    //#endregion
 
     const { data, error, mutate } = useSWR("/api/licenseType");
 
@@ -246,7 +250,7 @@ export default function LicenseTypes() {
                         <form
                             action=""
                             autoComplete="off"
-                            className="flex flex-col gap-3"
+                            className="flex flex-col gap-2"
                             onSubmit={handleSubmit(
                                 isNew ? onSubmitNew : onSubmitUpdate,
                             )}

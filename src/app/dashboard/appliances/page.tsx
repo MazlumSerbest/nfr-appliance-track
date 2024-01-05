@@ -53,6 +53,7 @@ export default function Appliances() {
     const [dealers, setDealers] = useState<ListBoxItem[] | null>(null);
     const [suppliers, setSuppliers] = useState<ListBoxItem[] | null>(null);
 
+    //#region Form
     const { register, reset, handleSubmit, control } = useForm<IFormInput>({});
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         data.createdBy = currUser?.username ?? "";
@@ -77,7 +78,9 @@ export default function Appliances() {
                 mutate();
             });
     };
+    //#endregion
 
+    //#region Table
     const visibleColumns = [
         "serialNo",
         "product",
@@ -195,7 +198,9 @@ export default function Appliances() {
         },
         [],
     );
+    //#endregion
 
+    //#region Data
     async function getData() {
         const pro: ListBoxItem[] = await getProducts(true);
         const lic: ListBoxItem[] = await getLicenses(true);
@@ -213,6 +218,7 @@ export default function Appliances() {
     useEffect(() => {
         getData();
     }, []);
+    //#endregion
 
     const { data, error, mutate } = useSWR("/api/appliance");
 

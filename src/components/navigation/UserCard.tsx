@@ -60,6 +60,7 @@ export default function UserCard() {
                         placement="top"
                         isOpen={isOpen}
                         onOpenChange={onOpenChange}
+                        backdrop="opaque"
                     >
                         <PopoverTrigger>
                             <Button

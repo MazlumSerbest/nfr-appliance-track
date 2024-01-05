@@ -67,7 +67,7 @@ export default function Licenses() {
     const [suppliers, setSuppliers] = useState<ListBoxItem[] | null>(null);
 
     //#region Form
-    const { register, reset, resetField, handleSubmit, control } =
+    const { register, reset, handleSubmit, control } =
         useForm<IFormInput>({ defaultValues: { isStock: false } });
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         data.createdBy = currUser?.username ?? "";
@@ -385,7 +385,7 @@ export default function Licenses() {
                                                 id="isStock"
                                                 type="checkbox"
                                                 className="h-4 w-4 rounded border-zinc-300 ring-offset-1 focus:ring-2 focus:ring-sky-500 outline-none cursor-pointer accent-sky-600"
-                                                {...register("isStock", {})}
+                                                {...register("isStock")}
                                             />
                                         </div>
                                     </div>
@@ -414,23 +414,6 @@ export default function Licenses() {
                                 />
                             </div>
 
-                            {/* <div>
-                                <label
-                                    htmlFor="product"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
-                                >
-                                    Ürün
-                                </label>
-                                <AutoComplete
-                                    onChange={async (e) => {
-                                        resetField("licenseTypeId");
-                                        const licenseTypes: ListBoxItem[] =
-                                            await getLicenseTypes(true, e);
-                                        setLicenseTypes(licenseTypes);
-                                    }}
-                                    data={products || []}
-                                />
-                            </div> */}
                             <div>
                                 <label
                                     htmlFor="licenseTypeId"

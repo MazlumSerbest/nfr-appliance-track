@@ -43,6 +43,7 @@ export default function ConnectionDetail({
     const [customers, setCustomers] = useState<ListBoxItem[] | null>(null);
     const { user: currUser } = useUserStore();
 
+    //#region Form
     const { register, reset, handleSubmit, control } = useForm<IFormInput>({
         defaultValues: con,
     });
@@ -68,7 +69,9 @@ export default function ConnectionDetail({
                 mutate();
             });
     };
+    //#endregion
 
+    //#region Data
     async function getData() {
         const cus: ListBoxItem[] = await getCustomers(true);
 
@@ -78,6 +81,7 @@ export default function ConnectionDetail({
     useEffect(() => {
         getData();
     }, []);
+    //#endregion
 
     const { data, error, mutate } = useSWR(
         `/api/connection/${params.id}`,
@@ -219,26 +223,15 @@ export default function ConnectionDetail({
                     <ModalBody>
                         <form
                             autoComplete="off"
-                            className="flex flex-col gap-3"
+                            className="flex flex-col gap-2"
                             onSubmit={handleSubmit(onSubmit)}
                         >
-                            {/* <div className="">
-                                <label
-                                    htmlFor="active"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500"
-                                >
-                                    Aktif
-                                </label>
-                                <div className="mt-2">
-                                    <Switch name="active" id="ip" />
-                                </div>
-                            </div> */}
                             <div>
                                 <label
                                     htmlFor="ip"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
                                 >
-                                    IP <span className="text-red-400">*</span>
+                                    IP
                                 </label>
                                 <div className="mt-2">
                                     <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:max-w-md">
@@ -261,10 +254,9 @@ export default function ConnectionDetail({
                             <div>
                                 <label
                                     htmlFor="login"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
                                 >
-                                    Kullanıcı{" "}
-                                    <span className="text-red-400">*</span>
+                                    Kullanıcı
                                 </label>
                                 <div className="mt-2">
                                     <input
@@ -281,10 +273,9 @@ export default function ConnectionDetail({
                             <div>
                                 <label
                                     htmlFor="password"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
                                 >
-                                    Şifre{" "}
-                                    <span className="text-red-400">*</span>
+                                    Şifre
                                 </label>
                                 <div className="mt-2">
                                     <input

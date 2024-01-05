@@ -36,6 +36,7 @@ export default function BoughtTypes() {
     const { user: currUser } = useUserStore();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
 
+    //#region Form
     const { register, reset, handleSubmit, control } = useForm<IFormInput>({});
     const onSubmitNew: SubmitHandler<IFormInput> = async (data) => {
         data.createdBy = currUser?.username ?? "";
@@ -83,7 +84,9 @@ export default function BoughtTypes() {
                 mutate();
             });
     };
+    //#endregion
 
+    //#region Table
     const visibleColumns = ["type", "active", "actions"];
 
     const sort: SortDescriptor = {
@@ -176,6 +179,7 @@ export default function BoughtTypes() {
         },
         [onOpen, reset],
     );
+    //#endregion
 
     const { data, error, mutate } = useSWR("/api/boughtType");
 
@@ -225,7 +229,7 @@ export default function BoughtTypes() {
                         <form
                             action=""
                             autoComplete="off"
-                            className="flex flex-col gap-3"
+                            className="flex flex-col gap-2"
                             onSubmit={handleSubmit(
                                 isNew ? onSubmitNew : onSubmitUpdate,
                             )}

@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import useSWR from "swr";
 
 import { Card, CardBody, CardFooter } from "@nextui-org/card";
@@ -14,10 +15,9 @@ import {
 import { Accordion, AccordionItem } from "@nextui-org/accordion";
 import { Button } from "@nextui-org/button";
 
-import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
 import BoolChip from "@/components/BoolChip";
-import RegInfo from "@/components/RegInfo";
+import RegInfo from "@/components/buttons/RegInfo";
 import AutoComplete from "@/components/AutoComplete";
 import {
     BiChevronLeft,
@@ -48,6 +48,7 @@ interface IFormInput {
     supplierId: number;
     applianceId: number;
     updatedBy: string;
+    appliance?: Appliance;
 }
 
 export default function LicenseDetail({ params }: { params: { id: string } }) {
@@ -70,9 +71,10 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         if (currUser) {
             data.updatedBy = currUser?.username ?? "";
+            delete data["appliance"];
 
             await fetch("/api/license", {
-                method: "POST",
+                method: "PUT",
                 body: JSON.stringify(data),
                 headers: { "Content-Type": "application/json" },
             })
@@ -103,14 +105,13 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                 updatedBy,
             );
             if (lic) {
-                toast.success("Lisans cihaza eklendi!");
                 onCloseApp();
                 reset();
                 mutate();
+                toast.success("Lisans cihaza eklendi!");
             } else toast.error("Bir hata oluştu! Lütfen tekrar deneyiniz.");
         }
     };
-
     //#endregion
 
     //#region Data
@@ -342,6 +343,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                     )}
                 </AccordionItem>
             </Accordion>
+
             <Modal
                 isOpen={isOpenApp}
                 onOpenChange={onOpenChangeApp}
@@ -354,7 +356,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
             >
                 <ModalContent>
                     <ModalHeader className="flex flex-col gap-1 text-zinc-500">
-                        Cihaz Ekle
+                        Cihaz Ekleme
                     </ModalHeader>
                     <ModalBody>
                         <form
