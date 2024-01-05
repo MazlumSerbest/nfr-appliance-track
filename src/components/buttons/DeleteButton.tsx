@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 import { useDisclosure } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/popover";
@@ -8,15 +9,24 @@ import { deleteData } from "@/lib/prisma";
 import useUserStore from "@/store/user";
 
 type Props = {
-    table: "users" | "products" | "licenseTypes" | "boughtTypes" | "currents";
+    table:
+        | "appliances"
+        | "licenses"
+        | "connections"
+        | "users"
+        | "products"
+        | "licenseTypes"
+        | "boughtTypes"
+        | "currents";
     data: any;
     mutate?: () => void;
     trigger: ReactNode;
     isButton?: boolean;
+    router?: any;
 };
 
 export default function DeleteButton(props: Props) {
-    const { table, data, mutate, trigger, isButton } = props;
+    const { table, data, mutate, trigger, isButton, router } = props;
     const { isOpen, onClose, onOpenChange } = useDisclosure();
     const { user: currUser } = useUserStore();
 
@@ -40,7 +50,7 @@ export default function DeleteButton(props: Props) {
             )}
             <PopoverContent className="flex flex-col gap-2 p-3">
                 <h2 className="text-lg font-semibold text-zinc-600">
-                Seçili kayıt silinecektir!
+                    Seçili kayıt silinecektir!
                 </h2>
                 <p className="text-sm text-zinc-500 pb-2">
                     Devam etmek istediğinizden emin misiniz?
@@ -58,10 +68,16 @@ export default function DeleteButton(props: Props) {
                         color="danger"
                         className="bg-red-600"
                         onClick={async () => {
-                            const res = await deleteData(table, data.id, currUser?.username)
+                            const res = await deleteData(
+                                table,
+                                data.id,
+                                currUser?.username,
+                            );
                             if (res) {
                                 toast.success("Kayıt silindi!");
-                                mutate ? mutate() : null;
+                                onClose();
+                                if (isButton) router.back();
+                                else mutate ? mutate() : null;
                             } else
                                 toast.error(
                                     "Bir hata oluştu! Lütfen tekrar deneyiniz.",
