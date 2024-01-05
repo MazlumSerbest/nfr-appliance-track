@@ -1,7 +1,7 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import useSWR from "swr";
-import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
 
 import {
@@ -18,11 +18,13 @@ import { Button } from "@nextui-org/button";
 import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
 import DataTable from "@/components/DataTable";
 import BoolChip from "@/components/BoolChip";
-import { BiEdit, BiTrash } from "react-icons/bi";
+import RegInfo from "@/components/buttons/RegInfo";
+import ActiveButton from "@/components/buttons/ActiveButton";
+import DeleteButton from "@/components/buttons/DeleteButton";
 import { DateTimeFormat } from "@/utils/date";
-import useUserStore from "@/store/user";
 import { activeOptions } from "@/lib/constants";
-import AutoComplete from "@/components/AutoComplete";
+import { BiEdit, BiInfoCircle, BiTrash } from "react-icons/bi";
+import useUserStore from "@/store/user";
 
 interface IFormInput {
     id: number;
@@ -36,6 +38,8 @@ export default function BoughtTypes() {
     const { user: currUser } = useUserStore();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
 
+    const { data, error, mutate } = useSWR("/api/boughtType");
+    
     //#region Form
     const { register, reset, handleSubmit, control } = useForm<IFormInput>({});
     const onSubmitNew: SubmitHandler<IFormInput> = async (data) => {
@@ -149,6 +153,19 @@ export default function BoughtTypes() {
                 case "actions":
                     return (
                         <div className="flex justify-start items-center gap-2">
+                            <RegInfo
+                                data={boughtType}
+                                trigger={
+                                    <span>
+                                        <BiInfoCircle />
+                                    </span>
+                                }
+                            />
+                            <ActiveButton
+                                table="boughtTypes"
+                                data={boughtType}
+                                mutate={mutate}
+                            />
                             <Tooltip
                                 key={boughtType.id + "-edit"}
                                 content="Düzenle"
@@ -163,25 +180,25 @@ export default function BoughtTypes() {
                                     />
                                 </span>
                             </Tooltip>
-                            <Tooltip
-                                key={boughtType.id + "-del"}
-                                content="Sil"
-                            >
-                                <span className="text-xl text-red-600 active:opacity-50 cursor-pointer">
-                                    <BiTrash onClick={() => {}} />
-                                </span>
-                            </Tooltip>
+                            <DeleteButton
+                                table="boughtTypes"
+                                data={boughtType}
+                                mutate={mutate}
+                                trigger={
+                                    <span>
+                                        <BiTrash />
+                                    </span>
+                                }
+                            />
                         </div>
                     );
                 default:
                     return cellValue ? cellValue : "-";
             }
         },
-        [onOpen, reset],
+        [onOpen, reset, mutate],
     );
     //#endregion
-
-    const { data, error, mutate } = useSWR("/api/boughtType");
 
     if (error) return <div>Yükleme Hatası!</div>;
     if (!data)

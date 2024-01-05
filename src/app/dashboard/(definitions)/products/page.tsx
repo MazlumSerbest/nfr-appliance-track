@@ -15,11 +15,15 @@ import { SortDescriptor } from "@nextui-org/table";
 import { Tooltip } from "@nextui-org/tooltip";
 import { Button } from "@nextui-org/button";
 
-import { BiTrash, BiEdit } from "react-icons/bi";
 import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
 import BoolChip from "@/components/BoolChip";
 import DataTable from "@/components/DataTable";
+import ActiveButton from "@/components/buttons/ActiveButton";
+import RegInfo from "@/components/buttons/RegInfo";
+import DeleteButton from "@/components/buttons/DeleteButton";
+import { activeOptions } from "@/lib/constants";
 import { DateTimeFormat } from "@/utils/date";
+import { BiTrash, BiEdit, BiInfoCircle } from "react-icons/bi";
 import useUserStore from "@/store/user";
 
 type IFormInput = {
@@ -36,6 +40,9 @@ export default function Products() {
     const { user: currUser } = useUserStore();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
 
+    const { data, error, mutate } = useSWR("/api/product");
+
+    //#region Form
     const { register, reset, handleSubmit } = useForm<IFormInput>({});
     const onSubmitNew: SubmitHandler<IFormInput> = async (data) => {
         data.createdBy = currUser?.username ?? "";
@@ -61,7 +68,7 @@ export default function Products() {
     };
     const onSubmitUpdate: SubmitHandler<IFormInput> = async (data) => {
         data.updatedBy = currUser?.username ?? "";
-        
+
         await fetch(`/api/product/${data.id}`, {
             method: "PUT",
             body: JSON.stringify(data),
@@ -82,18 +89,15 @@ export default function Products() {
                 mutate();
             });
     };
+    //#endregion
 
+    //#region Table
     const visibleColumns = ["brand", "model", "type", "active", "actions"];
 
     const sort: SortDescriptor = {
         column: "createdAt",
         direction: "descending",
     };
-
-    const activeOptions = [
-        { name: "Yes", key: "true" },
-        { name: "No", key: "false" },
-    ];
 
     const columns: Column[] = [
         {
@@ -164,6 +168,19 @@ export default function Products() {
                 case "actions":
                     return (
                         <div className="relative flex justify-start items-center gap-2">
+                            <RegInfo
+                                data={product}
+                                trigger={
+                                    <span>
+                                        <BiInfoCircle />
+                                    </span>
+                                }
+                            />
+                            <ActiveButton
+                                table="products"
+                                data={product}
+                                mutate={mutate}
+                            />
                             <Tooltip
                                 key={product.id + "-edit"}
                                 content="Düzenle"
@@ -178,21 +195,25 @@ export default function Products() {
                                     />
                                 </span>
                             </Tooltip>
-                            <Tooltip key={product.id + "-del"} content="Sil">
-                                <span className="text-xl text-red-600 active:opacity-50 cursor-pointer">
-                                    <BiTrash onClick={() => {}} />
-                                </span>
-                            </Tooltip>
+                            <DeleteButton
+                                table="products"
+                                data={product}
+                                mutate={mutate}
+                                trigger={
+                                    <span>
+                                        <BiTrash />
+                                    </span>
+                                }
+                            />
                         </div>
                     );
                 default:
                     return cellValue ? cellValue : "-";
             }
         },
-        [onOpen, reset],
+        [reset, onOpen, mutate],
     );
-
-    const { data, error, mutate } = useSWR("/api/product");
+    //#endregion
 
     if (error) return <div>Yükleme Hatası!</div>;
     if (!data)
@@ -240,7 +261,7 @@ export default function Products() {
                         <form
                             action=""
                             autoComplete="off"
-                            className="flex flex-col gap-3"
+                            className="flex flex-col gap-2"
                             onSubmit={handleSubmit(
                                 isNew ? onSubmitNew : onSubmitUpdate,
                             )}
@@ -248,10 +269,9 @@ export default function Products() {
                             <div>
                                 <label
                                     htmlFor="brand"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
                                 >
-                                    Marka{" "}
-                                    <span className="text-red-400">*</span>
+                                    Marka
                                 </label>
                                 <div className="mt-2">
                                     <input
@@ -269,10 +289,9 @@ export default function Products() {
                             <div>
                                 <label
                                     htmlFor="model"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
                                 >
-                                    Model{" "}
-                                    <span className="text-red-400">*</span>
+                                    Model
                                 </label>
                                 <div className="mt-2">
                                     <input
