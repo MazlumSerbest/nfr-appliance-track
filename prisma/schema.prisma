@@ -170,7 +170,7 @@ model authorizedPersons {
   createdBy String    @db.VarChar
   updatedBy String?   @db.VarChar
   updatedAt DateTime? @updatedAt @db.Timestamptz(6)
-  current   currents  @relation(fields: [currentId], references: [id])
+  current   currents  @relation(fields: [currentId], references: [id], onDelete: Cascade)
 }
 
 view vAppliances {
