@@ -60,21 +60,18 @@ export default function ConnectionDetail({
             method: "PUT",
             body: JSON.stringify(data),
             headers: { "Content-Type": "application/json" },
-        })
-            .then(async (res) => {
-                const result = await res.json();
-                if (res.ok) {
-                    toast.success(result.message);
-                } else {
-                    toast.error(result.message);
-                }
-                return result;
-            })
-            .then(() => {
+        }).then(async (res) => {
+            const result = await res.json();
+            if (res.ok) {
+                toast.success(result.message);
                 onClose();
                 reset();
                 mutate();
-            });
+            } else {
+                toast.error(result.message);
+            }
+            return result;
+        });
     };
     //#endregion
 
@@ -221,10 +218,7 @@ export default function ConnectionDetail({
                         isButton={true}
                         router={router}
                         trigger={
-                            <Button
-                                color="primary"
-                                className="bg-red-500"
-                            >
+                            <Button color="primary" className="bg-red-500">
                                 Sil
                             </Button>
                         }
