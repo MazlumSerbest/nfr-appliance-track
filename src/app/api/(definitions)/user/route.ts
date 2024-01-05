@@ -16,6 +16,10 @@ export async function GET(request: Request) {
                     email: true,
                     role: true,
                     active: true,
+                    createdBy: true,
+                    createdAt: true,
+                    updatedBy: true,
+                    updatedAt: true,
                 },
             });
 
@@ -27,7 +31,7 @@ export async function GET(request: Request) {
             status: 401,
         });
     } catch (error) {
-        return NextResponse.json({ message: error });
+        return NextResponse.json({ message: error, status: 500 });
     }
 }
 
@@ -47,12 +51,10 @@ export async function POST(request: Request) {
                 },
             });
             if (checkUsername)
-                return NextResponse.json(
-                    {
-                        message: "This username already used for another user!",
-                    },
-                    { status: 400 },
-                );
+                return NextResponse.json({
+                    message: "Bu kullanıcı adı önceden kullanılmıştır!",
+                    status: 400,
+                });
 
             const checkEmail = await prisma.users.findUnique({
                 where: {
@@ -63,45 +65,43 @@ export async function POST(request: Request) {
                 },
             });
             if (checkEmail)
-                return NextResponse.json(
-                    {
-                        message: "This email already used for another user!",
-                    },
-                    { status: 400 },
-                );
+                return NextResponse.json({
+                    message: "Bu e-posta önceden kullanılmıştır!",
+                    status: 400,
+                });
 
-            bcrypt.hash(
-                user.password,
-                10,
-                async function (err: Error | undefined, hash: string) {
-                    if (!err) {
-                        user.password = hash;
+            const hashedPassword = await bcrypt.hash(user.password, 10);
 
-                        const newUser = await prisma.users.create({
-                            data: user,
-                        });
+            if (hashedPassword) {
+                user.password = hashedPassword;
 
-                        if (newUser.id) {
-                            return NextResponse.json({
-                                message: "User created successfully!",
-                            });
-                        } else {
-                            return NextResponse.json({
-                                message: "User didn't created!",
-                            });
-                        }
-                    } else {
-                        return NextResponse.json({ message: err });
-                    }
-                },
-            );
+                const newUser = await prisma.users.create({
+                    data: user,
+                });
+
+                if (newUser.id) {
+                    return NextResponse.json({
+                        message: "Kullanıcı başarıyla oluşturuldu!",
+                        status: 200,
+                    });
+                } else {
+                    return NextResponse.json({
+                        message: "Kullanıcı oluşturulamadı!",
+                        status: 200,
+                    });
+                }
+            } else
+                return NextResponse.json({
+                    message: "Kullanıcı kaydedilemedi!",
+                    status: 400,
+                });
         }
 
         return NextResponse.json({
             message: "Authorization Needed!",
             status: 401,
         });
-    } catch (err) {
-        return NextResponse.json({ message: err });
+    } catch (error) {
+        return NextResponse.json({ message: error, status: 500 });
     }
 }

@@ -57,7 +57,7 @@ export async function GET(
             status: 401,
         });
     } catch (error) {
-        return NextResponse.json({ message: error }, { status: 500 });
+        return NextResponse.json({ message: error, status: 500 });
     }
 }
 
@@ -79,12 +79,10 @@ export async function PUT(
                 },
             });
 
-            return NextResponse.json(
-                {
-                    message: "Lisans başarıyla güncellendi!",
-                },
-                { status: 200 },
-            );
+            return NextResponse.json({
+                message: "Lisans başarıyla güncellendi!",
+                status: 200,
+            });
         }
 
         return NextResponse.json({
@@ -92,7 +90,7 @@ export async function PUT(
             status: 401,
         });
     } catch (error) {
-        return NextResponse.json({ message: error }, { status: 500 });
+        return NextResponse.json({ message: error, status: 500 });
     }
 }
 
@@ -116,12 +114,10 @@ export async function DELETE(
                 },
             });
 
-            return NextResponse.json(
-                {
-                    message: "Lisans silindi!",
-                },
-                { status: 200 },
-            );
+            return NextResponse.json({
+                message: "Lisans silindi!",
+                status: 200,
+            });
         }
 
         return NextResponse.json({
@@ -129,6 +125,6 @@ export async function DELETE(
             status: 401,
         });
     } catch (error) {
-        return NextResponse.json({ message: error }, { status: 500 });
+        return NextResponse.json({ message: error, status: 500 });
     }
 }

@@ -37,7 +37,7 @@ export async function GET(
             status: 401,
         });
     } catch (error) {
-        return NextResponse.json({ message: error }, { status: 500 });
+        return NextResponse.json({ message: error, status: 500 });
     }
 }
 
@@ -60,14 +60,12 @@ export async function PUT(
                 data: current,
             });
 
-            return NextResponse.json(
-                {
-                    message: `${
-                        currentTypes.find((e) => e.key == currType)?.name
-                    } başarıyla güncellendi!`,
-                },
-                { status: 200 },
-            );
+            return NextResponse.json({
+                message: `${
+                    currentTypes.find((e) => e.key == currType)?.name
+                } başarıyla güncellendi!`,
+                status: 200,
+            });
         }
 
         return NextResponse.json({
@@ -75,7 +73,7 @@ export async function PUT(
             status: 401,
         });
     } catch (error) {
-        return NextResponse.json({ message: error }, { status: 500 });
+        return NextResponse.json({ message: error, status: 500 });
     }
 }
 
@@ -96,14 +94,12 @@ export async function DELETE(
                 },
             });
 
-            return NextResponse.json(
-                {
-                    message: `${
-                        currentTypes.find((e) => e.key == currType)?.name
-                    } silindi!`,
-                },
-                { status: 200 },
-            );
+            return NextResponse.json({
+                message: `${
+                    currentTypes.find((e) => e.key == currType)?.name
+                } silindi!`,
+                status: 200,
+            });
         }
 
         return NextResponse.json({
@@ -111,6 +107,6 @@ export async function DELETE(
             status: 401,
         });
     } catch (error) {
-        return NextResponse.json({ message: error }, { status: 500 });
+        return NextResponse.json({ message: error, status: 500 });
     }
 }

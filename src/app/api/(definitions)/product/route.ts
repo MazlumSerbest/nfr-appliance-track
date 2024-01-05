@@ -23,7 +23,7 @@ export async function GET(request: Request) {
             status: 401,
         });
     } catch (error) {
-        return NextResponse.json({ message: error }, { status: 500 });
+        return NextResponse.json({ message: error, status: 500 });
     }
 }
 
@@ -37,22 +37,18 @@ export async function POST(request: Request) {
             });
 
             if (newProduct.id) {
-                return NextResponse.json(
-                    {
-                        message: "Ürün başarıyla kaydedildi!",
-                    },
-                    { status: 200 },
-                );
+                return NextResponse.json({
+                    message: "Ürün başarıyla kaydedildi!",
+                    status: 200,
+                });
             } else {
-                return NextResponse.json(
-                    {
-                        message: "Ürün kaydedilemedi!",
-                    },
-                    { status: 400 },
-                );
+                return NextResponse.json({
+                    message: "Ürün kaydedilemedi!",
+                    status: 400,
+                });
             }
         } catch (error) {
-            return NextResponse.json({ message: error }, { status: 500 });
+            return NextResponse.json({ message: error, status: 500 });
         }
     }
 }

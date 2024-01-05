@@ -31,7 +31,7 @@ export async function GET(
             status: 401,
         });
     } catch (error) {
-        return NextResponse.json({ message: error }, { status: 500 });
+        return NextResponse.json({ message: error, status: 500 });
     }
 }
 
@@ -55,9 +55,7 @@ export async function PUT(
 
             return NextResponse.json(
                 {
-                    message: "Bağlantı başarıyla güncellendi!",
-                },
-                { status: 200 },
+                    message: "Bağlantı başarıyla güncellendi!", status: 200 },
             );
         }
 
@@ -66,6 +64,6 @@ export async function PUT(
             status: 401,
         });
     } catch (error) {
-        return NextResponse.json({ message: error }, { status: 500 });
+        return NextResponse.json({ message: error, status: 500 });
     }
 }

@@ -21,6 +21,10 @@ export async function GET(
                     email: true,
                     role: true,
                     active: true,
+                    createdBy: true,
+                    createdAt: true,
+                    updatedBy: true,
+                    updatedAt: true,
                 },
             });
 
@@ -32,7 +36,7 @@ export async function GET(
             status: 401,
         });
     } catch (error) {
-        return NextResponse.json({ message: error });
+        return NextResponse.json({ message: error, status: 500 });
     }
 }
 
@@ -54,12 +58,10 @@ export async function PUT(
                 data: user,
             });
 
-            return NextResponse.json(
-                {
-                    message: "Kullanıcı başarıyla güncellendi!",
-                },
-                { status: 200 },
-            );
+            return NextResponse.json({
+                message: "Kullanıcı başarıyla güncellendi!",
+                status: 200,
+            });
         }
 
         return NextResponse.json({
@@ -67,6 +69,6 @@ export async function PUT(
             status: 401,
         });
     } catch (error) {
-        return NextResponse.json({ message: error }, { status: 500 });
+        return NextResponse.json({ message: error, status: 500 });
     }
 }
