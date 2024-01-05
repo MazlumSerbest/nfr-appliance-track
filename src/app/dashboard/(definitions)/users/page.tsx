@@ -1,8 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import useSWR from "swr";
 import { useForm, SubmitHandler } from "react-hook-form";
-import useUserStore from "@/store/user";
 import toast from "react-hot-toast";
 
 import {
@@ -19,58 +18,93 @@ import { Button } from "@nextui-org/button";
 import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
 import DataTable from "@/components/DataTable";
 import BoolChip from "@/components/BoolChip";
-import {
-    BiCheckCircle,
-    BiEdit,
-    BiLockAlt,
-    BiTrash,
-    BiXCircle,
-} from "react-icons/bi";
+import ActiveButton from "@/components/buttons/ActiveButton";
+import DeleteButton from "@/components/buttons/DeleteButton";
+import RegInfo from "@/components/buttons/RegInfo";
+import { BiEdit, BiInfoCircle, BiLockAlt, BiTrash } from "react-icons/bi";
 import { DateTimeFormat } from "@/utils/date";
 import { activeOptions, userTypes } from "@/lib/constants";
+import useUserStore from "@/store/user";
 
 interface IFormInput {
+    id: number;
     username: string;
     name?: string;
     email: string;
     role: string;
-    password: string;
-    confirmPassword: string;
+    password?: string;
+    confirmPassword?: string;
     createdBy: string;
     updatedBy?: string;
 }
 
 export default function Users() {
-    const router = useRouter();
     const [users, setUsers] = useState();
+    const [isNew, setIsNew] = useState(false);
     const { user: currUser } = useUserStore();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
 
-    const { register, reset, handleSubmit, getValues, formState: { errors } } = useForm<IFormInput>();
-    const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    const { data, error, mutate } = useSWR("/api/user", null, {
+        onSuccess: (data) => {
+            setUsers(data);
+        },
+    });
+
+    //#region Form
+    const {
+        register,
+        reset,
+        handleSubmit,
+        getValues,
+        formState: { errors },
+    } = useForm<IFormInput>();
+    const onSubmitNew: SubmitHandler<IFormInput> = async (data) => {
         data.createdBy = currUser?.username ?? "";
+        delete data["confirmPassword"];
 
         await fetch("/api/user", {
             method: "POST",
             body: JSON.stringify(data),
             headers: { "Content-Type": "application/json" },
-        })
-            .then(async (res) => {
-                const result = await res.json();
-                if (res.ok) {
-                    toast.success(result.message);
-                } else {
-                    toast.error(result.message);
-                }
-                return result;
-            })
-            .then(() => {
+        }).then(async (res) => {
+            const result = await res.json();
+            if (res.ok) {
+                toast.success(result.message);
                 onClose();
                 reset();
-                // mutate();
-            });
+                mutate();
+            } else {
+                toast.error(result.message);
+            }
+            return result;
+        });
     };
 
+    const onSubmitUpdate: SubmitHandler<IFormInput> = async (data) => {
+        data.createdBy = currUser?.username ?? "";
+        delete data["confirmPassword"];
+
+        await fetch(`/api/user/${data.id}`, {
+            method: "PUT",
+            body: JSON.stringify(data),
+            headers: { "Content-Type": "application/json" },
+        }).then(async (res) => {
+            console.log(res);
+            const result = await res.json();
+            if (res.ok) {
+                toast.success(result.message);
+                onClose();
+                reset();
+                mutate();
+            } else {
+                toast.error(result.message);
+            }
+            return result;
+        });
+    };
+    //#endregion
+
+    //#region Table
     const visibleColumns = [
         "username",
         "name",
@@ -110,6 +144,7 @@ export default function Users() {
         {
             key: "role",
             name: "Rol",
+            searchable: true,
             width: 100,
         },
         {
@@ -167,6 +202,19 @@ export default function Users() {
                                         "-"
                                     ) : (
                                         <>
+                                            <RegInfo
+                                                data={user}
+                                                trigger={
+                                                    <span>
+                                                        <BiInfoCircle />
+                                                    </span>
+                                                }
+                                            />
+                                            <ActiveButton
+                                                table="users"
+                                                data={user}
+                                                mutate={mutate}
+                                            />
                                             <Tooltip
                                                 key={user.id + "-edit"}
                                                 content="Düzenle"
@@ -174,14 +222,14 @@ export default function Users() {
                                                 <span className="text-xl text-green-600 active:opacity-50 cursor-pointer">
                                                     <BiEdit
                                                         onClick={() => {
-                                                            // setIsNew(false);
-                                                            // reset(user);
+                                                            setIsNew(false);
+                                                            reset(user);
                                                             onOpen();
                                                         }}
                                                     />
                                                 </span>
                                             </Tooltip>
-                                            <Tooltip
+                                            {/* <Tooltip
                                                 key={user.id + "-pass"}
                                                 content="Şifre Değiştir"
                                             >
@@ -190,40 +238,17 @@ export default function Users() {
                                                         onClick={() => {}}
                                                     />
                                                 </span>
-                                            </Tooltip>
-                                            {user.active ? (
-                                                <Tooltip
-                                                    key={user.id + "-act"}
-                                                    content="Pasif Yap"
-                                                >
-                                                    <span className="text-xl text-red-600 active:opacity-50 cursor-pointer">
-                                                        <BiXCircle
-                                                            onClick={() => {}}
-                                                        />
+                                            </Tooltip> */}
+                                            <DeleteButton
+                                                table="users"
+                                                data={user}
+                                                mutate={mutate}
+                                                trigger={
+                                                    <span>
+                                                        <BiTrash />
                                                     </span>
-                                                </Tooltip>
-                                            ) : (
-                                                <Tooltip
-                                                    key={user.id + "-act"}
-                                                    content="Aktif Yap"
-                                                >
-                                                    <span className="text-xl text-green-600 active:opacity-50 cursor-pointer">
-                                                        <BiCheckCircle
-                                                            onClick={() => {}}
-                                                        />
-                                                    </span>
-                                                </Tooltip>
-                                            )}
-                                            <Tooltip
-                                                key={user.id + "-del"}
-                                                content="Sil"
-                                            >
-                                                <span className="text-xl text-red-600 active:opacity-50 cursor-pointer">
-                                                    <BiTrash
-                                                        onClick={() => {}}
-                                                    />
-                                                </span>
-                                            </Tooltip>
+                                                }
+                                            />
                                         </>
                                     )}
                                 </div>
@@ -236,142 +261,145 @@ export default function Users() {
                     return cellValue ? cellValue : "-";
             }
         },
-        [currUser?.role, onOpen],
+        [currUser?.role, onOpen, reset, mutate],
     );
+    //#endregion
 
-    useEffect(() => {
-        fetch("/api/user")
-            .then((res) => res.json())
-            .then((users) => {
-                setUsers(users);
-            });
-    }, [setUsers]);
-
+    if (error) return <div>Yükleme Hatası!</div>;
+    if (!data)
+        return (
+            <div className="flex flex-col mt-4">
+                <Skeleton>
+                    <TableSkeleton />
+                </Skeleton>
+            </div>
+        );
     return (
         <>
-            {users ? (
-                <>
-                    <DataTable
-                        isCompact
-                        isStriped
-                        className="mt-4 mb-2"
-                        emptyContent="Herhangi bir kullanıcı bulunamadı!"
-                        data={users || []}
-                        columns={columns}
-                        renderCell={renderCell}
-                        sortOption={sort}
-                        initialVisibleColumNames={visibleColumns}
-                        activeOptions={activeOptions}
-                        onAddNew={() => onOpen()}
-                    />
-                    <Modal
-                        isOpen={isOpen}
-                        onOpenChange={onOpenChange}
-                        placement="center"
-                        backdrop="opaque"
-                        shadow="lg"
-                        isDismissable={false}
-                        scrollBehavior="outside"
-                    >
-                        <ModalContent>
-                            <ModalHeader className="flex flex-col gap-1 text-zinc-500">
-                                Yeni Kullanıcı
-                            </ModalHeader>
-                            <ModalBody>
-                                <form
-                                    action=""
-                                    autoComplete="off"
-                                    className="flex flex-col gap-2"
-                                    onSubmit={handleSubmit(onSubmit)}
+            <DataTable
+                isCompact
+                isStriped
+                className="mt-4 mb-2"
+                emptyContent="Herhangi bir kullanıcı bulunamadı!"
+                data={users || []}
+                columns={columns}
+                renderCell={renderCell}
+                sortOption={sort}
+                initialVisibleColumNames={visibleColumns}
+                activeOptions={activeOptions}
+                onAddNew={() => {
+                    setIsNew(true);
+                    reset({});
+                    reset({});
+                    onOpen();
+                }}
+            />
+            <Modal
+                isOpen={isOpen}
+                onOpenChange={onOpenChange}
+                placement="center"
+                backdrop="opaque"
+                shadow="lg"
+                isDismissable={false}
+                scrollBehavior="outside"
+            >
+                <ModalContent>
+                    <ModalHeader className="flex flex-col gap-1 text-zinc-500">
+                        {isNew ? "Yeni Kullanıcı" : "Kullanıcı Güncelle"}
+                    </ModalHeader>
+                    <ModalBody>
+                        <form
+                            action=""
+                            autoComplete="off"
+                            className="flex flex-col gap-2"
+                            onSubmit={handleSubmit(
+                                isNew ? onSubmitNew : onSubmitUpdate,
+                            )}
+                        >
+                            <div>
+                                <label
+                                    htmlFor="username"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
                                 >
-                                    <div>
-                                        <label
-                                            htmlFor="username"
-                                            className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
-                                        >
-                                            Kullanıcı Adı
-                                        </label>
-                                        <input
-                                            type="text"
-                                            id="username"
-                                            required
-                                            className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
-                                            {...register("username", {
-                                                required: true,
-                                                maxLength: 20,
-                                            })}
-                                        />
-                                    </div>
-                                    <div>
-                                        <label
-                                            htmlFor="name"
-                                            className="block text-sm font-semibold leading-6 text-zinc-500"
-                                        >
-                                            Ad
-                                        </label>
-                                        <input
-                                            type="text"
-                                            id="name"
-                                            className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
-                                            {...register("username", {
-                                                maxLength: 50,
-                                            })}
-                                        />
-                                    </div>
-                                    <div>
-                                        <label
-                                            htmlFor="email"
-                                            className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
-                                        >
-                                            E-Posta
-                                        </label>
-                                        <input
-                                            type="email"
-                                            id="email"
-                                            required
-                                            className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
-                                            {...register("email", {
-                                                required: true,
-                                                maxLength: 50,
-                                            })}
-                                        />
-                                    </div>
+                                    Kullanıcı Adı
+                                </label>
+                                <input
+                                    type="text"
+                                    id="username"
+                                    required
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    {...register("username", {
+                                        required: true,
+                                        maxLength: 20,
+                                        minLength: 4,
+                                    })}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="name"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Ad
+                                </label>
+                                <input
+                                    type="text"
+                                    id="name"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    {...register("name", {
+                                        maxLength: 50,
+                                    })}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="email"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                >
+                                    E-Posta
+                                </label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    required
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    {...register("email", {
+                                        required: true,
+                                        maxLength: 50,
+                                    })}
+                                />
+                            </div>
 
-                                    <div>
-                                        <label
-                                            htmlFor="role"
-                                            className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
-                                        >
-                                            Tip
-                                        </label>
-                                        <div className="block w-full h-10 rounded-md border-0 px-3 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2">
-                                            <select
-                                                id="role"
-                                                required
-                                                className="w-full border-none text-sm text-zinc-700 outline-none"
-                                                {...register("role", {
-                                                    required: true,
-                                                })}
-                                            >
-                                                <option
-                                                    disabled
-                                                    selected
-                                                    value=""
-                                                >
-                                                    Tip Seçiniz...
-                                                </option>
-                                                {userTypes?.map((t) => (
-                                                    <option
-                                                        key={t.key}
-                                                        value={t.key}
-                                                    >
-                                                        {t.name}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                    </div>
+                            <div>
+                                <label
+                                    htmlFor="role"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                >
+                                    Tip
+                                </label>
+                                <div className="block w-full h-10 rounded-md border-0 px-3 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2">
+                                    <select
+                                        id="role"
+                                        required
+                                        className="w-full border-none text-sm text-zinc-700 outline-none"
+                                        {...register("role", {
+                                            required: true,
+                                        })}
+                                    >
+                                        <option disabled selected value="">
+                                            Tip Seçiniz...
+                                        </option>
+                                        {userTypes?.map((t) => (
+                                            <option key={t.key} value={t.key}>
+                                                {t.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
 
+                            {isNew ? (
+                                <>
                                     <div>
                                         <label
                                             htmlFor="password"
@@ -387,6 +415,7 @@ export default function Users() {
                                             {...register("password", {
                                                 required: true,
                                                 maxLength: 30,
+                                                minLength: 8,
                                             })}
                                         />
                                     </div>
@@ -405,6 +434,7 @@ export default function Users() {
                                             {...register("confirmPassword", {
                                                 required: true,
                                                 maxLength: 30,
+                                                minLength: 8,
                                                 validate: (value) => {
                                                     const { password } =
                                                         getValues();
@@ -416,36 +446,36 @@ export default function Users() {
                                             })}
                                         />
                                     </div>
-                                            {errors.confirmPassword?.message}
-                                    <div className="flex flex-row gap-2 mt-4">
-                                        <div className="flex-1"></div>
-                                        <Button
-                                            color="danger"
-                                            onPress={onClose}
-                                            className="bg-red-600"
-                                        >
-                                            Kapat
-                                        </Button>
-                                        <Button
-                                            type="submit"
-                                            color="success"
-                                            className="text-white bg-green-600"
-                                        >
-                                            Kaydet
-                                        </Button>
-                                    </div>
-                                </form>
-                            </ModalBody>
-                        </ModalContent>
-                    </Modal>
-                </>
-            ) : (
-                <div className="flex flex-col mt-4">
-                    <Skeleton>
-                        <TableSkeleton />
-                    </Skeleton>
-                </div>
-            )}
+                                </>
+                            ) : (
+                                <></>
+                            )}
+                            {
+                                <p className="text-base text-red-600">
+                                    {errors.confirmPassword?.message}
+                                </p>
+                            }
+                            <div className="flex flex-row gap-2 mt-4">
+                                <div className="flex-1"></div>
+                                <Button
+                                    color="danger"
+                                    onPress={onClose}
+                                    className="bg-red-600"
+                                >
+                                    Kapat
+                                </Button>
+                                <Button
+                                    type="submit"
+                                    color="success"
+                                    className="text-white bg-green-600"
+                                >
+                                    Kaydet
+                                </Button>
+                            </div>
+                        </form>
+                    </ModalBody>
+                </ModalContent>
+            </Modal>
         </>
     );
 }
