@@ -37,11 +37,12 @@ export default function Suppliers() {
     const { user: currUser } = useUserStore();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
 
+    //#region Form
     const { register, reset, handleSubmit } = useForm<IFormInput>({});
     const onSubmitNew: SubmitHandler<IFormInput> = async (data) => {
         data.createdBy = currUser?.username ?? "";
 
-        await fetch("/api/supplier", {
+        await fetch("/api/current", {
             method: "POST",
             body: JSON.stringify(data),
             headers: { "Content-Type": "application/json" },
@@ -64,7 +65,7 @@ export default function Suppliers() {
     const onSubmitUpdate: SubmitHandler<IFormInput> = async (data) => {
         data.updatedBy = currUser?.username ?? "";
 
-        await fetch(`/api/supplier/${data.id}`, {
+        await fetch(`/api/current/${data.id}`, {
             method: "PUT",
             body: JSON.stringify(data),
             headers: { "Content-Type": "application/json" },
@@ -84,7 +85,9 @@ export default function Suppliers() {
                 mutate();
             });
     };
+    //#endregion
 
+    //#region Table
     const visibleColumns = ["name", "phone", "email", "active", "actions"];
 
     const sort: SortDescriptor = {
@@ -145,7 +148,7 @@ export default function Suppliers() {
     ];
 
     const renderCell = React.useCallback(
-        (supplier: Supplier, columnKey: React.Key) => {
+        (supplier: Current, columnKey: React.Key) => {
             const cellValue: any = supplier[columnKey as keyof typeof supplier];
 
             switch (columnKey) {
@@ -182,6 +185,7 @@ export default function Suppliers() {
         },
         [onOpen, reset],
     );
+    //#endregion
 
     const { data, error, mutate } = useSWR("/api/supplier");
 
@@ -239,9 +243,9 @@ export default function Suppliers() {
                             <div>
                                 <label
                                     htmlFor="name"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
                                 >
-                                    Ad <span className="text-red-400">*</span>
+                                    Ad
                                 </label>
                                 <input
                                     type="text"
@@ -257,10 +261,9 @@ export default function Suppliers() {
                             <div>
                                 <label
                                     htmlFor="phone"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
                                 >
-                                    Telefon{" "}
-                                    <span className="text-red-400">*</span>
+                                    Telefon
                                 </label>
                                 <input
                                     type="text"
@@ -276,10 +279,9 @@ export default function Suppliers() {
                             <div>
                                 <label
                                     htmlFor="email"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
                                 >
-                                    E-Posta{" "}
-                                    <span className="text-red-400">*</span>
+                                    E-Posta
                                 </label>
                                 <input
                                     type="text"
