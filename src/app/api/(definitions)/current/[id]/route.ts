@@ -16,16 +16,7 @@ export async function GET(
                     id: Number(params.id),
                 },
                 include: {
-                    authorizedPersons: {
-                        select: {
-                            id: true,
-                            isMain: true,
-                            name: true,
-                            title: true,
-                            phone: true,
-                            email: true,
-                        },
-                    },
+                    authorizedPersons: true,
                 },
             });
 
