@@ -19,7 +19,7 @@ export default function RegInfo(props: Props) {
             backdrop="opaque"
         >
             <Tooltip key={data.id + "-info"} content="Kayıt Bilgisi">
-                <span className="text-xl text-sky-500 active:opacity-50 cursor-pointer flex items-center">
+                <span className="text-xl text-zinc-500 active:opacity-50 cursor-pointer flex items-center">
                     <PopoverTrigger>{trigger}</PopoverTrigger>
                 </span>
             </Tooltip>

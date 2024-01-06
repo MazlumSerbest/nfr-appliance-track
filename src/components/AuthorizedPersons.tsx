@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { currentTypes } from "@/lib/constants";
 
 import { Accordion, AccordionItem } from "@nextui-org/accordion";
 import {
@@ -16,6 +15,7 @@ import { Tooltip } from "@nextui-org/tooltip";
 import {
     BiChevronLeft,
     BiEdit,
+    BiInfoCircle,
     BiMailSend,
     BiPhoneOutgoing,
     BiPlus,
@@ -23,7 +23,10 @@ import {
     BiUserVoice,
 } from "react-icons/bi";
 import useUserStore from "@/store/user";
+import RegInfo from "./buttons/RegInfo";
+import DeleteButton from "./buttons/DeleteButton";
 import toast from "react-hot-toast";
+import { currentTypes } from "@/lib/constants";
 import {
     newAuthorizedPerson,
     setMainAuthorizedPerson,
@@ -52,15 +55,12 @@ type Props = {
 export default function AuthorizedPersons(props: Props) {
     const { currentId, currentType, personList, mutate } = props;
     const [isNew, setIsNew] = useState(false);
-    const [per, setPer] = useState();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
     const { user: currUser } = useUserStore();
 
     //#region Form
     const { register, reset, resetField, handleSubmit, control } =
-        useForm<IFormInput>({
-            defaultValues: per,
-        });
+        useForm<IFormInput>();
 
     const onSubmitNew: SubmitHandler<IFormInput> = async (data: any) => {
         data.createdBy = currUser?.username ?? "";
@@ -217,6 +217,14 @@ export default function AuthorizedPersons(props: Props) {
                                                         ) : (
                                                             <></>
                                                         )}
+                                                        <RegInfo
+                                                            data={ap}
+                                                            trigger={
+                                                                <span>
+                                                                    <BiInfoCircle />
+                                                                </span>
+                                                            }
+                                                        />
                                                         <Tooltip
                                                             key={
                                                                 ap.id + "-edit"
@@ -237,16 +245,16 @@ export default function AuthorizedPersons(props: Props) {
                                                                 />
                                                             </span>
                                                         </Tooltip>
-                                                        <Tooltip
-                                                            key={ap.id + "-del"}
-                                                            content="Sil"
-                                                        >
-                                                            <span className="text-xl text-red-600 active:opacity-50 cursor-pointer">
-                                                                <BiTrash
-                                                                    onClick={() => {}}
-                                                                />
-                                                            </span>
-                                                        </Tooltip>
+                                                        <DeleteButton
+                                                            table="authorizedPersons"
+                                                            data={ap}
+                                                            mutate={mutate}
+                                                            trigger={
+                                                                <span>
+                                                                    <BiTrash />
+                                                                </span>
+                                                            }
+                                                        />
                                                     </div>
                                                 </div>
                                             </li>
