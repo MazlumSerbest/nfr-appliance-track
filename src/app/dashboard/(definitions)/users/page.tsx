@@ -316,25 +316,30 @@ export default function Users() {
                                 isNew ? onSubmitNew : onSubmitUpdate,
                             )}
                         >
-                            <div>
-                                <label
-                                    htmlFor="username"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
-                                >
-                                    Kullanıcı Adı
-                                </label>
-                                <input
-                                    type="text"
-                                    id="username"
-                                    required
-                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
-                                    {...register("username", {
-                                        required: true,
-                                        maxLength: 20,
-                                        minLength: 4,
-                                    })}
-                                />
-                            </div>
+                            {isNew ? (
+                                <div>
+                                    <label
+                                        htmlFor="username"
+                                        className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                    >
+                                        Kullanıcı Adı
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="username"
+                                        required
+                                        className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                        {...register("username", {
+                                            required: true,
+                                            maxLength: 20,
+                                            minLength: 4,
+                                        })}
+                                    />
+                                </div>
+                            ) : (
+                                <></>
+                            )}
+
                             <div>
                                 <label
                                     htmlFor="name"
@@ -351,24 +356,28 @@ export default function Users() {
                                     })}
                                 />
                             </div>
-                            <div>
-                                <label
-                                    htmlFor="email"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
-                                >
-                                    E-Posta
-                                </label>
-                                <input
-                                    type="email"
-                                    id="email"
-                                    required
-                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
-                                    {...register("email", {
-                                        required: true,
-                                        maxLength: 50,
-                                    })}
-                                />
-                            </div>
+                            {isNew ? (
+                                <div>
+                                    <label
+                                        htmlFor="email"
+                                        className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                    >
+                                        E-Posta
+                                    </label>
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        required
+                                        className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                        {...register("email", {
+                                            required: true,
+                                            maxLength: 50,
+                                        })}
+                                    />
+                                </div>
+                            ) : (
+                                <></>
+                            )}
 
                             <div>
                                 <label
