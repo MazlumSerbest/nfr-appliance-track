@@ -46,6 +46,7 @@ export default function Products() {
     const { register, reset, handleSubmit } = useForm<IFormInput>({});
     const onSubmitNew: SubmitHandler<IFormInput> = async (data) => {
         data.createdBy = currUser?.username ?? "";
+        
         await fetch("/api/product", {
             method: "POST",
             body: JSON.stringify(data),

@@ -32,7 +32,6 @@ interface IFormInput {
     note: string;
     createdBy: string;
     updatedBy: string;
-    updatedAt: string;
     customer?: Current;
 }
 

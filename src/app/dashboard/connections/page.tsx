@@ -46,6 +46,7 @@ export default function Connections() {
     });
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         data.createdBy = currUser?.username ?? "";
+        
         await fetch("/api/connection", {
             method: "POST",
             body: JSON.stringify(data),

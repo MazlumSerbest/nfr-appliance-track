@@ -81,7 +81,7 @@ export default function Users() {
     };
 
     const onSubmitUpdate: SubmitHandler<IFormInput> = async (data) => {
-        data.createdBy = currUser?.username ?? "";
+        data.updatedBy = currUser?.username ?? "";
         delete data["confirmPassword"];
 
         await fetch(`/api/user/${data.id}`, {
