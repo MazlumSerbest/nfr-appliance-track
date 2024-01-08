@@ -23,7 +23,6 @@ import useUserStore from "@/store/user";
 import { activeOptions } from "@/lib/constants";
 
 interface IFormInput {
-    id: number;
     type: "customer";
     name: string;
     phone: string;
