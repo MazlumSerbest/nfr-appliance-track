@@ -49,6 +49,20 @@ export async function POST(request: Request) {
                 ? new Date(license.soldAt).toISOString()
                 : undefined;
 
+            const checkSerialNo = await prisma.licenses.findUnique({
+                where: {
+                    serialNo: license.serialNo,
+                },
+                select: {
+                    serialNo: true,
+                },
+            });
+            if (checkSerialNo)
+                return NextResponse.json({
+                    message: "Bu seri numarası önceden kullanılmıştır!",
+                    status: 400,
+                });
+
             const newLicense = await prisma.licenses.create({
                 data: license,
             });

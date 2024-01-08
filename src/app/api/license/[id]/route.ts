@@ -71,18 +71,51 @@ export async function PUT(
         if (session) {
             const license: License = await request.json();
             license.updatedAt = new Date().toISOString();
+            license.startDate = license.startDate
+                ? new Date(license.startDate).toISOString()
+                : undefined;
+            license.expiryDate = license.expiryDate
+                ? new Date(license.expiryDate).toISOString()
+                : undefined;
+            license.boughtAt = license.boughtAt
+                ? new Date(license.boughtAt).toISOString()
+                : undefined;
+            license.soldAt = license.soldAt
+                ? new Date(license.soldAt).toISOString()
+                : undefined;
 
-            await prisma.licenses.update({
+            const checkSerialNo = await prisma.licenses.findUnique({
+                where: {
+                    serialNo: license.serialNo,
+                },
+                select: {
+                    serialNo: true,
+                },
+            });
+            if (checkSerialNo)
+                return NextResponse.json({
+                    message: "Bu seri numarası önceden kullanılmıştır!",
+                    status: 400,
+                });
+
+            const updateLicense = await prisma.licenses.update({
                 data: license,
                 where: {
                     id: Number(params.id),
                 },
             });
 
-            return NextResponse.json({
-                message: "Lisans başarıyla güncellendi!",
-                status: 200,
-            });
+            if (updateLicense.id) {
+                return NextResponse.json({
+                    message: "Lisans başarıyla güncellendi!",
+                    status: 200,
+                });
+            } else {
+                return NextResponse.json({
+                    message: "Lisans güncellenemedi!",
+                    status: 400,
+                });
+            }
         }
 
         return NextResponse.json({

@@ -46,17 +46,24 @@ export async function PUT(
             const connection: Connection = await request.json();
             connection.updatedAt = new Date().toISOString();
 
-            const data = await prisma.connections.update({
+            const updateConnection = await prisma.connections.update({
                 where: {
                     id: Number(params.id),
                 },
                 data: connection,
             });
 
-            return NextResponse.json(
-                {
-                    message: "Bağlantı başarıyla güncellendi!", status: 200 },
-            );
+            if (updateConnection.id) {
+                return NextResponse.json({
+                    message: "Bağlantı başarıyla güncellendi!",
+                    status: 200,
+                });
+            } else {
+                return NextResponse.json({
+                    message: "Bağlantı güncellenemedi!",
+                    status: 400,
+                });
+            }
         }
 
         return NextResponse.json({

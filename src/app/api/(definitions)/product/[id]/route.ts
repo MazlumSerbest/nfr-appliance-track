@@ -38,17 +38,25 @@ export async function PUT(
         if (session) {
             const product: Product = await request.json();
             product.updatedAt = new Date().toISOString();
-            const data = await prisma.products.update({
+
+            const updateProduct = await prisma.products.update({
                 where: {
                     id: Number(params.id),
                 },
                 data: product,
             });
 
-            return NextResponse.json({
-                message: "Ürün başarıyla güncellendi!",
-                status: 200,
-            });
+            if (updateProduct.id) {
+                return NextResponse.json({
+                    message: "Ürün başarıyla güncellendi!",
+                    status: 200,
+                });
+            } else {
+                return NextResponse.json({
+                    message: "Ürün güncellenemedi!",
+                    status: 400,
+                });
+            }
         }
 
         return NextResponse.json({

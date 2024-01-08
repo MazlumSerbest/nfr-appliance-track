@@ -44,19 +44,28 @@ export async function PUT(
             const currType = current.type;
             current.updatedAt = new Date().toISOString();
 
-            await prisma.currents.update({
+            const updateCurrent = await prisma.currents.update({
                 where: {
                     id: Number(params.id),
                 },
                 data: current,
             });
 
-            return NextResponse.json({
-                message: `${
-                    currentTypes.find((e) => e.key == currType)?.name
-                } başarıyla güncellendi!`,
-                status: 200,
-            });
+            if (updateCurrent.id) {
+                return NextResponse.json({
+                    message: `${
+                        currentTypes.find((e) => e.key == currType)?.name
+                    } başarıyla güncellendi!`,
+                    status: 200,
+                });
+            } else {
+                return NextResponse.json({
+                    message: `${
+                        currentTypes.find((e) => e.key == currType)?.name
+                    } güncellenemedi!`,
+                    status: 400,
+                });
+            }
         }
 
         return NextResponse.json({

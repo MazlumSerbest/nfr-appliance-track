@@ -48,6 +48,35 @@ export async function POST(request: Request) {
                 ? new Date(appliance.soldAt).toISOString()
                 : undefined;
 
+            const checkSerialNo = await prisma.appliances.findUnique({
+                where: {
+                    serialNo: appliance.serialNo,
+                },
+                select: {
+                    serialNo: true,
+                },
+            });
+            if (checkSerialNo)
+                return NextResponse.json({
+                    message: "Bu seri numarası önceden kullanılmıştır!",
+                    status: 400,
+                });
+
+            const checkPredecessor = await prisma.appliances.findUnique({
+                where: {
+                    predecessorId: appliance.predecessorId,
+                },
+                select: {
+                    predecessorId: true,
+                },
+            });
+            if (checkPredecessor)
+                return NextResponse.json({
+                    message:
+                        "Bu cihaz önceden başka bir cihazda eski cihaz olarak kullanılmıştır!",
+                    status: 400,
+                });
+
             const newAppliance = await prisma.appliances.create({
                 data: appliance,
             });

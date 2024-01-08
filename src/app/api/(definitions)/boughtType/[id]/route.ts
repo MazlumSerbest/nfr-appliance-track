@@ -39,17 +39,24 @@ export async function PUT(
             const boughtType: BoughtType = await request.json();
             boughtType.updatedAt = new Date().toISOString();
 
-            await prisma.boughtTypes.update({
+            const updateBoughtType = await prisma.boughtTypes.update({
                 where: {
                     id: Number(params.id),
                 },
                 data: boughtType,
             });
 
-            return NextResponse.json({
-                message: "Alım tipi başarıyla güncellendi!",
-                status: 200,
-            });
+            if (updateBoughtType.id) {
+                return NextResponse.json({
+                    message: "Alım tipi başarıyla güncellendi!",
+                    status: 200,
+                });
+            } else {
+                return NextResponse.json({
+                    message: "Alım tipi güncellenemedi!",
+                    status: 400,
+                });
+            }
         }
 
         return NextResponse.json({
