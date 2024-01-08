@@ -43,15 +43,12 @@ export default function ConnectionDetail({
 }) {
     const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
-    const [con, setCon] = useState();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
     const [customers, setCustomers] = useState<ListBoxItem[] | null>(null);
     const { user: currUser } = useUserStore();
 
     //#region Form
-    const { register, reset, handleSubmit, control } = useForm<IFormInput>({
-        defaultValues: con,
-    });
+    const { register, reset, handleSubmit, control } = useForm<IFormInput>();
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         data.updatedBy = currUser?.username ?? "";
         delete data["customer"];
@@ -92,7 +89,6 @@ export default function ConnectionDetail({
         null,
         {
             onSuccess: (con) => {
-                setCon(con);
                 reset(con);
             },
         },
@@ -211,6 +207,7 @@ export default function ConnectionDetail({
                             </Button>
                         }
                     />
+                    
                     <DeleteButton
                         table="connections"
                         data={data}
