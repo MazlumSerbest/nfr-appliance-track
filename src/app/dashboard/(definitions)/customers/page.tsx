@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import useSWR from "swr";
 import { useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -24,7 +24,7 @@ import { activeOptions } from "@/lib/constants";
 
 interface IFormInput {
     id: number;
-    type: string;
+    type: "customer";
     name: string;
     phone: string;
     email: string;
@@ -50,21 +50,18 @@ export default function Customers() {
             method: "POST",
             body: JSON.stringify(data),
             headers: { "Content-Type": "application/json" },
-        })
-            .then(async (res) => {
-                const result = await res.json();
-                if (res.ok) {
-                    toast.success(result.message);
-                } else {
-                    toast.error(result.message);
-                }
-                return result;
-            })
-            .then(() => {
+        }).then(async (res) => {
+            const result = await res.json();
+            if (res.ok) {
+                toast.success(result.message);
                 onClose();
                 reset();
                 mutate();
-            });
+            } else {
+                toast.error(result.message);
+            }
+            return result;
+        });
     };
     //#endregion
 

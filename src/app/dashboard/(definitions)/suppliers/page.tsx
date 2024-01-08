@@ -1,6 +1,7 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import useSWR from "swr";
+import { useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
 
@@ -12,83 +13,60 @@ import {
     useDisclosure,
 } from "@nextui-org/modal";
 import { SortDescriptor } from "@nextui-org/table";
-import { Tooltip } from "@nextui-org/tooltip";
 import { Button } from "@nextui-org/button";
 
 import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
 import DataTable from "@/components/DataTable";
 import BoolChip from "@/components/BoolChip";
-import { BiEdit, BiTrash } from "react-icons/bi";
 import { DateTimeFormat } from "@/utils/date";
 import useUserStore from "@/store/user";
 import { activeOptions } from "@/lib/constants";
 
 interface IFormInput {
     id: number;
+    type: "supplier";
     name: string;
     phone: string;
     email: string;
+    taxOffice: string;
+    taxNo: string;
+    city: string;
+    address: string;
     createdBy: string;
-    updatedBy: string;
 }
 
 export default function Suppliers() {
-    const [isNew, setIsNew] = useState(false);
+    const router = useRouter();
     const { user: currUser } = useUserStore();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
 
     //#region Form
     const { register, reset, handleSubmit } = useForm<IFormInput>({});
-    const onSubmitNew: SubmitHandler<IFormInput> = async (data) => {
+    const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         data.createdBy = currUser?.username ?? "";
+        data.type = "supplier";
 
         await fetch("/api/current", {
             method: "POST",
             body: JSON.stringify(data),
             headers: { "Content-Type": "application/json" },
-        })
-            .then(async (res) => {
-                const result = await res.json();
-                if (res.ok) {
-                    toast.success(result.message);
-                } else {
-                    toast.error(result.message);
-                }
-                return result;
-            })
-            .then(() => {
+        }).then(async (res) => {
+            const result = await res.json();
+            if (res.ok) {
+                toast.success(result.message);
                 onClose();
                 reset();
                 mutate();
-            });
-    };
-    const onSubmitUpdate: SubmitHandler<IFormInput> = async (data) => {
-        data.updatedBy = currUser?.username ?? "";
-
-        await fetch(`/api/current/${data.id}`, {
-            method: "PUT",
-            body: JSON.stringify(data),
-            headers: { "Content-Type": "application/json" },
-        })
-            .then(async (res) => {
-                const result = await res.json();
-                if (res.ok) {
-                    toast.success(result.message);
-                } else {
-                    toast.error(result.message);
-                }
-                return result;
-            })
-            .then(() => {
-                onClose();
-                reset();
-                mutate();
-            });
+            } else {
+                toast.error(result.message);
+            }
+            return result;
+        });
     };
     //#endregion
 
     //#region Table
-    const visibleColumns = ["name", "phone", "email", "active", "actions"];
+    const visibleColumns = ["name", "phone", "email", "city", "active"];
 
     const sort: SortDescriptor = {
         column: "createdAt",
@@ -116,6 +94,22 @@ export default function Suppliers() {
             searchable: true,
         },
         {
+            key: "city",
+            name: "Şehir",
+            width: 100,
+            searchable: true,
+        },
+        {
+            key: "taxOffice",
+            name: "Vergi Dairesi",
+            width: 100,
+        },
+        {
+            key: "taxNo",
+            name: "Vergi No",
+            width: 100,
+        },
+        {
             key: "active",
             name: "Aktif",
             width: 80,
@@ -140,11 +134,6 @@ export default function Suppliers() {
             name: "Güncellenme Tarihi",
             width: 150,
         },
-        {
-            key: "actions",
-            name: "Aksiyonlar",
-            width: 100,
-        },
     ];
 
     const renderCell = React.useCallback(
@@ -158,36 +147,15 @@ export default function Suppliers() {
                     return <p>{DateTimeFormat(cellValue)}</p>;
                 case "updatedAt":
                     return <p>{DateTimeFormat(cellValue)}</p>;
-                case "actions":
-                    return (
-                        <div className="relative flex justify-start items-center gap-2">
-                            <Tooltip key={supplier.id} content="Düzenle">
-                                <span className="text-xl text-green-600 active:opacity-50 cursor-pointer">
-                                    <BiEdit
-                                        onClick={() => {
-                                            setIsNew(false);
-                                            reset(supplier);
-                                            onOpen();
-                                        }}
-                                    />
-                                </span>
-                            </Tooltip>
-                            <Tooltip key={supplier.id} content="Sil">
-                                <span className="text-xl text-red-600 active:opacity-50 cursor-pointer">
-                                    <BiTrash onClick={() => {}} />
-                                </span>
-                            </Tooltip>
-                        </div>
-                    );
                 default:
                     return cellValue ? cellValue : "-";
             }
         },
-        [onOpen, reset],
+        [],
     );
     //#endregion
 
-    const { data, error, mutate } = useSWR("/api/supplier");
+    const { data, error, mutate } = useSWR("/api/current?currentType=supplier");
 
     if (error) return <div>Yükleme Hatası!</div>;
     if (!data)
@@ -212,10 +180,11 @@ export default function Suppliers() {
                 initialVisibleColumNames={visibleColumns}
                 activeOptions={activeOptions}
                 onAddNew={() => {
-                    setIsNew(true);
-                    reset({});
                     reset({});
                     onOpen();
+                }}
+                onDoubleClick={(item) => {
+                    router.push(`/dashboard/suppliers/${item.id}`);
                 }}
             />
             <Modal
@@ -229,16 +198,14 @@ export default function Suppliers() {
             >
                 <ModalContent>
                     <ModalHeader className="flex flex-col gap-1 text-zinc-500">
-                        {isNew ? "Yeni Tedarikçi" : "Tedarikçi Güncelle"}
+                        Yeni Tedarikçi
                     </ModalHeader>
                     <ModalBody>
                         <form
                             action=""
                             autoComplete="off"
                             className="flex flex-col gap-3"
-                            onSubmit={handleSubmit(
-                                isNew ? onSubmitNew : onSubmitUpdate,
-                            )}
+                            onSubmit={handleSubmit(onSubmit)}
                         >
                             <div>
                                 <label
@@ -292,6 +259,68 @@ export default function Suppliers() {
                                         required: true,
                                         maxLength: 50,
                                     })}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="taxOffice"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Vergi Dairesi
+                                </label>
+                                <input
+                                    type="text"
+                                    id="taxOffice"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    {...register("taxOffice", {
+                                        maxLength: 50,
+                                    })}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="taxNo"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Vergi No
+                                </label>
+                                <input
+                                    type="text"
+                                    id="taxNo"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    {...register("taxNo", {
+                                        maxLength: 50,
+                                    })}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="city"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Şehir
+                                </label>
+                                <input
+                                    type="text"
+                                    id="city"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    {...register("city", {
+                                        maxLength: 50,
+                                    })}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="address"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Adres
+                                </label>
+                                <textarea
+                                    id="address"
+                                    rows={3}
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    {...register("address", { maxLength: 400 })}
                                 />
                             </div>
                             <div className="flex flex-row gap-2 mt-4">

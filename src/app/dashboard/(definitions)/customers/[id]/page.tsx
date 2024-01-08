@@ -1,5 +1,4 @@
 "use client";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
 import useSWR from "swr";
@@ -26,7 +25,7 @@ import toast from "react-hot-toast";
 interface IFormInput {
     id: number;
     active: boolean;
-    type: string;
+    type: "customer";
     name: string;
     phone: string;
     email: string;
@@ -54,21 +53,18 @@ export default function CustomerDetail({ params }: { params: { id: string } }) {
             method: "PUT",
             body: JSON.stringify(data),
             headers: { "Content-Type": "application/json" },
-        })
-            .then(async (res) => {
-                const result = await res.json();
-                if (res.ok) {
-                    toast.success(result.message);
-                } else {
-                    toast.error(result.message);
-                }
-                return result;
-            })
-            .then(() => {
+        }).then(async (res) => {
+            const result = await res.json();
+            if (res.ok) {
+                toast.success(result.message);
                 onClose();
                 reset();
                 mutate();
-            });
+            } else {
+                toast.error(result.message);
+            }
+            return result;
+        });
     };
     //#endregion
 
@@ -180,7 +176,7 @@ export default function CustomerDetail({ params }: { params: { id: string } }) {
                             </Button>
                         }
                     />
-                    
+
                     <DeleteButton
                         table="currents"
                         data={data}
@@ -193,7 +189,7 @@ export default function CustomerDetail({ params }: { params: { id: string } }) {
                             </Button>
                         }
                     />
-                    
+
                     <Button
                         color="primary"
                         className="bg-sky-500"

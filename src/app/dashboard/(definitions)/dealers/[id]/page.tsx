@@ -1,29 +1,30 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import useSWR from "swr";
 import { useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
-import toast from "react-hot-toast";
+import useSWR from "swr";
 
+import { Card, CardBody, CardFooter } from "@nextui-org/card";
 import {
     Modal,
-    ModalBody,
     ModalContent,
     ModalHeader,
+    ModalBody,
     useDisclosure,
 } from "@nextui-org/modal";
-import { SortDescriptor } from "@nextui-org/table";
 import { Button } from "@nextui-org/button";
 
-import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
-import DataTable from "@/components/DataTable";
+import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
 import BoolChip from "@/components/BoolChip";
-import { DateTimeFormat } from "@/utils/date";
+import RegInfo from "@/components/buttons/RegInfo";
+import DeleteButton from "@/components/buttons/DeleteButton";
+import AuthorizedPersons from "@/components/AuthorizedPersons";
+import { BiInfoCircle, BiMailSend, BiPhoneOutgoing, BiX } from "react-icons/bi";
 import useUserStore from "@/store/user";
-import { activeOptions } from "@/lib/constants";
+import toast from "react-hot-toast";
 
 interface IFormInput {
     id: number;
+    active: boolean;
     type: "dealer";
     name: string;
     phone: string;
@@ -32,22 +33,24 @@ interface IFormInput {
     taxNo: string;
     city: string;
     address: string;
-    createdBy: string;
+    updatedBy: string;
+    authorizedPersons?: AuthorizedPerson[];
 }
 
-export default function Dealers() {
+export default function DealerDetail({ params }: { params: { id: string } }) {
     const router = useRouter();
-    const { user: currUser } = useUserStore();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
+    const { user: currUser } = useUserStore();
 
     //#region Form
-    const { register, reset, handleSubmit } = useForm<IFormInput>({});
-    const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-        data.createdBy = currUser?.username ?? "";
-        data.type = "dealer";
+    const { register, reset, handleSubmit } = useForm<IFormInput>();
 
-        await fetch("/api/current", {
-            method: "POST",
+    const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+        data.updatedBy = currUser?.username ?? "";
+        delete data["authorizedPersons"];
+
+        await fetch(`/api/current/${data.id}`, {
+            method: "PUT",
             body: JSON.stringify(data),
             headers: { "Content-Type": "application/json" },
         }).then(async (res) => {
@@ -65,128 +68,145 @@ export default function Dealers() {
     };
     //#endregion
 
-    //#region Table
-    const visibleColumns = ["name", "phone", "email", "city", "active"];
-
-    const sort: SortDescriptor = {
-        column: "createdAt",
-        direction: "descending",
-    };
-
-    const columns: Column[] = [
-        {
-            key: "name",
-            name: "Ad",
-            width: 200,
-            searchable: true,
-            sortable: true,
+    const { data, error, mutate } = useSWR(`/api/current/${params.id}`, null, {
+        onSuccess: (dea) => {
+            reset(dea);
         },
-        {
-            key: "phone",
-            name: "Telefon",
-            width: 100,
-            searchable: true,
-        },
-        {
-            key: "email",
-            name: "E-Posta",
-            width: 100,
-            searchable: true,
-        },
-        {
-            key: "city",
-            name: "Şehir",
-            width: 100,
-            searchable: true,
-        },
-        {
-            key: "taxOffice",
-            name: "Vergi Dairesi",
-            width: 100,
-        },
-        {
-            key: "taxNo",
-            name: "Vergi No",
-            width: 100,
-        },
-        {
-            key: "active",
-            name: "Aktif",
-            width: 80,
-        },
-        {
-            key: "createdBy",
-            name: "Oluşturan Kullanıcı",
-            width: 80,
-        },
-        {
-            key: "createdAt",
-            name: "Oluşturulma Tarihi",
-            width: 150,
-        },
-        {
-            key: "updatedBy",
-            name: "Güncelleyen Kullanıcı",
-            width: 80,
-        },
-        {
-            key: "updatedAt",
-            name: "Güncellenme Tarihi",
-            width: 150,
-        },
-    ];
-
-    const renderCell = React.useCallback(
-        (dealer: Current, columnKey: React.Key) => {
-            const cellValue: any = dealer[columnKey as keyof typeof dealer];
-
-            switch (columnKey) {
-                case "active":
-                    return <BoolChip value={cellValue} />;
-                case "createdAt":
-                    return <p>{DateTimeFormat(cellValue)}</p>;
-                case "updatedAt":
-                    return <p>{DateTimeFormat(cellValue)}</p>;
-                default:
-                    return cellValue ? cellValue : "-";
-            }
-        },
-        [],
-    );
-    //#endregion
-
-    const { data, error, mutate } = useSWR("/api/current?currentType=dealer");
+    });
 
     if (error) return <div>Yükleme Hatası!</div>;
     if (!data)
         return (
             <div className="flex flex-col mt-4">
                 <Skeleton>
-                    <TableSkeleton />
+                    <DefaultSkeleton />
                 </Skeleton>
             </div>
         );
     return (
-        <>
-            <DataTable
-                isCompact
-                isStriped
-                className="mt-4 mb-2"
-                emptyContent="Herhangi bir bayi bulunamadı!"
-                data={data || []}
-                columns={columns}
-                renderCell={renderCell}
-                sortOption={sort}
-                initialVisibleColumNames={visibleColumns}
-                activeOptions={activeOptions}
-                onAddNew={() => {
-                    reset({});
-                    onOpen();
-                }}
-                onDoubleClick={(item) => {
-                    router.push(`/dashboard/dealers/${item.id}`);
-                }}
+        <div className="flex flex-col gap-2">
+            <Card className="mt-4 px-1 py-2">
+                <CardBody className="gap-3">
+                    <div className="flex items-center pb-2 pl-1">
+                        <p className="text-3xl font-bold text-sky-500">
+                            {data.name}
+                        </p>
+                        <div className="flex-1"></div>
+                        <BiX
+                            className="text-3xl text-zinc-500 cursor-pointer active:opacity-50"
+                            onClick={() => router.back()}
+                        />
+                    </div>
+                    <div className="divide-y divide-zinc-200">
+                        <div className="grid grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
+                            <dt className="font-medium">Aktif</dt>
+                            <dd className="col-span-1 md:col-span-2">
+                                <BoolChip value={data.active} />
+                            </dd>
+                        </div>
+
+                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
+                            <dt className="font-medium">Telefon</dt>
+                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0 gap-2">
+                                {data.phone ? (
+                                    <>
+                                        {data.phone}
+                                        <a href={`tel:${data.phone}`}>
+                                            <BiPhoneOutgoing className="text-xl text-green-600 cursor-pointer active:opacity-50" />
+                                        </a>
+                                    </>
+                                ) : (
+                                    "-"
+                                )}
+                            </dd>
+                        </div>
+
+                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
+                            <dt className="font-medium">Email</dt>
+                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0 gap-2">
+                                {data.email ? (
+                                    <>
+                                        {data.email}
+                                        <a href={`mailto:${data.email}`}>
+                                            <BiMailSend className="text-xl text-sky-500 cursor-pointer active:opacity-50" />
+                                        </a>
+                                    </>
+                                ) : (
+                                    "-"
+                                )}
+                            </dd>
+                        </div>
+
+                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
+                            <dt className="font-medium">Vergi Dairesi</dt>
+                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
+                                {data.taxOffice || "-"}
+                            </dd>
+                        </div>
+
+                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
+                            <dt className="font-medium">Vergi No</dt>
+                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
+                                {data.taxNo || "-"}
+                            </dd>
+                        </div>
+
+                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
+                            <dt className="font-medium">Şehir</dt>
+                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
+                                {data.city || "-"}
+                            </dd>
+                        </div>
+
+                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
+                            <dt className="font-medium">Adres</dt>
+                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
+                                {data.address || "-"}
+                            </dd>
+                        </div>
+                    </div>
+                </CardBody>
+                <CardFooter className="flex gap-2">
+                    <div className="flex-1"></div>
+                    <RegInfo
+                        data={data}
+                        trigger={
+                            <Button color="primary" className="bg-green-600">
+                                Kayıt Bilgisi
+                            </Button>
+                        }
+                    />
+
+                    <DeleteButton
+                        table="currents"
+                        data={data}
+                        mutate={mutate}
+                        isButton={true}
+                        router={router}
+                        trigger={
+                            <Button color="primary" className="bg-red-500">
+                                Sil
+                            </Button>
+                        }
+                    />
+
+                    <Button
+                        color="primary"
+                        className="bg-sky-500"
+                        onPress={onOpen}
+                    >
+                        Düzenle
+                    </Button>
+                </CardFooter>
+            </Card>
+
+            <AuthorizedPersons
+                currentId={data?.id}
+                currentType={data?.type}
+                personList={data?.authorizedPersons}
+                mutate={mutate}
             />
+
             <Modal
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}
@@ -198,15 +218,40 @@ export default function Dealers() {
             >
                 <ModalContent>
                     <ModalHeader className="flex flex-col gap-1 text-zinc-500">
-                        Yeni Bayi
+                        Bayi Güncelle
                     </ModalHeader>
                     <ModalBody>
                         <form
                             action=""
                             autoComplete="off"
-                            className="flex flex-col gap-3"
+                            className="flex flex-col gap-2"
                             onSubmit={handleSubmit(onSubmit)}
                         >
+                            <div>
+                                <div className="relative flex flex-col gap-x-3">
+                                    <div className="flex flex-row">
+                                        <label
+                                            htmlFor="active"
+                                            className="text-sm font-semibold leading-6 text-zinc-500"
+                                        >
+                                            Aktif
+                                        </label>
+                                        <div className="flex h-6 ml-3 items-center">
+                                            <input
+                                                id="active"
+                                                type="checkbox"
+                                                className="h-4 w-4 rounded border-zinc-300 ring-offset-1 focus:ring-2 focus:ring-sky-500 outline-none cursor-pointer accent-sky-600"
+                                                {...register("active")}
+                                            />
+                                        </div>
+                                    </div>
+                                    <span className="flex flex-row font-normal text-xs text-zinc-400 items-center gap-1 mb-1">
+                                        <BiInfoCircle />
+                                        Diğer tanımlamalarda bu bayinin
+                                        seçilebilir olması için gereklidir!
+                                    </span>
+                                </div>
+                            </div>
                             <div>
                                 <label
                                     htmlFor="name"
@@ -344,6 +389,6 @@ export default function Dealers() {
                     </ModalBody>
                 </ModalContent>
             </Modal>
-        </>
+        </div>
     );
 }
