@@ -200,6 +200,7 @@ export default function ConnectionDetail({
                     <div className="flex-1"></div>
                     <RegInfo
                         data={data}
+                        isButton
                         trigger={
                             <Button color="primary" className="bg-green-600">
                                 Kayıt Bilgisi

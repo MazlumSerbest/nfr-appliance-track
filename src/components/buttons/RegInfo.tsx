@@ -6,10 +6,11 @@ import { DateTimeFormat } from "@/utils/date";
 type Props = {
     data: any;
     trigger: ReactNode;
+    isButton?: boolean;
 };
 
 export default function RegInfo(props: Props) {
-    let { data, trigger } = props;
+    let { data, trigger, isButton } = props;
 
     return (
         <Popover
@@ -18,11 +19,15 @@ export default function RegInfo(props: Props) {
             color="default"
             backdrop="opaque"
         >
-            <Tooltip key={data.id + "-info"} content="Kayıt Bilgisi">
-                <span className="text-xl text-zinc-500 active:opacity-50 cursor-pointer flex items-center">
-                    <PopoverTrigger>{trigger}</PopoverTrigger>
-                </span>
-            </Tooltip>
+            {isButton ? (
+                <PopoverTrigger>{trigger}</PopoverTrigger>
+            ) : (
+                <Tooltip key={data.id + "-info"} content="Kayıt Bilgisi">
+                    <span className="text-xl text-zinc-500 active:opacity-50 cursor-pointer flex items-center">
+                        <PopoverTrigger>{trigger}</PopoverTrigger>
+                    </span>
+                </Tooltip>
+            )}
             <PopoverContent>
                 <div className="flex flex-col px-1 py-2 divide-y divide-zinc-200 text-zinc-700 text-sm">
                     <div className="grid grid-cols-2">
