@@ -230,6 +230,7 @@ export default function ConnectionDetail({
                     </Button>
                 </CardFooter>
             </Card>
+            
             <Modal
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}
