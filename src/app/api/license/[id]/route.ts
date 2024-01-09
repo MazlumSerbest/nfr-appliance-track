@@ -86,6 +86,7 @@ export async function PUT(
 
             const checkSerialNo = await prisma.licenses.findUnique({
                 where: {
+                    NOT: { id: Number(params.id) },
                     serialNo: license.serialNo,
                 },
                 select: {

@@ -38,12 +38,11 @@ import {
 } from "@/lib/data";
 
 interface IFormInput {
-    id: number;
     isStock: boolean;
     serialNo: string;
     startDate: string;
     expiryDate: string;
-    boughtTypeId: string;
+    boughtTypeId: number | undefined;
     boughtAt: string;
     soldAt: string;
     licenseTypeId: number;
@@ -67,30 +66,30 @@ export default function Licenses() {
     const [suppliers, setSuppliers] = useState<ListBoxItem[] | null>(null);
 
     //#region Form
-    const { register, reset, handleSubmit, control } =
-        useForm<IFormInput>({ defaultValues: { isStock: false } });
+    const { register, reset, handleSubmit, control } = useForm<IFormInput>({
+        defaultValues: { isStock: false },
+    });
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         data.createdBy = currUser?.username ?? "";
+        data.boughtTypeId = Number(data.boughtTypeId || undefined);
 
+        console.log(data);
         await fetch("/api/license", {
             method: "POST",
             body: JSON.stringify(data),
             headers: { "Content-Type": "application/json" },
-        })
-            .then(async (res) => {
-                const result = await res.json();
-                if (res.ok) {
-                    toast.success(result.message);
-                } else {
-                    toast.error(result.message);
-                }
-                return result;
-            })
-            .then(() => {
+        }).then(async (res) => {
+            const result = await res.json();
+            if (res.ok) {
+                toast.success(result.message);
                 onClose();
                 reset();
                 mutate();
-            });
+            } else {
+                toast.error(result.message);
+            }
+            return result;
+        });
     };
     //#endregion
 
@@ -167,11 +166,6 @@ export default function Licenses() {
             sortable: true,
         },
         {
-            key: "expiryStatus",
-            name: "Süre",
-            width: 80,
-        },
-        {
             key: "customerName",
             name: "Müşteri",
             width: 120,
@@ -218,6 +212,11 @@ export default function Licenses() {
             key: "updatedAt",
             name: "Güncellenme Tarihi",
             width: 150,
+        },
+        {
+            key: "expiryStatus",
+            name: "Süre",
+            width: 80,
         },
     ];
 
@@ -296,18 +295,15 @@ export default function Licenses() {
 
     //#region Data
     async function getData() {
-        // const pro: ListBoxItem[] = await getProducts(true);
         const lit: ListBoxItem[] = await getLicenseTypes(true);
-        const bou: ListBoxItem[] = await getBoughtTypes(true);
-        const cus: ListBoxItem[] = await getCustomers(true);
-        const deal: ListBoxItem[] = await getDealers(true);
-        const sup: ListBoxItem[] = await getSuppliers(true);
-
-        // setProducts(pro);
         setLicenseTypes(lit);
+        const bou: ListBoxItem[] = await getBoughtTypes(true);
         setBoughtTypes(bou);
+        const cus: ListBoxItem[] = await getCustomers(true);
         setCustomers(cus);
+        const deal: ListBoxItem[] = await getDealers(true);
         setDealers(deal);
+        const sup: ListBoxItem[] = await getSuppliers(true);
         setSuppliers(sup);
     }
 
@@ -366,7 +362,6 @@ export default function Licenses() {
                     </ModalHeader>
                     <ModalBody>
                         <form
-                            action=""
                             autoComplete="off"
                             className="flex flex-col gap-2"
                             onSubmit={handleSubmit(onSubmit)}
@@ -421,11 +416,6 @@ export default function Licenses() {
                                 >
                                     Lisans Tipi
                                 </label>
-                                <span className="flex flex-row font-normal text-xs text-zinc-400 items-center gap-1 mb-1">
-                                    <BiInfoCircle />
-                                    Lisans tipi seçmek için ürün seçimi yapmanız
-                                    gereklidir!
-                                </span>
                                 <Controller
                                     control={control}
                                     name="licenseTypeId"
