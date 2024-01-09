@@ -55,7 +55,6 @@ type User = Entity & {
 type Appliance = Entity & {
     predecessorId?: number;
     productId: number;
-    licenseId: number;
     customerId: number;
     dealerId: number;
     subDealerId: number;

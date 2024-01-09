@@ -17,11 +17,19 @@ export async function deleteData(
     id: number,
     updatedBy?: string,
 ) {
+    let res;
+    const date = new Date().toISOString();
     if (!updatedBy) return;
 
-    const query = `DELETE FROM "${table}" WHERE id = ${id};`;
+    if (table == "appliances" || table == "licenses") {
+        const query = `UPDATE "${table}" SET deleted = true, "updatedBy" = '${updatedBy}', "updatedAt" = '${date}' WHERE id = ${id};`;
 
-    const res = await prisma.$queryRaw`${Prisma.raw(query)}`;
+        res = await prisma.$queryRaw`${Prisma.raw(query)}`;
+    } else {
+        const query = `DELETE FROM "${table}" WHERE id = ${id};`;
+
+        res = await prisma.$queryRaw`${Prisma.raw(query)}`;
+    }
 
     if (res) return true;
     else return false;

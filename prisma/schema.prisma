@@ -25,7 +25,7 @@ model users {
 model appliances {
   id            Int         @id @default(autoincrement())
   customerId    Int?
-  productId     Int?
+  productId     Int
   active        Boolean     @default(true)
   createdAt     DateTime    @default(now()) @db.Timestamptz(6)
   createdBy     String      @db.VarChar

@@ -14,7 +14,7 @@ export async function getAppliances(forListBox?: boolean, productId?: number) {
     if (forListBox)
         return appliances?.map((a: vAppliance) => ({
             id: a.id,
-            name: a.serialNo + " - " + a.productBrand + " " + a.productModel,
+            name: a.serialNo,
         }));
     return appliances;
 }
