@@ -86,6 +86,7 @@ export async function PUT(
 
             const checkSerialNo = await prisma.appliances.findUnique({
                 where: {
+                    NOT: { id: Number(params.id) },
                     serialNo: appliance.serialNo,
                 },
                 select: {
@@ -100,6 +101,7 @@ export async function PUT(
 
             const checkPredecessor = await prisma.appliances.findUnique({
                 where: {
+                    NOT: { id: Number(params.id) },
                     predecessorId: appliance.predecessorId,
                 },
                 select: {

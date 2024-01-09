@@ -1,7 +1,9 @@
 "use client";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import useSWR from "swr";
+import { useRouter } from "next/navigation";
+import { SubmitHandler, useForm, Controller } from "react-hook-form";
+import toast from "react-hot-toast";
 
 import { Card, CardBody, CardFooter } from "@nextui-org/card";
 import {
@@ -13,10 +15,12 @@ import {
 } from "@nextui-org/modal";
 import { Accordion, AccordionItem } from "@nextui-org/accordion";
 import { Button } from "@nextui-org/button";
+import { Divider } from "@nextui-org/divider";
 
-import { SubmitHandler, useForm } from "react-hook-form";
 import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
-import RegInfo from "@/components/RegInfo";
+import RegInfo from "@/components/buttons/RegInfo";
+import DeleteButton from "@/components/buttons/DeleteButton";
+import AutoComplete from "@/components/AutoComplete";
 import {
     BiX,
     BiCheckShield,
@@ -24,8 +28,32 @@ import {
     BiChevronRight,
 } from "react-icons/bi";
 import useUserStore from "@/store/user";
-import toast from "react-hot-toast";
-import { DateFormat, DateTimeFormat } from "@/utils/date";
+import { DateFormat } from "@/utils/date";
+import {
+    getProducts,
+    getCustomers,
+    getDealers,
+    getSuppliers,
+} from "@/lib/data";
+
+interface IFormInput {
+    id: number;
+    productId: number;
+    serialNo: string;
+    boughtAt: string;
+    soldAt: string;
+    customerId: number;
+    dealerId: number;
+    subDealerId: number;
+    supplierId: number;
+    updatedBy: string;
+    product?: Product;
+    licenses?: License[];
+    customer?: Current;
+    dealer?: Current;
+    subDealer?: Current;
+    supplier?: Current;
+}
 
 export default function ApplianceDetail({
     params,
@@ -33,16 +61,67 @@ export default function ApplianceDetail({
     params: { id: string };
 }) {
     const router = useRouter();
-    const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
     const { user: currUser } = useUserStore();
+    const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
+    const [products, setProducts] = useState<ListBoxItem[] | null>(null);
+    const [customers, setCustomers] = useState<ListBoxItem[] | null>(null);
+    const [dealers, setDealers] = useState<ListBoxItem[] | null>(null);
+    const [suppliers, setSuppliers] = useState<ListBoxItem[] | null>(null);
+
+    //#region Form
+    const { register, reset, handleSubmit, control } = useForm<IFormInput>({});
+    const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+        data.updatedBy = currUser?.username ?? "";
+
+        delete data["product"];
+        delete data["licenses"];
+        delete data["customer"];
+        delete data["dealer"];
+        delete data["subDealer"];
+        delete data["supplier"];
+
+        await fetch(`/api/appliance/${data.id}`, {
+            method: "PUT",
+            body: JSON.stringify(data),
+            headers: { "Content-Type": "application/json" },
+        }).then(async (res) => {
+            const result = await res.json();
+            if (res.ok) {
+                toast.success(result.message);
+                onClose();
+                reset();
+                mutate();
+            } else {
+                toast.error(result.message);
+            }
+            return result;
+        });
+    };
+    //#endregion
+
+    //#region Data
+    async function getData() {
+        const pro: ListBoxItem[] = await getProducts(true);
+        setProducts(pro);
+        const cus: ListBoxItem[] = await getCustomers(true);
+        setCustomers(cus);
+        const deal: ListBoxItem[] = await getDealers(true);
+        setDealers(deal);
+        const sup: ListBoxItem[] = await getSuppliers(true);
+        setSuppliers(sup);
+    }
+
+    useEffect(() => {
+        getData();
+    }, []);
+    //#endregion
 
     const { data, error, mutate } = useSWR(
         `/api/appliance/${params.id}`,
         null,
         {
-            onSuccess: (lic) => {
-                // setCon(con);
-                // reset(con);
+            onSuccess: (app) => {
+                reset(app);
             },
         },
     );
@@ -105,6 +184,12 @@ export default function ApplianceDetail({
                             </dd>
                         </div>
                         <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
+                            <dt className="font-medium">Alt Bayi</dt>
+                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
+                                {data.subDealer?.name || "-"}
+                            </dd>
+                        </div>
+                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
                             <dt className="font-medium">Tedarikçi</dt>
                             <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
                                 {data.supplier?.name || "-"}
@@ -116,19 +201,27 @@ export default function ApplianceDetail({
                     <div className="flex-1"></div>
                     <RegInfo
                         data={data}
+                        isButton
                         trigger={
                             <Button color="primary" className="bg-green-600">
                                 Kayıt Bilgisi
                             </Button>
                         }
                     />
-                    <Button
-                        color="primary"
-                        className="bg-red-600"
-                        // onPress={onOpen}
-                    >
-                        Sil
-                    </Button>
+
+                    <DeleteButton
+                        table="appliances"
+                        data={data}
+                        mutate={mutate}
+                        isButton={true}
+                        router={router}
+                        trigger={
+                            <Button color="primary" className="bg-red-500">
+                                Sil
+                            </Button>
+                        }
+                    />
+
                     <Button
                         color="primary"
                         className="bg-sky-500"
@@ -138,19 +231,20 @@ export default function ApplianceDetail({
                     </Button>
                 </CardFooter>
             </Card>
+
             <Accordion
                 selectionMode="multiple"
                 variant="splitted"
-                // defaultExpandedKeys={["license"]}
+                defaultExpandedKeys={data.licenses.length ? ["licenses"] : []}
                 className="p-0"
                 itemClasses={{
                     title: "font-medium text-zinc-600",
-                    // base: "px-1",
+                    base: "px-1 py-2",
                 }}
             >
                 <AccordionItem
-                    key="license"
-                    aria-label="License"
+                    key="licenses"
+                    aria-label="Licenses"
                     title="Lisans Bilgileri"
                     subtitle="Bu cihaza tanımlanmış lisans bilgileri"
                     indicator={
@@ -180,16 +274,24 @@ export default function ApplianceDetail({
                                         <div className="flex flex-1 gap-x-4">
                                             <div className="min-w-0 flex-auto">
                                                 <p className="text-sm font-semibold leading-6 text-zinc-600">
-                                                    {`${
-                                                        lic.licenseType?.type
-                                                    } - ${
-                                                        lic.licenseType
-                                                            ?.duration
-                                                    } ay${
-                                                        lic.isStock
-                                                            ? " (Stok)"
-                                                            : ""
-                                                    }`}
+                                                    {lic.licenseType?.type}
+                                                    {lic.licenseType
+                                                        ?.duration ? (
+                                                        <span className="inline-flex items-center rounded-md bg-sky-50 px-2 py-1 text-xs font-medium text-sky-600 ring-1 ring-inset ring-sky-600/20 ml-2">
+                                                            {lic.licenseType
+                                                                ?.duration +
+                                                                " ay"}
+                                                        </span>
+                                                    ) : (
+                                                        <> </>
+                                                    )}
+                                                    {lic.isStock ? (
+                                                        <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-600 ring-1 ring-inset ring-green-600/20 ml-2">
+                                                            Stok
+                                                        </span>
+                                                    ) : (
+                                                        <></>
+                                                    )}
                                                 </p>
                                                 <div className="max-w-fit text-xs leading-5 text-zinc-400">
                                                     <div className="grid grid-cols-2 gap-4">
@@ -231,6 +333,206 @@ export default function ApplianceDetail({
                     )}
                 </AccordionItem>
             </Accordion>
+
+            <Modal
+                isOpen={isOpen}
+                onOpenChange={onOpenChange}
+                placement="center"
+                backdrop="opaque"
+                shadow="lg"
+                isDismissable={false}
+                scrollBehavior="outside"
+            >
+                <ModalContent>
+                    <ModalHeader className="flex flex-col gap-1 text-zinc-500">
+                        Cihaz Güncelle
+                    </ModalHeader>
+                    <ModalBody>
+                        <form
+                            autoComplete="off"
+                            className="flex flex-col gap-2"
+                            onSubmit={handleSubmit(onSubmit)}
+                        >
+                            <div>
+                                <label
+                                    htmlFor="serialNo"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                >
+                                    Seri Numarası
+                                </label>
+                                <input
+                                    type="text"
+                                    id="serialNo"
+                                    required
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    {...register("serialNo", {
+                                        required: true,
+                                        maxLength: 50,
+                                    })}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="productId"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                >
+                                    Ürün
+                                </label>
+                                <Controller
+                                    control={control}
+                                    name="productId"
+                                    rules={{ required: true }}
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <AutoComplete
+                                            onChange={onChange}
+                                            value={value}
+                                            data={products || []}
+                                        />
+                                    )}
+                                />
+                            </div>
+
+                            <Divider className="my-3" />
+
+                            <div>
+                                <label
+                                    htmlFor="boughtAt"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Alım Tarihi
+                                </label>
+                                <input
+                                    type="date"
+                                    id="boughtAt"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    {...register("boughtAt")}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="soldAt"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Satış Tarihi
+                                </label>
+                                <input
+                                    type="date"
+                                    id="soldAt"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    {...register("soldAt")}
+                                />
+                            </div>
+
+                            <Divider className="my-3" />
+
+                            <div>
+                                <label
+                                    htmlFor="customerId"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                >
+                                    Müşteri
+                                </label>
+                                <Controller
+                                    control={control}
+                                    name="customerId"
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <AutoComplete
+                                            onChange={onChange}
+                                            value={value}
+                                            data={customers || []}
+                                        />
+                                    )}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="dealerId"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                >
+                                    Bayi
+                                </label>
+                                <Controller
+                                    control={control}
+                                    name="dealerId"
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <AutoComplete
+                                            onChange={onChange}
+                                            value={value}
+                                            data={dealers || []}
+                                        />
+                                    )}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="subDealerId"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                >
+                                    Alt Bayi
+                                </label>
+                                <Controller
+                                    control={control}
+                                    name="subDealerId"
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <AutoComplete
+                                            onChange={onChange}
+                                            value={value}
+                                            data={dealers || []}
+                                        />
+                                    )}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="supplierId"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                >
+                                    Tedarikçi
+                                </label>
+                                <Controller
+                                    control={control}
+                                    name="supplierId"
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <AutoComplete
+                                            onChange={onChange}
+                                            value={value}
+                                            data={suppliers || []}
+                                        />
+                                    )}
+                                />
+                            </div>
+
+                            <div className="flex flex-row gap-2 mt-4">
+                                <div className="flex-1"></div>
+                                <Button
+                                    color="danger"
+                                    onPress={onClose}
+                                    className="bg-red-500"
+                                >
+                                    Kapat
+                                </Button>
+                                <Button
+                                    type="submit"
+                                    color="success"
+                                    className="text-white bg-green-600"
+                                >
+                                    Kaydet
+                                </Button>
+                            </div>
+                        </form>
+                    </ModalBody>
+                </ModalContent>
+            </Modal>
         </div>
     );
 }

@@ -18,29 +18,26 @@ import { Divider } from "@nextui-org/divider";
 
 import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
 import DataTable from "@/components/DataTable";
-import { DateFormat, DateTimeFormat } from "@/utils/date";
-import useUserStore from "@/store/user";
 import AutoComplete from "@/components/AutoComplete";
+import useUserStore from "@/store/user";
+import { DateFormat, DateTimeFormat } from "@/utils/date";
 import {
     getProducts,
-    getLicenses,
     getCustomers,
     getDealers,
     getSuppliers,
 } from "@/lib/data";
 
 interface IFormInput {
-    id: number;
+    productId: number;
     serialNo: string;
     boughtAt: string;
     soldAt: string;
-    productId: any;
     customerId: number;
     dealerId: number;
     subDealerId: number;
     supplierId: number;
     createdBy: string;
-    updatedBy: string;
 }
 
 export default function Appliances() {
@@ -48,7 +45,6 @@ export default function Appliances() {
     const { user: currUser } = useUserStore();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
     const [products, setProducts] = useState<ListBoxItem[] | null>(null);
-    const [licenses, setLicenses] = useState<ListBoxItem[] | null>(null);
     const [customers, setCustomers] = useState<ListBoxItem[] | null>(null);
     const [dealers, setDealers] = useState<ListBoxItem[] | null>(null);
     const [suppliers, setSuppliers] = useState<ListBoxItem[] | null>(null);
@@ -62,21 +58,18 @@ export default function Appliances() {
             method: "POST",
             body: JSON.stringify(data),
             headers: { "Content-Type": "application/json" },
-        })
-            .then(async (res) => {
-                const result = await res.json();
-                if (res.ok) {
-                    toast.success(result.message);
-                } else {
-                    toast.error(result.message);
-                }
-                return result;
-            })
-            .then(() => {
+        }).then(async (res) => {
+            const result = await res.json();
+            if (res.ok) {
+                toast.success(result.message);
                 onClose();
                 reset();
                 mutate();
-            });
+            } else {
+                toast.error(result.message);
+            }
+            return result;
+        });
     };
     //#endregion
 
@@ -142,11 +135,13 @@ export default function Appliances() {
             key: "boughtAt",
             name: "Alım Tarihi",
             width: 150,
+            sortable: true,
         },
         {
             key: "soldAt",
             name: "Satış Tarihi",
             width: 150,
+            sortable: true,
         },
         {
             key: "createdBy",
@@ -203,15 +198,12 @@ export default function Appliances() {
     //#region Data
     async function getData() {
         const pro: ListBoxItem[] = await getProducts(true);
-        const lic: ListBoxItem[] = await getLicenses(true);
-        const cus: ListBoxItem[] = await getCustomers(true);
-        const deal: ListBoxItem[] = await getDealers(true);
-        const sup: ListBoxItem[] = await getSuppliers(true);
-
         setProducts(pro);
-        setLicenses(lic);
+        const cus: ListBoxItem[] = await getCustomers(true);
         setCustomers(cus);
+        const deal: ListBoxItem[] = await getDealers(true);
         setDealers(deal);
+        const sup: ListBoxItem[] = await getSuppliers(true);
         setSuppliers(sup);
     }
 
@@ -296,23 +288,19 @@ export default function Appliances() {
                             <div>
                                 <label
                                     htmlFor="productId"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2 after:content-['*'] after:ml-0.5 after:text-red-500"
                                 >
                                     Ürün
                                 </label>
                                 <Controller
                                     control={control}
                                     name="productId"
+                                    rules={{ required: true }}
                                     render={({
                                         field: { onChange, value },
                                     }) => (
                                         <AutoComplete
-                                            onChange={async (e) => {
-                                                onChange;
-                                                const lic: ListBoxItem[] =
-                                                    await getLicenses(true);
-                                                setLicenses(lic);
-                                            }}
+                                            onChange={onChange}
                                             value={value}
                                             data={products || []}
                                         />
@@ -333,7 +321,7 @@ export default function Appliances() {
                                     type="date"
                                     id="boughtAt"
                                     className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
-                                    {...register("boughtAt", {})}
+                                    {...register("boughtAt")}
                                 />
                             </div>
                             <div>
@@ -347,7 +335,7 @@ export default function Appliances() {
                                     type="date"
                                     id="soldAt"
                                     className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
-                                    {...register("soldAt", {})}
+                                    {...register("soldAt")}
                                 />
                             </div>
 
