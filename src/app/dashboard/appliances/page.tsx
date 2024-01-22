@@ -96,12 +96,14 @@ export default function Appliances() {
             name: "Seri Numarası",
             width: 200,
             searchable: true,
+            sortable: true,
         },
         {
             key: "product",
             name: "Ürün",
             width: 150,
             searchable: true,
+            sortable: true,
         },
         {
             key: "customerName",
@@ -152,6 +154,7 @@ export default function Appliances() {
             key: "createdAt",
             name: "Oluşturulma Tarihi",
             width: 150,
+            sortable: true,
         },
         {
             key: "updatedBy",
@@ -162,6 +165,7 @@ export default function Appliances() {
             key: "updatedAt",
             name: "Güncellenme Tarihi",
             width: 150,
+            sortable: true,
         },
     ];
 

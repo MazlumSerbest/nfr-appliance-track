@@ -120,12 +120,14 @@ export default function Licenses() {
             name: "Seri Numarası",
             width: 200,
             searchable: true,
+            sortable: true,
         },
         {
             key: "applianceSerialNo",
             name: "Cihaz Seri Numarası",
             width: 200,
             searchable: true,
+            sortable: true,
         },
         {
             key: "isStock",
@@ -147,11 +149,13 @@ export default function Licenses() {
             key: "boughtAt",
             name: "Alım Tarihi",
             width: 150,
+            sortable: true,
         },
         {
             key: "soldAt",
             name: "Satış Tarihi",
             width: 150,
+            sortable: true,
         },
         {
             key: "startDate",
@@ -202,6 +206,7 @@ export default function Licenses() {
             key: "createdAt",
             name: "Oluşturulma Tarihi",
             width: 150,
+            sortable: true,
         },
         {
             key: "updatedBy",
@@ -212,6 +217,7 @@ export default function Licenses() {
             key: "updatedAt",
             name: "Güncellenme Tarihi",
             width: 150,
+            sortable: true,
         },
         {
             key: "expiryStatus",
