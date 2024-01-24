@@ -46,7 +46,8 @@ export default function Users() {
 
     const { data, error, mutate } = useSWR("/api/user", null, {
         onSuccess: (data) => {
-            setUsers(data);
+            const users = data.filter((e: User) => e.username != "admin");
+            setUsers(users);
         },
     });
 
