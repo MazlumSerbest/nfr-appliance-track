@@ -49,7 +49,7 @@ type User = Entity & {
     username: string;
     name?: string;
     email: string;
-    role: "admin" | "user";
+    role: "admin" | "technical" | "seller";
 };
 
 type Appliance = Entity & {
@@ -120,6 +120,7 @@ type Current =  Entity & {
     city?: string;
     taxOffice?: string;
     taxNo?: string;
+    paymentPlan?: string;
 };
 
 type AuthorizedPerson = Entity & {

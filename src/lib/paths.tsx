@@ -3,7 +3,6 @@ import {
     BiCollection,
     BiServer,
     BiLink,
-    BiCog,
     BiGroup,
     BiUserCircle,
     BiDevices,
@@ -73,7 +72,7 @@ export const paths: Path[] = [
     // },
 ];
 
-export const definitions: Path[] =[
+export const definitions: Path[] = [
     {
         path: "/dashboard/users",
         key: "users",
@@ -152,4 +151,4 @@ export const definitions: Path[] =[
             />
         ),
     },
-]
+];

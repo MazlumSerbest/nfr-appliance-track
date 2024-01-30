@@ -1,6 +1,7 @@
 export const userTypes = [
     { name: "Yönetici", key: "admin" },
-    { name: "Kullanıcı", key: "user" },
+    { name: "Teknik", key: "technical" },
+    { name: "Satış", key: "seller" },
 ];
 
 export const activeOptions = [
