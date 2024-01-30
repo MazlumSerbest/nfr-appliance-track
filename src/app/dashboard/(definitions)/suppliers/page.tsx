@@ -29,6 +29,7 @@ interface IFormInput {
     email: string;
     taxOffice: string;
     taxNo: string;
+    paymentPlan: string;
     city: string;
     address: string;
     createdBy: string;
@@ -109,6 +110,11 @@ export default function Suppliers() {
             width: 100,
         },
         {
+            key: "paymentPlan",
+            name: "Vade",
+            width: 100,
+        },
+        {
             key: "active",
             name: "Aktif",
             width: 80,
@@ -142,6 +148,8 @@ export default function Suppliers() {
             switch (columnKey) {
                 case "active":
                     return <BoolChip value={cellValue} />;
+                case "phone":
+                    return `+90${cellValue}`;
                 case "createdAt":
                     return <p>{DateTimeFormat(cellValue)}</p>;
                 case "updatedAt":
@@ -231,16 +239,23 @@ export default function Suppliers() {
                                 >
                                     Telefon
                                 </label>
-                                <input
-                                    type="text"
-                                    id="phone"
-                                    required
-                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
-                                    {...register("phone", {
-                                        required: true,
-                                        maxLength: 20,
-                                    })}
-                                />
+                                <div className="mt-2">
+                                    <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:max-w-md">
+                                        <span className="flex select-none items-center pl-3 text-zinc-400 sm:text-sm">
+                                            +90
+                                        </span>
+                                        <input
+                                            type="text"
+                                            id="phone"
+                                            required
+                                            className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-zinc-700 placeholder:text-zinc-400 focus:ring-0 sm:text-sm sm:leading-6 outline-none"
+                                            {...register("phone", {
+                                                required: true,
+                                                maxLength: 20,
+                                            })}
+                                        />
+                                    </div>
+                                </div>
                             </div>
                             <div>
                                 <label
@@ -288,6 +303,22 @@ export default function Suppliers() {
                                     id="taxNo"
                                     className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
                                     {...register("taxNo", {
+                                        maxLength: 50,
+                                    })}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="paymentPlan"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Vade
+                                </label>
+                                <input
+                                    type="text"
+                                    id="paymentPlan"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    {...register("paymentPlan", {
                                         maxLength: 50,
                                     })}
                                 />
