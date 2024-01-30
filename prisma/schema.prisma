@@ -11,9 +11,9 @@ datasource db {
 model users {
   id        Int       @id @default(autoincrement())
   username  String    @unique @db.VarChar
-  name      String?   @db.VarChar(100)
+  name      String?   @db.VarChar
   email     String    @unique @db.VarChar
-  password  String    @db.VarChar(100)
+  password  String    @db.VarChar
   active    Boolean   @default(true)
   createdAt DateTime  @default(now()) @db.Timestamptz(6)
   createdBy String    @db.VarChar
@@ -81,12 +81,12 @@ model licenses {
 model connections {
   id         Int       @id @default(autoincrement())
   login      String?   @db.VarChar
-  password   String?   @db.VarChar(100)
-  note       String?   @db.VarChar(400)
+  password   String?   @db.VarChar
+  note       String?   @db.VarChar
   createdAt  DateTime  @default(now()) @db.Timestamptz(6)
   createdBy  String    @db.VarChar
   updatedBy  String?   @db.VarChar
-  ip         String?   @db.VarChar(100)
+  ip         String?   @db.VarChar
   updatedAt  DateTime? @updatedAt @db.Timestamptz(6)
   customerId Int?
   customer   currents? @relation(fields: [customerId], references: [id])
@@ -134,12 +134,12 @@ model currents {
   id                  Int                 @id @default(autoincrement())
   active              Boolean             @default(true)
   type                CurrentType         @default(customer)
-  name                String              @db.VarChar(100)
+  name                String              @db.VarChar
   phone               String?             @db.VarChar
   email               String?             @db.VarChar
-  address             String?             @db.VarChar(400)
+  address             String?             @db.VarChar
   city                String?             @db.VarChar
-  taxOffice           String?             @db.VarChar(100)
+  taxOffice           String?             @db.VarChar
   taxNo               String?             @db.VarChar
   paymentPlan         String?             @db.VarChar
   createdAt           DateTime            @default(now()) @db.Timestamptz(6)
@@ -161,7 +161,7 @@ model currents {
 model authorizedPersons {
   id        Int       @id @default(autoincrement())
   currentId Int
-  name      String    @db.VarChar(100)
+  name      String    @db.VarChar
   isMain    Boolean   @default(false)
   title     String?   @db.VarChar
   phone     String?   @db.VarChar
