@@ -26,7 +26,6 @@ export async function GET(
                             id: true,
                             startDate: true,
                             expiryDate: true,
-                            isStock: true,
                             licenseType: {
                                 select: {
                                     type: true,

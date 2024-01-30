@@ -285,13 +285,13 @@ export default function ApplianceDetail({
                                                     ) : (
                                                         <> </>
                                                     )}
-                                                    {lic.isStock ? (
+                                                    {/* {lic.customerId ? (
                                                         <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-600 ring-1 ring-inset ring-green-600/20 ml-2">
                                                             Stok
                                                         </span>
                                                     ) : (
                                                         <></>
-                                                    )}
+                                                    )} */}
                                                 </p>
                                                 <div className="max-w-fit text-xs leading-5 text-zinc-400">
                                                     <div className="grid grid-cols-2 gap-4">
