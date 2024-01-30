@@ -12,6 +12,7 @@ import {
     ModalHeader,
     useDisclosure,
 } from "@nextui-org/modal";
+import { Tab, Tabs } from "@nextui-org/tabs";
 import { SortDescriptor } from "@nextui-org/table";
 import { Button } from "@nextui-org/button";
 import { Divider } from "@nextui-org/divider";
@@ -38,7 +39,6 @@ import {
 } from "@/lib/data";
 
 interface IFormInput {
-    isStock: boolean;
     serialNo: string;
     startDate: string;
     expiryDate: string;
@@ -57,6 +57,9 @@ export default function Licenses() {
     const router = useRouter();
     const { user: currUser } = useUserStore();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
+
+    const [licenses, setLicenses] = useState<vLicense[] | null>(null);
+    const [stockLicenses, setStockLicenses] = useState<vLicense[] | null>(null);
     const [licenseTypes, setLicenseTypes] = useState<ListBoxItem[] | null>(
         null,
     );
@@ -66,9 +69,7 @@ export default function Licenses() {
     const [suppliers, setSuppliers] = useState<ListBoxItem[] | null>(null);
 
     //#region Form
-    const { register, reset, handleSubmit, control } = useForm<IFormInput>({
-        defaultValues: { isStock: false },
-    });
+    const { register, reset, handleSubmit, control } = useForm<IFormInput>();
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         data.createdBy = currUser?.username ?? "";
         data.boughtTypeId = Number(data.boughtTypeId || undefined);
@@ -129,11 +130,11 @@ export default function Licenses() {
             searchable: true,
             sortable: true,
         },
-        {
-            key: "isStock",
-            name: "Stok",
-            width: 80,
-        },
+        // {
+        //     key: "isStock",
+        //     name: "Stok",
+        //     width: 80,
+        // },
         {
             key: "licenseType",
             name: "Lisans Tipi",
@@ -318,7 +319,12 @@ export default function Licenses() {
     }, []);
     //#endregion
 
-    const { data, error, mutate } = useSWR("/api/license");
+    const { data, error, mutate } = useSWR("/api/license", null, {
+        onSuccess: (data) => {
+            setLicenses(data?.filter((l: vLicense) => !l.isStock));
+            setStockLicenses(data?.filter((l: vLicense) => l.isStock));
+        },
+    });
 
     if (error) return <div>Yükleme Hatası!</div>;
     if (!data) {
@@ -332,26 +338,63 @@ export default function Licenses() {
     }
     return (
         <>
-            <DataTable
-                isCompact
-                isStriped
-                className="mt-4 mb-2"
-                emptyContent="Herhangi bir lisans bulunamadı!"
-                defaultRowsPerPage={20}
-                data={data || []}
-                columns={columns}
-                renderCell={renderCell}
-                sortOption={sort}
-                initialVisibleColumNames={visibleColumns}
-                activeOptions={[]}
-                onAddNew={() => {
-                    reset({});
-                    onOpen();
-                }}
-                onDoubleClick={(item) => {
-                    router.push(`/dashboard/licenses/${item.id}`);
-                }}
-            />
+            <div className="flex flex-col w-full items-center mt-4 mb-2">
+                <Tabs
+                    // fullWidth
+                    variant="bordered"
+                    aria-label="License Tab"
+                    color="primary"
+                    size="md"
+                    classNames={{
+                        cursor: "w-full bg-sky-500",
+                        tabList: "w-72",
+                    }}
+                >
+                    <Tab key="stocks" title="Stoklar" className="w-full">
+                        <DataTable
+                            isCompact
+                            isStriped
+                            emptyContent="Herhangi bir stok lisans bulunamadı!"
+                            defaultRowsPerPage={20}
+                            data={stockLicenses || []}
+                            columns={columns}
+                            renderCell={renderCell}
+                            sortOption={sort}
+                            initialVisibleColumNames={visibleColumns}
+                            activeOptions={[]}
+                            onAddNew={() => {
+                                reset({});
+                                onOpen();
+                            }}
+                            onDoubleClick={(item) => {
+                                router.push(`/dashboard/licenses/${item.id}`);
+                            }}
+                        />
+                    </Tab>
+                    <Tab key="active" title="Aktif" className="w-full">
+                        <DataTable
+                            isCompact
+                            isStriped
+                            emptyContent="Herhangi bir lisans bulunamadı!"
+                            defaultRowsPerPage={20}
+                            data={licenses || []}
+                            columns={columns}
+                            renderCell={renderCell}
+                            sortOption={sort}
+                            initialVisibleColumNames={visibleColumns}
+                            activeOptions={[]}
+                            onAddNew={() => {
+                                reset({});
+                                onOpen();
+                            }}
+                            onDoubleClick={(item) => {
+                                router.push(`/dashboard/licenses/${item.id}`);
+                            }}
+                        />
+                    </Tab>
+                </Tabs>
+            </div>
+            
             <Modal
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}
@@ -372,7 +415,7 @@ export default function Licenses() {
                             className="flex flex-col gap-2"
                             onSubmit={handleSubmit(onSubmit)}
                         >
-                            <div>
+                            {/* <div>
                                 <div className="relative flex flex-col gap-x-3">
                                     <div className="flex flex-row">
                                         <label
@@ -395,7 +438,7 @@ export default function Licenses() {
                                         Lisans stok kontrolü için gereklidir!
                                     </span>
                                 </div>
-                            </div>
+                            </div> */}
                             <div>
                                 <label
                                     htmlFor="serialNo"

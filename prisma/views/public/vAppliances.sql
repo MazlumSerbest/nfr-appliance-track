@@ -9,6 +9,10 @@ SELECT
   a."updatedAt",
   a.deleted,
   a."productId",
+  CASE
+    WHEN (a."customerId" IS NULL) THEN TRUE
+    ELSE false
+  END AS "isStock",
   p.model AS "productModel",
   p.brand AS "productBrand",
   c.name AS "customerName",

@@ -1,6 +1,9 @@
 SELECT
   l.id,
-  l."isStock",
+  CASE
+    WHEN (l."customerId" IS NULL) THEN TRUE
+    ELSE false
+  END AS "isStock",
   l."serialNo",
   l."startDate",
   l."expiryDate",

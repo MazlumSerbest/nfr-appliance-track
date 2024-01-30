@@ -65,12 +65,12 @@ type Appliance = Entity & {
 };
 
 type vAppliance = Appliance & {
+    isStock: boolean;
     productBrand?: string;
     productModel?: string;
 };
 
 type License = Entity & {
-    isStock: boolean;
     serialNo: string;
     customerId: number;
     dealerId: number;
@@ -87,6 +87,7 @@ type License = Entity & {
 };
 
 type vLicense = License & {
+    isStock: boolean;
     applianceSerialNo?: string;
     productModel?: string;
     productBrand?: string;

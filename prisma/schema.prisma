@@ -19,7 +19,7 @@ model users {
   createdBy String    @db.VarChar
   updatedBy String?   @db.VarChar
   updatedAt DateTime? @updatedAt @db.Timestamptz(6)
-  role      UserRole  @default(user)
+  role      String    @default("seller")
 }
 
 model appliances {
@@ -43,7 +43,7 @@ model appliances {
   dealer        currents?   @relation("Dealer", fields: [dealerId], references: [id])
   predecessor   appliances? @relation("ApplienceHistory", fields: [predecessorId], references: [id])
   successor     appliances? @relation("ApplienceHistory")
-  product       products?   @relation(fields: [productId], references: [id])
+  product       products    @relation(fields: [productId], references: [id])
   subDealer     currents?   @relation("SubDealer", fields: [subDealerId], references: [id])
   supplier      currents?   @relation("Supplier", fields: [supplierId], references: [id])
   licenses      licenses[]
@@ -52,7 +52,6 @@ model appliances {
 model licenses {
   id            Int          @id @default(autoincrement())
   active        Boolean      @default(true)
-  isStock       Boolean      @default(false)
   startDate     DateTime?    @db.Date
   expiryDate    DateTime?    @db.Date
   createdBy     String       @db.VarChar
@@ -142,6 +141,7 @@ model currents {
   city                String?             @db.VarChar
   taxOffice           String?             @db.VarChar
   taxNo               String?             @db.VarChar
+  paymentPlan         String?             @db.VarChar
   createdAt           DateTime            @default(now()) @db.Timestamptz(6)
   createdBy           String              @db.VarChar
   updatedBy           String?             @db.VarChar
@@ -184,6 +184,7 @@ view vAppliances {
   updatedAt     DateTime? @db.Timestamptz(6)
   deleted       Boolean?
   productId     Int?
+  isStock       Boolean?
   productModel  String?   @db.VarChar
   productBrand  String?   @db.VarChar
   customerName  String?   @db.VarChar
@@ -218,10 +219,11 @@ view vLicenses {
   expiryStatus      String?
 }
 
-enum UserRole {
-  admin
-  user
-}
+// enum UserRole {
+//   admin
+//   technical
+//   seller
+// }
 
 enum CurrentType {
   customer

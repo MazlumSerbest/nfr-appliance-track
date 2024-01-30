@@ -12,6 +12,7 @@ import {
     ModalHeader,
     useDisclosure,
 } from "@nextui-org/modal";
+import { Tabs, Tab } from "@nextui-org/tabs";
 import { SortDescriptor } from "@nextui-org/table";
 import { Button } from "@nextui-org/button";
 import { Divider } from "@nextui-org/divider";
@@ -44,6 +45,11 @@ export default function Appliances() {
     const router = useRouter();
     const { user: currUser } = useUserStore();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
+
+    const [appliances, setAppliances] = useState<vAppliance[] | null>(null);
+    const [stockAppliances, setStockAppliances] = useState<vAppliance[] | null>(
+        null,
+    );
     const [products, setProducts] = useState<ListBoxItem[] | null>(null);
     const [customers, setCustomers] = useState<ListBoxItem[] | null>(null);
     const [dealers, setDealers] = useState<ListBoxItem[] | null>(null);
@@ -216,7 +222,14 @@ export default function Appliances() {
     }, []);
     //#endregion
 
-    const { data, error, mutate } = useSWR("/api/appliance");
+    const { data, error, mutate } = useSWR("/api/appliance", null, {
+        onSuccess: (data) => {
+            setAppliances(data.filter((a: vAppliance) => !a.isStock));
+            setStockAppliances(
+                data.filter((a: vAppliance) => a.isStock),
+            );
+        },
+    });
 
     if (error) return <div>Yükleme Hatası!</div>;
     if (!data) {
@@ -230,26 +243,62 @@ export default function Appliances() {
     }
     return (
         <>
-            <DataTable
-                isCompact
-                isStriped
-                className="mt-4 mb-2"
-                emptyContent="Herhangi bir cihaz bulunamadı!"
-                defaultRowsPerPage={20}
-                data={data || []}
-                columns={columns}
-                renderCell={renderCell}
-                sortOption={sort}
-                initialVisibleColumNames={visibleColumns}
-                activeOptions={[]}
-                onAddNew={() => {
-                    reset({});
-                    onOpen();
-                }}
-                onDoubleClick={(item) => {
-                    router.push(`/dashboard/appliances/${item.id}`);
-                }}
-            />
+            <div className="flex flex-col w-full items-center mt-4 mb-2">
+                <Tabs
+                    variant="bordered"
+                    aria-label="Appliance Tab"
+                    color="primary"
+                    size="md"
+                    classNames={{
+                        cursor: "w-full bg-sky-500",
+                        tabList: "w-72",
+                    }}
+                >
+                    <Tab key="stocks" title="Stoklar" className="w-full">
+                        <DataTable
+                            isCompact
+                            isStriped
+                            emptyContent="Herhangi bir stok cihaz bulunamadı!"
+                            defaultRowsPerPage={20}
+                            data={stockAppliances || []}
+                            columns={columns}
+                            renderCell={renderCell}
+                            sortOption={sort}
+                            initialVisibleColumNames={visibleColumns}
+                            activeOptions={[]}
+                            onAddNew={() => {
+                                reset({});
+                                onOpen();
+                            }}
+                            onDoubleClick={(item) => {
+                                router.push(`/dashboard/appliances/${item.id}`);
+                            }}
+                        />
+                    </Tab>
+                    <Tab key="active" title="Aktif" className="w-full">
+                        <DataTable
+                            isCompact
+                            isStriped
+                            emptyContent="Herhangi bir cihaz bulunamadı!"
+                            defaultRowsPerPage={20}
+                            data={appliances || []}
+                            columns={columns}
+                            renderCell={renderCell}
+                            sortOption={sort}
+                            initialVisibleColumNames={visibleColumns}
+                            activeOptions={[]}
+                            onAddNew={() => {
+                                reset({});
+                                onOpen();
+                            }}
+                            onDoubleClick={(item) => {
+                                router.push(`/dashboard/appliances/${item.id}`);
+                            }}
+                        />
+                    </Tab>
+                </Tabs>
+            </div>
+
             <Modal
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}

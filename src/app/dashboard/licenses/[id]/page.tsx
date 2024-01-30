@@ -44,7 +44,6 @@ import {
 
 interface IFormInput {
     id: number;
-    isStock: boolean;
     serialNo: string;
     startDate?: string;
     expiryDate?: string;
@@ -333,7 +332,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                             className="flex flex-col gap-2"
                             onSubmit={handleSubmit(onSubmit)}
                         >
-                            <div>
+                            {/* <div>
                                 <div className="relative flex flex-col gap-x-3">
                                     <div className="flex flex-row">
                                         <label
@@ -356,7 +355,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                         Lisans stok kontrolü için gereklidir!
                                     </span>
                                 </div>
-                            </div>
+                            </div> */}
                             <div>
                                 <label
                                     htmlFor="serialNo"
