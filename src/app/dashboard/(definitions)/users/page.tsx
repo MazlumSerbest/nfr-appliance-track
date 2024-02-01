@@ -90,7 +90,6 @@ export default function Users() {
             body: JSON.stringify(data),
             headers: { "Content-Type": "application/json" },
         }).then(async (res) => {
-            console.log(res);
             const result = await res.json();
             if (res.ok) {
                 toast.success(result.message);

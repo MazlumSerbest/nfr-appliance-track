@@ -5,8 +5,7 @@ export async function getAppliances(forListBox?: boolean, productId?: number) {
         `/api/appliance${productId ? `?productId=${productId}` : ""}`,
     );
     const appliances = await res.json();
-    console.log(appliances);
-    console.log(productId);
+    
     if (!appliances.length) {
         toast.error("Cihaz bulunamadı!");
         return [];

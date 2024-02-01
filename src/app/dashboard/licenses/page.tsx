@@ -74,7 +74,6 @@ export default function Licenses() {
         data.createdBy = currUser?.username ?? "";
         data.boughtTypeId = Number(data.boughtTypeId || undefined);
 
-        console.log(data);
         await fetch("/api/license", {
             method: "POST",
             body: JSON.stringify(data),
