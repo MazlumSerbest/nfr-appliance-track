@@ -62,20 +62,22 @@ export async function POST(request: Request) {
                     status: 400,
                 });
 
-            const checkPredecessor = await prisma.appliances.findUnique({
-                where: {
-                    predecessorId: appliance.predecessorId,
-                },
-                select: {
-                    predecessorId: true,
-                },
-            });
-            if (checkPredecessor)
-                return NextResponse.json({
-                    message:
-                        "Bu cihaz önceden başka bir cihazda eski cihaz olarak kullanılmıştır!",
-                    status: 400,
+            if (appliance.predecessorId) {
+                const checkPredecessor = await prisma.appliances.findUnique({
+                    where: {
+                        predecessorId: appliance.predecessorId,
+                    },
+                    select: {
+                        predecessorId: true,
+                    },
                 });
+                if (checkPredecessor)
+                    return NextResponse.json({
+                        message:
+                            "Bu cihaz önceden başka bir cihazda eski cihaz olarak kullanılmıştır!",
+                        status: 400,
+                    });
+            }
 
             const newAppliance = await prisma.appliances.create({
                 data: appliance,
