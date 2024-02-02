@@ -339,14 +339,12 @@ export default function Licenses() {
         <>
             <div className="flex flex-col w-full items-center mt-4 mb-2">
                 <Tabs
-                    // fullWidth
-                    variant="bordered"
                     aria-label="License Tab"
                     color="primary"
                     size="md"
                     classNames={{
                         cursor: "w-full bg-sky-500",
-                        tabList: "w-72",
+                        tab: "px-10",
                     }}
                 >
                     <Tab key="stocks" title="Stoklar" className="w-full">
@@ -393,7 +391,7 @@ export default function Licenses() {
                     </Tab>
                 </Tabs>
             </div>
-            
+
             <Modal
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}

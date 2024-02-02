@@ -225,9 +225,7 @@ export default function Appliances() {
     const { data, error, mutate } = useSWR("/api/appliance", null, {
         onSuccess: (data) => {
             setAppliances(data.filter((a: vAppliance) => !a.isStock));
-            setStockAppliances(
-                data.filter((a: vAppliance) => a.isStock),
-            );
+            setStockAppliances(data.filter((a: vAppliance) => a.isStock));
         },
     });
 
@@ -245,13 +243,12 @@ export default function Appliances() {
         <>
             <div className="flex flex-col w-full items-center mt-4 mb-2">
                 <Tabs
-                    variant="bordered"
                     aria-label="Appliance Tab"
                     color="primary"
                     size="md"
                     classNames={{
                         cursor: "w-full bg-sky-500",
-                        tabList: "w-72",
+                        tab: "px-10",
                     }}
                 >
                     <Tab key="stocks" title="Stoklar" className="w-full">
