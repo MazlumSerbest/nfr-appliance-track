@@ -11,7 +11,7 @@ type Path = {
     path: string;
     key: string;
     name: string;
-    isAdmin?: boolean;
+    roles?: string[];
     icon: React.ReactNode;
 };
 

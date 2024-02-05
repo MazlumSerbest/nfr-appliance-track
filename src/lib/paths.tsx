@@ -18,6 +18,7 @@ export const paths: Path[] = [
         path: "/dashboard",
         key: "dashboard",
         name: "Panel",
+        roles: ["admin", "technical", "seller"],
         icon: (
             <BiCollection
                 className="text-2xl text-zinc-500"
@@ -29,6 +30,7 @@ export const paths: Path[] = [
         path: "/dashboard/appliances",
         key: "appliances",
         name: "Cihazlar",
+        roles: ["admin", "technical", "seller"],
         icon: (
             <BiServer
                 className="text-2xl text-zinc-500"
@@ -40,6 +42,7 @@ export const paths: Path[] = [
         path: "/dashboard/licenses",
         key: "licenses",
         name: "Lisanslar",
+        roles: ["admin", "technical", "seller"],
         icon: (
             <BiCheckShield
                 className="text-2xl text-zinc-500"
@@ -51,7 +54,7 @@ export const paths: Path[] = [
         path: "/dashboard/connections",
         key: "connections",
         name: "Bağlantılar",
-        isAdmin: true,
+        roles: ["admin", "technical"],
         icon: (
             <BiLink
                 className="text-2xl text-zinc-500"
@@ -77,7 +80,7 @@ export const definitions: Path[] = [
         path: "/dashboard/users",
         key: "users",
         name: "Kullanıcılar",
-        isAdmin: true,
+        roles: ["admin"],
         icon: (
             <BiGroup
                 className="text-2xl text-zinc-500"
@@ -89,6 +92,7 @@ export const definitions: Path[] = [
         path: "/dashboard/products",
         key: "products",
         name: "Ürünler",
+        roles: ["admin", "technical", "seller"],
         icon: (
             <BiDevices
                 className="text-2xl text-zinc-500"
@@ -100,6 +104,7 @@ export const definitions: Path[] = [
         path: "/dashboard/licenseTypes",
         key: "licenseTypes",
         name: "Lisans Tipleri",
+        roles: ["admin", "technical", "seller"],
         icon: (
             <BiShield
                 className="text-2xl text-zinc-500"
@@ -111,6 +116,7 @@ export const definitions: Path[] = [
         path: "/dashboard/boughtTypes",
         key: "boughtTypes",
         name: "Alım Tipleri",
+        roles: ["admin", "technical", "seller"],
         icon: (
             <BiBarcode
                 className="text-2xl text-zinc-500"
@@ -122,6 +128,7 @@ export const definitions: Path[] = [
         path: "/dashboard/customers",
         key: "customers",
         name: "Müşteriler",
+        roles: ["admin", "technical", "seller"],
         icon: (
             <BiUserCircle
                 className="text-2xl text-zinc-500"
@@ -133,6 +140,7 @@ export const definitions: Path[] = [
         path: "/dashboard/dealers",
         key: "dearlers",
         name: "Bayiler",
+        roles: ["admin", "technical", "seller"],
         icon: (
             <BiBriefcase
                 className="text-2xl text-zinc-500"
@@ -144,6 +152,7 @@ export const definitions: Path[] = [
         path: "/dashboard/suppliers",
         key: "suppliers",
         name: "Tedarikçiler",
+        roles: ["admin", "technical", "seller"],
         icon: (
             <BiStoreAlt
                 className="text-2xl text-zinc-500"

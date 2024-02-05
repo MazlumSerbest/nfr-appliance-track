@@ -64,8 +64,11 @@ export default function NavLayout() {
                         aria-label="Menu listbox"
                     >
                         <ListboxSection showDivider>
-                            {paths.map((p, index) => {
-                                return (
+                            {paths
+                                .filter((p) =>
+                                    p.roles?.includes(user?.role ?? ""),
+                                )
+                                .map((p) => (
                                     <ListboxItem
                                         key={p.key}
                                         startContent={p.icon}
@@ -73,9 +76,6 @@ export default function NavLayout() {
                                             "font-semibold" +
                                             (withoutFullLink == p.path
                                                 ? " bg-sky-100"
-                                                : "") +
-                                            (p.isAdmin && user?.role != "admin"
-                                                ? " hidden"
                                                 : "")
                                         }
                                     >
@@ -91,8 +91,7 @@ export default function NavLayout() {
                                         />
                                         {p.name}
                                     </ListboxItem>
-                                );
-                            })}
+                                ))}
                         </ListboxSection>
                         <ListboxSection
                             title="Tanımlamalar"
@@ -100,35 +99,36 @@ export default function NavLayout() {
                                 heading: "text-zinc-500",
                             }}
                         >
-                            {definitions?.map((p, index) => {
-                                return (
-                                    <ListboxItem
-                                        key={p.key}
-                                        startContent={p.icon}
-                                        className={
-                                            "font-semibold" +
-                                            (withoutFullLink == p.path
-                                                ? " bg-sky-100"
-                                                : "") +
-                                            (p.isAdmin && user?.role != "admin"
-                                                ? " hidden"
-                                                : "")
-                                        }
-                                    >
-                                        <NextLink
-                                            className="absolute inset-0 outline-none"
-                                            href={p.path}
-                                            onClick={() =>
-                                                setShowSidebar(false)
+                            {definitions
+                                .filter((p) =>
+                                    p.roles?.includes(user?.role ?? ""),
+                                )
+                                .map((p) => {
+                                    return (
+                                        <ListboxItem
+                                            key={p.key}
+                                            startContent={p.icon}
+                                            className={
+                                                "font-semibold" +
+                                                (withoutFullLink == p.path
+                                                    ? " bg-sky-100"
+                                                    : "")
                                             }
-                                            onTouchEnd={() =>
-                                                setShowSidebar(false)
-                                            }
-                                        />
-                                        {p.name}
-                                    </ListboxItem>
-                                );
-                            })}
+                                        >
+                                            <NextLink
+                                                className="absolute inset-0 outline-none"
+                                                href={p.path}
+                                                onClick={() =>
+                                                    setShowSidebar(false)
+                                                }
+                                                onTouchEnd={() =>
+                                                    setShowSidebar(false)
+                                                }
+                                            />
+                                            {p.name}
+                                        </ListboxItem>
+                                    );
+                                })}
                         </ListboxSection>
                     </Listbox>
                 </div>
