@@ -77,7 +77,7 @@ export default function Connections() {
     const columns: Column[] = [
         {
             key: "ip",
-            name: "IP",
+            name: "IP/Domain",
             width: 150,
             searchable: true,
         },
@@ -136,7 +136,7 @@ export default function Connections() {
                             target="_blank"
                             className="underline text-sky-400"
                         >
-                            {cellValue}
+                            {"https://" + cellValue}
                         </a>
                     );
                 case "active":
@@ -229,7 +229,7 @@ export default function Connections() {
                                     htmlFor="ip"
                                     className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
                                 >
-                                    IP
+                                    IP/Domain
                                 </label>
                                 <div className="mt-2">
                                     <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:max-w-md">
