@@ -47,6 +47,9 @@ export default function Appliances() {
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
 
     const [appliances, setAppliances] = useState<vAppliance[] | null>(null);
+    const [orderAppliances, setOrderAppliances] = useState<vAppliance[] | null>(
+        null,
+    );
     const [stockAppliances, setStockAppliances] = useState<vAppliance[] | null>(
         null,
     );
@@ -224,7 +227,12 @@ export default function Appliances() {
 
     const { data, error, mutate } = useSWR("/api/appliance", null, {
         onSuccess: (data) => {
-            setAppliances(data.filter((a: vAppliance) => !a.isStock));
+            setAppliances(
+                data.filter((a: vAppliance) => !a.isStock && a.soldAt),
+            );
+            setOrderAppliances(
+                data.filter((a: vAppliance) => !a.isStock && !a.soldAt),
+            );
             setStockAppliances(data.filter((a: vAppliance) => a.isStock));
         },
     });
@@ -251,13 +259,34 @@ export default function Appliances() {
                         tab: "px-10",
                     }}
                 >
-                    <Tab key="stocks" title="Stoklar" className="w-full">
+                    <Tab key="stock" title="Stok" className="w-full">
                         <DataTable
                             isCompact
                             isStriped
-                            emptyContent="Herhangi bir stok cihaz bulunamadı!"
+                            emptyContent="Herhangi bir cihaz bulunamadı!"
                             defaultRowsPerPage={20}
                             data={stockAppliances || []}
+                            columns={columns}
+                            renderCell={renderCell}
+                            sortOption={sort}
+                            initialVisibleColumNames={visibleColumns}
+                            activeOptions={[]}
+                            onAddNew={() => {
+                                reset({});
+                                onOpen();
+                            }}
+                            onDoubleClick={(item) => {
+                                router.push(`/dashboard/appliances/${item.id}`);
+                            }}
+                        />
+                    </Tab>
+                    <Tab key="order" title="Sipariş" className="w-full">
+                        <DataTable
+                            isCompact
+                            isStriped
+                            emptyContent="Herhangi bir cihaz bulunamadı!"
+                            defaultRowsPerPage={20}
+                            data={orderAppliances || []}
                             columns={columns}
                             renderCell={renderCell}
                             sortOption={sort}

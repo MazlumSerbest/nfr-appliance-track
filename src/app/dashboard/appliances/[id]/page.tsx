@@ -159,6 +159,17 @@ export default function ApplianceDetail({
                             </dd>
                         </div>
                         <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
+                            <dt className="font-medium">Durum</dt>
+                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
+                                {(!data.customerId
+                                    ? "Stok"
+                                    : !data.soldAt
+                                    ? "Sipariş"
+                                    : "Aktif") || "-"}
+                            </dd>
+                        </div>
+
+                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
                             <dt className="font-medium">Alım Tarihi</dt>
                             <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
                                 {DateFormat(data.boughtAt) || "-"}

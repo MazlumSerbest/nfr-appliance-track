@@ -164,13 +164,11 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
     }, []);
     //#endregion
 
-    const { data, error, mutate } = useSWR(`/api/license/${params.id}`,
-    null,
-    {
+    const { data, error, mutate } = useSWR(`/api/license/${params.id}`, null, {
         onSuccess: (lic) => {
             reset(lic);
         },
-    },);
+    });
 
     if (error) return <div>Yükleme Hatası!</div>;
     if (!data)
@@ -196,10 +194,14 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                         />
                     </div>
                     <div className="divide-y divide-zinc-200">
-                        <div className="grid grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
-                            <dt className="font-medium">Stok Lisans</dt>
-                            <dd className="col-span-1 md:col-span-2">
-                                <BoolChip value={data.isStock} />
+                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
+                            <dt className="font-medium">Durum</dt>
+                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
+                                {(!data.customerId
+                                    ? "Stok"
+                                    : !data.soldAt
+                                    ? "Sipariş"
+                                    : "Aktif") || "-"}
                             </dd>
                         </div>
 

@@ -60,6 +60,7 @@ export default function Licenses() {
 
     const [licenses, setLicenses] = useState<vLicense[] | null>(null);
     const [stockLicenses, setStockLicenses] = useState<vLicense[] | null>(null);
+    const [orderLicenses, setOrderLicenses] = useState<vLicense[] | null>(null);
     const [licenseTypes, setLicenseTypes] = useState<ListBoxItem[] | null>(
         null,
     );
@@ -320,7 +321,10 @@ export default function Licenses() {
 
     const { data, error, mutate } = useSWR("/api/license", null, {
         onSuccess: (data) => {
-            setLicenses(data?.filter((l: vLicense) => !l.isStock));
+            setLicenses(data?.filter((l: vLicense) => !l.isStock && l.soldAt));
+            setOrderLicenses(
+                data?.filter((l: vLicense) => !l.isStock && !l.soldAt),
+            );
             setStockLicenses(data?.filter((l: vLicense) => l.isStock));
         },
     });
@@ -347,13 +351,34 @@ export default function Licenses() {
                         tab: "px-10",
                     }}
                 >
-                    <Tab key="stocks" title="Stoklar" className="w-full">
+                    <Tab key="stock" title="Stok" className="w-full">
                         <DataTable
                             isCompact
                             isStriped
-                            emptyContent="Herhangi bir stok lisans bulunamadı!"
+                            emptyContent="Herhangi bir lisans bulunamadı!"
                             defaultRowsPerPage={20}
                             data={stockLicenses || []}
+                            columns={columns}
+                            renderCell={renderCell}
+                            sortOption={sort}
+                            initialVisibleColumNames={visibleColumns}
+                            activeOptions={[]}
+                            onAddNew={() => {
+                                reset({});
+                                onOpen();
+                            }}
+                            onDoubleClick={(item) => {
+                                router.push(`/dashboard/licenses/${item.id}`);
+                            }}
+                        />
+                    </Tab>
+                    <Tab key="order" title="Sipariş" className="w-full">
+                        <DataTable
+                            isCompact
+                            isStriped
+                            emptyContent="Herhangi bir lisans bulunamadı!"
+                            defaultRowsPerPage={20}
+                            data={orderLicenses || []}
                             columns={columns}
                             renderCell={renderCell}
                             sortOption={sort}
