@@ -207,7 +207,7 @@ export default function ConnectionDetail({
                             </Button>
                         }
                     />
-                    
+
                     <DeleteButton
                         table="connections"
                         data={data}
@@ -230,7 +230,7 @@ export default function ConnectionDetail({
                     </Button>
                 </CardFooter>
             </Card>
-            
+
             <Modal
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}
@@ -269,7 +269,6 @@ export default function ConnectionDetail({
                                             className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-zinc-700 placeholder:text-zinc-400 focus:ring-0 sm:text-sm sm:leading-6 outline-none"
                                             {...register("ip", {
                                                 required: true,
-                                                maxLength: 40,
                                             })}
                                         />
                                     </div>

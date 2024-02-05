@@ -188,6 +188,8 @@ export default function Users() {
                     return cellValue ? cellValue : "-";
                 case "active":
                     return <BoolChip value={cellValue} />;
+                case "role":
+                    return userTypes?.find((t) => t.key == cellValue)?.name;
                 case "createdAt":
                     return <p>{DateTimeFormat(cellValue)}</p>;
                 case "updatedAt":

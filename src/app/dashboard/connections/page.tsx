@@ -46,7 +46,7 @@ export default function Connections() {
     });
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         data.createdBy = currUser?.username ?? "";
-        
+
         await fetch("/api/connection", {
             method: "POST",
             body: JSON.stringify(data),
@@ -246,7 +246,6 @@ export default function Connections() {
                                             className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-zinc-700 placeholder:text-zinc-400 focus:ring-0 sm:text-sm sm:leading-6 outline-none"
                                             {...register("ip", {
                                                 required: true,
-                                                maxLength: 40,
                                             })}
                                         />
                                     </div>
