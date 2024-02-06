@@ -1,5 +1,5 @@
-import Image from "next/image";
 import { BiLoaderAlt } from "react-icons/bi";
+import Logo from "../navigation/Logo";
 
 export default function Loader() {
     return (
@@ -12,11 +12,9 @@ export default function Loader() {
 export function MainLoader() {
     return (
         <div className="flex animate-pulse w-screen h-screen items-center justify-center bg-white rounded-full">
-            <Image
-                src="/images/logo.png"
+            <Logo
                 width={280}
                 height={150}
-                alt="Company"
             />
         </div>
     );
