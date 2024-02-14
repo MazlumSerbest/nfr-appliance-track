@@ -9,7 +9,7 @@ import { useOnClickOutside } from "usehooks-ts";
 
 import UserCard from "./UserCard";
 import Logo from "./Logo";
-import { paths, definitions } from "@/lib/paths";
+import { paths, currents, definitions } from "@/lib/paths";
 
 import { Button } from "@nextui-org/button";
 import { Divider } from "@nextui-org/divider";
@@ -92,6 +92,43 @@ export default function NavLayout() {
                                         {p.name}
                                     </ListboxItem>
                                 ))}
+                        </ListboxSection>
+                        <ListboxSection
+                            showDivider
+                            title="Cariler"
+                            classNames={{
+                                heading: "text-zinc-500",
+                            }}
+                        >
+                            {currents.filter((p) =>
+                                    p.roles?.includes(user?.role ?? ""),
+                                )
+                                .map((p) => {
+                                    return (
+                                        <ListboxItem
+                                            key={p.key}
+                                            startContent={p.icon}
+                                            className={
+                                                "font-semibold" +
+                                                (withoutFullLink == p.path
+                                                    ? " bg-sky-100"
+                                                    : "")
+                                            }
+                                        >
+                                            <NextLink
+                                                className="absolute inset-0 outline-none"
+                                                href={p.path}
+                                                onClick={() =>
+                                                    setShowSidebar(false)
+                                                }
+                                                onTouchEnd={() =>
+                                                    setShowSidebar(false)
+                                                }
+                                            />
+                                            {p.name}
+                                        </ListboxItem>
+                                    );
+                                })}
                         </ListboxSection>
                         <ListboxSection
                             title="Tanımlamalar"

@@ -11,6 +11,8 @@ import {
     BiCheckShield,
     BiShield,
     BiBarcode,
+    BiRegistered,
+    BiHdd,
 } from "react-icons/bi";
 
 export const paths: Path[] = [
@@ -75,55 +77,7 @@ export const paths: Path[] = [
     // },
 ];
 
-export const definitions: Path[] = [
-    {
-        path: "/dashboard/users",
-        key: "users",
-        name: "Kullanıcılar",
-        roles: ["admin"],
-        icon: (
-            <BiGroup
-                className="text-2xl text-zinc-500"
-                aria-label="Kullanıcılar Sayfası"
-            />
-        ),
-    },
-    {
-        path: "/dashboard/products",
-        key: "products",
-        name: "Ürünler",
-        roles: ["admin", "technical", "seller"],
-        icon: (
-            <BiDevices
-                className="text-2xl text-zinc-500"
-                aria-label="Ürünler Sayfası"
-            />
-        ),
-    },
-    {
-        path: "/dashboard/licenseTypes",
-        key: "licenseTypes",
-        name: "Lisans Tipleri",
-        roles: ["admin", "technical", "seller"],
-        icon: (
-            <BiShield
-                className="text-2xl text-zinc-500"
-                aria-label="Lisans Tipleri Sayfası"
-            />
-        ),
-    },
-    {
-        path: "/dashboard/boughtTypes",
-        key: "boughtTypes",
-        name: "Alım Tipleri",
-        roles: ["admin", "technical", "seller"],
-        icon: (
-            <BiBarcode
-                className="text-2xl text-zinc-500"
-                aria-label="Alım Tipleri Sayfası"
-            />
-        ),
-    },
+export const currents: Path[] = [
     {
         path: "/dashboard/customers",
         key: "customers",
@@ -157,6 +111,81 @@ export const definitions: Path[] = [
             <BiStoreAlt
                 className="text-2xl text-zinc-500"
                 aria-label="Tedarikçiler Sayfası"
+            />
+        ),
+    },
+];
+
+export const definitions: Path[] = [
+    {
+        path: "/dashboard/users",
+        key: "users",
+        name: "Kullanıcılar",
+        roles: ["admin"],
+        icon: (
+            <BiGroup
+                className="text-2xl text-zinc-500"
+                aria-label="Kullanıcılar Sayfası"
+            />
+        ),
+    },
+    {
+        path: "/dashboard/products",
+        key: "products",
+        name: "Ürünler",
+        roles: ["admin", "technical", "seller"],
+        icon: (
+            <BiHdd
+                className="text-2xl text-zinc-500"
+                aria-label="Ürünler Sayfası"
+            />
+        ),
+    },
+    {
+        path: "/dashboard/licenseTypes",
+        key: "licenseTypes",
+        name: "Lisans Tipleri",
+        roles: ["admin", "technical", "seller"],
+        icon: (
+            <BiShield
+                className="text-2xl text-zinc-500"
+                aria-label="Lisans Tipleri Sayfası"
+            />
+        ),
+    },
+    {
+        path: "/dashboard/boughtTypes",
+        key: "boughtTypes",
+        name: "Alım Tipleri",
+        roles: ["admin", "technical", "seller"],
+        icon: (
+            <BiBarcode
+                className="text-2xl text-zinc-500"
+                aria-label="Alım Tipleri Sayfası"
+            />
+        ),
+    },
+    {
+        path: "/dashboard/brandTypes",
+        key: "brandTypes",
+        name: "Marka Tipleri",
+        roles: ["admin", "technical", "seller"],
+        icon: (
+            <BiRegistered
+                className="text-2xl text-zinc-500"
+                aria-label="Marka Tipleri Sayfası"
+            />
+        ),
+    },
+    {
+        path: "/dashboard/productTypes",
+        key: "productTypes",
+        name: "Ürün Tipleri",
+        roles: ["admin", "technical", "seller"],
+        icon: (
+            <BiDevices
+                className="text-2xl text-zinc-500"
+                aria-label="Ürün Tipleri Sayfası"
             />
         ),
     },
