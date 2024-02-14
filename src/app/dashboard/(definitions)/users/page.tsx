@@ -12,22 +12,21 @@ import {
     useDisclosure,
 } from "@nextui-org/modal";
 import { SortDescriptor } from "@nextui-org/table";
-import { Tooltip } from "@nextui-org/tooltip";
 import { Button } from "@nextui-org/button";
 
 import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
 import DataTable from "@/components/DataTable";
 import BoolChip from "@/components/BoolChip";
-import ActiveButton from "@/components/buttons/ActiveButton";
 import DeleteButton from "@/components/buttons/DeleteButton";
 import RegInfo from "@/components/buttons/RegInfo";
-import { BiEdit, BiInfoCircle, BiLockAlt, BiTrash } from "react-icons/bi";
+import { BiInfoCircle, BiTrash } from "react-icons/bi";
 import { DateTimeFormat } from "@/utils/date";
 import { activeOptions, userTypes } from "@/lib/constants";
 import useUserStore from "@/store/user";
 
 interface IFormInput {
     id: number;
+    active: boolean;
     username: string;
     name?: string;
     email: string;
@@ -58,7 +57,7 @@ export default function Users() {
         handleSubmit,
         getValues,
         formState: { errors },
-    } = useForm<IFormInput>();
+    } = useForm<IFormInput>({ defaultValues: { active: true, role: "user" } });
     const onSubmitNew: SubmitHandler<IFormInput> = async (data) => {
         data.createdBy = currUser?.username ?? "";
         delete data["confirmPassword"];
@@ -212,25 +211,6 @@ export default function Users() {
                                                     </span>
                                                 }
                                             />
-                                            <ActiveButton
-                                                table="users"
-                                                data={user}
-                                                mutate={mutate}
-                                            />
-                                            <Tooltip
-                                                key={user.id + "-edit"}
-                                                content="Düzenle"
-                                            >
-                                                <span className="text-xl text-green-600 active:opacity-50 cursor-pointer">
-                                                    <BiEdit
-                                                        onClick={() => {
-                                                            setIsNew(false);
-                                                            reset(user);
-                                                            onOpen();
-                                                        }}
-                                                    />
-                                                </span>
-                                            </Tooltip>
                                             {/* <Tooltip
                                                 key={user.id + "-pass"}
                                                 content="Şifre Değiştir"
@@ -263,7 +243,7 @@ export default function Users() {
                     return cellValue ? cellValue : "-";
             }
         },
-        [currUser?.role, onOpen, reset, mutate],
+        [currUser?.role, mutate],
     );
     //#endregion
 
@@ -293,6 +273,11 @@ export default function Users() {
                     setIsNew(true);
                     reset({});
                     reset({});
+                    onOpen();
+                }}
+                onDoubleClick={(user) => {
+                    setIsNew(false);
+                    reset(user);
                     onOpen();
                 }}
             />
@@ -386,7 +371,7 @@ export default function Users() {
                                     htmlFor="role"
                                     className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
                                 >
-                                    Tip
+                                    Rol
                                 </label>
                                 <div className="block w-full h-10 rounded-md border-0 px-3 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2">
                                     <select
@@ -398,7 +383,7 @@ export default function Users() {
                                         })}
                                     >
                                         <option disabled selected value="">
-                                            Tip Seçiniz...
+                                            Rol Seçiniz...
                                         </option>
                                         {userTypes?.map((t) => (
                                             <option key={t.key} value={t.key}>

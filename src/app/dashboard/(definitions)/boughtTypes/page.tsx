@@ -12,22 +12,21 @@ import {
     useDisclosure,
 } from "@nextui-org/modal";
 import { SortDescriptor } from "@nextui-org/table";
-import { Tooltip } from "@nextui-org/tooltip";
 import { Button } from "@nextui-org/button";
 
 import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
 import DataTable from "@/components/DataTable";
 import BoolChip from "@/components/BoolChip";
 import RegInfo from "@/components/buttons/RegInfo";
-import ActiveButton from "@/components/buttons/ActiveButton";
 import DeleteButton from "@/components/buttons/DeleteButton";
 import { DateTimeFormat } from "@/utils/date";
 import { activeOptions } from "@/lib/constants";
-import { BiEdit, BiInfoCircle, BiTrash } from "react-icons/bi";
+import { BiInfoCircle, BiTrash } from "react-icons/bi";
 import useUserStore from "@/store/user";
 
 interface IFormInput {
     id: number;
+    active: boolean;
     type: string;
     createdBy: string;
     updatedBy?: string;
@@ -41,7 +40,9 @@ export default function BoughtTypes() {
     const { data, error, mutate } = useSWR("/api/boughtType");
 
     //#region Form
-    const { register, reset, handleSubmit, control } = useForm<IFormInput>({});
+    const { register, reset, handleSubmit, control } = useForm<IFormInput>({
+        defaultValues: { active: true },
+    });
     const onSubmitNew: SubmitHandler<IFormInput> = async (data) => {
         data.createdBy = currUser?.username ?? "";
 
@@ -155,7 +156,7 @@ export default function BoughtTypes() {
                                     </span>
                                 }
                             />
-                            <ActiveButton
+                            {/* <ActiveButton
                                 table="boughtTypes"
                                 data={boughtType}
                                 mutate={mutate}
@@ -173,7 +174,7 @@ export default function BoughtTypes() {
                                         }}
                                     />
                                 </span>
-                            </Tooltip>
+                            </Tooltip> */}
                             <DeleteButton
                                 table="boughtTypes"
                                 data={boughtType}
@@ -190,7 +191,7 @@ export default function BoughtTypes() {
                     return cellValue ? cellValue : "-";
             }
         },
-        [onOpen, reset, mutate],
+        [mutate],
     );
     //#endregion
 
@@ -222,6 +223,11 @@ export default function BoughtTypes() {
                     reset({});
                     onOpen();
                 }}
+                onDoubleClick={(boughtType) => {
+                    setIsNew(false);
+                    reset(boughtType);
+                    onOpen();
+                }}
             />
             <Modal
                 isOpen={isOpen}
@@ -245,6 +251,30 @@ export default function BoughtTypes() {
                                 isNew ? onSubmitNew : onSubmitUpdate,
                             )}
                         >
+                            <div>
+                                <div className="relative flex flex-col gap-x-3 mb-3">
+                                    <div className="flex flex-row">
+                                        <label
+                                            htmlFor="active"
+                                            className="text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                        >
+                                            Aktif
+                                        </label>
+                                        <div className="flex h-6 ml-3 items-center">
+                                            <input
+                                                id="active"
+                                                type="checkbox"
+                                                className="h-4 w-4 rounded border-zinc-300 ring-offset-1 focus:ring-2 focus:ring-sky-500 outline-none cursor-pointer accent-sky-600"
+                                                {...register("active")}
+                                            />
+                                        </div>
+                                    </div>
+                                    {/* <span className="flex flex-row font-normal text-xs text-zinc-400 items-center gap-1 mb-1">
+                                        <BiInfoCircle />
+                                        Alım tipi aktif mi?
+                                    </span> */}
+                                </div>
+                            </div>
                             <div>
                                 <label
                                     htmlFor="type"

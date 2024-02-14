@@ -12,22 +12,21 @@ import {
     useDisclosure,
 } from "@nextui-org/modal";
 import { SortDescriptor } from "@nextui-org/table";
-import { Tooltip } from "@nextui-org/tooltip";
 import { Button } from "@nextui-org/button";
 
 import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
 import DataTable from "@/components/DataTable";
 import BoolChip from "@/components/BoolChip";
 import RegInfo from "@/components/buttons/RegInfo";
-import ActiveButton from "@/components/buttons/ActiveButton";
 import DeleteButton from "@/components/buttons/DeleteButton";
 import { DateTimeFormat } from "@/utils/date";
 import { activeOptions } from "@/lib/constants";
-import { BiEdit, BiInfoCircle, BiTrash } from "react-icons/bi";
+import { BiInfoCircle, BiTrash } from "react-icons/bi";
 import useUserStore from "@/store/user";
 
 interface IFormInput {
     id: number;
+    active: boolean;
     brand: string;
     type: string;
     duration?: number | null;
@@ -45,7 +44,9 @@ export default function LicenseTypes() {
     const { data, error, mutate } = useSWR("/api/licenseType");
 
     //#region Form
-    const { register, reset, handleSubmit, control } = useForm<IFormInput>({});
+    const { register, reset, handleSubmit, control } = useForm<IFormInput>({
+        defaultValues: { active: true },
+    });
     const onSubmitNew: SubmitHandler<IFormInput> = async (data) => {
         data.createdBy = currUser?.username ?? "";
         data.duration = Number(data.duration);
@@ -177,25 +178,6 @@ export default function LicenseTypes() {
                                     </span>
                                 }
                             />
-                            <ActiveButton
-                                table="licenseTypes"
-                                data={licenseType}
-                                mutate={mutate}
-                            />
-                            <Tooltip
-                                key={licenseType.id + "-edit"}
-                                content="Düzenle"
-                            >
-                                <span className="text-xl text-green-600 active:opacity-50 cursor-pointer">
-                                    <BiEdit
-                                        onClick={() => {
-                                            setIsNew(false);
-                                            reset(licenseType);
-                                            onOpen();
-                                        }}
-                                    />
-                                </span>
-                            </Tooltip>
                             <DeleteButton
                                 table="licenseTypes"
                                 data={licenseType}
@@ -212,7 +194,7 @@ export default function LicenseTypes() {
                     return cellValue ? cellValue : "-";
             }
         },
-        [onOpen, reset, mutate],
+        [mutate],
     );
     //#endregion
 
@@ -244,6 +226,11 @@ export default function LicenseTypes() {
                     reset({});
                     onOpen();
                 }}
+                onDoubleClick={(licenseType) => {
+                    setIsNew(false);
+                    reset(licenseType);
+                    onOpen();
+                }}
             />
             <Modal
                 isOpen={isOpen}
@@ -267,6 +254,26 @@ export default function LicenseTypes() {
                                 isNew ? onSubmitNew : onSubmitUpdate,
                             )}
                         >
+                            <div>
+                                <div className="relative flex flex-col gap-x-3 mb-3">
+                                    <div className="flex flex-row">
+                                        <label
+                                            htmlFor="active"
+                                            className="text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                        >
+                                            Aktif
+                                        </label>
+                                        <div className="flex h-6 ml-3 items-center">
+                                            <input
+                                                id="active"
+                                                type="checkbox"
+                                                className="h-4 w-4 rounded border-zinc-300 ring-offset-1 focus:ring-2 focus:ring-sky-500 outline-none cursor-pointer accent-sky-600"
+                                                {...register("active")}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div>
                                 <label
                                     htmlFor="brand"
