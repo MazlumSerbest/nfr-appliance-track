@@ -142,6 +142,30 @@ export const definitions: Path[] = [
         ),
     },
     {
+        path: "/dashboard/brands",
+        key: "brands",
+        name: "Markalar",
+        roles: ["admin", "technical", "seller"],
+        icon: (
+            <BiRegistered
+                className="text-2xl text-zinc-500"
+                aria-label="Markalar Sayfası"
+            />
+        ),
+    },
+    {
+        path: "/dashboard/productTypes",
+        key: "productTypes",
+        name: "Ürün Tipleri",
+        roles: ["admin", "technical", "seller"],
+        icon: (
+            <BiDevices
+                className="text-2xl text-zinc-500"
+                aria-label="Ürün Tipleri Sayfası"
+            />
+        ),
+    },
+    {
         path: "/dashboard/licenseTypes",
         key: "licenseTypes",
         name: "Lisans Tipleri",
@@ -162,30 +186,6 @@ export const definitions: Path[] = [
             <BiBarcode
                 className="text-2xl text-zinc-500"
                 aria-label="Alım Tipleri Sayfası"
-            />
-        ),
-    },
-    {
-        path: "/dashboard/brandTypes",
-        key: "brandTypes",
-        name: "Marka Tipleri",
-        roles: ["admin", "technical", "seller"],
-        icon: (
-            <BiRegistered
-                className="text-2xl text-zinc-500"
-                aria-label="Marka Tipleri Sayfası"
-            />
-        ),
-    },
-    {
-        path: "/dashboard/productTypes",
-        key: "productTypes",
-        name: "Ürün Tipleri",
-        roles: ["admin", "technical", "seller"],
-        icon: (
-            <BiDevices
-                className="text-2xl text-zinc-500"
-                aria-label="Ürün Tipleri Sayfası"
             />
         ),
     },

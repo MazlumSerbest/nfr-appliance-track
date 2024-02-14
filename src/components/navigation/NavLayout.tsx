@@ -132,6 +132,7 @@ export default function NavLayout() {
                         </ListboxSection>
                         <ListboxSection
                             title="Tanımlamalar"
+                            className="mb-0"
                             classNames={{
                                 heading: "text-zinc-500",
                             }}
