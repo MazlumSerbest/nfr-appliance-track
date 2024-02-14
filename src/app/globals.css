@@ -20,3 +20,19 @@ body {
     /* color: rgb(); */
     background: rgb(255, 255, 255);
 }
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgb(240 249 255);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgb(224 242 254);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(125, 211, 252, 0.8);
+}
