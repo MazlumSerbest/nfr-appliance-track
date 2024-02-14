@@ -6,8 +6,8 @@ import bcrypt from "bcrypt";
 
 const options: NextAuthOptions = {
     session: {
-        maxAge: 30 * 24 * 60 * 60,
-        updateAge: 24 * 60 * 60,
+        maxAge: 12 * 60 * 60, // 12 hours
+        // updateAge: 24 * 60 * 60,
     },
     // pages: {
     //     signIn: "/auth/signin",
