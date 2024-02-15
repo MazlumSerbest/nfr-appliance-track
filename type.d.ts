@@ -62,6 +62,7 @@ type Appliance = Entity & {
     serialNo: string;
     boughtAt?: string;
     soldAt?: string;
+    note?: string;
 };
 
 type vAppliance = Appliance & {
@@ -82,6 +83,8 @@ type License = Entity & {
     expiryDate?: string;
     boughtAt?: string;
     soldAt?: string;
+    orderedAt?: string;
+    note?: string;
     licenseType: any;
     boughtType: any;
 };
@@ -95,10 +98,18 @@ type vLicense = License & {
     licenseDuration?: string;
 };
 
+type Brand = Entity & {
+    name: string;
+};
+
 type Product = Entity & {
     brand: string;
     model: string;
     type?: string;
+};
+
+type ProductType = Entity & {
+    type: string;
 };
 
 type LicenseType = Entity & {
@@ -112,7 +123,7 @@ type BoughtType = Entity & {
     type: string;
 };
 
-type Current =  Entity & {
+type Current = Entity & {
     name: string;
     type: "customer" | "dealer" | "supplier";
     phone?: string;
@@ -122,6 +133,9 @@ type Current =  Entity & {
     taxOffice?: string;
     taxNo?: string;
     paymentPlan?: string;
+    authName?: string;
+    authTitle?: string;
+    iban?: string;
 };
 
 type AuthorizedPerson = Entity & {
@@ -131,5 +145,12 @@ type AuthorizedPerson = Entity & {
     title?: string;
     phone?: string;
     email?: string;
-}
+};
+
+type Address = Entity & {
+    currentId: number;
+    name: string;
+    address: string;
+    city?: string;
+};
 //#endregion
