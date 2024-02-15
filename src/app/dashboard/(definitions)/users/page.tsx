@@ -303,6 +303,29 @@ export default function Users() {
                                 isNew ? onSubmitNew : onSubmitUpdate,
                             )}
                         >
+                            {!isNew ? (
+                                <div>
+                                    <div className="relative flex flex-col gap-x-3 mb-3">
+                                        <div className="flex flex-row">
+                                            <label
+                                                htmlFor="active"
+                                                className="text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                            >
+                                                Aktif
+                                            </label>
+                                            <div className="flex h-6 ml-3 items-center">
+                                                <input
+                                                    id="active"
+                                                    type="checkbox"
+                                                    className="h-4 w-4 rounded border-zinc-300 ring-offset-1 focus:ring-2 focus:ring-sky-500 outline-none cursor-pointer accent-sky-600"
+                                                    {...register("active")}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : null}
+
                             {isNew ? (
                                 <div>
                                     <label
@@ -318,7 +341,7 @@ export default function Users() {
                                         className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
                                         {...register("username", {
                                             required: true,
-                                            maxLength: 20,
+                                            maxLength: 30,
                                             minLength: 4,
                                         })}
                                     />
@@ -339,7 +362,7 @@ export default function Users() {
                                     id="name"
                                     className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
                                     {...register("name", {
-                                        maxLength: 50,
+                                        maxLength: 80,
                                     })}
                                 />
                             </div>
@@ -358,7 +381,7 @@ export default function Users() {
                                         className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
                                         {...register("email", {
                                             required: true,
-                                            maxLength: 50,
+                                            maxLength: 80,
                                         })}
                                     />
                                 </div>

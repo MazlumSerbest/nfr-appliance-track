@@ -8,9 +8,9 @@ export async function GET(request: NextRequest) {
 
         if (session) {
             const data = await prisma.vLicenses.findMany({
-                where: {
-                    deleted: false,
-                },
+                // where: {
+                //     deleted: false,
+                // },
                 orderBy: [
                     {
                         createdAt: "desc",

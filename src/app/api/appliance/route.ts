@@ -13,7 +13,6 @@ export async function GET(request: NextRequest) {
 
             const data = await prisma.vAppliances.findMany({
                 where: {
-                    deleted: false,
                     ...(productId ? { productId: productId } : {}),
                 },
                 orderBy: [
