@@ -8,6 +8,10 @@ export async function GET(request: Request) {
 
         if (session) {
             const data = await prisma.products.findMany({
+                include: {
+                    brand: { select: { name: true } },
+                    productType: { select: { type: true } },
+                },
                 orderBy: [
                     {
                         createdAt: "desc",
@@ -30,10 +34,10 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
     if (request) {
         try {
-            const product: Product = await request.json();
+            const product: any = await request.json();
 
             const newProduct = await prisma.products.create({
-                data: product,
+                data: product
             });
 
             if (newProduct.id) {

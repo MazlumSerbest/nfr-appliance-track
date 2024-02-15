@@ -8,6 +8,9 @@ export async function GET(request: NextRequest) {
 
         if (session) {
             const data = await prisma.licenseTypes.findMany({
+                include: {
+                    brand: { select: { name: true } },
+                },
                 orderBy: [
                     {
                         createdAt: "asc",
@@ -32,7 +35,7 @@ export async function POST(request: Request) {
         const session = await getServerSession();
 
         if (session) {
-            const licenseType: LicenseType = await request.json();
+            const licenseType: any = await request.json();
 
             const newLicenseType = await prisma.licenseTypes.create({
                 data: licenseType,

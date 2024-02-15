@@ -37,6 +37,20 @@ export async function getLicenses(forListBox?: boolean) {
     return licenses;
 }
 
+export async function getBrands(forListBox?: boolean) {
+    const res = await fetch("/api/brand");
+    const brands = await res.json();
+
+    if (forListBox)
+        return brands
+            .filter((b: Brand) => b.active)
+            .map((b: Brand) => ({
+                id: b.id,
+                name: b.name,
+            }));
+    return brands.filter((b: Brand) => b.active);
+}
+
 export async function getProducts(forListBox?: boolean) {
     const res = await fetch("/api/product");
     const products = await res.json();
@@ -50,6 +64,20 @@ export async function getProducts(forListBox?: boolean) {
                 name: p.brand + " " + p.model,
             }));
     return products.filter((p: Product) => p.active);
+}
+
+export async function getProductTypes(forListBox?: boolean) {
+    const res = await fetch("/api/productType");
+    const productTypes = await res.json();
+
+    if (forListBox)
+        return productTypes
+            .filter((pt: ProductType) => pt.active)
+            .map((pt: ProductType) => ({
+                id: pt.id,
+                name: pt.type,
+            }));
+    return productTypes.filter((pt: ProductType) => pt.active);
 }
 
 export async function getLicenseTypes(

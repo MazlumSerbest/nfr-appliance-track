@@ -1,7 +1,7 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useSWR from "swr";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
 
 import {
@@ -17,32 +17,38 @@ import { Button } from "@nextui-org/button";
 import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
 import BoolChip from "@/components/BoolChip";
 import DataTable from "@/components/DataTable";
+import AutoComplete from "@/components/AutoComplete";
 import RegInfo from "@/components/buttons/RegInfo";
 import DeleteButton from "@/components/buttons/DeleteButton";
 import { activeOptions } from "@/lib/constants";
 import { DateTimeFormat } from "@/utils/date";
 import { BiTrash, BiInfoCircle } from "react-icons/bi";
 import useUserStore from "@/store/user";
+import { getBrands, getProductTypes } from "@/lib/data";
 
 type IFormInput = {
     id: number;
     active: boolean;
-    brand: string;
+    brandId: number;
+    productTypeId: number;
     model: string;
-    type: string;
     createdBy: string;
     updatedBy: string;
+    brand?: Brand;
+    productType?: ProductType;
 };
 
 export default function Products() {
     const [isNew, setIsNew] = useState(false);
-    const { user: currUser } = useUserStore();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
+    const [brands, setBrands] = useState<ListBoxItem[] | null>(null);
+    const [productTypes, setProductTypes] = useState<ListBoxItem[] | null>(null);
+    const { user: currUser } = useUserStore();
 
     const { data, error, mutate } = useSWR("/api/product");
 
     //#region Form
-    const { register, reset, handleSubmit } = useForm<IFormInput>({
+    const { register, reset, handleSubmit, control } = useForm<IFormInput>({
         defaultValues: { active: true },
     });
     const onSubmitNew: SubmitHandler<IFormInput> = async (data) => {
@@ -67,6 +73,8 @@ export default function Products() {
     };
     const onSubmitUpdate: SubmitHandler<IFormInput> = async (data) => {
         data.updatedBy = currUser?.username ?? "";
+        delete data["brand"];
+        delete data["productType"];
 
         await fetch(`/api/product/${data.id}`, {
             method: "PUT",
@@ -112,8 +120,9 @@ export default function Products() {
         },
         {
             key: "type",
-            name: "Tip",
+            name: "Ürün Tipi",
             width: 150,
+            searchable: true,
             sortable: true,
         },
         {
@@ -157,6 +166,10 @@ export default function Products() {
             switch (columnKey) {
                 case "active":
                     return <BoolChip value={cellValue} />;
+                case "brand":
+                    return <p>{product.brand?.name || "-"}</p>;
+                case "type":
+                    return <p>{product.productType?.type || "-"}</p>;
                 case "createdAt":
                     return <p>{DateTimeFormat(cellValue)}</p>;
                 case "updatedAt":
@@ -190,6 +203,19 @@ export default function Products() {
         },
         [mutate],
     );
+    //#endregion
+
+    //#region Data
+    async function getData() {
+        const bra: ListBoxItem[] = await getBrands(true);
+        setBrands(bra);
+        const prt: ListBoxItem[] = await getProductTypes(true);
+        setProductTypes(prt);
+    }
+
+    useEffect(() => {
+        getData();
+    }, []);
     //#endregion
 
     if (error) return <div>Yükleme Hatası!</div>;
@@ -248,46 +274,29 @@ export default function Products() {
                                 isNew ? onSubmitNew : onSubmitUpdate,
                             )}
                         >
-                            <div>
-                                <div className="relative flex flex-col gap-x-3 mb-3">
-                                    <div className="flex flex-row">
-                                        <label
-                                            htmlFor="active"
-                                            className="text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
-                                        >
-                                            Aktif
-                                        </label>
-                                        <div className="flex h-6 ml-3 items-center">
-                                            <input
-                                                id="active"
-                                                type="checkbox"
-                                                className="h-4 w-4 rounded border-zinc-300 ring-offset-1 focus:ring-2 focus:ring-sky-500 outline-none cursor-pointer accent-sky-600"
-                                                {...register("active")}
-                                            />
+                            {!isNew ? (
+                                <div>
+                                    <div className="relative flex flex-col gap-x-3 mb-3">
+                                        <div className="flex flex-row">
+                                            <label
+                                                htmlFor="active"
+                                                className="text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                            >
+                                                Aktif
+                                            </label>
+                                            <div className="flex h-6 ml-3 items-center">
+                                                <input
+                                                    id="active"
+                                                    type="checkbox"
+                                                    className="h-4 w-4 rounded border-zinc-300 ring-offset-1 focus:ring-2 focus:ring-sky-500 outline-none cursor-pointer accent-sky-600"
+                                                    {...register("active")}
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div>
-                                <label
-                                    htmlFor="brand"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
-                                >
-                                    Marka
-                                </label>
-                                <div className="mt-2">
-                                    <input
-                                        type="text"
-                                        id="brand"
-                                        required
-                                        className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
-                                        {...register("brand", {
-                                            required: true,
-                                            maxLength: 40,
-                                        })}
-                                    />
-                                </div>
-                            </div>
+                            ) : null}
+
                             <div>
                                 <label
                                     htmlFor="model"
@@ -303,30 +312,56 @@ export default function Products() {
                                         className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
                                         {...register("model", {
                                             required: true,
-                                            maxLength: 40,
+                                            maxLength: 80,
                                         })}
                                     />
                                 </div>
                             </div>
+                            
                             <div>
                                 <label
-                                    htmlFor="type"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                    htmlFor="brandId"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
                                 >
-                                    Tip
+                                    Marka
                                 </label>
-                                <div className="mt-2">
-                                    <input
-                                        type="text"
-                                        id="type"
-                                        className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
-                                        {...register("type", {
-                                            required: true,
-                                            maxLength: 40,
-                                        })}
-                                    />
-                                </div>
+                                <Controller
+                                    control={control}
+                                    name="brandId"
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <AutoComplete
+                                            onChange={onChange}
+                                            value={value}
+                                            data={brands || []}
+                                        />
+                                    )}
+                                />
                             </div>
+                            
+                            <div>
+                                <label
+                                    htmlFor="productTypeId"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                >
+                                    Ürün Tipi
+                                </label>
+                                <Controller
+                                    control={control}
+                                    name="productTypeId"
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <AutoComplete
+                                            onChange={onChange}
+                                            value={value}
+                                            data={productTypes || []}
+                                        />
+                                    )}
+                                />
+                            </div>
+
                             <div className="flex flex-row gap-2 mt-4">
                                 <div className="flex-1"></div>
                                 <Button

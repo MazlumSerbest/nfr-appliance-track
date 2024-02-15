@@ -1,7 +1,7 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useSWR from "swr";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
 
 import {
@@ -16,6 +16,7 @@ import { Button } from "@nextui-org/button";
 
 import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
 import DataTable from "@/components/DataTable";
+import AutoComplete from "@/components/AutoComplete";
 import BoolChip from "@/components/BoolChip";
 import RegInfo from "@/components/buttons/RegInfo";
 import DeleteButton from "@/components/buttons/DeleteButton";
@@ -23,23 +24,25 @@ import { DateTimeFormat } from "@/utils/date";
 import { activeOptions } from "@/lib/constants";
 import { BiInfoCircle, BiTrash } from "react-icons/bi";
 import useUserStore from "@/store/user";
+import { getBrands } from "@/lib/data";
 
 interface IFormInput {
     id: number;
     active: boolean;
-    brand: string;
+    brandId: number;
     type: string;
     duration?: number | null;
     price?: number | null;
     createdBy: string;
     updatedBy?: string;
-    product?: Product;
+    brand?: Brand;
 }
 
 export default function LicenseTypes() {
     const [isNew, setIsNew] = useState(false);
-    const { user: currUser } = useUserStore();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
+    const [brands, setBrands] = useState<ListBoxItem[] | null>(null);
+    const { user: currUser } = useUserStore();
 
     const { data, error, mutate } = useSWR("/api/licenseType");
 
@@ -73,6 +76,7 @@ export default function LicenseTypes() {
         data.updatedBy = currUser?.username ?? "";
         data.duration = Number(data.duration);
         data.price = 0;
+        delete data["brand"];
 
         await fetch(`/api/licenseType/${data.id}`, {
             method: "PUT",
@@ -163,6 +167,8 @@ export default function LicenseTypes() {
             switch (columnKey) {
                 case "active":
                     return <BoolChip value={cellValue} />;
+                case "brand":
+                    return <p>{licenseType.brand?.name || "-"}</p>;
                 case "createdAt":
                     return <p>{DateTimeFormat(cellValue)}</p>;
                 case "updatedAt":
@@ -196,6 +202,18 @@ export default function LicenseTypes() {
         },
         [mutate],
     );
+    //#endregion
+
+    //#region Data
+    async function getData() {
+        const bra: ListBoxItem[] = await getBrands(true);
+
+        setBrands(bra);
+    }
+
+    useEffect(() => {
+        getData();
+    }, []);
     //#endregion
 
     if (error) return <div>Yükleme Hatası!</div>;
@@ -232,6 +250,7 @@ export default function LicenseTypes() {
                     onOpen();
                 }}
             />
+
             <Modal
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}
@@ -254,42 +273,51 @@ export default function LicenseTypes() {
                                 isNew ? onSubmitNew : onSubmitUpdate,
                             )}
                         >
-                            <div>
-                                <div className="relative flex flex-col gap-x-3 mb-3">
-                                    <div className="flex flex-row">
-                                        <label
-                                            htmlFor="active"
-                                            className="text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
-                                        >
-                                            Aktif
-                                        </label>
-                                        <div className="flex h-6 ml-3 items-center">
-                                            <input
-                                                id="active"
-                                                type="checkbox"
-                                                className="h-4 w-4 rounded border-zinc-300 ring-offset-1 focus:ring-2 focus:ring-sky-500 outline-none cursor-pointer accent-sky-600"
-                                                {...register("active")}
-                                            />
+                            {!isNew ? (
+                                <div>
+                                    <div className="relative flex flex-col gap-x-3 mb-3">
+                                        <div className="flex flex-row">
+                                            <label
+                                                htmlFor="active"
+                                                className="text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                            >
+                                                Aktif
+                                            </label>
+                                            <div className="flex h-6 ml-3 items-center">
+                                                <input
+                                                    id="active"
+                                                    type="checkbox"
+                                                    className="h-4 w-4 rounded border-zinc-300 ring-offset-1 focus:ring-2 focus:ring-sky-500 outline-none cursor-pointer accent-sky-600"
+                                                    {...register("active")}
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            ) : null}
+
                             <div>
                                 <label
-                                    htmlFor="brand"
+                                    htmlFor="brandId"
                                     className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
                                 >
                                     Marka
                                 </label>
-                                <input
-                                    type="text"
-                                    id="brand"
-                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
-                                    {...register("brand", {
-                                        maxLength: 50,
-                                    })}
+                                <Controller
+                                    control={control}
+                                    name="brandId"
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <AutoComplete
+                                            onChange={onChange}
+                                            value={value}
+                                            data={brands || []}
+                                        />
+                                    )}
                                 />
                             </div>
+
                             <div>
                                 <label
                                     htmlFor="type"
@@ -304,7 +332,7 @@ export default function LicenseTypes() {
                                     className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
                                     {...register("type", {
                                         required: true,
-                                        maxLength: 50,
+                                        maxLength: 80,
                                     })}
                                 />
                             </div>
@@ -322,6 +350,7 @@ export default function LicenseTypes() {
                                     {...register("duration", {})}
                                 />
                             </div>
+
                             <div className="flex flex-row gap-2 mt-4">
                                 <div className="flex-1"></div>
                                 <Button
