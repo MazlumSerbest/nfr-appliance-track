@@ -8,8 +8,9 @@ export async function deleteData(
         | "licenses"
         | "connections"
         | "users"
-        | "connections"
+        | "brands"
         | "products"
+        | "productTypes"
         | "licenseTypes"
         | "boughtTypes"
         | "currents"
@@ -36,7 +37,14 @@ export async function deleteData(
 }
 
 export async function setActiveStatus(
-    table: "users" | "products" | "licenseTypes" | "boughtTypes" | "currents",
+    table:
+        | "users"
+        | "brands"
+        | "products"
+        | "productTypes"
+        | "licenseTypes"
+        | "boughtTypes"
+        | "currents",
     id: number,
     activeStatus: boolean,
     updatedBy?: string,

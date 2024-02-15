@@ -5,7 +5,7 @@ import useUserStore from "@/store/user";
 import { setActiveStatus } from "@/lib/prisma";
 
 type Props = {
-    table: "users" | "products" | "licenseTypes" | "boughtTypes" | "currents";
+    table: "users" | "brands" | "products" | "productTypes" | "licenseTypes" | "boughtTypes" | "currents";
     data: any;
     mutate?: () => void;
 };

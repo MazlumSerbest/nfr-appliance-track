@@ -39,6 +39,7 @@ model appliances {
   updatedAt     DateTime?   @updatedAt @db.Timestamptz(6)
   deleted       Boolean     @default(false)
   subDealerId   Int?
+  note          String?     @db.VarChar
   customer      currents?   @relation("Customer", fields: [customerId], references: [id])
   dealer        currents?   @relation("Dealer", fields: [dealerId], references: [id])
   predecessor   appliances? @relation("ApplienceHistory", fields: [predecessorId], references: [id])
@@ -69,6 +70,8 @@ model licenses {
   applianceId   Int?
   subDealerId   Int?
   boughtTypeId  Int?
+  note          String?      @db.VarChar
+  orderedAt     DateTime?    @updatedAt @db.Timestamptz(6)
   appliance     appliances?  @relation(fields: [applianceId], references: [id])
   boughtType    boughtTypes? @relation(fields: [boughtTypeId], references: [id])
   customer      currents?    @relation("Customer", fields: [customerId], references: [id])
@@ -92,17 +95,41 @@ model connections {
   customer   currents? @relation(fields: [customerId], references: [id])
 }
 
+model brands {
+  id        Int        @id @default(autoincrement())
+  active    Boolean    @default(true)
+  name      String     @db.VarChar
+  createdAt DateTime   @default(now()) @db.Timestamptz(6)
+  createdBy String     @db.VarChar
+  updatedAt DateTime?  @updatedAt @db.Timestamptz(6)
+  updatedBy String?    @db.VarChar
+  products  products[]
+}
+
 model products {
-  id         Int          @id @default(autoincrement())
-  active     Boolean      @default(true)
-  brand      String       @db.VarChar
-  type       String?      @db.VarChar
-  createdAt  DateTime     @default(now()) @db.Timestamptz(6)
-  createdBy  String       @db.VarChar
-  model      String       @db.VarChar
-  updatedBy  String?      @db.VarChar
-  updatedAt  DateTime?    @updatedAt @db.Timestamptz(6)
-  appliances appliances[]
+  id            Int           @id @default(autoincrement())
+  active        Boolean       @default(true)
+  brandId       Int?
+  productTypeId Int?
+  createdAt     DateTime      @default(now()) @db.Timestamptz(6)
+  createdBy     String        @db.VarChar
+  model         String        @db.VarChar
+  updatedBy     String?       @db.VarChar
+  updatedAt     DateTime?     @updatedAt @db.Timestamptz(6)
+  appliances    appliances[]
+  productType   productTypes? @relation(fields: [productTypeId], references: [id])
+  brand         brands?       @relation(fields: [brandId], references: [id])
+}
+
+model productTypes {
+  id        Int        @id @default(autoincrement())
+  active    Boolean    @default(true)
+  type      String     @db.VarChar
+  createdAt DateTime   @default(now()) @db.Timestamptz(6)
+  createdBy String     @db.VarChar
+  updatedAt DateTime?  @updatedAt @db.Timestamptz(6)
+  updatedBy String?    @db.VarChar
+  products  products[]
 }
 
 model licenseTypes {
@@ -156,6 +183,7 @@ model currents {
   dealerLicenses      licenses[]          @relation("Dealer")
   subDealerLicenses   licenses[]          @relation("SubDealer")
   supplierLicenses    licenses[]          @relation("Supplier")
+  addresses           addresses[]
 }
 
 model authorizedPersons {
@@ -166,6 +194,19 @@ model authorizedPersons {
   title     String?   @db.VarChar
   phone     String?   @db.VarChar
   email     String?   @db.VarChar
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+  createdBy String    @db.VarChar
+  updatedBy String?   @db.VarChar
+  updatedAt DateTime? @updatedAt @db.Timestamptz(6)
+  current   currents  @relation(fields: [currentId], references: [id], onDelete: Cascade)
+}
+
+model addresses {
+  id        Int       @id @default(autoincrement())
+  currentId Int
+  name      String    @db.VarChar
+  address   String    @db.VarChar
+  city      String    @db.VarChar
   createdAt DateTime  @default(now()) @db.Timestamptz(6)
   createdBy String    @db.VarChar
   updatedBy String?   @db.VarChar
