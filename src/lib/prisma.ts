@@ -14,7 +14,8 @@ export async function deleteData(
         | "licenseTypes"
         | "boughtTypes"
         | "currents"
-        | "authorizedPersons",
+        | "authorizedPersons"
+        | "addresses",
     id: number,
     updatedBy?: string,
 ) {
@@ -90,11 +91,11 @@ export async function newAuthorizedPerson(
 ) {
     if (!createdBy) return;
 
-    const person = await prisma.authorizedPersons.create({
+    const newPerson = await prisma.authorizedPersons.create({
         data: { ...authorizedPerson, createdBy: createdBy },
     });
 
-    if (person.id) return true;
+    if (newPerson.id) return true;
     else return false;
 }
 
@@ -119,41 +120,71 @@ export async function updateAuthorizedPerson(
     else return false;
 }
 
-export async function setMainAuthorizedPerson(
-    currentId: number,
-    authorizedPersonId: number,
-    updatedBy?: string,
-) {
-    if (!updatedBy) return;
+export async function newAddress(address: Address, createdBy?: string) {
+    if (!createdBy) return;
 
-    await prisma.authorizedPersons.updateMany({
-        data: {
-            isMain: false,
-            updatedBy: updatedBy,
-            updatedAt: new Date().toISOString(),
-        },
-        where: {
-            currentId: currentId,
-            id: { not: authorizedPersonId },
-        },
-    });
-    const person = await prisma.authorizedPersons.update({
-        data: {
-            isMain: true,
-            updatedBy: updatedBy,
-            updatedAt: new Date().toISOString(),
-        },
-        where: {
-            id: authorizedPersonId,
-        },
+    const newAddress = await prisma.addresses.create({
+        data: { ...address, createdBy: createdBy },
     });
 
-    if (person.isMain == true) return true;
+    if (newAddress.id) return true;
     else return false;
 }
 
-export async function getReport() {
-    const report = prisma.vLicenses.count();
+export async function updateAddress(address: Address, updatedBy?: string) {
+    if (!updatedBy) return;
 
-    return null;
+    const newAddress = await prisma.addresses.update({
+        data: {
+            ...address,
+            updatedBy: updatedBy,
+            updatedAt: new Date().toISOString(),
+        },
+        where: {
+            id: address.id,
+        },
+    });
+
+    if (newAddress.id) return true;
+    else return false;
+
 }
+
+// export async function setMainAuthorizedPerson(
+//     currentId: number,
+//     authorizedPersonId: number,
+//     updatedBy?: string,
+// ) {
+//     if (!updatedBy) return;
+
+//     await prisma.authorizedPersons.updateMany({
+//         data: {
+//             isMain: false,
+//             updatedBy: updatedBy,
+//             updatedAt: new Date().toISOString(),
+//         },
+//         where: {
+//             currentId: currentId,
+//             id: { not: authorizedPersonId },
+//         },
+//     });
+//     const person = await prisma.authorizedPersons.update({
+//         data: {
+//             isMain: true,
+//             updatedBy: updatedBy,
+//             updatedAt: new Date().toISOString(),
+//         },
+//         where: {
+//             id: authorizedPersonId,
+//         },
+//     });
+
+//     if (person.isMain == true) return true;
+//     else return false;
+// }
+
+// export async function getReport() {
+//     const report = prisma.vLicenses.count();
+
+//     return null;
+// }

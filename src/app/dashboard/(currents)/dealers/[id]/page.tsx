@@ -17,7 +17,8 @@ import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
 import BoolChip from "@/components/BoolChip";
 import RegInfo from "@/components/buttons/RegInfo";
 import DeleteButton from "@/components/buttons/DeleteButton";
-import AuthorizedPersons from "@/components/AuthorizedPersons";
+import AuthorizedPersons from "@/components/currents/AuthorizedPersons";
+import Addresses from "@/components/currents/Addresses";
 import { BiInfoCircle, BiMailSend, BiPhoneOutgoing, BiX } from "react-icons/bi";
 import useUserStore from "@/store/user";
 import toast from "react-hot-toast";
@@ -213,6 +214,13 @@ export default function DealerDetail({ params }: { params: { id: string } }) {
                 currentId={data?.id}
                 currentType={data?.type}
                 personList={data?.authorizedPersons}
+                mutate={mutate}
+            />
+
+            <Addresses
+                currentId={data?.id}
+                currentType={data?.type}
+                addressList={data?.addresses}
                 mutate={mutate}
             />
 

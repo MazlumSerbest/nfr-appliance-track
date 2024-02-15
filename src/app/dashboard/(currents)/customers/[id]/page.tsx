@@ -1,7 +1,8 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useForm, SubmitHandler } from "react-hook-form";
 import useSWR from "swr";
+import { useForm, SubmitHandler } from "react-hook-form";
+import toast from "react-hot-toast";
 
 import { Card, CardBody, CardFooter } from "@nextui-org/card";
 import {
@@ -17,10 +18,10 @@ import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
 import BoolChip from "@/components/BoolChip";
 import RegInfo from "@/components/buttons/RegInfo";
 import DeleteButton from "@/components/buttons/DeleteButton";
-import AuthorizedPersons from "@/components/AuthorizedPersons";
+import AuthorizedPersons from "@/components/currents/AuthorizedPersons";
+import Addresses from "@/components/currents/Addresses";
 import { BiInfoCircle, BiMailSend, BiPhoneOutgoing, BiX } from "react-icons/bi";
 import useUserStore from "@/store/user";
-import toast from "react-hot-toast";
 
 interface IFormInput {
     id: number;
@@ -36,6 +37,7 @@ interface IFormInput {
     address: string;
     updatedBy: string;
     authorizedPersons?: AuthorizedPerson[];
+    addresses?: Address[];
 }
 
 export default function CustomerDetail({ params }: { params: { id: string } }) {
@@ -213,6 +215,13 @@ export default function CustomerDetail({ params }: { params: { id: string } }) {
                 currentId={data?.id}
                 currentType={data?.type}
                 personList={data?.authorizedPersons}
+                mutate={mutate}
+            />
+
+            <Addresses
+                currentId={data?.id}
+                currentType={data?.type}
+                addressList={data?.addresses}
                 mutate={mutate}
             />
 

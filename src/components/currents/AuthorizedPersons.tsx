@@ -23,13 +23,12 @@ import {
     BiUserVoice,
 } from "react-icons/bi";
 import useUserStore from "@/store/user";
-import RegInfo from "./buttons/RegInfo";
-import DeleteButton from "./buttons/DeleteButton";
+import RegInfo from "../buttons/RegInfo";
+import DeleteButton from "../buttons/DeleteButton";
 import toast from "react-hot-toast";
 import { currentTypes } from "@/lib/constants";
 import {
     newAuthorizedPerson,
-    setMainAuthorizedPerson,
     updateAuthorizedPerson,
 } from "@/lib/prisma";
 
@@ -93,7 +92,7 @@ export default function AuthorizedPersons(props: Props) {
             <Accordion
                 selectionMode="multiple"
                 variant="splitted"
-                defaultExpandedKeys={personList ? ["authorized"] : []}
+                defaultExpandedKeys={personList.length ? ["authorized"] : []}
                 className="p-0"
                 itemClasses={{
                     title: "font-medium text-zinc-600",
@@ -143,13 +142,13 @@ export default function AuthorizedPersons(props: Props) {
                                                             ) : (
                                                                 <></>
                                                             )}
-                                                            {ap.isMain ? (
+                                                            {/* {ap.isMain ? (
                                                                 <span className="inline-flex items-center rounded-md bg-sky-50 px-2 py-1 text-xs font-medium text-sky-600 ring-1 ring-inset ring-sky-600/20 ml-2">
                                                                     Ana Yetkili
                                                                 </span>
                                                             ) : (
                                                                 <></>
-                                                            )}
+                                                            )} */}
                                                         </p>
                                                         {ap.phone ? (
                                                             <div className="flex flex-row gap-2 mt-2 mb-1">
@@ -182,7 +181,7 @@ export default function AuthorizedPersons(props: Props) {
                                                     </div>
                                                     <div className="flex-1"></div>
                                                     <div className="flex justify-start items-center gap-2">
-                                                        {!ap.isMain ? (
+                                                        {/* {!ap.isMain ? (
                                                             <Tooltip
                                                                 key={
                                                                     ap.id +
@@ -216,7 +215,7 @@ export default function AuthorizedPersons(props: Props) {
                                                             </Tooltip>
                                                         ) : (
                                                             <></>
-                                                        )}
+                                                        )} */}
                                                         <RegInfo
                                                             data={ap}
                                                             trigger={
@@ -358,6 +357,7 @@ export default function AuthorizedPersons(props: Props) {
                                     })}
                                 />
                             </div>
+
                             <div>
                                 <label
                                     htmlFor="phone"
@@ -399,6 +399,7 @@ export default function AuthorizedPersons(props: Props) {
                                     })}
                                 />
                             </div>
+
                             <div className="flex flex-row gap-2 mt-4">
                                 <div className="flex-1"></div>
                                 <Button
