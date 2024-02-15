@@ -1,7 +1,8 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useForm, SubmitHandler } from "react-hook-form";
 import useSWR from "swr";
+import { useForm, SubmitHandler } from "react-hook-form";
+import toast from "react-hot-toast";
 
 import { Card, CardBody, CardFooter } from "@nextui-org/card";
 import {
@@ -12,6 +13,7 @@ import {
     useDisclosure,
 } from "@nextui-org/modal";
 import { Button } from "@nextui-org/button";
+import { Divider } from "@nextui-org/divider";
 
 import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
 import BoolChip from "@/components/BoolChip";
@@ -19,9 +21,15 @@ import RegInfo from "@/components/buttons/RegInfo";
 import DeleteButton from "@/components/buttons/DeleteButton";
 import AuthorizedPersons from "@/components/currents/AuthorizedPersons";
 import Addresses from "@/components/currents/Addresses";
-import { BiInfoCircle, BiMailSend, BiPhoneOutgoing, BiX } from "react-icons/bi";
+import {
+    BiInfoCircle,
+    BiMailSend,
+    BiPhoneOutgoing,
+    BiX,
+    BiCopy,
+} from "react-icons/bi";
 import useUserStore from "@/store/user";
-import toast from "react-hot-toast";
+import { CopyToClipboard } from "@/utils/functions";
 
 interface IFormInput {
     id: number;
@@ -33,10 +41,14 @@ interface IFormInput {
     taxOffice: string;
     taxNo: string;
     paymentPlan: string;
+    paymentNumber: string;
+    authorizedName: string;
+    authorizedTitle: string;
     city: string;
     address: string;
     updatedBy: string;
     authorizedPersons?: AuthorizedPerson[];
+    addresses?: Address[];
 }
 
 export default function DealerDetail({ params }: { params: { id: string } }) {
@@ -50,6 +62,7 @@ export default function DealerDetail({ params }: { params: { id: string } }) {
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         data.updatedBy = currUser?.username ?? "";
         delete data["authorizedPersons"];
+        delete data["addresses"];
 
         await fetch(`/api/current/${data.id}`, {
             method: "PUT",
@@ -145,7 +158,6 @@ export default function DealerDetail({ params }: { params: { id: string } }) {
                                 {data.taxOffice || "-"}
                             </dd>
                         </div>
-
                         <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
                             <dt className="font-medium">Vergi No</dt>
                             <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
@@ -159,6 +171,39 @@ export default function DealerDetail({ params }: { params: { id: string } }) {
                                 {data.paymentPlan || "-"}
                             </dd>
                         </div>
+                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
+                            <dt className="font-medium">IBAN</dt>
+                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light gap-2 items-center mt-1 sm:mt-0">
+                                {data.paymentNumber ? (
+                                    <>
+                                        {`TR ${data.paymentNumber}`}
+                                        <BiCopy
+                                            className="text-xl text-sky-500 cursor-pointer active:opacity-50"
+                                            onClick={() =>
+                                                CopyToClipboard(
+                                                    `TR${data.paymentNumber}`,
+                                                    "IBAN panoya kopyalandı!",
+                                                )
+                                            }
+                                        />
+                                    </>
+                                ) : (
+                                    "-"
+                                )}
+                            </dd>
+                        </div>
+                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
+                            <dt className="font-medium">Yetkili Adı</dt>
+                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
+                                {data.authorizedName || "-"}
+                            </dd>
+                        </div>
+                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
+                            <dt className="font-medium">Yetkili Ünvanı</dt>
+                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
+                                {data.authorizedTitle || "-"}
+                            </dd>
+                        </div>
 
                         <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
                             <dt className="font-medium">Şehir</dt>
@@ -166,7 +211,6 @@ export default function DealerDetail({ params }: { params: { id: string } }) {
                                 {data.city || "-"}
                             </dd>
                         </div>
-
                         <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
                             <dt className="font-medium">Adres</dt>
                             <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
@@ -330,6 +374,9 @@ export default function DealerDetail({ params }: { params: { id: string } }) {
                                     })}
                                 />
                             </div>
+
+                            <Divider className="my-3" />
+
                             <div>
                                 <label
                                     htmlFor="taxOffice"
@@ -380,6 +427,65 @@ export default function DealerDetail({ params }: { params: { id: string } }) {
                             </div>
                             <div>
                                 <label
+                                    htmlFor="paymentNumber"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    IBAN
+                                </label>
+                                <div className="mt-2">
+                                    <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:max-w-md">
+                                        <span className="flex select-none items-center pl-3 text-zinc-400 sm:text-sm">
+                                            TR
+                                        </span>
+                                        <input
+                                            type="text"
+                                            id="paymentNumber"
+                                            className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-zinc-700 placeholder:text-zinc-400 focus:ring-0 sm:text-sm sm:leading-6 outline-none"
+                                            {...register("paymentNumber", {
+                                                maxLength: 50,
+                                            })}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <Divider className="my-3" />
+
+                            <div>
+                                <label
+                                    htmlFor="authorizedName"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Yetkili Adı
+                                </label>
+                                <input
+                                    type="text"
+                                    id="authorizedName"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    {...register("authorizedName", {
+                                        maxLength: 80,
+                                    })}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="authorizedTitle"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Yetkili Ünvanı
+                                </label>
+                                <input
+                                    type="text"
+                                    id="authorizedTitle"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    {...register("authorizedTitle", {
+                                        maxLength: 80,
+                                    })}
+                                />
+                            </div>
+
+                            <div>
+                                <label
                                     htmlFor="city"
                                     className="block text-sm font-semibold leading-6 text-zinc-500"
                                 >
@@ -390,7 +496,7 @@ export default function DealerDetail({ params }: { params: { id: string } }) {
                                     id="city"
                                     className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
                                     {...register("city", {
-                                        maxLength: 50,
+                                        maxLength: 80,
                                     })}
                                 />
                             </div>
@@ -405,9 +511,10 @@ export default function DealerDetail({ params }: { params: { id: string } }) {
                                     id="address"
                                     rows={3}
                                     className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
-                                    {...register("address", { maxLength: 400 })}
+                                    {...register("address", { maxLength: 500 })}
                                 />
                             </div>
+
                             <div className="flex flex-row gap-2 mt-4">
                                 <div className="flex-1"></div>
                                 <Button

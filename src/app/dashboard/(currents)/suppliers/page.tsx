@@ -14,6 +14,7 @@ import {
 } from "@nextui-org/modal";
 import { SortDescriptor } from "@nextui-org/table";
 import { Button } from "@nextui-org/button";
+import { Divider } from "@nextui-org/divider";
 
 import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
 import DataTable from "@/components/DataTable";
@@ -30,6 +31,9 @@ interface IFormInput {
     taxOffice: string;
     taxNo: string;
     paymentPlan: string;
+    paymentNumber: string;
+    authorizedName: string;
+    authorizedTitle: string;
     city: string;
     address: string;
     createdBy: string;
@@ -107,6 +111,16 @@ export default function Suppliers() {
         {
             key: "taxNo",
             name: "Vergi No",
+            width: 100,
+        },
+        {
+            key: "authorizedName",
+            name: "Yetkili Adı",
+            width: 200,
+        },
+        {
+            key: "authorizedTitle",
+            name: "Yetkili Ünvanı",
             width: 100,
         },
         {
@@ -275,6 +289,9 @@ export default function Suppliers() {
                                     })}
                                 />
                             </div>
+
+                            <Divider className="my-3" />
+
                             <div>
                                 <label
                                     htmlFor="taxOffice"
@@ -325,6 +342,65 @@ export default function Suppliers() {
                             </div>
                             <div>
                                 <label
+                                    htmlFor="paymentNumber"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    IBAN
+                                </label>
+                                <div className="mt-2">
+                                    <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:max-w-md">
+                                        <span className="flex select-none items-center pl-3 text-zinc-400 sm:text-sm">
+                                            TR
+                                        </span>
+                                        <input
+                                            type="text"
+                                            id="paymentNumber"
+                                            className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-zinc-700 placeholder:text-zinc-400 focus:ring-0 sm:text-sm sm:leading-6 outline-none"
+                                            {...register("paymentNumber", {
+                                                maxLength: 50,
+                                            })}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <Divider className="my-3" />
+
+                            <div>
+                                <label
+                                    htmlFor="authorizedName"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Yetkili Adı
+                                </label>
+                                <input
+                                    type="text"
+                                    id="authorizedName"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    {...register("authorizedName", {
+                                        maxLength: 80,
+                                    })}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="authorizedTitle"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Yetkili Ünvanı
+                                </label>
+                                <input
+                                    type="text"
+                                    id="authorizedTitle"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    {...register("authorizedTitle", {
+                                        maxLength: 80,
+                                    })}
+                                />
+                            </div>
+
+                            <div>
+                                <label
                                     htmlFor="city"
                                     className="block text-sm font-semibold leading-6 text-zinc-500"
                                 >
@@ -335,7 +411,7 @@ export default function Suppliers() {
                                     id="city"
                                     className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
                                     {...register("city", {
-                                        maxLength: 50,
+                                        maxLength: 80,
                                     })}
                                 />
                             </div>
@@ -350,9 +426,10 @@ export default function Suppliers() {
                                     id="address"
                                     rows={3}
                                     className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
-                                    {...register("address", { maxLength: 400 })}
+                                    {...register("address", { maxLength: 500 })}
                                 />
                             </div>
+
                             <div className="flex flex-row gap-2 mt-4">
                                 <div className="flex-1"></div>
                                 <Button
