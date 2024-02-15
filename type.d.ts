@@ -103,9 +103,9 @@ type Brand = Entity & {
 };
 
 type Product = Entity & {
-    brand: string;
     model: string;
-    type?: string;
+    brand?: Brand;
+    productType?: ProductType;
 };
 
 type ProductType = Entity & {
@@ -117,6 +117,7 @@ type LicenseType = Entity & {
     type: string;
     duration?: number;
     price?: Decimal;
+    brand?: Brand;
 };
 
 type BoughtType = Entity & {
@@ -133,9 +134,9 @@ type Current = Entity & {
     taxOffice?: string;
     taxNo?: string;
     paymentPlan?: string;
+    paymentNumber?: string;
     authName?: string;
     authTitle?: string;
-    iban?: string;
 };
 
 type AuthorizedPerson = Entity & {
