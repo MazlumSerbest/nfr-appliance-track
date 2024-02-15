@@ -31,6 +31,8 @@ import {
 import { DateFormat, DateTimeFormat } from "@/utils/date";
 import useUserStore from "@/store/user";
 import {
+    getAppliances,
+    getProducts,
     getLicenseTypes,
     getCustomers,
     getDealers,
@@ -45,6 +47,9 @@ interface IFormInput {
     boughtTypeId: number | undefined;
     boughtAt: string;
     soldAt: string;
+    orderedAt?: string;
+    note?: string;
+    applianceId: number;
     licenseTypeId: number;
     customerId: number;
     dealerId: number;
@@ -58,6 +63,8 @@ export default function Licenses() {
     const { user: currUser } = useUserStore();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
 
+    const [products, setProducts] = useState<ListBoxItem[] | null>(null);
+    const [appliances, setAppliances] = useState<ListBoxItem[] | null>(null);
     const [licenses, setLicenses] = useState<vLicense[] | null>(null);
     const [stockLicenses, setStockLicenses] = useState<vLicense[] | null>(null);
     const [orderLicenses, setOrderLicenses] = useState<vLicense[] | null>(null);
@@ -70,7 +77,7 @@ export default function Licenses() {
     const [suppliers, setSuppliers] = useState<ListBoxItem[] | null>(null);
 
     //#region Form
-    const { register, reset, handleSubmit, control } = useForm<IFormInput>();
+    const { register, reset, resetField, handleSubmit, control } = useForm<IFormInput>();
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         data.createdBy = currUser?.username ?? "";
         data.boughtTypeId = Number(data.boughtTypeId || undefined);
@@ -96,7 +103,6 @@ export default function Licenses() {
 
     //#region Table
     const visibleColumns = [
-        "serialNo",
         "applianceSerialNo",
         "licenseType",
         "customerName",
@@ -118,7 +124,7 @@ export default function Licenses() {
     const columns: Column[] = [
         {
             key: "serialNo",
-            name: "Seri Numarası",
+            name: "Lisans Seri Numarası",
             width: 200,
             searchable: true,
             sortable: true,
@@ -155,6 +161,12 @@ export default function Licenses() {
         {
             key: "soldAt",
             name: "Satış Tarihi",
+            width: 150,
+            sortable: true,
+        },
+        {
+            key: "orderedAt",
+            name: "Sipariş Tarihi",
             width: 150,
             sortable: true,
         },
@@ -302,6 +314,9 @@ export default function Licenses() {
 
     //#region Data
     async function getData() {
+        const pro: ListBoxItem[] = await getProducts(true);
+        setProducts(pro);
+
         const lit: ListBoxItem[] = await getLicenseTypes(true);
         setLicenseTypes(lit);
         const bou: ListBoxItem[] = await getBoughtTypes(true);
@@ -393,6 +408,7 @@ export default function Licenses() {
                             }}
                         />
                     </Tab>
+                    <Tab key="waitingOrder" title="Bekleyen Sipariş" className="w-full"></Tab>
                     <Tab key="active" title="Aktif" className="w-full">
                         <DataTable
                             isCompact
@@ -461,22 +477,48 @@ export default function Licenses() {
                                     </span>
                                 </div>
                             </div> */}
+
+<div>
+                                <label
+                                    htmlFor="product"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                >
+                                    Ürün
+                                </label>
+                                <AutoComplete
+                                    onChange={async (e) => {
+                                        resetField("applianceId");
+                                        const appliances: ListBoxItem[] =
+                                            await getAppliances(true, e);
+                                        setAppliances(appliances);
+                                    }}
+                                    data={products || []}
+                                />
+                            </div>
                             <div>
                                 <label
-                                    htmlFor="serialNo"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                    htmlFor="applianceId"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
                                 >
-                                    Seri Numarası
+                                    Cihaz
                                 </label>
-                                <input
-                                    type="text"
-                                    id="serialNo"
-                                    required
-                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
-                                    {...register("serialNo", {
-                                        required: true,
-                                        maxLength: 50,
-                                    })}
+                                <span className="flex flex-row font-normal text-xs text-zinc-400 items-center gap-1 mb-1">
+                                    <BiInfoCircle />
+                                    Cihaz seçmek için ürün seçimi yapmanız
+                                    gereklidir!
+                                </span>
+                                <Controller
+                                    control={control}
+                                    name="applianceId"
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <AutoComplete
+                                            onChange={onChange}
+                                            value={value}
+                                            data={appliances || []}
+                                        />
+                                    )}
                                 />
                             </div>
 
@@ -586,6 +628,20 @@ export default function Licenses() {
                                     {...register("soldAt", {})}
                                 />
                             </div>
+                            <div>
+                                <label
+                                    htmlFor="orderedAt"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Sipariş Tarihi
+                                </label>
+                                <input
+                                    type="date"
+                                    id="orderedAt"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    {...register("orderedAt", {})}
+                                />
+                            </div>
 
                             <Divider className="my-3" />
 
@@ -672,6 +728,41 @@ export default function Licenses() {
                                         />
                                     )}
                                 />
+                            </div>
+
+                            <Divider className="my-3" />
+                            
+                            <div>
+                                <label
+                                    htmlFor="serialNo"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Lisans Seri Numarası
+                                </label>
+                                <input
+                                    type="text"
+                                    id="serialNo"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    {...register("serialNo", {})}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="note"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Not
+                                </label>
+                                <div className="mt-2">
+                                    <textarea
+                                        id="note"
+                                        rows={3}
+                                        className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                        {...register("note", {
+                                            maxLength: 500,
+                                        })}
+                                    />
+                                </div>
                             </div>
 
                             <div className="flex flex-row gap-2 mt-4">

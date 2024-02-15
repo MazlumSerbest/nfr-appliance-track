@@ -18,7 +18,6 @@ import { Button } from "@nextui-org/button";
 import { Divider } from "@nextui-org/divider";
 
 import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
-import BoolChip from "@/components/BoolChip";
 import AutoComplete from "@/components/AutoComplete";
 import RegInfo from "@/components/buttons/RegInfo";
 import DeleteButton from "@/components/buttons/DeleteButton";
@@ -50,6 +49,8 @@ interface IFormInput {
     boughtTypeId: number;
     boughtAt?: string;
     soldAt?: string;
+    orderedAt?: string;
+    note?: string;
     licenseTypeId: number;
     customerId?: number;
     dealerId?: number;
@@ -277,6 +278,12 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                 {data.supplier?.name || "-"}
                             </dd>
                         </div>
+                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
+                            <dt className="font-medium">Not</dt>
+                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
+                                {data.note || "-"}
+                            </dd>
+                        </div>
                     </div>
                 </CardBody>
                 <CardFooter className="flex gap-2">
@@ -358,24 +365,6 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                     </span>
                                 </div>
                             </div> */}
-                            <div>
-                                <label
-                                    htmlFor="serialNo"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
-                                >
-                                    Seri Numarası
-                                </label>
-                                <input
-                                    type="text"
-                                    id="serialNo"
-                                    required
-                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
-                                    {...register("serialNo", {
-                                        required: true,
-                                        maxLength: 50,
-                                    })}
-                                />
-                            </div>
 
                             <div>
                                 <label
@@ -483,6 +472,20 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                     {...register("soldAt", {})}
                                 />
                             </div>
+                            <div>
+                                <label
+                                    htmlFor="orderedAt"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Sipariş Tarihi
+                                </label>
+                                <input
+                                    type="date"
+                                    id="orderedAt"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    {...register("orderedAt", {})}
+                                />
+                            </div>
 
                             <Divider className="my-3" />
 
@@ -569,6 +572,41 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                         />
                                     )}
                                 />
+                            </div>
+
+                            <Divider className="my-3" />
+
+                            <div>
+                                <label
+                                    htmlFor="serialNo"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Lisans Seri Numarası
+                                </label>
+                                <input
+                                    type="text"
+                                    id="serialNo"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    {...register("serialNo", {})}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="note"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Not
+                                </label>
+                                <div className="mt-2">
+                                    <textarea
+                                        id="note"
+                                        rows={3}
+                                        className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                        {...register("note", {
+                                            maxLength: 500,
+                                        })}
+                                    />
+                                </div>
                             </div>
 
                             <div className="flex flex-row gap-2 mt-4">

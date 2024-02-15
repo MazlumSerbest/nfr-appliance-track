@@ -42,6 +42,7 @@ interface IFormInput {
     serialNo: string;
     boughtAt: string;
     soldAt: string;
+    note?: string;
     customerId: number;
     dealerId: number;
     subDealerId: number;
@@ -204,6 +205,12 @@ export default function ApplianceDetail({
                             <dt className="font-medium">Tedarikçi</dt>
                             <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
                                 {data.supplier?.name || "-"}
+                            </dd>
+                        </div>
+                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
+                            <dt className="font-medium">Not</dt>
+                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
+                                {data.note || "-"}
                             </dd>
                         </div>
                     </div>
@@ -521,6 +528,25 @@ export default function ApplianceDetail({
                                         />
                                     )}
                                 />
+                            </div>
+
+                            <div>
+                                <label
+                                    htmlFor="note"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Not
+                                </label>
+                                <div className="mt-2">
+                                    <textarea
+                                        id="note"
+                                        rows={3}
+                                        className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                        {...register("note", {
+                                            maxLength: 500,
+                                        })}
+                                    />
+                                </div>
                             </div>
 
                             <div className="flex flex-row gap-2 mt-4">
