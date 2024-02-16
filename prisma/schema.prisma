@@ -40,6 +40,7 @@ model appliances {
   deleted       Boolean     @default(false)
   subDealerId   Int?
   note          String?     @db.VarChar
+  isDemo        Boolean     @default(false)
   customer      currents?   @relation("Customer", fields: [customerId], references: [id])
   dealer        currents?   @relation("Dealer", fields: [dealerId], references: [id])
   predecessor   appliances? @relation("ApplienceHistory", fields: [predecessorId], references: [id])
@@ -136,7 +137,6 @@ model productTypes {
 model licenseTypes {
   id        Int        @id @default(autoincrement())
   active    Boolean    @default(true)
-  brandId   Int?
   duration  Int?
   type      String     @db.VarChar
   price     Decimal?   @db.Decimal(9, 2)
@@ -144,6 +144,7 @@ model licenseTypes {
   createdBy String     @db.VarChar
   updatedAt DateTime?  @updatedAt @db.Timestamptz(6)
   updatedBy String?    @db.VarChar
+  brandId   Int?
   brand     brands?    @relation(fields: [brandId], references: [id])
   licenses  licenses[]
 }
@@ -176,8 +177,8 @@ model currents {
   updatedAt           DateTime?           @updatedAt @db.Timestamptz(6)
   paymentPlan         String?             @db.VarChar
   paymentNumber       String?             @db.VarChar
-  authName            String?             @db.VarChar
-  authTitle           String?             @db.VarChar
+  authorizedName      String?             @db.VarChar
+  authorizedTitle     String?             @db.VarChar
   addresses           addresses[]
   customerAppliances  appliances[]        @relation("Customer")
   dealerAppliances    appliances[]        @relation("Dealer")
@@ -217,6 +218,56 @@ model addresses {
   updatedBy String?   @db.VarChar
   updatedAt DateTime? @updatedAt @db.Timestamptz(6)
   current   currents  @relation(fields: [currentId], references: [id], onDelete: Cascade)
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view vAppliances {
+  id            Int       @unique
+  serialNo      String?   @db.VarChar
+  boughtAt      DateTime? @db.Date
+  soldAt        DateTime? @db.Date
+  createdBy     String?   @db.VarChar
+  createdAt     DateTime? @db.Timestamptz(6)
+  updatedBy     String?   @db.VarChar
+  updatedAt     DateTime? @db.Timestamptz(6)
+  deleted       Boolean?
+  isDemo        Boolean?
+  productId     Int?
+  status        String?
+  productModel  String?   @db.VarChar
+  productBrand  String?   @db.VarChar
+  customerName  String?   @db.VarChar
+  dealerName    String?   @db.VarChar
+  subDealerName String?   @db.VarChar
+  supplierName  String?   @db.VarChar
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view vLicenses {
+  id                Int       @unique
+  status            String?
+  serialNo          String?   @db.VarChar
+  startDate         DateTime? @db.Date
+  expiryDate        DateTime? @db.Date
+  boughtAt          DateTime? @db.Date
+  soldAt            DateTime? @db.Date
+  orderedAt         DateTime? @db.Timestamptz(6)
+  createdBy         String?   @db.VarChar
+  createdAt         DateTime? @db.Timestamptz(6)
+  updatedBy         String?   @db.VarChar
+  updatedAt         DateTime? @db.Timestamptz(6)
+  deleted           Boolean?
+  applianceSerialNo String?   @db.VarChar
+  productModel      String?   @db.VarChar
+  productBrand      String?   @db.VarChar
+  licenseType       String?   @db.VarChar
+  licenseDuration   Int?
+  boughtType        String?   @db.VarChar
+  customerName      String?   @db.VarChar
+  dealerName        String?   @db.VarChar
+  subDealerName     String?   @db.VarChar
+  supplierName      String?   @db.VarChar
+  expiryStatus      String?
 }
 
 enum CurrentType {

@@ -1,14 +1,30 @@
 SELECT
   l.id,
   CASE
-    WHEN (l."customerId" IS NULL) THEN TRUE
-    ELSE false
-  END AS "isStock",
+    WHEN (
+      (l."customerId" IS NULL)
+      AND (l."orderedAt" IS NULL)
+      AND (l."expiryDate" IS NULL)
+    ) THEN 'stock' :: text
+    WHEN (
+      (l."customerId" IS NOT NULL)
+      AND (l."orderedAt" IS NULL)
+      AND (l."expiryDate" IS NULL)
+    ) THEN 'order' :: text
+    WHEN (
+      (l."customerId" IS NOT NULL)
+      AND (l."orderedAt" IS NOT NULL)
+      AND (l."expiryDate" IS NULL)
+    ) THEN 'waiting' :: text
+    WHEN (l."expiryDate" IS NOT NULL) THEN 'active' :: text
+    ELSE 'waiting' :: text
+  END AS STATUS,
   l."serialNo",
   l."startDate",
   l."expiryDate",
   l."boughtAt",
   l."soldAt",
+  l."orderedAt",
   l."createdBy",
   l."createdAt",
   l."updatedBy",

@@ -8,13 +8,25 @@ SELECT
   a."updatedBy",
   a."updatedAt",
   a.deleted,
+  a."isDemo",
   a."productId",
   CASE
-    WHEN (a."customerId" IS NULL) THEN TRUE
-    ELSE false
-  END AS "isStock",
+    WHEN (
+      (a."customerId" IS NULL)
+      AND (a."soldAt" IS NULL)
+    ) THEN 'stock' :: text
+    WHEN (
+      (a."customerId" IS NOT NULL)
+      AND (a."soldAt" IS NULL)
+    ) THEN 'order' :: text
+    WHEN (
+      (a."customerId" IS NOT NULL)
+      AND (a."soldAt" IS NOT NULL)
+    ) THEN 'active' :: text
+    ELSE 'order' :: text
+  END AS STATUS,
   p.model AS "productModel",
-  p.brand AS "productBrand",
+  b.name AS "productBrand",
   c.name AS "customerName",
   d.name AS "dealerName",
   sd.name AS "subDealerName",
@@ -25,8 +37,11 @@ FROM
       (
         (
           (
-            appliances a
-            LEFT JOIN products p ON ((a."productId" = p.id))
+            (
+              appliances a
+              LEFT JOIN products p ON ((a."productId" = p.id))
+            )
+            LEFT JOIN brands b ON ((p."brandId" = b.id))
           )
           LEFT JOIN currents c ON ((a."customerId" = c.id))
         )

@@ -66,7 +66,7 @@ type Appliance = Entity & {
 };
 
 type vAppliance = Appliance & {
-    isStock: boolean;
+    status: string;
     productBrand?: string;
     productModel?: string;
 };
@@ -90,7 +90,7 @@ type License = Entity & {
 };
 
 type vLicense = License & {
-    isStock: boolean;
+    status: string;
     applianceSerialNo?: string;
     productModel?: string;
     productBrand?: string;
@@ -135,8 +135,8 @@ type Current = Entity & {
     taxNo?: string;
     paymentPlan?: string;
     paymentNumber?: string;
-    authName?: string;
-    authTitle?: string;
+    authorizedName?: string;
+    authorizedTitle?: string;
 };
 
 type AuthorizedPerson = Entity & {
