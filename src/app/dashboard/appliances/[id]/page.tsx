@@ -154,9 +154,9 @@ export default function ApplianceDetail({
                         <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
                             <dt className="font-medium">Ürün</dt>
                             <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                {data.product?.brand +
-                                    " " +
-                                    data.product?.model || "-"}
+                                {(data.product?.brand?.name
+                                    ? data.product?.brand?.name + " "
+                                    : "") + data.product?.model || "-"}
                             </dd>
                         </div>
                         <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
