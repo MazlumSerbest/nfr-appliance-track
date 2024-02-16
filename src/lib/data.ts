@@ -32,7 +32,7 @@ export async function getLicenses(forListBox?: boolean) {
                 " " +
                 l.licenseDuration +
                 " Ay" +
-                (l.isStock ? " (Stok)" : ""),
+                (l.status == "stock" ? " (Stok)" : ""),
         }));
     return licenses;
 }

@@ -36,7 +36,7 @@ export async function PUT(
         const session = await getServerSession();
 
         if (session) {
-            const product: Product = await request.json();
+            const product: any = await request.json();
             product.updatedAt = new Date().toISOString();
 
             const updateProduct = await prisma.products.update({

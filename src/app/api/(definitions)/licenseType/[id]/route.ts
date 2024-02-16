@@ -36,7 +36,7 @@ export async function PUT(
         const session = await getServerSession();
 
         if (session) {
-            const licenseType: LicenseType = await request.json();
+            const licenseType: any = await request.json();
             licenseType.updatedAt = new Date().toISOString();
 
             const updateLicenseType = await prisma.licenseTypes.update({
