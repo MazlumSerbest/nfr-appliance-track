@@ -191,9 +191,12 @@ export default function Appliances() {
                 case "product":
                     return (
                         <p>
-                            {appliance.productBrand +
-                                " " +
-                                appliance.productModel}
+                            {(appliance.productBrand
+                                ? appliance.productBrand + " "
+                                : "") +
+                                (appliance.productModel
+                                    ? appliance.productModel
+                                    : "")}
                         </p>
                     );
                 case "boughtAt":
