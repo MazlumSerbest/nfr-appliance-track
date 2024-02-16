@@ -47,13 +47,16 @@ export default function Appliances() {
     const { user: currUser } = useUserStore();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
 
-    const [appliances, setAppliances] = useState<vAppliance[] | null>(null);
-    const [orderAppliances, setOrderAppliances] = useState<vAppliance[] | null>(
-        null,
-    );
     const [stockAppliances, setStockAppliances] = useState<vAppliance[] | null>(
         null,
     );
+    const [orderAppliances, setOrderAppliances] = useState<vAppliance[] | null>(
+        null,
+    );
+    const [activeAppliances, setActiveAppliances] = useState<
+        vAppliance[] | null
+    >(null);
+
     const [products, setProducts] = useState<ListBoxItem[] | null>(null);
     const [customers, setCustomers] = useState<ListBoxItem[] | null>(null);
     const [dealers, setDealers] = useState<ListBoxItem[] | null>(null);
@@ -228,13 +231,15 @@ export default function Appliances() {
 
     const { data, error, mutate } = useSWR("/api/appliance", null, {
         onSuccess: (data) => {
-            setAppliances(
-                data.filter((a: vAppliance) => !a.isStock && a.soldAt),
+            setStockAppliances(
+                data.filter((a: vAppliance) => a.status == "stock"),
             );
             setOrderAppliances(
-                data.filter((a: vAppliance) => !a.isStock && !a.soldAt),
+                data.filter((a: vAppliance) => a.status == "order"),
             );
-            setStockAppliances(data.filter((a: vAppliance) => a.isStock));
+            setActiveAppliances(
+                data.filter((a: vAppliance) => a.status == "active"),
+            );
         },
     });
 
@@ -308,7 +313,7 @@ export default function Appliances() {
                             isStriped
                             emptyContent="Herhangi bir cihaz bulunamadı!"
                             defaultRowsPerPage={20}
-                            data={appliances || []}
+                            data={activeAppliances || []}
                             columns={columns}
                             renderCell={renderCell}
                             sortOption={sort}
