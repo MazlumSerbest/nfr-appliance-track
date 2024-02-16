@@ -83,6 +83,9 @@ export async function PUT(
             license.soldAt = license.soldAt
                 ? new Date(license.soldAt).toISOString()
                 : undefined;
+            license.orderedAt = license.orderedAt
+                ? new Date(license.orderedAt).toISOString()
+                : undefined;
 
             const checkSerialNo = await prisma.licenses.findUnique({
                 where: {

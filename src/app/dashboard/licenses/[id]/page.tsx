@@ -198,11 +198,23 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                         <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
                             <dt className="font-medium">Durum</dt>
                             <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                {(!data.customerId
+                                {!data.customerId &&
+                                !data.orderedAt &&
+                                !data.expiryDate
                                     ? "Stok"
-                                    : !data.soldAt
+                                    : data.customerId &&
+                                      !data.orderedAt &&
+                                      !data.expiryDate
                                     ? "Sipariş"
-                                    : "Aktif") || "-"}
+                                    : data.customerId &&
+                                      data.orderedAt &&
+                                      !data.expiryDate
+                                    ? "Bekleyen Sipariş"
+                                    : data.customerId &&
+                                      data.orderedAt &&
+                                      data.expiryDate
+                                    ? "Aktif"
+                                    : "Bekleyen Sipariş"}
                             </dd>
                         </div>
 
@@ -251,6 +263,12 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                             <dt className="font-medium">Satış Tarihi</dt>
                             <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
                                 {DateFormat(data.soldAt) || "-"}
+                            </dd>
+                        </div>
+                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
+                            <dt className="font-medium">Sipariş Tarihi</dt>
+                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
+                                {DateFormat(data.orderedAt) || "-"}
                             </dd>
                         </div>
 

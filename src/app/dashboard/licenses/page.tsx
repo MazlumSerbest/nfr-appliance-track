@@ -63,11 +63,17 @@ export default function Licenses() {
     const { user: currUser } = useUserStore();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
 
-    const [products, setProducts] = useState<ListBoxItem[] | null>(null);
-    const [appliances, setAppliances] = useState<ListBoxItem[] | null>(null);
-    const [licenses, setLicenses] = useState<vLicense[] | null>(null);
     const [stockLicenses, setStockLicenses] = useState<vLicense[] | null>(null);
     const [orderLicenses, setOrderLicenses] = useState<vLicense[] | null>(null);
+    const [waitingOrderLicenses, setWaitingOrderLicenses] = useState<
+        vLicense[] | null
+    >(null);
+    const [activeLicenses, setActiveLicenses] = useState<vLicense[] | null>(
+        null,
+    );
+
+    const [products, setProducts] = useState<ListBoxItem[] | null>(null);
+    const [appliances, setAppliances] = useState<ListBoxItem[] | null>(null);
     const [licenseTypes, setLicenseTypes] = useState<ListBoxItem[] | null>(
         null,
     );
@@ -77,7 +83,8 @@ export default function Licenses() {
     const [suppliers, setSuppliers] = useState<ListBoxItem[] | null>(null);
 
     //#region Form
-    const { register, reset, resetField, handleSubmit, control } = useForm<IFormInput>();
+    const { register, reset, resetField, handleSubmit, control } =
+        useForm<IFormInput>();
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         data.createdBy = currUser?.username ?? "";
         data.boughtTypeId = Number(data.boughtTypeId || undefined);
@@ -136,11 +143,12 @@ export default function Licenses() {
             searchable: true,
             sortable: true,
         },
-        // {
-        //     key: "isStock",
-        //     name: "Stok",
-        //     width: 80,
-        // },
+        {
+            key: "product",
+            name: "Ürün",
+            width: 200,
+            searchable: true,
+        },
         {
             key: "licenseType",
             name: "Lisans Tipi",
@@ -336,11 +344,18 @@ export default function Licenses() {
 
     const { data, error, mutate } = useSWR("/api/license", null, {
         onSuccess: (data) => {
-            setLicenses(data?.filter((l: vLicense) => !l.isStock && l.soldAt));
-            setOrderLicenses(
-                data?.filter((l: vLicense) => !l.isStock && !l.soldAt),
+            setStockLicenses(
+                data?.filter((l: vLicense) => l.status == "stock"),
             );
-            setStockLicenses(data?.filter((l: vLicense) => l.isStock));
+            setOrderLicenses(
+                data?.filter((l: vLicense) => l.status == "order"),
+            );
+            setWaitingOrderLicenses(
+                data?.filter((l: vLicense) => l.status == "waiting"),
+            );
+            setActiveLicenses(
+                data?.filter((l: vLicense) => l.status == "active"),
+            );
         },
     });
 
@@ -408,14 +423,38 @@ export default function Licenses() {
                             }}
                         />
                     </Tab>
-                    <Tab key="waitingOrder" title="Bekleyen Sipariş" className="w-full"></Tab>
+                    <Tab
+                        key="waitingOrder"
+                        title="Bekleyen Sipariş"
+                        className="w-full"
+                    >
+                        <DataTable
+                            isCompact
+                            isStriped
+                            emptyContent="Herhangi bir lisans bulunamadı!"
+                            defaultRowsPerPage={20}
+                            data={waitingOrderLicenses || []}
+                            columns={columns}
+                            renderCell={renderCell}
+                            sortOption={sort}
+                            initialVisibleColumNames={visibleColumns}
+                            activeOptions={[]}
+                            onAddNew={() => {
+                                reset({});
+                                onOpen();
+                            }}
+                            onDoubleClick={(item) => {
+                                router.push(`/dashboard/licenses/${item.id}`);
+                            }}
+                        />
+                    </Tab>
                     <Tab key="active" title="Aktif" className="w-full">
                         <DataTable
                             isCompact
                             isStriped
                             emptyContent="Herhangi bir lisans bulunamadı!"
                             defaultRowsPerPage={20}
-                            data={licenses || []}
+                            data={activeLicenses || []}
                             columns={columns}
                             renderCell={renderCell}
                             sortOption={sort}
@@ -478,7 +517,7 @@ export default function Licenses() {
                                 </div>
                             </div> */}
 
-<div>
+                            <div>
                                 <label
                                     htmlFor="product"
                                     className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
@@ -731,7 +770,7 @@ export default function Licenses() {
                             </div>
 
                             <Divider className="my-3" />
-                            
+
                             <div>
                                 <label
                                     htmlFor="serialNo"
