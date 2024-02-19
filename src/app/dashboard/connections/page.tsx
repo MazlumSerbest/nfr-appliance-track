@@ -53,7 +53,7 @@ export default function Connections() {
             headers: { "Content-Type": "application/json" },
         }).then(async (res) => {
             const result = await res.json();
-            if (res.ok) {
+            if (result.ok) {
                 toast.success(result.message);
                 onClose();
                 reset();
@@ -79,13 +79,11 @@ export default function Connections() {
             key: "ip",
             name: "IP/Domain",
             width: 150,
-            searchable: true,
         },
         {
             key: "login",
             name: "Kullanıcı",
             width: 150,
-            searchable: true,
         },
         {
             key: "customer",

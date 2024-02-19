@@ -58,7 +58,7 @@ export default function ConnectionDetail({
             headers: { "Content-Type": "application/json" },
         }).then(async (res) => {
             const result = await res.json();
-            if (res.ok) {
+            if (result.ok) {
                 toast.success(result.message);
                 onClose();
                 reset();
