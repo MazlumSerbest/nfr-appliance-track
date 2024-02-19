@@ -61,9 +61,10 @@ export async function GET(
         return NextResponse.json({
             message: "Authorization Needed!",
             status: 401,
+            ok: false,
         });
     } catch (error) {
-        return NextResponse.json({ message: error, status: 500 });
+        return NextResponse.json({ message: error, status: 500, ok: false });
     }
 }
 
@@ -97,6 +98,7 @@ export async function PUT(
                 return NextResponse.json({
                     message: "Bu seri numarası önceden kullanılmıştır!",
                     status: 400,
+                    ok: false,
                 });
 
             if (appliance.predecessorId) {
@@ -114,6 +116,7 @@ export async function PUT(
                         message:
                             "Bu cihaz önceden başka bir cihazda eski cihaz olarak kullanılmıştır!",
                         status: 400,
+                        ok: false,
                     });
             }
 
@@ -128,11 +131,13 @@ export async function PUT(
                 return NextResponse.json({
                     message: "Cihaz başarıyla güncellendi!",
                     status: 200,
+                    ok: true,
                 });
             } else {
                 return NextResponse.json({
                     message: "Cihaz güncellenemedi!",
                     status: 400,
+                    ok: false,
                 });
             }
         }
@@ -140,9 +145,10 @@ export async function PUT(
         return NextResponse.json({
             message: "Authorization Needed!",
             status: 401,
+            ok: false,
         });
     } catch (error) {
-        return NextResponse.json({ message: error, status: 500 });
+        return NextResponse.json({ message: error, status: 500, ok: false });
     }
 }
 

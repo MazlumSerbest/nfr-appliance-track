@@ -28,9 +28,10 @@ export async function GET(request: Request) {
         return NextResponse.json({
             message: "Authorization Needed!",
             status: 401,
+            ok: false,
         });
     } catch (error) {
-        return NextResponse.json({ message: error, status: 500 });
+        return NextResponse.json({ message: error, status: 500, ok: false });
     }
 }
 
@@ -49,11 +50,13 @@ export async function POST(request: Request) {
                 return NextResponse.json({
                     message: "Bağlantı başarıyla kaydedildi!",
                     status: 200,
+                    ok: true,
                 });
             } else {
                 return NextResponse.json({
                     message: "Bağlantı kaydedilemedi!",
                     status: 400,
+                    ok: false,
                 });
             }
         }
@@ -61,8 +64,9 @@ export async function POST(request: Request) {
         return NextResponse.json({
             message: "Authorization Needed!",
             status: 401,
+            ok: false,
         });
     } catch (error) {
-        return NextResponse.json({ message: error, status: 500 });
+        return NextResponse.json({ message: error, status: 500, ok: false });
     }
 }

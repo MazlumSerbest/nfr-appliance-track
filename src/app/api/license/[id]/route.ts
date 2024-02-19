@@ -55,9 +55,10 @@ export async function GET(
         return NextResponse.json({
             message: "Authorization Needed!",
             status: 401,
+            ok: false,
         });
     } catch (error) {
-        return NextResponse.json({ message: error, status: 500 });
+        return NextResponse.json({ message: error, status: 500, ok: false });
     }
 }
 
@@ -100,6 +101,7 @@ export async function PUT(
                 return NextResponse.json({
                     message: "Bu seri numarası önceden kullanılmıştır!",
                     status: 400,
+                    ok: false,
                 });
 
             const updateLicense = await prisma.licenses.update({
@@ -113,11 +115,13 @@ export async function PUT(
                 return NextResponse.json({
                     message: "Lisans başarıyla güncellendi!",
                     status: 200,
+                    ok: true,
                 });
             } else {
                 return NextResponse.json({
                     message: "Lisans güncellenemedi!",
                     status: 400,
+                    ok: false,
                 });
             }
         }
@@ -125,9 +129,10 @@ export async function PUT(
         return NextResponse.json({
             message: "Authorization Needed!",
             status: 401,
+            ok: false,
         });
     } catch (error) {
-        return NextResponse.json({ message: error, status: 500 });
+        return NextResponse.json({ message: error, status: 500, ok: false });
     }
 }
 
@@ -154,14 +159,16 @@ export async function DELETE(
             return NextResponse.json({
                 message: "Lisans silindi!",
                 status: 200,
+                ok: true,
             });
         }
 
         return NextResponse.json({
             message: "Authorization Needed!",
             status: 401,
+            ok: false,
         });
     } catch (error) {
-        return NextResponse.json({ message: error, status: 500 });
+        return NextResponse.json({ message: error, status: 500, ok: false });
     }
 }

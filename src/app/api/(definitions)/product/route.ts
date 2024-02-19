@@ -25,9 +25,10 @@ export async function GET(request: Request) {
         return NextResponse.json({
             message: "Authorization Needed!",
             status: 401,
+            ok: false,
         });
     } catch (error) {
-        return NextResponse.json({ message: error, status: 500 });
+        return NextResponse.json({ message: error, status: 500, ok: false });
     }
 }
 
@@ -37,22 +38,28 @@ export async function POST(request: Request) {
             const product: any = await request.json();
 
             const newProduct = await prisma.products.create({
-                data: product
+                data: product,
             });
 
             if (newProduct.id) {
                 return NextResponse.json({
                     message: "Ürün başarıyla kaydedildi!",
                     status: 200,
+                    ok: true,
                 });
             } else {
                 return NextResponse.json({
                     message: "Ürün kaydedilemedi!",
                     status: 400,
+                    ok: false,
                 });
             }
         } catch (error) {
-            return NextResponse.json({ message: error, status: 500 });
+            return NextResponse.json({
+                message: error,
+                status: 500,
+                ok: false,
+            });
         }
     }
 }

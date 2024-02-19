@@ -27,9 +27,10 @@ export async function GET(
         return NextResponse.json({
             message: "Authorization Needed!",
             status: 401,
+            ok: false,
         });
     } catch (error) {
-        return NextResponse.json({ message: error, status: 500 });
+        return NextResponse.json({ message: error, status: 500, ok: false });
     }
 }
 
@@ -58,6 +59,7 @@ export async function PUT(
                         currentTypes.find((e) => e.key == currType)?.name
                     } başarıyla güncellendi!`,
                     status: 200,
+                    ok: true,
                 });
             } else {
                 return NextResponse.json({
@@ -65,6 +67,7 @@ export async function PUT(
                         currentTypes.find((e) => e.key == currType)?.name
                     } güncellenemedi!`,
                     status: 400,
+                    ok: false,
                 });
             }
         }
@@ -72,9 +75,10 @@ export async function PUT(
         return NextResponse.json({
             message: "Authorization Needed!",
             status: 401,
+            ok: false,
         });
     } catch (error) {
-        return NextResponse.json({ message: error, status: 500 });
+        return NextResponse.json({ message: error, status: 500, ok: false });
     }
 }
 
@@ -100,14 +104,16 @@ export async function DELETE(
                     currentTypes.find((e) => e.key == currType)?.name
                 } silindi!`,
                 status: 200,
+                ok: true,
             });
         }
 
         return NextResponse.json({
             message: "Authorization Needed!",
             status: 401,
+            ok: false,
         });
     } catch (error) {
-        return NextResponse.json({ message: error, status: 500 });
+        return NextResponse.json({ message: error, status: 500, ok: false });
     }
 }

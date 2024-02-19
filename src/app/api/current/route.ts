@@ -28,9 +28,10 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({
             message: "Authorization Needed!",
             status: 401,
+            ok: false,
         });
     } catch (error) {
-        return NextResponse.json({ message: error, status: 500 });
+        return NextResponse.json({ message: error, status: 500, ok: false });
     }
 }
 
@@ -52,6 +53,7 @@ export async function POST(request: Request) {
                         currentTypes.find((e) => e.key == currType)?.name
                     } başarıyla kaydedildi!`,
                     status: 200,
+                    ok: true,
                 });
             } else {
                 return NextResponse.json({
@@ -59,6 +61,7 @@ export async function POST(request: Request) {
                         currentTypes.find((e) => e.key == currType)?.name
                     } kaydedilemedi!`,
                     status: 400,
+                    ok: false,
                 });
             }
         }
@@ -66,8 +69,9 @@ export async function POST(request: Request) {
         return NextResponse.json({
             message: "Authorization Needed!",
             status: 401,
+            ok: false,
         });
     } catch (error) {
-        return NextResponse.json({ message: error, status: 500 });
+        return NextResponse.json({ message: error, status: 500, ok: false });
     }
 }

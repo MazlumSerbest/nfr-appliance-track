@@ -29,9 +29,10 @@ export async function GET(request: Request) {
         return NextResponse.json({
             message: "Authorization Needed!",
             status: 401,
+            ok: false,
         });
     } catch (error) {
-        return NextResponse.json({ message: error, status: 500 });
+        return NextResponse.json({ message: error, status: 500, ok: false });
     }
 }
 
@@ -54,6 +55,7 @@ export async function POST(request: Request) {
                 return NextResponse.json({
                     message: "Bu kullanıcı adı önceden kullanılmıştır!",
                     status: 400,
+                    ok: false,
                 });
 
             const checkEmail = await prisma.users.findUnique({
@@ -68,6 +70,7 @@ export async function POST(request: Request) {
                 return NextResponse.json({
                     message: "Bu e-posta önceden kullanılmıştır!",
                     status: 400,
+                    ok: false,
                 });
 
             const hashedPassword = await bcrypt.hash(user.password, 10);
@@ -83,25 +86,29 @@ export async function POST(request: Request) {
                     return NextResponse.json({
                         message: "Kullanıcı başarıyla oluşturuldu!",
                         status: 200,
+                        ok: true,
                     });
                 } else {
                     return NextResponse.json({
                         message: "Kullanıcı oluşturulamadı!",
-                        status: 200,
+                        status: 400,
+                        ok: false,
                     });
                 }
             } else
                 return NextResponse.json({
                     message: "Kullanıcı kaydedilemedi!",
                     status: 400,
+                    ok: false,
                 });
         }
 
         return NextResponse.json({
             message: "Authorization Needed!",
             status: 401,
+            ok: false,
         });
     } catch (error) {
-        return NextResponse.json({ message: error, status: 500 });
+        return NextResponse.json({ message: error, status: 500, ok: false });
     }
 }

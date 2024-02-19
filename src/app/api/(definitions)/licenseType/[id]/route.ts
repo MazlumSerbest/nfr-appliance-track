@@ -22,9 +22,10 @@ export async function GET(
         return NextResponse.json({
             message: "Authorization Needed!",
             status: 401,
+            ok: false,
         });
     } catch (error) {
-        return NextResponse.json({ message: error, status: 500 });
+        return NextResponse.json({ message: error, status: 500, ok: false });
     }
 }
 
@@ -50,11 +51,13 @@ export async function PUT(
                 return NextResponse.json({
                     message: "Lisans tipi başarıyla güncellendi!",
                     status: 200,
+                    ok: true,
                 });
             } else {
                 return NextResponse.json({
                     message: "Lisans tipi güncellenemedi!",
                     status: 400,
+                    ok: false,
                 });
             }
         }
@@ -62,8 +65,9 @@ export async function PUT(
         return NextResponse.json({
             message: "Authorization Needed!",
             status: 401,
+            ok: false,
         });
     } catch (error) {
-        return NextResponse.json({ message: error, status: 500 });
+        return NextResponse.json({ message: error, status: 500, ok: false });
     }
 }
