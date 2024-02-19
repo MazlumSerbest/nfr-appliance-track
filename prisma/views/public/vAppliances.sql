@@ -1,15 +1,5 @@
 SELECT
   a.id,
-  a."serialNo",
-  a."boughtAt",
-  a."soldAt",
-  a."createdBy",
-  a."createdAt",
-  a."updatedBy",
-  a."updatedAt",
-  a.deleted,
-  a."isDemo",
-  a."productId",
   CASE
     WHEN (
       (a."customerId" IS NULL)
@@ -25,6 +15,16 @@ SELECT
     ) THEN 'active' :: text
     ELSE 'order' :: text
   END AS STATUS,
+  a."serialNo",
+  a."boughtAt",
+  a."soldAt",
+  a."createdBy",
+  a."createdAt",
+  a."updatedBy",
+  a."updatedAt",
+  a.deleted,
+  a."isDemo",
+  a."productId",
   p.model AS "productModel",
   b.name AS "productBrand",
   c.name AS "customerName",
@@ -50,4 +50,6 @@ FROM
       LEFT JOIN currents sd ON ((a."subDealerId" = sd.id))
     )
     LEFT JOIN currents s ON ((a."supplierId" = s.id))
-  );
+  )
+WHERE
+  (a.deleted = false);

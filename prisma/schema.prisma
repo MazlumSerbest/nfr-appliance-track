@@ -223,6 +223,7 @@ model addresses {
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view vAppliances {
   id            Int       @unique
+  status        String?
   serialNo      String?   @db.VarChar
   boughtAt      DateTime? @db.Date
   soldAt        DateTime? @db.Date
@@ -233,7 +234,6 @@ view vAppliances {
   deleted       Boolean?
   isDemo        Boolean?
   productId     Int?
-  status        String?
   productModel  String?   @db.VarChar
   productBrand  String?   @db.VarChar
   customerName  String?   @db.VarChar

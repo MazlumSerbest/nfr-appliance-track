@@ -70,4 +70,6 @@ FROM
       LEFT JOIN currents sd ON ((l."subDealerId" = sd.id))
     )
     LEFT JOIN currents s ON ((l."supplierId" = s.id))
-  );
+  )
+WHERE
+  (l.deleted = false);
