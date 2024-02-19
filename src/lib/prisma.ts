@@ -21,7 +21,7 @@ export async function deleteData(
 ) {
     let res;
     const date = new Date().toISOString();
-    if (!updatedBy) return;
+    if (!updatedBy) return false;
 
     if (table == "appliances" || table == "licenses") {
         const query = `UPDATE "${table}" SET deleted = true, "updatedBy" = '${updatedBy}', "updatedAt" = '${date}' WHERE id = ${id};`;
@@ -50,7 +50,7 @@ export async function setActiveStatus(
     activeStatus: boolean,
     updatedBy?: string,
 ) {
-    if (!updatedBy) return;
+    if (!updatedBy) return false;
     const date = new Date().toISOString();
 
     const query = `UPDATE "${table}" SET active = ${
@@ -68,7 +68,7 @@ export async function setLicenseAppliance(
     applianceId: number,
     updatedBy?: string,
 ) {
-    if (!updatedBy) return;
+    if (!updatedBy) return false;
 
     const license = await prisma.licenses.update({
         data: {
@@ -89,7 +89,7 @@ export async function newAuthorizedPerson(
     authorizedPerson: AuthorizedPerson,
     createdBy?: string,
 ) {
-    if (!createdBy) return;
+    if (!createdBy) return false;
 
     const newPerson = await prisma.authorizedPersons.create({
         data: { ...authorizedPerson, createdBy: createdBy },
@@ -103,7 +103,7 @@ export async function updateAuthorizedPerson(
     authorizedPerson: AuthorizedPerson,
     updatedBy?: string,
 ) {
-    if (!updatedBy) return;
+    if (!updatedBy) return false;
 
     const person = await prisma.authorizedPersons.update({
         data: {
@@ -121,7 +121,7 @@ export async function updateAuthorizedPerson(
 }
 
 export async function newAddress(address: Address, createdBy?: string) {
-    if (!createdBy) return;
+    if (!createdBy) return false;
 
     const newAddress = await prisma.addresses.create({
         data: { ...address, createdBy: createdBy },
@@ -132,7 +132,7 @@ export async function newAddress(address: Address, createdBy?: string) {
 }
 
 export async function updateAddress(address: Address, updatedBy?: string) {
-    if (!updatedBy) return;
+    if (!updatedBy) return false;
 
     const newAddress = await prisma.addresses.update({
         data: {

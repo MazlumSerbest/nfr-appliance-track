@@ -93,6 +93,8 @@ model connections {
   ip         String?   @db.VarChar
   updatedAt  DateTime? @updatedAt @db.Timestamptz(6)
   customerId Int?
+  brandId    Int?
+  brand      brands?   @relation(fields: [brandId], references: [id])
   customer   currents? @relation(fields: [customerId], references: [id])
 }
 
@@ -104,6 +106,7 @@ model brands {
   createdBy    String         @db.VarChar
   updatedAt    DateTime?      @updatedAt @db.Timestamptz(6)
   updatedBy    String?        @db.VarChar
+  connections  connections[]
   licenseTypes licenseTypes[]
   products     products[]
 }
@@ -220,7 +223,6 @@ model addresses {
   current   currents  @relation(fields: [currentId], references: [id], onDelete: Cascade)
 }
 
-/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view vAppliances {
   id            Int       @unique
   status        String?
@@ -242,7 +244,6 @@ view vAppliances {
   supplierName  String?   @db.VarChar
 }
 
-/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view vLicenses {
   id                Int       @unique
   status            String?
@@ -268,6 +269,20 @@ view vLicenses {
   subDealerName     String?   @db.VarChar
   supplierName      String?   @db.VarChar
   expiryStatus      String?
+}
+
+view vConnections {
+  id           Int @unique
+  ip           String?   @db.VarChar
+  login        String?   @db.VarChar
+  password     String?   @db.VarChar
+  note         String?   @db.VarChar
+  createdBy    String?   @db.VarChar
+  createdAt    DateTime? @db.Timestamptz(6)
+  updatedBy    String?   @db.VarChar
+  updatedAt    DateTime? @db.Timestamptz(6)
+  customerName String?   @db.VarChar
+  brandName    String?   @db.VarChar
 }
 
 enum CurrentType {

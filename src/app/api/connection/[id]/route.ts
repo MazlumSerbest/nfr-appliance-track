@@ -20,6 +20,11 @@ export async function GET(
                             name: true,
                         },
                     },
+                    brand: {
+                        select: {
+                            name: true,
+                        },
+                    },
                 },
             });
 

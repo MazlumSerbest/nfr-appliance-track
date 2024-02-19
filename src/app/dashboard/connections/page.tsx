@@ -21,12 +21,13 @@ import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
 import useUserStore from "@/store/user";
 import { DateTimeFormat } from "@/utils/date";
 import AutoComplete from "@/components/AutoComplete";
-import { getCustomers } from "@/lib/data";
+import { getCustomers, getBrands } from "@/lib/data";
 
 interface IFormInput {
     ip: string;
     login: string;
     customerId: number;
+    brandId: number;
     password: string;
     note?: string;
     createdBy: string;
@@ -36,6 +37,7 @@ export default function Connections() {
     const router = useRouter();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
     const [customers, setCustomers] = useState<ListBoxItem[] | null>(null);
+    const [brands, setBrands] = useState<ListBoxItem[] | null>(null);
     const { user: currUser } = useUserStore();
 
     //#region Form
@@ -67,7 +69,7 @@ export default function Connections() {
     //#endregion
 
     //#region Table
-    const visibleColumns = ["ip", "login", "customer", "note"];
+    const visibleColumns = ["ip", "login", "customerName", "brandName", "note"];
 
     const sort: SortDescriptor = {
         column: "createdAt",
@@ -86,16 +88,23 @@ export default function Connections() {
             width: 150,
         },
         {
-            key: "customer",
+            key: "customerName",
             name: "Müşteri",
-            width: 120,
+            width: 150,
             searchable: true,
             sortable: true,
+        },
+        {
+            key: "brandName",
+            name: "Marka",
+            width: 150,
+            searchable: true,
         },
         {
             key: "note",
             name: "Not",
             width: 200,
+            searchable: true,
         },
         {
             key: "createdBy",
@@ -125,14 +134,12 @@ export default function Connections() {
                 connection[columnKey as keyof typeof connection];
 
             switch (columnKey) {
-                case "customer":
-                    return <p>{connection?.customer?.name || "-"}</p>;
                 case "ip":
                     return (
                         <a
                             href={"https://" + cellValue}
                             target="_blank"
-                            className="underline text-sky-400"
+                            className="underline text-sky-400 truncate"
                         >
                             {"https://" + cellValue}
                         </a>
@@ -164,8 +171,9 @@ export default function Connections() {
     //#region Data
     async function getData() {
         const cus: ListBoxItem[] = await getCustomers(true);
-
         setCustomers(cus);
+        const bra: ListBoxItem[] = await getBrands(true);
+        setBrands(bra);
     }
 
     useEffect(() => {
@@ -308,6 +316,27 @@ export default function Connections() {
                                             onChange={onChange}
                                             value={value}
                                             data={customers || []}
+                                        />
+                                    )}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="brandId"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                >
+                                    Marka
+                                </label>
+                                <Controller
+                                    control={control}
+                                    name="brandId"
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <AutoComplete
+                                            onChange={onChange}
+                                            value={value}
+                                            data={brands || []}
                                         />
                                     )}
                                 />

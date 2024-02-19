@@ -21,18 +21,20 @@ import DeleteButton from "@/components/buttons/DeleteButton";
 import { CopyToClipboard } from "@/utils/functions";
 import { BiLinkExternal, BiX, BiShow, BiHide, BiCopy } from "react-icons/bi";
 import useUserStore from "@/store/user";
-import { getCustomers } from "@/lib/data";
+import { getCustomers, getBrands } from "@/lib/data";
 import toast from "react-hot-toast";
 
 interface IFormInput {
     ip: string;
     login: string;
     customerId: number;
+    brandId: number;
     password: string;
     note?: string;
     createdBy: string;
     updatedBy: string;
     customer?: Current;
+    brand?: Brand;
 }
 
 export default function ConnectionDetail({
@@ -44,6 +46,7 @@ export default function ConnectionDetail({
     const [showPassword, setShowPassword] = useState(false);
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
     const [customers, setCustomers] = useState<ListBoxItem[] | null>(null);
+    const [brands, setBrands] = useState<ListBoxItem[] | null>(null);
     const { user: currUser } = useUserStore();
 
     //#region Form
@@ -51,6 +54,7 @@ export default function ConnectionDetail({
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         data.updatedBy = currUser?.username ?? "";
         delete data["customer"];
+        delete data["brand"];
 
         await fetch(`/api/connection/${params.id}`, {
             method: "PUT",
@@ -74,8 +78,9 @@ export default function ConnectionDetail({
     //#region Data
     async function getData() {
         const cus: ListBoxItem[] = await getCustomers(true);
-
         setCustomers(cus);
+        const bra: ListBoxItem[] = await getBrands(true);
+        setBrands(bra);
     }
 
     useEffect(() => {
@@ -182,10 +187,17 @@ export default function ConnectionDetail({
                                 />
                             </dd>
                         </div>
+
                         <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
                             <dt className="font-medium">Müşteri</dt>
                             <dd className="flex flex-row col-span-1 md:col-span-2 font-light gap-2 items-center mt-1 sm:mt-0">
                                 {data.customer?.name || "-"}
+                            </dd>
+                        </div>
+                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
+                            <dt className="font-medium">Marka</dt>
+                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light gap-2 items-center mt-1 sm:mt-0">
+                                {data.brand?.name || "-"}
                             </dd>
                         </div>
                         <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
@@ -313,6 +325,7 @@ export default function ConnectionDetail({
                                     />
                                 </div>
                             </div>
+
                             <div>
                                 <label
                                     htmlFor="customerId"
@@ -330,6 +343,27 @@ export default function ConnectionDetail({
                                             onChange={onChange}
                                             value={value}
                                             data={customers || []}
+                                        />
+                                    )}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="brandId"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                >
+                                    Marka
+                                </label>
+                                <Controller
+                                    control={control}
+                                    name="brandId"
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <AutoComplete
+                                            onChange={onChange}
+                                            value={value}
+                                            data={brands || []}
                                         />
                                     )}
                                 />
