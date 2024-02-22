@@ -258,6 +258,19 @@ export default function Licenses() {
                     return license.licenseType + " " + license.licenseDuration;
                 case "isStock":
                     return <BoolChip value={cellValue} />;
+                case "customerName":
+                case "dealerName":
+                case "subDealerName":
+                case "supplierName":
+                    return (
+                        <p>
+                            {cellValue
+                                ? cellValue.length > 40
+                                    ? cellValue.substring(0, 40) + "..."
+                                    : cellValue
+                                : "-"}
+                        </p>
+                    );
                 case "expiryStatus":
                     return (
                         <>

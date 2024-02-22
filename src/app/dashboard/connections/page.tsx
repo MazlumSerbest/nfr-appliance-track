@@ -69,7 +69,7 @@ export default function Connections() {
     //#endregion
 
     //#region Table
-    const visibleColumns = ["ip", "login", "customerName", "brandName", "note"];
+    const visibleColumns = ["brandName", "ip", "login", "customerName", "note"];
 
     const sort: SortDescriptor = {
         column: "createdAt",
@@ -77,6 +77,12 @@ export default function Connections() {
     };
 
     const columns: Column[] = [
+        {
+            key: "brandName",
+            name: "Marka",
+            width: 150,
+            searchable: true,
+        },
         {
             key: "ip",
             name: "IP/Domain",
@@ -93,12 +99,6 @@ export default function Connections() {
             width: 150,
             searchable: true,
             sortable: true,
-        },
-        {
-            key: "brandName",
-            name: "Marka",
-            width: 150,
-            searchable: true,
         },
         {
             key: "note",
@@ -141,12 +141,18 @@ export default function Connections() {
                             target="_blank"
                             className="underline text-sky-400 truncate"
                         >
-                            {"https://" + cellValue}
+                            {"https://" +
+                                (cellValue
+                                    ? cellValue.length > 30
+                                        ? cellValue.substring(0, 30) + "..."
+                                        : cellValue
+                                    : "-")}
                         </a>
                     );
                 case "active":
                     return <BoolChip value={cellValue} />;
                 case "note":
+                case "customerName":
                     return (
                         <p>
                             {cellValue

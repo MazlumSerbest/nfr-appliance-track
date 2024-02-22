@@ -203,6 +203,19 @@ export default function Appliances() {
                     return <p>{DateFormat(cellValue)}</p>;
                 case "soldAt":
                     return <p>{DateFormat(cellValue)}</p>;
+                case "customerName":
+                case "dealerName":
+                case "subDealerName":
+                case "supplierName":
+                    return (
+                        <p>
+                            {cellValue
+                                ? cellValue.length > 40
+                                    ? cellValue.substring(0, 40) + "..."
+                                    : cellValue
+                                : "-"}
+                        </p>
+                    );
                 case "createdAt":
                     return <p>{DateTimeFormat(cellValue)}</p>;
                 case "updatedAt":
