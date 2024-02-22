@@ -5,7 +5,7 @@ export async function getAppliances(forListBox?: boolean, productId?: number) {
         `/api/appliance${productId ? `?productId=${productId}` : ""}`,
     );
     const appliances = await res.json();
-    
+
     if (!appliances.length) {
         toast.error("Cihaz bulunamadı!");
         return [];
@@ -61,7 +61,7 @@ export async function getProducts(forListBox?: boolean) {
             .filter((p: Product) => p.active)
             .map((p: Product) => ({
                 id: p.id,
-                name: p.brand + " " + p.model,
+                name: (p.brand?.name ? p.brand?.name + " " : "") + p.model,
             }));
     return products.filter((p: Product) => p.active);
 }
