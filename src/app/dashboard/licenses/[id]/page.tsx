@@ -89,7 +89,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
     const [suppliers, setSuppliers] = useState<ListBoxItem[] | null>(null);
 
     //#region Form
-    const { register, reset, resetField, handleSubmit, control } =
+    const { register, reset, setValue, resetField, handleSubmit, control } =
         useForm<IFormInput>();
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
@@ -168,6 +168,11 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
     const { data, error, mutate } = useSWR(`/api/license/${params.id}`, null, {
         onSuccess: (lic) => {
             reset(lic);
+            setValue("startDate", lic.startDate?.split("T")[0]);
+            setValue("expiryDate", lic.expiryDate?.split("T")[0]);
+            setValue("boughtAt", lic.boughtAt?.split("T")[0]);
+            setValue("soldAt", lic.soldAt?.split("T")[0]);
+            setValue("orderedAt", lic.orderedAt?.split("T")[0]);
         },
     });
 
@@ -218,8 +223,19 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                             </dd>
                         </div>
 
+                        {/* <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2 items-center">
+                            <dt className="font-medium">Lisans Seri No</dt>
+                            <input
+                                type="text"
+                                id="serialNo"
+                                className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                {...register("serialNo", {})}
+                            />
+                        </div> */}
+
                         <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
                             <dt className="font-medium">Lisans Tipi</dt>
+
                             <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
                                 {data.licenseType?.type}
                             </dd>
@@ -418,7 +434,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                     type="date"
                                     id="startDate"
                                     className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
-                                    {...register("startDate", {})}
+                                    {...register("startDate")}
                                 />
                             </div>
                             <div>
@@ -432,7 +448,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                     type="date"
                                     id="expiryDate"
                                     className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
-                                    {...register("expiryDate", {})}
+                                    {...register("expiryDate")}
                                 />
                             </div>
 
@@ -473,7 +489,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                     type="date"
                                     id="boughtAt"
                                     className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
-                                    {...register("boughtAt", {})}
+                                    {...register("boughtAt")}
                                 />
                             </div>
                             <div>
@@ -487,7 +503,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                     type="date"
                                     id="soldAt"
                                     className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
-                                    {...register("soldAt", {})}
+                                    {...register("soldAt")}
                                 />
                             </div>
                             <div>
@@ -501,7 +517,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                     type="date"
                                     id="orderedAt"
                                     className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
-                                    {...register("orderedAt", {})}
+                                    {...register("orderedAt")}
                                 />
                             </div>
 

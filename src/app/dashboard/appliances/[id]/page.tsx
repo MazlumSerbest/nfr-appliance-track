@@ -70,7 +70,7 @@ export default function ApplianceDetail({
     const [suppliers, setSuppliers] = useState<ListBoxItem[] | null>(null);
 
     //#region Form
-    const { register, reset, handleSubmit, control } = useForm<IFormInput>({});
+    const { register, reset, handleSubmit, control, setValue } = useForm<IFormInput>({});
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         data.updatedBy = currUser?.username ?? "";
 
@@ -123,6 +123,8 @@ export default function ApplianceDetail({
         {
             onSuccess: (app) => {
                 reset(app);
+                setValue("boughtAt", app.boughtAt?.split("T")[0]);
+                setValue("soldAt", app.soldAt?.split("T")[0]);
             },
         },
     );
