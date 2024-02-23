@@ -231,11 +231,31 @@ export default function Connections() {
                     </ModalHeader>
                     <ModalBody>
                         <form
-                            action=""
                             autoComplete="off"
                             className="flex flex-col gap-2"
                             onSubmit={handleSubmit(onSubmit)}
                         >
+                            <div>
+                                <label
+                                    htmlFor="brandId"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                >
+                                    Marka
+                                </label>
+                                <Controller
+                                    control={control}
+                                    name="brandId"
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <AutoComplete
+                                            onChange={onChange}
+                                            value={value}
+                                            data={brands || []}
+                                        />
+                                    )}
+                                />
+                            </div>
                             <div>
                                 <label
                                     htmlFor="ip"
@@ -255,7 +275,7 @@ export default function Connections() {
                                             autoComplete="ip"
                                             required
                                             // placeholder="1.1.1.1"
-                                            className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-zinc-700 placeholder:text-zinc-400 focus:ring-0 sm:text-sm sm:leading-6 outline-none"
+                                            className="block flex-1 border-0 bg-transparent pl-1 pr-3.5 py-2 text-zinc-700 placeholder:text-zinc-400 focus:ring-0 sm:text-sm sm:leading-6 outline-none"
                                             {...register("ip", {
                                                 required: true,
                                             })}
@@ -322,27 +342,6 @@ export default function Connections() {
                                             onChange={onChange}
                                             value={value}
                                             data={customers || []}
-                                        />
-                                    )}
-                                />
-                            </div>
-                            <div>
-                                <label
-                                    htmlFor="brandId"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
-                                >
-                                    Marka
-                                </label>
-                                <Controller
-                                    control={control}
-                                    name="brandId"
-                                    render={({
-                                        field: { onChange, value },
-                                    }) => (
-                                        <AutoComplete
-                                            onChange={onChange}
-                                            value={value}
-                                            data={brands || []}
                                         />
                                     )}
                                 />

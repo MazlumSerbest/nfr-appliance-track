@@ -15,7 +15,6 @@ import {
 } from "@nextui-org/modal";
 import { Accordion, AccordionItem } from "@nextui-org/accordion";
 import { Button } from "@nextui-org/button";
-import { Divider } from "@nextui-org/divider";
 
 import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
 import AutoComplete from "@/components/AutoComplete";
@@ -70,7 +69,6 @@ interface IFormInput {
 export default function LicenseDetail({ params }: { params: { id: string } }) {
     const router = useRouter();
     const { user: currUser } = useUserStore();
-    const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
     const {
         isOpen: isOpenApp,
         onClose: onCloseApp,
@@ -87,6 +85,17 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
     const [customers, setCustomers] = useState<ListBoxItem[] | null>(null);
     const [dealers, setDealers] = useState<ListBoxItem[] | null>(null);
     const [suppliers, setSuppliers] = useState<ListBoxItem[] | null>(null);
+
+    const { data, error, mutate } = useSWR(`/api/license/${params.id}`, null, {
+        onSuccess: (lic) => {
+            reset(lic);
+            setValue("startDate", lic.startDate?.split("T")[0]);
+            setValue("expiryDate", lic.expiryDate?.split("T")[0]);
+            setValue("boughtAt", lic.boughtAt?.split("T")[0]);
+            setValue("soldAt", lic.soldAt?.split("T")[0]);
+            setValue("orderedAt", lic.orderedAt?.split("T")[0]);
+        },
+    });
 
     //#region Form
     const { register, reset, setValue, resetField, handleSubmit, control } =
@@ -113,8 +122,6 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                 const result = await res.json();
                 if (result.ok) {
                     toast.success(result.message);
-                    onClose();
-                    reset();
                     mutate();
                 } else {
                     toast.error(result.message);
@@ -144,37 +151,29 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
     //#endregion
 
     //#region Data
-    async function getData() {
-        const pro: ListBoxItem[] = await getProducts(true);
-        setProducts(pro);
-
-        const lit: ListBoxItem[] = await getLicenseTypes(true);
-        setLicenseTypes(lit);
-        const bou: ListBoxItem[] = await getBoughtTypes(true);
-        setBoughtTypes(bou);
-        const cus: ListBoxItem[] = await getCustomers(true);
-        setCustomers(cus);
-        const deal: ListBoxItem[] = await getDealers(true);
-        setDealers(deal);
-        const sup: ListBoxItem[] = await getSuppliers(true);
-        setSuppliers(sup);
-    }
 
     useEffect(() => {
-        getData();
-    }, []);
-    //#endregion
+        async function getData() {
+            const pro: ListBoxItem[] = await getProducts(true);
+            setProducts(pro);
 
-    const { data, error, mutate } = useSWR(`/api/license/${params.id}`, null, {
-        onSuccess: (lic) => {
-            reset(lic);
-            setValue("startDate", lic.startDate?.split("T")[0]);
-            setValue("expiryDate", lic.expiryDate?.split("T")[0]);
-            setValue("boughtAt", lic.boughtAt?.split("T")[0]);
-            setValue("soldAt", lic.soldAt?.split("T")[0]);
-            setValue("orderedAt", lic.orderedAt?.split("T")[0]);
-        },
-    });
+            const lit: ListBoxItem[] = await getLicenseTypes(true);
+            setLicenseTypes(lit);
+            const bou: ListBoxItem[] = await getBoughtTypes(true);
+            setBoughtTypes(bou);
+            const cus: ListBoxItem[] = await getCustomers(true);
+            setCustomers(cus);
+            const deal: ListBoxItem[] = await getDealers(true);
+            setDealers(deal);
+            const sup: ListBoxItem[] = await getSuppliers(true);
+            setSuppliers(sup);
+
+            mutate();
+        }
+
+        getData();
+    }, [mutate]);
+    //#endregion
 
     if (error) return <div>Yükleme Hatası!</div>;
     if (!data)
@@ -188,222 +187,46 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
     return (
         <div className="flex flex-col gap-2">
             <Card className="mt-4 px-1 py-2">
-                <CardBody className="gap-3">
-                    <div className="flex items-center pb-2 pl-1">
-                        <p className="text-3xl font-bold text-sky-500">
-                            {data.serialNo || "Seri Numarasız Lisans"}
-                        </p>
-                        <div className="flex-1"></div>
-                        <BiX
-                            className="text-3xl text-zinc-500 cursor-pointer active:opacity-50"
-                            onClick={() => router.back()}
-                        />
-                    </div>
-                    <div className="divide-y divide-zinc-200">
-                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
-                            <dt className="font-medium">Durum</dt>
-                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                {!data.customerId &&
-                                !data.orderedAt &&
-                                !data.expiryDate
-                                    ? "Stok"
-                                    : data.customerId &&
-                                      !data.orderedAt &&
-                                      !data.expiryDate
-                                    ? "Sipariş"
-                                    : data.customerId &&
-                                      data.orderedAt &&
-                                      !data.expiryDate
-                                    ? "Bekleyen Sipariş"
-                                    : data.customerId &&
-                                      data.orderedAt &&
-                                      data.expiryDate
-                                    ? "Aktif"
-                                    : "Bekleyen Sipariş"}
-                            </dd>
-                        </div>
-
-                        {/* <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2 items-center">
-                            <dt className="font-medium">Lisans Seri No</dt>
-                            <input
-                                type="text"
-                                id="serialNo"
-                                className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
-                                {...register("serialNo", {})}
+                <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
+                    <CardBody className="gap-3">
+                        <div className="flex items-center pb-2 pl-1">
+                            <p className="text-3xl font-bold text-sky-500">
+                                {data.serialNo || "Seri Numarasız Lisans"}
+                            </p>
+                            <div className="flex-1"></div>
+                            <BiX
+                                className="text-3xl text-zinc-500 cursor-pointer active:opacity-50"
+                                onClick={() => router.back()}
                             />
-                        </div> */}
+                        </div>
+                        <div className="divide-y divide-zinc-200">
+                            <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
+                                <dt className="font-medium">Durum</dt>
+                                <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
+                                    {!data.customerId &&
+                                    !data.orderedAt &&
+                                    !data.expiryDate
+                                        ? "Stok"
+                                        : data.customerId &&
+                                          !data.orderedAt &&
+                                          !data.expiryDate
+                                        ? "Sipariş"
+                                        : data.customerId &&
+                                          data.orderedAt &&
+                                          !data.expiryDate
+                                        ? "Bekleyen Sipariş"
+                                        : data.customerId &&
+                                          data.orderedAt &&
+                                          data.expiryDate
+                                        ? "Aktif"
+                                        : "Bekleyen Sipariş"}
+                                </dd>
+                            </div>
 
-                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
-                            <dt className="font-medium">Lisans Tipi</dt>
-
-                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                {data.licenseType?.type}
-                            </dd>
-                        </div>
-
-                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
-                            <dt className="font-medium">Lisans Süresi</dt>
-                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                {data.licenseType?.duration
-                                    ? data.licenseType?.duration + " ay"
-                                    : "-"}
-                            </dd>
-                        </div>
-
-                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
-                            <dt className="font-medium">Başlangıç Tarihi</dt>
-                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                {DateFormat(data.startDate) || "-"}
-                            </dd>
-                        </div>
-                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
-                            <dt className="font-medium">Bitiş Tarihi</dt>
-                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                {DateFormat(data.expiryDate) || "-"}
-                            </dd>
-                        </div>
-
-                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
-                            <dt className="font-medium">Alım Tipi</dt>
-                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                {data.boughtType?.type || "-"}
-                            </dd>
-                        </div>
-                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
-                            <dt className="font-medium">Alım Tarihi</dt>
-                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                {DateFormat(data.boughtAt) || "-"}
-                            </dd>
-                        </div>
-                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
-                            <dt className="font-medium">Satış Tarihi</dt>
-                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                {DateFormat(data.soldAt) || "-"}
-                            </dd>
-                        </div>
-                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
-                            <dt className="font-medium">Sipariş Tarihi</dt>
-                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                {DateFormat(data.orderedAt) || "-"}
-                            </dd>
-                        </div>
-
-                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
-                            <dt className="font-medium">Müşteri</dt>
-                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                {data.customer?.name || "-"}
-                            </dd>
-                        </div>
-                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
-                            <dt className="font-medium">Bayi</dt>
-                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                {data.dealer?.name || "-"}
-                            </dd>
-                        </div>
-                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
-                            <dt className="font-medium">Alt Bayi</dt>
-                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                {data.subDealer?.name || "-"}
-                            </dd>
-                        </div>
-                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
-                            <dt className="font-medium">Tedarikçi</dt>
-                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                {data.supplier?.name || "-"}
-                            </dd>
-                        </div>
-                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
-                            <dt className="font-medium">Not</dt>
-                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                {data.note || "-"}
-                            </dd>
-                        </div>
-                    </div>
-                </CardBody>
-                <CardFooter className="flex gap-2">
-                    <div className="flex-1"></div>
-                    <RegInfo
-                        data={data}
-                        isButton
-                        trigger={
-                            <Button color="primary" className="bg-green-600">
-                                Kayıt Bilgisi
-                            </Button>
-                        }
-                    />
-
-                    <DeleteButton
-                        table="licenses"
-                        data={data}
-                        mutate={mutate}
-                        isButton
-                        router={router}
-                        trigger={
-                            <Button color="primary" className="bg-red-500">
-                                Sil
-                            </Button>
-                        }
-                    />
-
-                    <Button
-                        color="primary"
-                        className="bg-sky-500"
-                        onPress={onOpen}
-                    >
-                        Düzenle
-                    </Button>
-                </CardFooter>
-            </Card>
-
-            <Modal
-                isOpen={isOpen}
-                onOpenChange={onOpenChange}
-                size="lg"
-                placement="center"
-                backdrop="opaque"
-                shadow="lg"
-                isDismissable={false}
-                scrollBehavior="outside"
-            >
-                <ModalContent>
-                    <ModalHeader className="flex flex-col gap-1 text-zinc-500">
-                        Lisans Güncelleme
-                    </ModalHeader>
-                    <ModalBody>
-                        <form
-                            autoComplete="off"
-                            className="flex flex-col gap-2"
-                            onSubmit={handleSubmit(onSubmit)}
-                        >
-                            {/* <div>
-                                <div className="relative flex flex-col gap-x-3">
-                                    <div className="flex flex-row">
-                                        <label
-                                            htmlFor="isStock"
-                                            className="text-sm font-semibold leading-6 text-zinc-500"
-                                        >
-                                            Stok Lisans
-                                        </label>
-                                        <div className="flex h-6 ml-3 items-center">
-                                            <input
-                                                id="isStock"
-                                                type="checkbox"
-                                                className="h-4 w-4 rounded border-zinc-300 ring-offset-1 focus:ring-2 focus:ring-sky-500 outline-none cursor-pointer accent-sky-600"
-                                                {...register("isStock")}
-                                            />
-                                        </div>
-                                    </div>
-                                    <span className="flex flex-row font-normal text-xs text-zinc-400 items-center gap-1 mb-1">
-                                        <BiInfoCircle />
-                                        Lisans stok kontrolü için gereklidir!
-                                    </span>
-                                </div>
-                            </div> */}
-
-                            <div>
+                            <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                 <label
                                     htmlFor="licenseTypeId"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                    className="font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
                                 >
                                     Lisans Tipi
                                 </label>
@@ -418,58 +241,56 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                             onChange={onChange}
                                             value={value}
                                             data={licenseTypes || []}
+                                            className="md:col-span-2 xl:col-span-1 my-1 sm:my-0"
                                         />
                                     )}
                                 />
                             </div>
 
-                            <div>
+                            <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                 <label
                                     htmlFor="startDate"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                    className="font-medium"
                                 >
                                     Başlangıç Tarihi
                                 </label>
                                 <input
                                     type="date"
                                     id="startDate"
-                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
                                     {...register("startDate")}
                                 />
                             </div>
-                            <div>
+
+                            <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                 <label
                                     htmlFor="expiryDate"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                    className="font-medium"
                                 >
                                     Bitiş Tarihi
                                 </label>
                                 <input
                                     type="date"
                                     id="expiryDate"
-                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
                                     {...register("expiryDate")}
                                 />
                             </div>
 
-                            <Divider className="my-3" />
-
-                            <div>
+                            <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                 <label
                                     htmlFor="boughtTypeId"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                    className="font-medium"
                                 >
                                     Alım Tipi
                                 </label>
-                                <div className="block w-full h-10 rounded-md border-0 px-3 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2">
+                                <div className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full h-10 rounded-md border-0 px-3 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2">
                                     <select
-                                        id="boughtType"
+                                        id="boughtTypeId"
                                         className="w-full border-none text-sm text-zinc-700 outline-none"
-                                        {...register("boughtTypeId", {})}
+                                        {...register("boughtTypeId")}
                                     >
-                                        <option disabled selected value="">
-                                            Satın alım tipi Seçiniz...
-                                        </option>
+                                        <option value={undefined}></option>
                                         {boughtTypes?.map((bt) => (
                                             <option key={bt.id} value={bt.id}>
                                                 {bt.name}
@@ -478,55 +299,53 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                     </select>
                                 </div>
                             </div>
-                            <div>
+
+                            <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                 <label
                                     htmlFor="boughtAt"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                    className="font-medium"
                                 >
                                     Alım Tarihi
                                 </label>
                                 <input
                                     type="date"
                                     id="boughtAt"
-                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
                                     {...register("boughtAt")}
                                 />
                             </div>
-                            <div>
-                                <label
-                                    htmlFor="soldAt"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500"
-                                >
+
+                            <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                <label htmlFor="soldAt" className="font-medium">
                                     Satış Tarihi
                                 </label>
                                 <input
                                     type="date"
                                     id="soldAt"
-                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
                                     {...register("soldAt")}
                                 />
                             </div>
-                            <div>
+
+                            <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                 <label
                                     htmlFor="orderedAt"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                    className="font-medium"
                                 >
                                     Sipariş Tarihi
                                 </label>
                                 <input
                                     type="date"
                                     id="orderedAt"
-                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
                                     {...register("orderedAt")}
                                 />
                             </div>
 
-                            <Divider className="my-3" />
-
-                            <div>
+                            <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                 <label
                                     htmlFor="customerId"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                    className="font-medium"
                                 >
                                     Müşteri
                                 </label>
@@ -540,14 +359,16 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                             onChange={onChange}
                                             value={value}
                                             data={customers || []}
+                                            className="md:col-span-2 xl:col-span-1 my-1 sm:my-0"
                                         />
                                     )}
                                 />
                             </div>
-                            <div>
+
+                            <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                 <label
                                     htmlFor="dealerId"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                    className="font-medium"
                                 >
                                     Bayi
                                 </label>
@@ -561,14 +382,16 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                             onChange={onChange}
                                             value={value}
                                             data={dealers || []}
+                                            className="md:col-span-2 xl:col-span-1 my-1 sm:my-0"
                                         />
                                     )}
                                 />
                             </div>
-                            <div>
+
+                            <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                 <label
                                     htmlFor="subDealerId"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                    className="font-medium"
                                 >
                                     Alt Bayi
                                 </label>
@@ -582,14 +405,16 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                             onChange={onChange}
                                             value={value}
                                             data={dealers || []}
+                                            className="md:col-span-2 xl:col-span-1 my-1 sm:my-0"
                                         />
                                     )}
                                 />
                             </div>
-                            <div>
+
+                            <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                 <label
                                     htmlFor="supplierId"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                    className="font-medium"
                                 >
                                     Tedarikçi
                                 </label>
@@ -603,67 +428,72 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                             onChange={onChange}
                                             value={value}
                                             data={suppliers || []}
+                                            className="md:col-span-2 xl:col-span-1 my-1 sm:my-0"
                                         />
                                     )}
                                 />
                             </div>
 
-                            <Divider className="my-3" />
-
-                            <div>
-                                <label
-                                    htmlFor="serialNo"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500"
-                                >
-                                    Lisans Seri Numarası
-                                </label>
+                            <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2 items-center">
+                                <dt className="font-medium">Lisans Seri No</dt>
                                 <input
                                     type="text"
                                     id="serialNo"
-                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
                                     {...register("serialNo", {})}
                                 />
                             </div>
-                            <div>
-                                <label
-                                    htmlFor="note"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500"
-                                >
+
+                            <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                <label htmlFor="note" className="font-medium">
                                     Not
                                 </label>
-                                <div className="mt-2">
-                                    <textarea
-                                        id="note"
-                                        rows={3}
-                                        className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
-                                        {...register("note", {
-                                            maxLength: 500,
-                                        })}
-                                    />
-                                </div>
+                                <textarea
+                                    id="note"
+                                    rows={4}
+                                    className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                    {...register("note", {
+                                        maxLength: 500,
+                                    })}
+                                />
                             </div>
+                        </div>
+                    </CardBody>
+                    <CardFooter className="flex gap-2">
+                        <div className="flex-1"></div>
+                        <RegInfo
+                            data={data}
+                            isButton
+                            trigger={
+                                <Button color="primary" className="bg-sky-500">
+                                    Kayıt Bilgisi
+                                </Button>
+                            }
+                        />
 
-                            <div className="flex flex-row gap-2 mt-4">
-                                <div className="flex-1"></div>
-                                <Button
-                                    color="danger"
-                                    onPress={onClose}
-                                    className="bg-red-600"
-                                >
-                                    Kapat
+                        <DeleteButton
+                            table="licenses"
+                            data={data}
+                            mutate={mutate}
+                            isButton
+                            router={router}
+                            trigger={
+                                <Button color="primary" className="bg-red-500">
+                                    Sil
                                 </Button>
-                                <Button
-                                    type="submit"
-                                    color="success"
-                                    className="text-white bg-green-600"
-                                >
-                                    Kaydet
-                                </Button>
-                            </div>
-                        </form>
-                    </ModalBody>
-                </ModalContent>
-            </Modal>
+                            }
+                        />
+
+                        <Button
+                            type="submit"
+                            color="primary"
+                            className="text-white bg-green-600"
+                        >
+                            Kaydet
+                        </Button>
+                    </CardFooter>
+                </form>
+            </Card>
 
             <Accordion
                 selectionMode="multiple"
