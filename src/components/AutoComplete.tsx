@@ -6,11 +6,12 @@ type Props = {
     data: ListBoxItem[];
     onChange: (value: any) => any;
     value?: any;
+    className?: string;
 };
 
 export default function AutoComplete(props: Props) {
     const [query, setQuery] = useState("");
-    const data = props.data;
+    const {data, onChange, value, className} = props;
 
     const filteredData =
         query === ""
@@ -23,11 +24,11 @@ export default function AutoComplete(props: Props) {
               ) || [];
 
     return (
-        <Combobox onChange={props.onChange} value={props.value}>
-            <div className="relative">
+        <Combobox onChange={onChange} value={value}>
+            <div className={`relative ${className}`}>
                 <div className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400  focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:text-sm sm:leading-6 outline-none">
                     <Combobox.Input
-                        className="w-full border-none text-sm text-zinc-700 outline-none"
+                        className="w-full border-none text-sm text-zinc-700 outline-none pr-5"
                         displayValue={(item: ListBoxItem) =>
                             data.find((e) => e.id.toString() == item?.toString())
                                 ?.name || ""
