@@ -505,31 +505,6 @@ export default function Licenses() {
                             className="flex flex-col gap-2"
                             onSubmit={handleSubmit(onSubmit)}
                         >
-                            {/* <div>
-                                <div className="relative flex flex-col gap-x-3">
-                                    <div className="flex flex-row">
-                                        <label
-                                            htmlFor="isStock"
-                                            className="text-sm font-semibold leading-6 text-zinc-500"
-                                        >
-                                            Stok Lisans
-                                        </label>
-                                        <div className="flex h-6 ml-3 items-center">
-                                            <input
-                                                id="isStock"
-                                                type="checkbox"
-                                                className="h-4 w-4 rounded border-zinc-300 ring-offset-1 focus:ring-2 focus:ring-sky-500 outline-none cursor-pointer accent-sky-600"
-                                                {...register("isStock")}
-                                            />
-                                        </div>
-                                    </div>
-                                    <span className="flex flex-row font-normal text-xs text-zinc-400 items-center gap-1 mb-1">
-                                        <BiInfoCircle />
-                                        Lisans stok kontrolü için gereklidir!
-                                    </span>
-                                </div>
-                            </div> */}
-
                             <div>
                                 <label
                                     htmlFor="product"
@@ -637,11 +612,11 @@ export default function Licenses() {
                                 </label>
                                 <div className="block w-full h-10 rounded-md border-0 px-3 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2">
                                     <select
-                                        id="boughtType"
+                                        id="boughtTypeId"
                                         className="w-full border-none text-sm text-zinc-700 outline-none"
-                                        {...register("boughtTypeId", {})}
+                                        {...register("boughtTypeId")}
                                     >
-                                        <option disabled selected value="">
+                                        <option selected value="">
                                             Satın alım tipi Seçiniz...
                                         </option>
                                         {boughtTypes?.map((bt) => (
