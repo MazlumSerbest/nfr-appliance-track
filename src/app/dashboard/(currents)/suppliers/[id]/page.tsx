@@ -9,7 +9,6 @@ import { Button } from "@nextui-org/button";
 import { Switch } from "@nextui-org/switch";
 
 import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
-import BoolChip from "@/components/BoolChip";
 import RegInfo from "@/components/buttons/RegInfo";
 import DeleteButton from "@/components/buttons/DeleteButton";
 import AuthorizedPersons from "@/components/currents/AuthorizedPersons";
