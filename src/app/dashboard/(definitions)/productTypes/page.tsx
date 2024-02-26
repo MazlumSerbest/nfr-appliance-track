@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import useSWR from "swr";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
 
 import {
@@ -12,6 +12,7 @@ import {
     useDisclosure,
 } from "@nextui-org/modal";
 import { SortDescriptor } from "@nextui-org/table";
+import { Switch } from "@nextui-org/switch";
 import { Button } from "@nextui-org/button";
 
 import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
@@ -236,21 +237,31 @@ export default function ProductTypes() {
                             {!isNew ? (
                                 <div>
                                     <div className="relative flex flex-col gap-x-3 mb-3">
-                                        <div className="flex flex-row">
+                                        <div className="flex flex-row items-center gap-4">
                                             <label
                                                 htmlFor="active"
                                                 className="text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
                                             >
                                                 Aktif
                                             </label>
-                                            <div className="flex h-6 ml-3 items-center">
-                                                <input
-                                                    id="active"
-                                                    type="checkbox"
-                                                    className="h-4 w-4 rounded border-zinc-300 ring-offset-1 focus:ring-2 focus:ring-sky-500 outline-none cursor-pointer accent-sky-600"
-                                                    {...register("active")}
-                                                />
-                                            </div>
+                                            <Controller
+                                                control={control}
+                                                name="active"
+                                                render={({
+                                                    field: { onChange, value },
+                                                }) => (
+                                                    <Switch
+                                                        size="sm"
+                                                        color="primary"
+                                                        onChange={onChange}
+                                                        isSelected={value}
+                                                        classNames={{
+                                                            wrapper:
+                                                                "group-data-[selected=true]:bg-sky-500",
+                                                        }}
+                                                    />
+                                                )}
+                                            />
                                         </div>
                                     </div>
                                 </div>
