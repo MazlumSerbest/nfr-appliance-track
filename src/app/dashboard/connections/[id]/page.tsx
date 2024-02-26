@@ -162,6 +162,7 @@ export default function ConnectionDetail({
                                             className="block flex-1 border-0 bg-transparent pl-1 pr-3.5 py-2 text-zinc-700 placeholder:text-zinc-400 focus:ring-0 sm:text-sm sm:leading-6 outline-none"
                                             {...register("ip", {
                                                 required: true,
+                                                maxLength: 200,
                                             })}
                                         />
                                     </div>

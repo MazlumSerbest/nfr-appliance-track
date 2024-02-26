@@ -278,6 +278,7 @@ export default function Connections() {
                                             className="block flex-1 border-0 bg-transparent pl-1 pr-3.5 py-2 text-zinc-700 placeholder:text-zinc-400 focus:ring-0 sm:text-sm sm:leading-6 outline-none"
                                             {...register("ip", {
                                                 required: true,
+                                                maxLength: 200,
                                             })}
                                         />
                                     </div>
@@ -298,7 +299,7 @@ export default function Connections() {
                                         className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
                                         {...register("login", {
                                             required: true,
-                                            maxLength: 30,
+                                            maxLength: 50,
                                         })}
                                     />
                                 </div>
@@ -319,7 +320,7 @@ export default function Connections() {
                                         className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
                                         {...register("password", {
                                             required: true,
-                                            maxLength: 30,
+                                            maxLength: 50,
                                         })}
                                     />
                                 </div>
