@@ -151,7 +151,7 @@ export default function ConnectionDetail({
                                     IP/Domain
                                 </label>
                                 <div>
-                                    <div className="flex md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:max-w-md">
+                                    <div className="flex md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500">
                                         <span className="flex select-none items-center pl-3 text-zinc-400 sm:text-sm">
                                             https://
                                         </span>
@@ -159,7 +159,7 @@ export default function ConnectionDetail({
                                             type="text"
                                             id="ip"
                                             required
-                                            className="block flex-1 border-0 bg-transparent pl-1 pr-3.5 py-2 text-zinc-700 placeholder:text-zinc-400 focus:ring-0 sm:text-sm sm:leading-6 outline-none"
+                                            className="flex-1 border-0 bg-transparent pl-1 pr-3.5 py-2 w-full text-zinc-700 placeholder:text-zinc-400 focus:ring-0 sm:text-sm sm:leading-6 outline-none"
                                             {...register("ip", {
                                                 required: true,
                                                 maxLength: 200,

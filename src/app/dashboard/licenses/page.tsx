@@ -482,6 +482,7 @@ export default function Licenses() {
                             data={activeLicenses || []}
                             columns={columns}
                             renderCell={renderCell}
+                            searchValue={""}
                             sortOption={sort}
                             initialVisibleColumNames={visibleColumns}
                             activeOptions={[]}
