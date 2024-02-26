@@ -13,11 +13,13 @@ import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
 import RegInfo from "@/components/buttons/RegInfo";
 import DeleteButton from "@/components/buttons/DeleteButton";
 import AutoComplete from "@/components/AutoComplete";
+import IconChip from "@/components/IconChip";
 import {
     BiX,
     BiCheckShield,
     BiChevronLeft,
     BiChevronRight,
+    BiServer,
 } from "react-icons/bi";
 import useUserStore from "@/store/user";
 import { DateFormat } from "@/utils/date";
@@ -131,10 +133,7 @@ export default function ApplianceDetail({
     return (
         <div className="flex flex-col gap-2">
             <Card className="mt-4 px-1 py-2">
-                <form
-                    autoComplete="off"
-                    onSubmit={handleSubmit(onSubmit)}
-                >
+                <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
                     <CardBody className="gap-3">
                         <div className="flex items-center pb-2 pl-1">
                             <p className="text-3xl font-bold text-sky-500">
@@ -150,11 +149,19 @@ export default function ApplianceDetail({
                             <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
                                 <dt className="font-medium">Durum</dt>
                                 <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                    {(!data.customerId
-                                        ? "Stok"
-                                        : !data.soldAt
-                                        ? "Sipariş"
-                                        : "Aktif") || "-"}
+                                    {(!data.customerId ? (
+                                        <span className="inline-flex items-center rounded-md bg-sky-50 px-2 py-1 text-sm font-medium text-sky-500 ring-1 ring-inset ring-sky-500/20">
+                                            Stok
+                                        </span>
+                                    ) : !data.soldAt ? (
+                                        <span className="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-sm font-medium text-yellow-500 ring-1 ring-inset ring-yellow-500/20">
+                                            Sipariş
+                                        </span>
+                                    ) : (
+                                        <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-sm font-medium text-green-600 ring-1 ring-inset ring-green-600/20">
+                                            Aktif
+                                        </span>
+                                    )) || "-"}
                                 </dd>
                             </div>
 
