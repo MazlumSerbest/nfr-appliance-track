@@ -8,15 +8,17 @@ type Props = {
 };
 
 export default function IconChip(props: Props) {
+    const { icon, color, content } = props;
+
     return (
         <div className="w-full">
-            <Tooltip key={props.content} content={props.content}>
+            <Tooltip key={content} content={content}>
                 <div
                     className={
-                        `flex items-center p-1 rounded-full w-min ${props.color}`
+                        `flex items-center p-1 rounded-full w-min ${color}`
                     }
                 >
-                    {props.icon}
+                    {icon}
                 </div>
             </Tooltip>
         </div>
