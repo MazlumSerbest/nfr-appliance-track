@@ -272,17 +272,25 @@ export default function Users() {
                 sortOption={sort}
                 initialVisibleColumNames={visibleColumns}
                 activeOptions={activeOptions}
-                onAddNew={() => {
-                    setIsNew(true);
-                    reset({});
-                    reset({});
-                    onOpen();
-                }}
-                onDoubleClick={(user) => {
-                    setIsNew(false);
-                    reset(user);
-                    onOpen();
-                }}
+                onAddNew={
+                    currUser?.role == "admin"
+                        ? () => {
+                              setIsNew(true);
+                              reset({});
+                              reset({});
+                              onOpen();
+                          }
+                        : undefined
+                }
+                onDoubleClick={
+                    currUser?.role == "admin"
+                        ? (user) => {
+                              setIsNew(false);
+                              reset(user);
+                              onOpen();
+                          }
+                        : undefined
+                }
             />
             <Modal
                 isOpen={isOpen}
@@ -299,7 +307,6 @@ export default function Users() {
                     </ModalHeader>
                     <ModalBody>
                         <form
-                            action=""
                             autoComplete="off"
                             className="flex flex-col gap-2"
                             onSubmit={handleSubmit(

@@ -406,10 +406,14 @@ export default function Licenses() {
                             sortOption={sort}
                             initialVisibleColumNames={visibleColumns}
                             activeOptions={[]}
-                            onAddNew={() => {
-                                reset({});
-                                onOpen();
-                            }}
+                            onAddNew={
+                                currUser?.role == "technical"
+                                    ? undefined
+                                    : () => {
+                                          reset({});
+                                          onOpen();
+                                      }
+                            }
                             onDoubleClick={(item) => {
                                 router.push(`/dashboard/licenses/${item.id}`);
                             }}
@@ -427,10 +431,14 @@ export default function Licenses() {
                             sortOption={sort}
                             initialVisibleColumNames={visibleColumns}
                             activeOptions={[]}
-                            onAddNew={() => {
-                                reset({});
-                                onOpen();
-                            }}
+                            onAddNew={
+                                currUser?.role == "technical"
+                                    ? undefined
+                                    : () => {
+                                          reset({});
+                                          onOpen();
+                                      }
+                            }
                             onDoubleClick={(item) => {
                                 router.push(`/dashboard/licenses/${item.id}`);
                             }}
@@ -452,10 +460,14 @@ export default function Licenses() {
                             sortOption={sort}
                             initialVisibleColumNames={visibleColumns}
                             activeOptions={[]}
-                            onAddNew={() => {
-                                reset({});
-                                onOpen();
-                            }}
+                            onAddNew={
+                                currUser?.role == "technical"
+                                    ? undefined
+                                    : () => {
+                                          reset({});
+                                          onOpen();
+                                      }
+                            }
                             onDoubleClick={(item) => {
                                 router.push(`/dashboard/licenses/${item.id}`);
                             }}
@@ -473,10 +485,14 @@ export default function Licenses() {
                             sortOption={sort}
                             initialVisibleColumNames={visibleColumns}
                             activeOptions={[]}
-                            onAddNew={() => {
-                                reset({});
-                                onOpen();
-                            }}
+                            onAddNew={
+                                currUser?.role == "technical"
+                                    ? undefined
+                                    : () => {
+                                          reset({});
+                                          onOpen();
+                                      }
+                            }
                             onDoubleClick={(item) => {
                                 router.push(`/dashboard/licenses/${item.id}`);
                             }}

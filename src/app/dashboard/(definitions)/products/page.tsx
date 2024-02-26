@@ -43,7 +43,9 @@ export default function Products() {
     const [isNew, setIsNew] = useState(false);
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
     const [brands, setBrands] = useState<ListBoxItem[] | null>(null);
-    const [productTypes, setProductTypes] = useState<ListBoxItem[] | null>(null);
+    const [productTypes, setProductTypes] = useState<ListBoxItem[] | null>(
+        null,
+    );
     const { user: currUser } = useUserStore();
 
     const { data, error, mutate } = useSWR("/api/product");
@@ -241,17 +243,25 @@ export default function Products() {
                 sortOption={sort}
                 initialVisibleColumNames={visibleColumns}
                 activeOptions={activeOptions}
-                onAddNew={() => {
-                    setIsNew(true);
-                    reset({});
-                    reset({});
-                    onOpen();
-                }}
-                onDoubleClick={(product) => {
-                    setIsNew(false);
-                    reset(product);
-                    onOpen();
-                }}
+                onAddNew={
+                    currUser?.role == "technical"
+                        ? undefined
+                        : () => {
+                              setIsNew(true);
+                              reset({});
+                              reset({});
+                              onOpen();
+                          }
+                }
+                onDoubleClick={
+                    currUser?.role == "technical"
+                        ? undefined
+                        : (product) => {
+                              setIsNew(false);
+                              reset(product);
+                              onOpen();
+                          }
+                }
             />
             <Modal
                 isOpen={isOpen}
@@ -328,7 +338,7 @@ export default function Products() {
                                     />
                                 </div>
                             </div>
-                            
+
                             <div>
                                 <label
                                     htmlFor="brandId"
@@ -350,7 +360,7 @@ export default function Products() {
                                     )}
                                 />
                             </div>
-                            
+
                             <div>
                                 <label
                                     htmlFor="productTypeId"

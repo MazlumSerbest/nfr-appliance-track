@@ -199,17 +199,25 @@ export default function ProductTypes() {
                 sortOption={sort}
                 initialVisibleColumNames={visibleColumns}
                 activeOptions={activeOptions}
-                onAddNew={() => {
-                    setIsNew(true);
-                    reset({});
-                    reset({});
-                    onOpen();
-                }}
-                onDoubleClick={(productType) => {
-                    setIsNew(false);
-                    reset(productType);
-                    onOpen();
-                }}
+                onAddNew={
+                    currUser?.role == "technical"
+                        ? undefined
+                        : () => {
+                              setIsNew(true);
+                              reset({});
+                              reset({});
+                              onOpen();
+                          }
+                }
+                onDoubleClick={
+                    currUser?.role == "technical"
+                        ? undefined
+                        : (productType) => {
+                              setIsNew(false);
+                              reset(productType);
+                              onOpen();
+                          }
+                }
             />
 
             <Modal

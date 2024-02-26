@@ -342,39 +342,47 @@ export default function ApplianceDetail({
                             </div>
                         </div>
                     </CardBody>
-                    <CardFooter className="flex gap-2">
-                        <div className="flex-1"></div>
-                        <RegInfo
-                            data={data}
-                            isButton
-                            trigger={
-                                <Button color="primary" className="bg-sky-500">
-                                    Kayıt Bilgisi
-                                </Button>
-                            }
-                        />
+                    {currUser?.role === "technical" ? undefined : (
+                        <CardFooter className="flex gap-2">
+                            <div className="flex-1"></div>
+                            <RegInfo
+                                data={data}
+                                isButton
+                                trigger={
+                                    <Button
+                                        color="primary"
+                                        className="bg-sky-500"
+                                    >
+                                        Kayıt Bilgisi
+                                    </Button>
+                                }
+                            />
 
-                        <DeleteButton
-                            table="appliances"
-                            data={data}
-                            mutate={mutate}
-                            isButton={true}
-                            router={router}
-                            trigger={
-                                <Button color="primary" className="bg-red-500">
-                                    Sil
-                                </Button>
-                            }
-                        />
+                            <DeleteButton
+                                table="appliances"
+                                data={data}
+                                mutate={mutate}
+                                isButton={true}
+                                router={router}
+                                trigger={
+                                    <Button
+                                        color="primary"
+                                        className="bg-red-500"
+                                    >
+                                        Sil
+                                    </Button>
+                                }
+                            />
 
-                        <Button
-                            type="submit"
-                            color="primary"
-                            className="text-white bg-green-600"
-                        >
-                            Kaydet
-                        </Button>
-                    </CardFooter>
+                            <Button
+                                type="submit"
+                                color="primary"
+                                className="text-white bg-green-600"
+                            >
+                                Kaydet
+                            </Button>
+                        </CardFooter>
+                    )}
                 </form>
             </Card>
 

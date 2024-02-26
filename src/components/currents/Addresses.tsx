@@ -136,64 +136,76 @@ export default function Addresses(props: Props) {
                                                         <p>{a.address}</p>
                                                     </div>
                                                 </div>
-                                                <div className="flex-1"></div>
-                                                <div className="flex justify-start items-center gap-2">
-                                                    <RegInfo
-                                                        data={a}
-                                                        trigger={
-                                                            <span>
-                                                                <BiInfoCircle />
-                                                            </span>
-                                                        }
-                                                    />
-                                                    <Tooltip
-                                                        key={a.id + "-edit"}
-                                                        content="Düzenle"
-                                                    >
-                                                        <span className="text-xl text-green-600 active:opacity-50 cursor-pointer">
-                                                            <BiEdit
-                                                                onClick={() => {
-                                                                    setIsNew(
-                                                                        false,
-                                                                    );
-                                                                    reset(a);
-                                                                    onOpen();
-                                                                }}
+                                                {currUser?.role ===
+                                                "technical" ? undefined : (
+                                                    <>
+                                                        <div className="flex-1"></div>
+                                                        <div className="flex justify-start items-center gap-2">
+                                                            <RegInfo
+                                                                data={a}
+                                                                trigger={
+                                                                    <span>
+                                                                        <BiInfoCircle />
+                                                                    </span>
+                                                                }
                                                             />
-                                                        </span>
-                                                    </Tooltip>
-                                                    <DeleteButton
-                                                        table="addresses"
-                                                        data={a}
-                                                        mutate={mutate}
-                                                        trigger={
-                                                            <span>
-                                                                <BiTrash />
-                                                            </span>
-                                                        }
-                                                    />
-                                                </div>
+                                                            <Tooltip
+                                                                key={
+                                                                    a.id +
+                                                                    "-edit"
+                                                                }
+                                                                content="Düzenle"
+                                                            >
+                                                                <span className="text-xl text-green-600 active:opacity-50 cursor-pointer">
+                                                                    <BiEdit
+                                                                        onClick={() => {
+                                                                            setIsNew(
+                                                                                false,
+                                                                            );
+                                                                            reset(
+                                                                                a,
+                                                                            );
+                                                                            onOpen();
+                                                                        }}
+                                                                    />
+                                                                </span>
+                                                            </Tooltip>
+                                                            <DeleteButton
+                                                                table="addresses"
+                                                                data={a}
+                                                                mutate={mutate}
+                                                                trigger={
+                                                                    <span>
+                                                                        <BiTrash />
+                                                                    </span>
+                                                                }
+                                                            />
+                                                        </div>
+                                                    </>
+                                                )}
                                             </div>
                                         </li>
                                     </>
                                 ))}
                             </ul>
-                            <div className="flex gap-2">
-                                <div className="flex-1"></div>
-                                <Button
-                                    color="primary"
-                                    className="bg-sky-500"
-                                    endContent={<BiPlus />}
-                                    onPress={() => {
-                                        setIsNew(true);
-                                        reset({});
-                                        reset({});
-                                        onOpen();
-                                    }}
-                                >
-                                    Adres Ekle
-                                </Button>
-                            </div>
+                            {currUser?.role === "technical" ? undefined : (
+                                <div className="flex gap-2">
+                                    <div className="flex-1"></div>
+                                    <Button
+                                        color="primary"
+                                        className="bg-sky-500"
+                                        endContent={<BiPlus />}
+                                        onPress={() => {
+                                            setIsNew(true);
+                                            reset({});
+                                            reset({});
+                                            onOpen();
+                                        }}
+                                    >
+                                        Adres Ekle
+                                    </Button>
+                                </div>
+                            )}
                         </div>
                     ) : (
                         <div className="w-full py-6 text-center">
@@ -202,18 +214,20 @@ export default function Addresses(props: Props) {
                                     .find((e) => e.key == currentType)
                                     ?.name.toLowerCase()}ye herhangi bir adres tanımlanmamıştır.`}
                             </p>
-                            <Button
-                                color="primary"
-                                className="bg-sky-500 mt-3"
-                                endContent={<BiPlus />}
-                                onPress={() => {
-                                    setIsNew(true);
-                                    reset({});
-                                    onOpen();
-                                }}
-                            >
-                                Adres Ekle
-                            </Button>
+                            {currUser?.role === "technical" ? undefined : (
+                                <Button
+                                    color="primary"
+                                    className="bg-sky-500 mt-3"
+                                    endContent={<BiPlus />}
+                                    onPress={() => {
+                                        setIsNew(true);
+                                        reset({});
+                                        onOpen();
+                                    }}
+                                >
+                                    Adres Ekle
+                                </Button>
+                            )}
                         </div>
                     )}
                 </AccordionItem>

@@ -200,17 +200,25 @@ export default function BrandsPage() {
                 sortOption={sort}
                 initialVisibleColumNames={visibleColumns}
                 activeOptions={activeOptions}
-                onAddNew={() => {
-                    setIsNew(true);
-                    reset({});
-                    reset({});
-                    onOpen();
-                }}
-                onDoubleClick={(brand) => {
-                    setIsNew(false);
-                    reset(brand);
-                    onOpen();
-                }}
+                onAddNew={
+                    currUser?.role == "technical"
+                        ? undefined
+                        : () => {
+                              setIsNew(true);
+                              reset({});
+                              reset({});
+                              onOpen();
+                          }
+                }
+                onDoubleClick={
+                    currUser?.role == "technical"
+                        ? undefined
+                        : (brand) => {
+                              setIsNew(false);
+                              reset(brand);
+                              onOpen();
+                          }
+                }
             />
 
             <Modal

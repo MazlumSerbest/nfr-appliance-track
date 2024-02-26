@@ -218,17 +218,25 @@ export default function BoughtTypes() {
                 sortOption={sort}
                 initialVisibleColumNames={visibleColumns}
                 activeOptions={activeOptions}
-                onAddNew={() => {
-                    setIsNew(true);
-                    reset({});
-                    reset({});
-                    onOpen();
-                }}
-                onDoubleClick={(boughtType) => {
-                    setIsNew(false);
-                    reset(boughtType);
-                    onOpen();
-                }}
+                onAddNew={
+                    currUser?.role == "technical"
+                        ? undefined
+                        : () => {
+                              setIsNew(true);
+                              reset({});
+                              reset({});
+                              onOpen();
+                          }
+                }
+                onDoubleClick={
+                    currUser?.role == "technical"
+                        ? undefined
+                        : (boughtType) => {
+                              setIsNew(false);
+                              reset(boughtType);
+                              onOpen();
+                          }
+                }
             />
             <Modal
                 isOpen={isOpen}

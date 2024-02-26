@@ -13,12 +13,7 @@ import RegInfo from "@/components/buttons/RegInfo";
 import DeleteButton from "@/components/buttons/DeleteButton";
 import AuthorizedPersons from "@/components/currents/AuthorizedPersons";
 import Addresses from "@/components/currents/Addresses";
-import {
-    BiMailSend,
-    BiPhoneOutgoing,
-    BiX,
-    BiCopy,
-} from "react-icons/bi";
+import { BiMailSend, BiPhoneOutgoing, BiX, BiCopy } from "react-icons/bi";
 import useUserStore from "@/store/user";
 import { CopyToClipboard } from "@/utils/functions";
 
@@ -128,7 +123,8 @@ export default function CustomerDetail({ params }: { params: { id: string } }) {
                                             onChange={onChange}
                                             isSelected={value}
                                             classNames={{
-                                                wrapper: "group-data-[selected=true]:bg-sky-500"
+                                                wrapper:
+                                                    "group-data-[selected=true]:bg-sky-500",
                                             }}
                                         />
                                     )}
@@ -368,39 +364,47 @@ export default function CustomerDetail({ params }: { params: { id: string } }) {
                             </div>
                         </div>
                     </CardBody>
-                    <CardFooter className="flex gap-2">
-                        <div className="flex-1"></div>
-                        <RegInfo
-                            data={data}
-                            isButton
-                            trigger={
-                                <Button color="primary" className="bg-sky-500">
-                                    Kayıt Bilgisi
-                                </Button>
-                            }
-                        />
+                    {currUser?.role === "technical" ? undefined : (
+                        <CardFooter className="flex gap-2">
+                            <div className="flex-1"></div>
+                            <RegInfo
+                                data={data}
+                                isButton
+                                trigger={
+                                    <Button
+                                        color="primary"
+                                        className="bg-sky-500"
+                                    >
+                                        Kayıt Bilgisi
+                                    </Button>
+                                }
+                            />
 
-                        <DeleteButton
-                            table="currents"
-                            data={data}
-                            mutate={mutate}
-                            isButton={true}
-                            router={router}
-                            trigger={
-                                <Button color="primary" className="bg-red-500">
-                                    Sil
-                                </Button>
-                            }
-                        />
+                            <DeleteButton
+                                table="currents"
+                                data={data}
+                                mutate={mutate}
+                                isButton={true}
+                                router={router}
+                                trigger={
+                                    <Button
+                                        color="primary"
+                                        className="bg-red-500"
+                                    >
+                                        Sil
+                                    </Button>
+                                }
+                            />
 
-                        <Button
-                            type="submit"
-                            color="primary"
-                            className="text-white bg-green-600"
-                        >
-                            Kaydet
-                        </Button>
-                    </CardFooter>
+                            <Button
+                                type="submit"
+                                color="primary"
+                                className="text-white bg-green-600"
+                            >
+                                Kaydet
+                            </Button>
+                        </CardFooter>
+                    )}
                 </form>
             </Card>
 

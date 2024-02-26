@@ -211,7 +211,14 @@ export default function Connections() {
                 sortOption={sort}
                 initialVisibleColumNames={visibleColumns}
                 // activeOptions={[]}
-                onAddNew={() => onOpen()}
+                onAddNew={
+                    currUser?.role == "technical"
+                        ? undefined
+                        : () => {
+                              reset({});
+                              onOpen();
+                          }
+                }
                 onDoubleClick={(item) =>
                     router.push("/dashboard/connections/" + item.id)
                 }

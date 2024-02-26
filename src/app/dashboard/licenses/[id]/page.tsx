@@ -473,39 +473,49 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                             </div>
                         </div>
                     </CardBody>
-                    <CardFooter className="flex gap-2">
-                        <div className="flex-1"></div>
-                        <RegInfo
-                            data={data}
-                            isButton
-                            trigger={
-                                <Button color="primary" className="bg-sky-500">
-                                    Kayıt Bilgisi
-                                </Button>
-                            }
-                        />
+                    {currUser?.role == "technical" ? (
+                        <></>
+                    ) : (
+                        <CardFooter className="flex gap-2">
+                            <div className="flex-1"></div>
+                            <RegInfo
+                                data={data}
+                                isButton
+                                trigger={
+                                    <Button
+                                        color="primary"
+                                        className="bg-sky-500"
+                                    >
+                                        Kayıt Bilgisi
+                                    </Button>
+                                }
+                            />
 
-                        <DeleteButton
-                            table="licenses"
-                            data={data}
-                            mutate={mutate}
-                            isButton
-                            router={router}
-                            trigger={
-                                <Button color="primary" className="bg-red-500">
-                                    Sil
-                                </Button>
-                            }
-                        />
+                            <DeleteButton
+                                table="licenses"
+                                data={data}
+                                mutate={mutate}
+                                isButton
+                                router={router}
+                                trigger={
+                                    <Button
+                                        color="primary"
+                                        className="bg-red-500"
+                                    >
+                                        Sil
+                                    </Button>
+                                }
+                            />
 
-                        <Button
-                            type="submit"
-                            color="primary"
-                            className="text-white bg-green-600"
-                        >
-                            Kaydet
-                        </Button>
-                    </CardFooter>
+                            <Button
+                                type="submit"
+                                color="primary"
+                                className="text-white bg-green-600"
+                            >
+                                Kaydet
+                            </Button>
+                        </CardFooter>
+                    )}
                 </form>
             </Card>
 
@@ -560,13 +570,15 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                             </div>
                             <div className="flex gap-2">
                                 <div className="flex-1"></div>
-                                <Button
-                                    color="primary"
-                                    className="bg-sky-500"
-                                    onPress={onOpenApp}
-                                >
-                                    Cihaz Değiştir
-                                </Button>
+                                {currUser?.role === "technical" ? undefined : (
+                                    <Button
+                                        color="primary"
+                                        className="bg-sky-500"
+                                        onPress={onOpenApp}
+                                    >
+                                        Cihaz Değiştir
+                                    </Button>
+                                )}
                                 <Button
                                     color="primary"
                                     className="bg-green-600"
@@ -585,14 +597,16 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                             <p className="text-zinc-400">
                                 Bu lisans herhangi bir cihaza ait değildir.
                             </p>
-                            <Button
-                                color="primary"
-                                className="bg-sky-500 mt-3"
-                                endContent={<BiPlus />}
-                                onPress={onOpenApp}
-                            >
-                                Cihaz Ekle
-                            </Button>
+                            {currUser?.role === "technical" ? undefined : (
+                                <Button
+                                    color="primary"
+                                    className="bg-sky-500 mt-3"
+                                    endContent={<BiPlus />}
+                                    onPress={onOpenApp}
+                                >
+                                    Cihaz Ekle
+                                </Button>
+                            )}
                         </div>
                     )}
                 </AccordionItem>

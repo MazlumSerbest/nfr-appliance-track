@@ -293,10 +293,14 @@ export default function Appliances() {
                             sortOption={sort}
                             initialVisibleColumNames={visibleColumns}
                             activeOptions={[]}
-                            onAddNew={() => {
-                                reset({});
-                                onOpen();
-                            }}
+                            onAddNew={
+                                currUser?.role == "technical"
+                                    ? undefined
+                                    : () => {
+                                          reset({});
+                                          onOpen();
+                                      }
+                            }
                             onDoubleClick={(item) => {
                                 router.push(`/dashboard/appliances/${item.id}`);
                             }}
@@ -314,10 +318,14 @@ export default function Appliances() {
                             sortOption={sort}
                             initialVisibleColumNames={visibleColumns}
                             activeOptions={[]}
-                            onAddNew={() => {
-                                reset({});
-                                onOpen();
-                            }}
+                            onAddNew={
+                                currUser?.role == "technical"
+                                    ? undefined
+                                    : () => {
+                                          reset({});
+                                          onOpen();
+                                      }
+                            }
                             onDoubleClick={(item) => {
                                 router.push(`/dashboard/appliances/${item.id}`);
                             }}
@@ -335,10 +343,14 @@ export default function Appliances() {
                             sortOption={sort}
                             initialVisibleColumNames={visibleColumns}
                             activeOptions={[]}
-                            onAddNew={() => {
-                                reset({});
-                                onOpen();
-                            }}
+                            onAddNew={
+                                currUser?.role == "technical"
+                                    ? undefined
+                                    : () => {
+                                          reset({});
+                                          onOpen();
+                                      }
+                            }
                             onDoubleClick={(item) => {
                                 router.push(`/dashboard/appliances/${item.id}`);
                             }}

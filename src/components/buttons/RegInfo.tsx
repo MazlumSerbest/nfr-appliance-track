@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/popover";
 import { Tooltip } from "@nextui-org/tooltip";
 import { DateTimeFormat } from "@/utils/date";
+import useUserStore from "@/store/user";
 
 type Props = {
     data: any;
@@ -11,7 +12,9 @@ type Props = {
 
 export default function RegInfo(props: Props) {
     let { data, trigger, isButton } = props;
+    const { user: currUser } = useUserStore();
 
+    if(currUser?.role != "admin") return null;
     return (
         <Popover
             key={data.id}

@@ -200,10 +200,14 @@ export default function Dealers() {
                 sortOption={sort}
                 initialVisibleColumNames={visibleColumns}
                 activeOptions={activeOptions}
-                onAddNew={() => {
-                    reset({});
-                    onOpen();
-                }}
+                onAddNew={
+                    currUser?.role == "technical"
+                        ? undefined
+                        : () => {
+                              reset({});
+                              onOpen();
+                          }
+                }
                 onDoubleClick={(item) => {
                     router.push(`/dashboard/dealers/${item.id}`);
                 }}
