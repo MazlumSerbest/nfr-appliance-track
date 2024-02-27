@@ -82,6 +82,25 @@ model licenses {
   supplier      currents?    @relation("Supplier", fields: [supplierId], references: [id])
 }
 
+model projects {
+  id            Int           @id @default(autoincrement())
+  active        Boolean       @default(true)
+  customerId    Int
+  dealerId      Int?
+  productId     Int?
+  licenseTypeId Int?
+  date          DateTime      @db.Date
+  note          String?       @db.VarChar
+  createdAt     DateTime      @default(now()) @db.Timestamptz(6)
+  createdBy     String        @db.VarChar
+  updatedBy     String?       @db.VarChar
+  updatedAt     DateTime?     @updatedAt @db.Timestamptz(6)
+  customer      currents      @relation("Customer", fields: [customerId], references: [id])
+  dealer        currents?     @relation("Dealer", fields: [dealerId], references: [id])
+  licenseType   licenseTypes? @relation(fields: [licenseTypeId], references: [id])
+  product       products?     @relation(fields: [productId], references: [id])
+}
+
 model connections {
   id         Int       @id @default(autoincrement())
   login      String?   @db.VarChar
@@ -124,6 +143,7 @@ model products {
   appliances    appliances[]
   brand         brands?       @relation(fields: [brandId], references: [id])
   productType   productTypes? @relation(fields: [productTypeId], references: [id])
+  projects      projects[]
 }
 
 model productTypes {
@@ -150,6 +170,7 @@ model licenseTypes {
   brandId   Int?
   brand     brands?    @relation(fields: [brandId], references: [id])
   licenses  licenses[]
+  projects  projects[]
 }
 
 model boughtTypes {
@@ -193,6 +214,8 @@ model currents {
   dealerLicenses      licenses[]          @relation("Dealer")
   subDealerLicenses   licenses[]          @relation("SubDealer")
   supplierLicenses    licenses[]          @relation("Supplier")
+  customerProjects    projects[]          @relation("Customer")
+  dealerProjects      projects[]          @relation("Dealer")
 }
 
 model authorizedPersons {
@@ -272,7 +295,7 @@ view vLicenses {
 }
 
 view vConnections {
-  id           Int @unique
+  id           Int       @unique
   ip           String?   @db.VarChar
   login        String?   @db.VarChar
   password     String?   @db.VarChar
@@ -283,6 +306,21 @@ view vConnections {
   updatedAt    DateTime? @db.Timestamptz(6)
   customerName String?   @db.VarChar
   brandName    String?   @db.VarChar
+}
+
+view vProjects {
+  id              Int       @unique
+  date            DateTime? @db.Date
+  createdBy       String?   @db.VarChar
+  createdAt       DateTime? @db.Timestamptz(6)
+  updatedBy       String?   @db.VarChar
+  updatedAt       DateTime? @db.Timestamptz(6)
+  customerName    String?   @db.VarChar
+  dealerName      String?   @db.VarChar
+  productModel    String?   @db.VarChar
+  productBrand    String?   @db.VarChar
+  licenseType     String?   @db.VarChar
+  licenseDuration Int?
 }
 
 enum CurrentType {

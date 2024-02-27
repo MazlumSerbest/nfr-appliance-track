@@ -86,7 +86,7 @@ type License = Entity & {
     orderedAt?: string;
     note?: string;
     licenseType: any;
-    boughtType: any;
+    // boughtType: any;
 };
 
 type vLicense = License & {
@@ -97,6 +97,23 @@ type vLicense = License & {
     licenseType?: string;
     licenseDuration?: string;
 };
+
+type Project = Entity & {
+    date: string;
+    customerId: number;
+    dealerId: number;
+    productId: number;
+    licenseTypeId: number;
+};
+
+type vProject = Project & {
+    customerName: string;
+    dealerName?: string;
+    productModel?: string;
+    productBrand?: string;
+    licenseType?: string;
+    licenseDuration?: string;
+}
 
 type Brand = Entity & {
     name: string;

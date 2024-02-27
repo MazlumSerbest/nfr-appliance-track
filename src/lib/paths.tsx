@@ -13,6 +13,7 @@ import {
     BiBarcode,
     BiRegistered,
     BiHdd,
+    BiChalkboard,
 } from "react-icons/bi";
 
 export const paths: Path[] = [
@@ -49,6 +50,18 @@ export const paths: Path[] = [
             <BiCheckShield
                 className="text-2xl text-zinc-500"
                 aria-label="Lisanslar Sayfası"
+            />
+        ),
+    },
+    {
+        path: "/dashboard/projects",
+        key: "projects",
+        name: "Projeler",
+        roles: ["admin", "technical", "seller"],
+        icon: (
+            <BiChalkboard
+                className="text-2xl text-zinc-500"
+                aria-label="Projeler Sayfası"
             />
         ),
     },

@@ -6,6 +6,7 @@ export async function deleteData(
     table:
         | "appliances"
         | "licenses"
+        | "projects"
         | "connections"
         | "users"
         | "brands"
