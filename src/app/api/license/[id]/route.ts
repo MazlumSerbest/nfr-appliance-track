@@ -26,23 +26,23 @@ export async function GET(
                             duration: true,
                         },
                     },
-                    boughtType: {
-                        select: {
-                            type: true,
-                        },
-                    },
-                    customer: {
-                        select: { name: true },
-                    },
-                    dealer: {
-                        select: { name: true },
-                    },
-                    subDealer: {
-                        select: { name: true },
-                    },
-                    supplier: {
-                        select: { name: true },
-                    },
+                    // boughtType: {
+                    //     select: {
+                    //         type: true,
+                    //     },
+                    // },
+                    // customer: {
+                    //     select: { name: true },
+                    // },
+                    // dealer: {
+                    //     select: { name: true },
+                    // },
+                    // subDealer: {
+                    //     select: { name: true },
+                    // },
+                    // supplier: {
+                    //     select: { name: true },
+                    // },
                 },
                 where: {
                     id: Number(params.id),

@@ -14,18 +14,18 @@ export async function GET(
                 where: {
                     id: Number(params.id),
                 },
-                include: {
-                    customer: {
-                        select: {
-                            name: true,
-                        },
-                    },
-                    brand: {
-                        select: {
-                            name: true,
-                        },
-                    },
-                },
+                // include: {
+                //     customer: {
+                //         select: {
+                //             name: true,
+                //         },
+                //     },
+                //     brand: {
+                //         select: {
+                //             name: true,
+                //         },
+                //     },
+                // },
             });
 
             return NextResponse.json(data);

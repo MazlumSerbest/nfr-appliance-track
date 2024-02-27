@@ -15,13 +15,13 @@ export async function GET(
                     id: Number(params.id),
                 },
                 include: {
-                    product: {
-                        select: {
-                            brand: { select: { name: true } },
-                            productType: { select: { type: true } },
-                            model: true,
-                        },
-                    },
+                    // product: {
+                    //     select: {
+                    //         brand: { select: { name: true } },
+                    //         productType: { select: { type: true } },
+                    //         model: true,
+                    //     },
+                    // },
                     licenses: {
                         select: {
                             id: true,
@@ -40,18 +40,18 @@ export async function GET(
                             },
                         ],
                     },
-                    customer: {
-                        select: { name: true },
-                    },
-                    dealer: {
-                        select: { name: true },
-                    },
-                    subDealer: {
-                        select: { name: true },
-                    },
-                    supplier: {
-                        select: { name: true },
-                    },
+                    // customer: {
+                    //     select: { name: true },
+                    // },
+                    // dealer: {
+                    //     select: { name: true },
+                    // },
+                    // subDealer: {
+                    //     select: { name: true },
+                    // },
+                    // supplier: {
+                    //     select: { name: true },
+                    // },
                 },
             });
 
