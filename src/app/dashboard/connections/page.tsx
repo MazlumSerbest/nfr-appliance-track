@@ -41,11 +41,7 @@ export default function Connections() {
     const { user: currUser } = useUserStore();
 
     //#region Form
-    const { register, reset, handleSubmit, control } = useForm<IFormInput>({
-        defaultValues: {
-            note: "",
-        },
-    });
+    const { register, reset, handleSubmit, control } = useForm<IFormInput>();
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         data.createdBy = currUser?.username ?? "";
 
@@ -223,6 +219,7 @@ export default function Connections() {
                     router.push("/dashboard/connections/" + item.id)
                 }
             />
+
             <Modal
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}

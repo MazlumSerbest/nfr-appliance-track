@@ -94,7 +94,7 @@ export async function getLicenseTypes(
             .filter((lt: LicenseType) => lt.active)
             .map((lt: LicenseType) => ({
                 id: lt.id,
-                name: lt.type + " - " + lt.duration + " ay",
+                name: lt.type + " - " + lt.duration + " ay" + (lt.brand?.name ? ` (${lt.brand?.name})` : ""),
             }));
     return licenseTypes.filter((lt: LicenseType) => lt.active);
 }

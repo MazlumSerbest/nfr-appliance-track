@@ -12,6 +12,7 @@ type Props = {
     table:
         | "appliances"
         | "licenses"
+        | "projects"
         | "connections"
         | "users"
         | "brands"

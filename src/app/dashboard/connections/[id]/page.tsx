@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import useSWR from "swr";
 import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
+import toast from "react-hot-toast";
 
 import { Card, CardBody, CardFooter } from "@nextui-org/card";
 import { Button } from "@nextui-org/button";
@@ -15,7 +16,6 @@ import { CopyToClipboard } from "@/utils/functions";
 import { BiLinkExternal, BiX, BiShow, BiHide, BiCopy } from "react-icons/bi";
 import useUserStore from "@/store/user";
 import { getCustomers, getBrands } from "@/lib/data";
-import toast from "react-hot-toast";
 
 interface IFormInput {
     ip: string;
@@ -24,7 +24,6 @@ interface IFormInput {
     brandId: number;
     password: string;
     note?: string;
-    createdBy: string;
     updatedBy: string;
     customer?: Current;
     brand?: Brand;
@@ -36,10 +35,10 @@ export default function ConnectionDetail({
     params: { id: string };
 }) {
     const router = useRouter();
+    const { user: currUser } = useUserStore();
     const [showPassword, setShowPassword] = useState(false);
     const [customers, setCustomers] = useState<ListBoxItem[] | null>(null);
     const [brands, setBrands] = useState<ListBoxItem[] | null>(null);
-    const { user: currUser } = useUserStore();
 
     //#region Form
     const { register, reset, handleSubmit, control } = useForm<IFormInput>();
