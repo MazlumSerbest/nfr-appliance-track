@@ -200,14 +200,10 @@ export default function Customers() {
                 sortOption={sort}
                 initialVisibleColumNames={visibleColumns}
                 activeOptions={activeOptions}
-                onAddNew={
-                    currUser?.role == "technical"
-                        ? undefined
-                        : () => {
-                              reset({});
-                              onOpen();
-                          }
-                }
+                onAddNew={() => {
+                    reset({});
+                    onOpen();
+                }}
                 onDoubleClick={(item) => {
                     router.push(`/dashboard/customers/${item.id}`);
                 }}

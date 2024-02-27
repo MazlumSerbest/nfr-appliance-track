@@ -372,7 +372,6 @@ export default function SupplierDetail({ params }: { params: { id: string } }) {
                             </div>
                         </div>
                     </CardBody>
-                    {currUser?.role === "technical" ? undefined : (
                         <CardFooter className="flex gap-2">
                             <div className="flex-1"></div>
                             <RegInfo
@@ -412,7 +411,6 @@ export default function SupplierDetail({ params }: { params: { id: string } }) {
                                 Kaydet
                             </Button>
                         </CardFooter>
-                    )}
                 </form>
             </Card>
 

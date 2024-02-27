@@ -180,12 +180,9 @@ export default function AuthorizedPersons(props: Props) {
                                                             <></>
                                                         )}
                                                     </div>
-                                                    {currUser?.role ===
-                                                    "technical" ? undefined : (
-                                                        <>
-                                                            <div className="flex-1"></div>
-                                                            <div className="flex justify-start items-center gap-2">
-                                                                {/* {!ap.isMain ? (
+                                                    <div className="flex-1"></div>
+                                                    <div className="flex justify-start items-center gap-2">
+                                                        {/* {!ap.isMain ? (
                                                             <Tooltip
                                                                 key={
                                                                     ap.id +
@@ -220,73 +217,66 @@ export default function AuthorizedPersons(props: Props) {
                                                         ) : (
                                                             <></>
                                                         )} */}
-                                                                <RegInfo
-                                                                    data={ap}
-                                                                    trigger={
-                                                                        <span>
-                                                                            <BiInfoCircle />
-                                                                        </span>
-                                                                    }
+                                                        <RegInfo
+                                                            data={ap}
+                                                            trigger={
+                                                                <span>
+                                                                    <BiInfoCircle />
+                                                                </span>
+                                                            }
+                                                        />
+                                                        <Tooltip
+                                                            key={
+                                                                ap.id + "-edit"
+                                                            }
+                                                            content="Düzenle"
+                                                        >
+                                                            <span className="text-xl text-green-600 active:opacity-50 cursor-pointer">
+                                                                <BiEdit
+                                                                    onClick={() => {
+                                                                        setIsNew(
+                                                                            false,
+                                                                        );
+                                                                        reset(
+                                                                            ap,
+                                                                        );
+                                                                        onOpen();
+                                                                    }}
                                                                 />
-                                                                <Tooltip
-                                                                    key={
-                                                                        ap.id +
-                                                                        "-edit"
-                                                                    }
-                                                                    content="Düzenle"
-                                                                >
-                                                                    <span className="text-xl text-green-600 active:opacity-50 cursor-pointer">
-                                                                        <BiEdit
-                                                                            onClick={() => {
-                                                                                setIsNew(
-                                                                                    false,
-                                                                                );
-                                                                                reset(
-                                                                                    ap,
-                                                                                );
-                                                                                onOpen();
-                                                                            }}
-                                                                        />
-                                                                    </span>
-                                                                </Tooltip>
-                                                                <DeleteButton
-                                                                    table="authorizedPersons"
-                                                                    data={ap}
-                                                                    mutate={
-                                                                        mutate
-                                                                    }
-                                                                    trigger={
-                                                                        <span>
-                                                                            <BiTrash />
-                                                                        </span>
-                                                                    }
-                                                                />
-                                                            </div>
-                                                        </>
-                                                    )}
+                                                            </span>
+                                                        </Tooltip>
+                                                        <DeleteButton
+                                                            table="authorizedPersons"
+                                                            data={ap}
+                                                            mutate={mutate}
+                                                            trigger={
+                                                                <span>
+                                                                    <BiTrash />
+                                                                </span>
+                                                            }
+                                                        />
+                                                    </div>
                                                 </div>
                                             </li>
                                         </>
                                     ))}
                             </ul>
-                            {currUser?.role === "technical" ? undefined : (
-                                <div className="flex gap-2">
-                                    <div className="flex-1"></div>
-                                    <Button
-                                        color="primary"
-                                        className="bg-sky-500"
-                                        endContent={<BiPlus />}
-                                        onPress={() => {
-                                            setIsNew(true);
-                                            reset({});
-                                            reset({});
-                                            onOpen();
-                                        }}
-                                    >
-                                        Yetkili Ekle
-                                    </Button>
-                                </div>
-                            )}
+                            <div className="flex gap-2">
+                                <div className="flex-1"></div>
+                                <Button
+                                    color="primary"
+                                    className="bg-sky-500"
+                                    endContent={<BiPlus />}
+                                    onPress={() => {
+                                        setIsNew(true);
+                                        reset({});
+                                        reset({});
+                                        onOpen();
+                                    }}
+                                >
+                                    Yetkili Ekle
+                                </Button>
+                            </div>
                         </div>
                     ) : (
                         <div className="w-full py-6 text-center">
@@ -295,20 +285,18 @@ export default function AuthorizedPersons(props: Props) {
                                     .find((e) => e.key == currentType)
                                     ?.name.toLowerCase()}ye herhangi bir yetkili tanımlanmamıştır.`}
                             </p>
-                            {currUser?.role === "technical" ? undefined : (
-                                <Button
-                                    color="primary"
-                                    className="bg-sky-500 mt-3"
-                                    endContent={<BiPlus />}
-                                    onPress={() => {
-                                        setIsNew(true);
-                                        reset({ isMain: true });
-                                        onOpen();
-                                    }}
-                                >
-                                    Yetkili Ekle
-                                </Button>
-                            )}
+                            <Button
+                                color="primary"
+                                className="bg-sky-500 mt-3"
+                                endContent={<BiPlus />}
+                                onPress={() => {
+                                    setIsNew(true);
+                                    reset({ isMain: true });
+                                    onOpen();
+                                }}
+                            >
+                                Yetkili Ekle
+                            </Button>
                         </div>
                     )}
                 </AccordionItem>
