@@ -30,7 +30,7 @@ model appliances {
   createdAt     DateTime    @default(now()) @db.Timestamptz(6)
   createdBy     String      @db.VarChar
   dealerId      Int?
-  serialNo      String?     @unique @db.VarChar
+  serialNo      String?     @db.VarChar
   supplierId    Int?
   updatedBy     String?     @db.VarChar
   boughtAt      DateTime?   @db.Date
@@ -67,7 +67,7 @@ model licenses {
   updatedAt     DateTime?    @updatedAt @db.Timestamptz(6)
   customerId    Int?
   deleted       Boolean      @default(false)
-  serialNo      String?      @unique @db.VarChar
+  serialNo      String?      @db.VarChar
   applianceId   Int?
   subDealerId   Int?
   boughtTypeId  Int?

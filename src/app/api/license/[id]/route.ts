@@ -88,21 +88,21 @@ export async function PUT(
                 ? new Date(license.orderedAt).toISOString()
                 : undefined;
 
-            const checkSerialNo = await prisma.licenses.findUnique({
-                where: {
-                    NOT: { id: Number(params.id) },
-                    serialNo: license.serialNo,
-                },
-                select: {
-                    serialNo: true,
-                },
-            });
-            if (checkSerialNo)
-                return NextResponse.json({
-                    message: "Bu seri numarası önceden kullanılmıştır!",
-                    status: 400,
-                    ok: false,
-                });
+            // const checkSerialNo = await prisma.licenses.findUnique({
+            //     where: {
+            //         NOT: { id: Number(params.id) },
+            //         serialNo: license.serialNo,
+            //     },
+            //     select: {
+            //         serialNo: true,
+            //     },
+            // });
+            // if (checkSerialNo)
+            //     return NextResponse.json({
+            //         message: "Bu seri numarası önceden kullanılmıştır!",
+            //         status: 400,
+            //         ok: false,
+            //     });
 
             const updateLicense = await prisma.licenses.update({
                 data: license,
