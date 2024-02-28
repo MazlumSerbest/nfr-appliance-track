@@ -13,7 +13,6 @@ import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
 import RegInfo from "@/components/buttons/RegInfo";
 import DeleteButton from "@/components/buttons/DeleteButton";
 import AutoComplete from "@/components/AutoComplete";
-import IconChip from "@/components/IconChip";
 import {
     BiX,
     BiCheckShield,
