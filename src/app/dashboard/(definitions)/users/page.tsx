@@ -292,6 +292,7 @@ export default function Users() {
                         : undefined
                 }
             />
+
             <Modal
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}
@@ -490,7 +491,7 @@ export default function Users() {
                                 <></>
                             )}
                             {
-                                <p className="text-base text-red-600">
+                                <p className="text-sm text-red-600">
                                     {errors.confirmPassword?.message}
                                 </p>
                             }
@@ -505,8 +506,8 @@ export default function Users() {
                                 </Button>
                                 <Button
                                     type="submit"
-                                    color="success"
-                                    className="text-white bg-green-600"
+                                    color="primary"
+                                    className="bg-green-600"
                                 >
                                     Kaydet
                                 </Button>
