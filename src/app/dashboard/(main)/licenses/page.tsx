@@ -523,6 +523,14 @@ export default function Licenses() {
                             className="flex flex-col gap-2"
                             onSubmit={handleSubmit(onSubmit)}
                         >
+                            <div className="relative flex items-center">
+                                <div className="flex-grow border-t border-zinc-200"></div>
+                                <span className="flex-shrink mx-4 text-base text-zinc-500">
+                                    Cihaz Bilgileri
+                                </span>
+                                <div className="flex-grow border-t border-zinc-200"></div>
+                            </div>
+
                             <div>
                                 <label
                                     htmlFor="product"
@@ -568,11 +576,11 @@ export default function Licenses() {
                             </div>
 
                             <div className="relative flex items-center mt-2">
-                                <div className="flex-grow border-t border-gray-200"></div>
-                                <span className="flex-shrink mx-4 text-sm text-zinc-500">
-                                    ya da
+                                <div className="flex-grow border-t border-zinc-200"></div>
+                                <span className="flex-shrink mx-4 text-xs text-zinc-500">
+                                    veya
                                 </span>
-                                <div className="flex-grow border-t border-gray-200"></div>
+                                <div className="flex-grow border-t border-zinc-200"></div>
                             </div>
 
                             <div>
@@ -592,7 +600,13 @@ export default function Licenses() {
                                 />
                             </div>
 
-                            <Divider className="my-3" />
+                            <div className="relative flex items-center mt-6">
+                                <div className="flex-grow border-t border-zinc-200"></div>
+                                <span className="flex-shrink mx-4 text-base text-zinc-500">
+                                    Lisans Bilgileri
+                                </span>
+                                <div className="flex-grow border-t border-zinc-200"></div>
+                            </div>
 
                             <div>
                                 <label
@@ -619,6 +633,23 @@ export default function Licenses() {
 
                             <div>
                                 <label
+                                    htmlFor="serialNo"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Lisans Seri Numarası
+                                </label>
+                                <input
+                                    type="text"
+                                    id="serialNo"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    {...register("serialNo", {
+                                        maxLength: 50,
+                                    })}
+                                />
+                            </div>
+
+                            <div>
+                                <label
                                     htmlFor="startDate"
                                     className="block text-sm font-semibold leading-6 text-zinc-500"
                                 >
@@ -631,6 +662,7 @@ export default function Licenses() {
                                     {...register("startDate")}
                                 />
                             </div>
+
                             <div>
                                 <label
                                     htmlFor="expiryDate"
@@ -646,7 +678,13 @@ export default function Licenses() {
                                 />
                             </div>
 
-                            <Divider className="my-3" />
+                            <div className="relative flex items-center mt-6">
+                                <div className="flex-grow border-t border-zinc-200"></div>
+                                <span className="flex-shrink mx-4 text-base text-zinc-500">
+                                    Alım ve Satış Bilgileri
+                                </span>
+                                <div className="flex-grow border-t border-zinc-200"></div>
+                            </div>
 
                             <div>
                                 <label
@@ -715,7 +753,13 @@ export default function Licenses() {
                                 />
                             </div>
 
-                            <Divider className="my-3" />
+                            <div className="relative flex items-center mt-6">
+                                <div className="flex-grow border-t border-zinc-200"></div>
+                                <span className="flex-shrink mx-4 text-base text-zinc-500">
+                                    Cari Bilgileri
+                                </span>
+                                <div className="flex-grow border-t border-zinc-200"></div>
+                            </div>
 
                             <div>
                                 <label
@@ -802,24 +846,10 @@ export default function Licenses() {
                                 />
                             </div>
 
-                            <Divider className="my-3" />
-
-                            <div>
-                                <label
-                                    htmlFor="serialNo"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500"
-                                >
-                                    Lisans Seri Numarası
-                                </label>
-                                <input
-                                    type="text"
-                                    id="serialNo"
-                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
-                                    {...register("serialNo", {
-                                        maxLength: 50,
-                                    })}
-                                />
+                            <div className="relative flex items-center mt-6">
+                                <div className="flex-grow border-t border-zinc-200"></div>
                             </div>
+
                             <div>
                                 <label
                                     htmlFor="note"

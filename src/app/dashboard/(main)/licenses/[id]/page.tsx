@@ -143,7 +143,6 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
             );
             if (lic) {
                 onCloseApp();
-                reset();
                 mutate();
                 toast.success("Lisans cihaza eklendi!");
             } else toast.error("Bir hata oluştu! Lütfen tekrar deneyiniz.");
@@ -236,6 +235,36 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                 </dd>
                             </div>
 
+                            <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2 items-center">
+                                {data.applianceId ? (
+                                    <>
+                                        <dt className="font-medium">
+                                            Cihaz Seri No
+                                        </dt>
+                                        <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
+                                            {data?.appliance?.serialNo}
+                                        </dd>
+                                    </>
+                                ) : (
+                                    <>
+                                        <label
+                                            htmlFor="appSerialNo"
+                                            className="font-medium"
+                                        >
+                                            Cihaz Seri No
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="appSerialNo"
+                                            className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                            {...register("appSerialNo", {
+                                                maxLength: 50,
+                                            })}
+                                        />
+                                    </>
+                                )}
+                            </div>
+
                             <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                 <label
                                     htmlFor="licenseTypeId"
@@ -257,6 +286,23 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                             className="md:col-span-2 xl:col-span-1 my-1 sm:my-0"
                                         />
                                     )}
+                                />
+                            </div>
+
+                            <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2 items-center">
+                                <label
+                                    htmlFor="serialNo"
+                                    className="font-medium"
+                                >
+                                    Lisans Seri No
+                                </label>
+                                <input
+                                    type="text"
+                                    id="serialNo"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                    {...register("serialNo", {
+                                        maxLength: 50,
+                                    })}
                                 />
                             </div>
 
@@ -446,35 +492,6 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                     )}
                                 />
                             </div>
-                            {data.applianceId ? (
-                                <></>
-                            ) : (
-                                <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2 items-center">
-                                    <dt className="font-medium">
-                                        Cihaz Seri No
-                                    </dt>
-                                    <input
-                                        type="text"
-                                        id="appSerialNo"
-                                        className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
-                                        {...register("appSerialNo", {
-                                            maxLength: 50,
-                                        })}
-                                    />
-                                </div>
-                            )}
-
-                            <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2 items-center">
-                                <dt className="font-medium">Lisans Seri No</dt>
-                                <input
-                                    type="text"
-                                    id="serialNo"
-                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
-                                    {...register("serialNo", {
-                                        maxLength: 50,
-                                    })}
-                                />
-                            </div>
 
                             <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                 <label htmlFor="note" className="font-medium">
@@ -618,7 +635,6 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                                         );
                                                     if (lic) {
                                                         onCloseApp();
-                                                        reset();
                                                         mutate();
                                                         toast.success(
                                                             "Lisans cihazdan silindi!",

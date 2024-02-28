@@ -380,6 +380,15 @@ export default function Appliances() {
                             className="flex flex-col gap-2"
                             onSubmit={handleSubmit(onSubmit)}
                         >
+
+                        <div className="relative flex items-center">
+                            <div className="flex-grow border-t border-zinc-200"></div>
+                            <span className="flex-shrink mx-4 text-base text-zinc-500">
+                                Ürün Bilgileri
+                            </span>
+                            <div className="flex-grow border-t border-zinc-200"></div>
+                        </div>
+
                             <div>
                                 <label
                                     htmlFor="serialNo"
@@ -421,8 +430,6 @@ export default function Appliances() {
                                 />
                             </div>
 
-                            <Divider className="my-3" />
-
                             <div>
                                 <label
                                     htmlFor="boughtAt"
@@ -452,7 +459,13 @@ export default function Appliances() {
                                 />
                             </div>
 
-                            <Divider className="my-3" />
+                            <div className="relative flex items-center mt-6">
+                                <div className="flex-grow border-t border-zinc-200"></div>
+                                <span className="flex-shrink mx-4 text-base text-zinc-500">
+                                    Cari Bilgileri
+                                </span>
+                                <div className="flex-grow border-t border-zinc-200"></div>
+                            </div>
 
                             <div>
                                 <label
@@ -537,6 +550,10 @@ export default function Appliances() {
                                         />
                                     )}
                                 />
+                            </div>
+
+                            <div className="relative flex items-center mt-6">
+                                <div className="flex-grow border-t border-zinc-200"></div>
                             </div>
 
                             <div>
