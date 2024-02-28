@@ -57,6 +57,7 @@ interface IFormInput {
     supplierId?: number;
     applianceId: number;
     updatedBy: string;
+    appSerialNo?: string;
     appliance?: Appliance;
     licenseType?: LicenseType;
     boughtType?: BoughtType;
@@ -445,6 +446,23 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                     )}
                                 />
                             </div>
+                            {data.applianceId ? (
+                                <></>
+                            ) : (
+                                <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2 items-center">
+                                    <dt className="font-medium">
+                                        Cihaz Seri No
+                                    </dt>
+                                    <input
+                                        type="text"
+                                        id="appSerialNo"
+                                        className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                        {...register("appSerialNo", {
+                                            maxLength: 50,
+                                        })}
+                                    />
+                                </div>
+                            )}
 
                             <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2 items-center">
                                 <dt className="font-medium">Lisans Seri No</dt>
@@ -570,18 +588,9 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                             </div>
                             <div className="flex gap-2">
                                 <div className="flex-1"></div>
-                                {currUser?.role === "technical" ? undefined : (
-                                    <Button
-                                        color="primary"
-                                        className="bg-sky-500"
-                                        onPress={onOpenApp}
-                                    >
-                                        Cihaz Değiştir
-                                    </Button>
-                                )}
                                 <Button
                                     color="primary"
-                                    className="bg-green-600"
+                                    className="bg-sky-500"
                                     onPress={() =>
                                         router.push(
                                             `/dashboard/appliances/${data.appliance?.id}`,
@@ -590,6 +599,48 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                 >
                                     Cihaza Git
                                 </Button>
+                                {currUser?.role === "technical" ? undefined : (
+                                    <>
+                                        <Button
+                                            color="primary"
+                                            className="bg-red-500"
+                                            onPress={async () => {
+                                                if (currUser) {
+                                                    const updatedBy =
+                                                        currUser?.username ??
+                                                        "";
+
+                                                    const lic =
+                                                        await setLicenseAppliance(
+                                                            Number(params.id),
+                                                            null,
+                                                            updatedBy,
+                                                        );
+                                                    if (lic) {
+                                                        onCloseApp();
+                                                        reset();
+                                                        mutate();
+                                                        toast.success(
+                                                            "Lisans cihazdan silindi!",
+                                                        );
+                                                    } else
+                                                        toast.error(
+                                                            "Bir hata oluştu! Lütfen tekrar deneyiniz.",
+                                                        );
+                                                }
+                                            }}
+                                        >
+                                            Cihazı Sil
+                                        </Button>
+                                        <Button
+                                            color="primary"
+                                            className="bg-green-600"
+                                            onPress={onOpenApp}
+                                        >
+                                            Cihaz Değiştir
+                                        </Button>
+                                    </>
+                                )}
                             </div>
                         </>
                     ) : (

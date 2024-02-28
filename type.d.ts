@@ -85,6 +85,7 @@ type License = Entity & {
     soldAt?: string;
     orderedAt?: string;
     note?: string;
+    appSerialNo?: string;
     licenseType: any;
     // boughtType: any;
 };

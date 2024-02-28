@@ -30,6 +30,7 @@ SELECT
   l."updatedBy",
   l."updatedAt",
   l.deleted,
+  l."appSerialNo",
   a."serialNo" AS "applianceSerialNo",
   a."productModel",
   a."productBrand",

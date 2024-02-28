@@ -73,6 +73,7 @@ model licenses {
   boughtTypeId  Int?
   note          String?      @db.VarChar
   orderedAt     DateTime?    @db.Timestamptz(6)
+  appSerialNo   String?      @db.VarChar
   appliance     appliances?  @relation(fields: [applianceId], references: [id])
   boughtType    boughtTypes? @relation(fields: [boughtTypeId], references: [id])
   customer      currents?    @relation("Customer", fields: [customerId], references: [id])
@@ -90,11 +91,11 @@ model projects {
   productId     Int?
   licenseTypeId Int?
   date          DateTime      @db.Date
-  note          String?       @db.VarChar
   createdAt     DateTime      @default(now()) @db.Timestamptz(6)
   createdBy     String        @db.VarChar
   updatedBy     String?       @db.VarChar
   updatedAt     DateTime?     @updatedAt @db.Timestamptz(6)
+  note          String?       @db.VarChar
   customer      currents      @relation("Customer", fields: [customerId], references: [id])
   dealer        currents?     @relation("Dealer", fields: [dealerId], references: [id])
   licenseType   licenseTypes? @relation(fields: [licenseTypeId], references: [id])
@@ -281,6 +282,7 @@ view vLicenses {
   updatedBy         String?   @db.VarChar
   updatedAt         DateTime? @db.Timestamptz(6)
   deleted           Boolean?
+  appSerialNo       String?   @db.VarChar
   applianceSerialNo String?   @db.VarChar
   productModel      String?   @db.VarChar
   productBrand      String?   @db.VarChar

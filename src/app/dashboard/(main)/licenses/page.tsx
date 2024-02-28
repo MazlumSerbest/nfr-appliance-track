@@ -50,6 +50,7 @@ interface IFormInput {
     orderedAt?: string;
     note?: string;
     applianceId: number;
+    appSerialNo: string;
     licenseTypeId: number;
     customerId: number;
     dealerId: number;
@@ -134,14 +135,12 @@ export default function Licenses() {
             name: "Lisans Seri Numarası",
             width: 200,
             searchable: true,
-            sortable: true,
         },
         {
             key: "applianceSerialNo",
             name: "Cihaz Seri Numarası",
             width: 200,
             searchable: true,
-            sortable: true,
         },
         {
             key: "product",
@@ -258,6 +257,8 @@ export default function Licenses() {
                     return license.licenseType + " " + license.licenseDuration;
                 case "isStock":
                     return <BoolChip value={cellValue} />;
+                case "applianceSerialNo":
+                    return cellValue || license.appSerialNo || "-";
                 case "customerName":
                 case "dealerName":
                 case "subDealerName":
@@ -566,6 +567,33 @@ export default function Licenses() {
                                 />
                             </div>
 
+                            <div className="relative flex items-center mt-2">
+                                <div className="flex-grow border-t border-gray-200"></div>
+                                <span className="flex-shrink mx-4 text-sm text-zinc-500">
+                                    ya da
+                                </span>
+                                <div className="flex-grow border-t border-gray-200"></div>
+                            </div>
+
+                            <div>
+                                <label
+                                    htmlFor="appSerialNo"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Cihaz Seri Numarası
+                                </label>
+                                <input
+                                    type="text"
+                                    id="appSerialNo"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                    {...register("appSerialNo", {
+                                        maxLength: 50,
+                                    })}
+                                />
+                            </div>
+
+                            <Divider className="my-3" />
+
                             <div>
                                 <label
                                     htmlFor="licenseTypeId"
@@ -600,7 +628,7 @@ export default function Licenses() {
                                     type="date"
                                     id="startDate"
                                     className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
-                                    {...register("startDate", {})}
+                                    {...register("startDate")}
                                 />
                             </div>
                             <div>
@@ -614,7 +642,7 @@ export default function Licenses() {
                                     type="date"
                                     id="expiryDate"
                                     className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
-                                    {...register("expiryDate", {})}
+                                    {...register("expiryDate")}
                                 />
                             </div>
 
@@ -655,7 +683,7 @@ export default function Licenses() {
                                     type="date"
                                     id="boughtAt"
                                     className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
-                                    {...register("boughtAt", {})}
+                                    {...register("boughtAt")}
                                 />
                             </div>
                             <div>
@@ -669,7 +697,7 @@ export default function Licenses() {
                                     type="date"
                                     id="soldAt"
                                     className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
-                                    {...register("soldAt", {})}
+                                    {...register("soldAt")}
                                 />
                             </div>
                             <div>
@@ -683,7 +711,7 @@ export default function Licenses() {
                                     type="date"
                                     id="orderedAt"
                                     className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
-                                    {...register("orderedAt", {})}
+                                    {...register("orderedAt")}
                                 />
                             </div>
 

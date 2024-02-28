@@ -66,7 +66,7 @@ export async function setActiveStatus(
 
 export async function setLicenseAppliance(
     licenseId: number,
-    applianceId: number,
+    applianceId: number | null,
     updatedBy?: string,
 ) {
     if (!updatedBy) return false;
@@ -148,7 +148,6 @@ export async function updateAddress(address: Address, updatedBy?: string) {
 
     if (newAddress.id) return true;
     else return false;
-
 }
 
 // export async function setMainAuthorizedPerson(

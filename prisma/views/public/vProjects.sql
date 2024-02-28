@@ -20,7 +20,7 @@ FROM
             projects p
             LEFT JOIN currents c ON ((p."customerId" = c.id))
           )
-          LEFT JOIN currents d ON ((p."customerId" = p.id))
+          LEFT JOIN currents d ON ((p."dealerId" = d.id))
         )
         LEFT JOIN products pr ON ((p."productId" = pr.id))
       )
