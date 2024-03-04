@@ -35,7 +35,7 @@ export default function DeleteButton(props: Props) {
     const { isOpen, onClose, onOpenChange } = useDisclosure();
     const { user: currUser } = useUserStore();
 
-    if(currUser?.role == "technical") return null;
+    if(currUser?.role == "technical" && table != "connections") return null;
     return (
         <Popover
             key={data.id}
