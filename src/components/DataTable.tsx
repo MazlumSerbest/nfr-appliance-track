@@ -95,6 +95,7 @@ export default function DataTable(props: Props) {
 
                 return filterColumns.some((e) =>
                     fitem[e.key]
+                        ?.toString()
                         ?.toLowerCase()
                         .includes(filterValue.toLowerCase()),
                 );
@@ -404,15 +405,11 @@ export default function DataTable(props: Props) {
                         key={item.id}
                         className={onDoubleClick ? "cursor-pointer" : ""}
                         onDoubleClick={() =>
-                            onDoubleClick
-                                ? onDoubleClick(item)
-                                : undefined
+                            onDoubleClick ? onDoubleClick(item) : undefined
                         }
                     >
                         {(columnKey) => (
-                            <TableCell>
-                                {renderCell(item, columnKey)}
-                            </TableCell>
+                            <TableCell>{renderCell(item, columnKey)}</TableCell>
                         )}
                     </TableRow>
                 )}

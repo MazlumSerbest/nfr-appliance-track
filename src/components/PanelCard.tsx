@@ -1,23 +1,88 @@
 import { Card, CardBody } from "@nextui-org/card";
+import { on } from "events";
 
 type Props = {
     content: React.ReactNode;
     header: string;
     icon?: React.ReactNode;
     color?: string;
-}
+    onClick?: () => void;
+};
+
+type ColorSet = {
+    name: string;
+    border: string;
+    icon: string;
+    text: string;
+};
 
 export default function PanelCard(props: Props) {
+    const { content, header, icon, color, onClick } = props;
+
+    const colors: ColorSet[] = [
+        {
+            name: "sky",
+            border: "border-sky-400/50",
+            icon: "text-sky-400/50",
+            text: "text-sky-400",
+        },
+        {
+            name: "green",
+            border: "border-green-400/50",
+            icon: "text-green-400/50",
+            text: "text-green-400",
+        },
+        {
+            name: "red",
+            border: "border-red-400/50",
+            icon: "text-red-400/50",
+            text: "text-red-400",
+        },
+        {
+            name: "yellow",
+            border: "border-yellow-400/50",
+            icon: "text-yellow-400/50",
+            text: "text-yellow-400",
+        },
+        {
+            name: "orange",
+            border: "border-orange-400/50",
+            icon: "text-orange-400/50",
+            text: "text-orange-400",
+        },
+    ];
+
     return (
-        <Card className="border-b-4 border-sky-400">
-            <CardBody className="flex flex-row p-6 pt-4 items-center">
-                {props.icon}
+        <Card
+            // className={`border-b-3 ${
+            //     colors.find((c) => c.name == color)?.border
+            // } ${onClick ? "cursor-pointer active:bg-gray-100" : ""}`}
+            className={
+                "min-w-72 max-w-80" +
+                (onClick ? "cursor-pointer active:bg-gray-100" : "")
+            }
+        >
+            <CardBody
+                className="flex flex-row p-6 pt-4 items-center overflow-hidden"
+                onClick={onClick}
+            >
+                <div
+                    className={`text-5xl md:text-5xl ${
+                        colors.find((c) => c.name == color)?.icon
+                    }`}
+                >
+                    {icon}
+                </div>
                 <div className="flex flex-col flex-1 gap-2 items-center">
-                    <h6 className="text-sm uppercase font-bold text-sky-400">
-                        {props.header}
+                    <h6
+                        className={`text-sm uppercase font-bold ${
+                            colors.find((c) => c.name == color)?.text
+                        }`}
+                    >
+                        {header}
                     </h6>
-                    <div className="flex flex-1 items-center">
-                        {props.content}
+                    <div className="flex flex-1 items-center font-bold text-6xl text-zinc-500 break-words px-2">
+                        {content}
                     </div>
                 </div>
             </CardBody>
