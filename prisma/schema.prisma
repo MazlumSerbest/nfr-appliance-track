@@ -325,6 +325,53 @@ view vProjects {
   licenseDuration Int?
 }
 
+view vApplianceCounts {
+  id          Int     @unique
+  stockCount  BigInt?
+  orderCount  BigInt?
+  activeCount BigInt?
+}
+
+view vLicenseCounts {
+  id             Int     @unique
+  stockCount     BigInt?
+  orderCount     BigInt?
+  waitingCount   BigInt?
+  activeCount    BigInt?
+  undefinedCount BigInt?
+  endedCount     BigInt?
+  endingCount    BigInt?
+  continuesCount BigInt?
+}
+
+view vLicenseTypes {
+  id        Int       @unique
+  active    Boolean?
+  duration  Int?
+  type      String?   @db.VarChar
+  price     Decimal?  @db.Decimal(9, 2)
+  brandId   Int?
+  createdBy String?   @db.VarChar
+  createdAt DateTime? @db.Timestamptz(6)
+  updatedBy String?   @db.VarChar
+  updatedAt DateTime? @db.Timestamptz(6)
+  brandName String?   @db.VarChar
+}
+
+view vProducts {
+  id            Int       @unique
+  active        Boolean?
+  model         String?   @db.VarChar
+  brandId       Int?
+  productTypeId Int?
+  createdBy     String?   @db.VarChar
+  createdAt     DateTime? @db.Timestamptz(6)
+  updatedBy     String?   @db.VarChar
+  updatedAt     DateTime? @db.Timestamptz(6)
+  brandName     String?   @db.VarChar
+  productType   String?   @db.VarChar
+}
+
 enum CurrentType {
   customer
   dealer

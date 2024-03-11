@@ -35,8 +35,8 @@ type IFormInput = {
     model: string;
     createdBy: string;
     updatedBy: string;
-    brand?: Brand;
-    productType?: ProductType;
+    brandName?: string;
+    productType?: string;
 };
 
 export default function Products() {
@@ -54,6 +54,7 @@ export default function Products() {
     const { register, reset, handleSubmit, control } = useForm<IFormInput>({
         defaultValues: { active: true },
     });
+
     const onSubmitNew: SubmitHandler<IFormInput> = async (data) => {
         data.createdBy = currUser?.username ?? "";
 
@@ -74,9 +75,11 @@ export default function Products() {
             return result;
         });
     };
+
     const onSubmitUpdate: SubmitHandler<IFormInput> = async (data) => {
         data.updatedBy = currUser?.username ?? "";
-        delete data["brand"];
+        
+        delete data["brandName"];
         delete data["productType"];
 
         await fetch(`/api/product/${data.id}`, {
@@ -99,7 +102,7 @@ export default function Products() {
     //#endregion
 
     //#region Table
-    const visibleColumns = ["brand", "model", "type", "active", "actions"];
+    const visibleColumns = ["brandName", "model", "productType", "active", "actions"];
 
     const sort: SortDescriptor = {
         column: "createdAt",
@@ -108,7 +111,7 @@ export default function Products() {
 
     const columns: Column[] = [
         {
-            key: "brand",
+            key: "brandName",
             name: "Marka",
             width: 150,
             searchable: true,
@@ -122,7 +125,7 @@ export default function Products() {
             sortable: true,
         },
         {
-            key: "type",
+            key: "productType",
             name: "Ürün Tipi",
             width: 150,
             searchable: true,
@@ -163,16 +166,12 @@ export default function Products() {
     ];
 
     const renderCell = React.useCallback(
-        (product: Product, columnKey: React.Key) => {
+        (product: vProduct, columnKey: React.Key) => {
             const cellValue: any = product[columnKey as keyof typeof product];
 
             switch (columnKey) {
                 case "active":
                     return <BoolChip value={cellValue} />;
-                case "brand":
-                    return <p>{product.brand?.name || "-"}</p>;
-                case "type":
-                    return <p>{product.productType?.type || "-"}</p>;
                 case "createdAt":
                     return <p>{DateTimeFormat(cellValue)}</p>;
                 case "updatedAt":

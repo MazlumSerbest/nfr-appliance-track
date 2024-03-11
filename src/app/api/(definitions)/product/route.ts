@@ -7,11 +7,7 @@ export async function GET(request: Request) {
         const session = await getServerSession();
 
         if (session) {
-            const data = await prisma.products.findMany({
-                include: {
-                    brand: { select: { name: true } },
-                    productType: { select: { type: true } },
-                },
+            const data = await prisma.vProducts.findMany({
                 orderBy: [
                     {
                         createdAt: "desc",

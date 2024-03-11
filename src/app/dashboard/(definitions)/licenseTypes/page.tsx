@@ -36,7 +36,7 @@ interface IFormInput {
     price?: number | null;
     createdBy: string;
     updatedBy?: string;
-    brand?: Brand;
+    brandName?: string;
 }
 
 export default function LicenseTypes() {
@@ -51,6 +51,7 @@ export default function LicenseTypes() {
     const { register, reset, handleSubmit, control } = useForm<IFormInput>({
         defaultValues: { active: true },
     });
+
     const onSubmitNew: SubmitHandler<IFormInput> = async (data) => {
         data.createdBy = currUser?.username ?? "";
         data.duration = Number(data.duration);
@@ -73,11 +74,12 @@ export default function LicenseTypes() {
             return result;
         });
     };
+
     const onSubmitUpdate: SubmitHandler<IFormInput> = async (data) => {
         data.updatedBy = currUser?.username ?? "";
         data.duration = Number(data.duration);
         data.price = 0;
-        delete data["brand"];
+        delete data["brandName"];
 
         await fetch(`/api/licenseType/${data.id}`, {
             method: "PUT",
@@ -99,7 +101,7 @@ export default function LicenseTypes() {
     //#endregion
 
     //#region Table
-    const visibleColumns = ["brand", "type", "duration", "active", "actions"];
+    const visibleColumns = ["brandName", "type", "duration", "active", "actions"];
 
     const sort: SortDescriptor = {
         column: "createdAt",
@@ -108,7 +110,7 @@ export default function LicenseTypes() {
 
     const columns: Column[] = [
         {
-            key: "brand",
+            key: "brandName",
             name: "Marka",
             width: 150,
             searchable: true,
@@ -161,15 +163,13 @@ export default function LicenseTypes() {
     ];
 
     const renderCell = React.useCallback(
-        (licenseType: LicenseType, columnKey: React.Key) => {
+        (licenseType: vLicenseType, columnKey: React.Key) => {
             const cellValue: any =
                 licenseType[columnKey as keyof typeof licenseType];
 
             switch (columnKey) {
                 case "active":
                     return <BoolChip value={cellValue} />;
-                case "brand":
-                    return <p>{licenseType.brand?.name || "-"}</p>;
                 case "createdAt":
                     return <p>{DateTimeFormat(cellValue)}</p>;
                 case "updatedAt":

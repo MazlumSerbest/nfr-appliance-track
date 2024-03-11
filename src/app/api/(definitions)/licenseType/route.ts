@@ -7,10 +7,7 @@ export async function GET(request: NextRequest) {
         const session = await getServerSession();
 
         if (session) {
-            const data = await prisma.licenseTypes.findMany({
-                include: {
-                    brand: { select: { name: true } },
-                },
+            const data = await prisma.vLicenseTypes.findMany({
                 orderBy: [
                     {
                         createdAt: "asc",
