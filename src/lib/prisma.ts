@@ -150,6 +150,18 @@ export async function updateAddress(address: Address, updatedBy?: string) {
     else return false;
 }
 
+export async function getLicenseCounts() {
+    const licenseCounts = await prisma.vLicenseCounts.findFirst();
+
+    return licenseCounts;
+}
+
+export async function getApplianceCounts() {
+    const applianceCounts = await prisma.vApplianceCounts.findFirst();
+
+    return applianceCounts;
+}
+
 // export async function setMainAuthorizedPerson(
 //     currentId: number,
 //     authorizedPersonId: number,
@@ -181,10 +193,4 @@ export async function updateAddress(address: Address, updatedBy?: string) {
 
 //     if (person.isMain == true) return true;
 //     else return false;
-// }
-
-// export async function getReport() {
-//     const report = prisma.vLicenses.count();
-
-//     return null;
 // }

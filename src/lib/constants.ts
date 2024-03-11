@@ -14,3 +14,10 @@ export const currentTypes = [
     { name: "Bayi", key: "dealer" },
     { name: "Tedarikçi", key: "supplier" },
 ];
+
+export const statusTypes = [
+    { name: "Stok", key: "stock" },
+    { name: "Sipariş", key: "order" },
+    { name: "Bekleyen Sipariş", key: "waiting" },
+    { name: "Aktif", key: "active" },
+];
