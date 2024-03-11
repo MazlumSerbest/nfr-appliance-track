@@ -52,6 +52,8 @@ type Project = Entity & {
     dealerId: number;
     productId: number;
     licenseTypeId: number;
+    note?: string;
+    status: "active" | "won" | "lost";
 };
 
 type Brand = Entity & {

@@ -21,3 +21,9 @@ export const statusTypes = [
     { name: "Bekleyen Sipariş", key: "waiting" },
     { name: "Aktif", key: "active" },
 ];
+
+export const projectStatus = [
+    { name: "Aktif", key: "active" },
+    { name: "Kazanılan", key: "won" },
+    { name: "Kaybedilen", key: "lost" },
+];

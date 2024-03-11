@@ -19,15 +19,7 @@ import { Divider } from "@nextui-org/divider";
 
 import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
 import DataTable from "@/components/DataTable";
-import BoolChip from "@/components/BoolChip";
-import IconChip from "@/components/IconChip";
 import AutoComplete from "@/components/AutoComplete";
-import {
-    BiCheckCircle,
-    BiErrorCircle,
-    BiHelpCircle,
-    BiInfoCircle,
-} from "react-icons/bi";
 import { DateTimeFormat, DateFormat } from "@/utils/date";
 import useUserStore from "@/store/user";
 import {
@@ -51,6 +43,10 @@ export default function Licenses() {
     const router = useRouter();
     const { user: currUser } = useUserStore();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
+
+    const [projects, setProjects] = useState<vProject[] | null>(null);
+    const [wonProjects, setWonProjects] = useState<vProject[] | null>(null);
+    const [lostProjects, setLostProjects] = useState<vProject[] | null>(null);
 
     const [customers, setCustomers] = useState<ListBoxItem[] | null>(null);
     const [dealers, setDealers] = useState<ListBoxItem[] | null>(null);
@@ -211,7 +207,14 @@ export default function Licenses() {
     }, []);
     //#endregion
 
-    const { data, error, mutate } = useSWR("/api/project");
+    const { data, error, mutate } = useSWR("/api/project", null, {
+        onSuccess: (data) => {
+            console.log(data)
+            setProjects(data.filter((p: vProject) => p.status == "active"));
+            setWonProjects(data.filter((p: vProject) => p.status == "won"));
+            setLostProjects(data.filter((p: vProject) => p.status == "lost"));
+        },
+    });
 
     if (error) return <div>Yükleme Hatası!</div>;
     if (!data) {
@@ -225,29 +228,93 @@ export default function Licenses() {
     }
     return (
         <>
-            <DataTable
-                isCompact
-                isStriped
-                className="mt-4 mb-2"
-                emptyContent="Herhangi bir proje bulunamadı!"
-                data={data || []}
-                columns={columns}
-                renderCell={renderCell}
-                sortOption={sort}
-                initialVisibleColumNames={visibleColumns}
-                // activeOptions={[]}
-                onAddNew={
-                    currUser?.role == "technical"
-                        ? undefined
-                        : () => {
-                              reset({});
-                              onOpen();
-                          }
-                }
-                onDoubleClick={(item) =>
-                    router.push("/dashboard/projects/" + item.id)
-                }
-            />
+            <div className="flex flex-col w-full items-center mt-4 mb-2">
+                <Tabs
+                    aria-label="License Tab"
+                    color="primary"
+                    size="md"
+                    classNames={{
+                        cursor: "w-full bg-sky-500",
+                        tab: "px-10",
+                    }}
+                >
+                    <Tab key="projects" title="Projeler" className="w-full">
+                        <DataTable
+                            isCompact
+                            isStriped
+                            className="mt-4 mb-2"
+                            emptyContent="Herhangi bir proje bulunamadı!"
+                            data={projects || []}
+                            columns={columns}
+                            renderCell={renderCell}
+                            sortOption={sort}
+                            initialVisibleColumNames={visibleColumns}
+                            // activeOptions={[]}
+                            onAddNew={
+                                currUser?.role == "technical"
+                                    ? undefined
+                                    : () => {
+                                          reset({});
+                                          onOpen();
+                                      }
+                            }
+                            onDoubleClick={(item) =>
+                                router.push("/dashboard/projects/" + item.id)
+                            }
+                        />
+                    </Tab>
+                    <Tab key="won" title="Kazanılan" className="w-full">
+                        <DataTable
+                            isCompact
+                            isStriped
+                            className="mt-4 mb-2"
+                            emptyContent="Herhangi bir proje bulunamadı!"
+                            data={wonProjects || []}
+                            columns={columns}
+                            renderCell={renderCell}
+                            sortOption={sort}
+                            initialVisibleColumNames={visibleColumns}
+                            // activeOptions={[]}
+                            onAddNew={
+                                currUser?.role == "technical"
+                                    ? undefined
+                                    : () => {
+                                          reset({});
+                                          onOpen();
+                                      }
+                            }
+                            onDoubleClick={(item) =>
+                                router.push("/dashboard/projects/" + item.id)
+                            }
+                        />
+                    </Tab>
+                    <Tab key="lost" title="Kaybedilen" className="w-full">
+                        <DataTable
+                            isCompact
+                            isStriped
+                            className="mt-4 mb-2"
+                            emptyContent="Herhangi bir proje bulunamadı!"
+                            data={lostProjects || []}
+                            columns={columns}
+                            renderCell={renderCell}
+                            sortOption={sort}
+                            initialVisibleColumNames={visibleColumns}
+                            // activeOptions={[]}
+                            onAddNew={
+                                currUser?.role == "technical"
+                                    ? undefined
+                                    : () => {
+                                          reset({});
+                                          onOpen();
+                                      }
+                            }
+                            onDoubleClick={(item) =>
+                                router.push("/dashboard/projects/" + item.id)
+                            }
+                        />
+                    </Tab>
+                </Tabs>
+            </div>
 
             <Modal
                 isOpen={isOpen}

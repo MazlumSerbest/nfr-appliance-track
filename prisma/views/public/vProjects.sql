@@ -1,6 +1,7 @@
 SELECT
   p.id,
   p.date,
+  p.status,
   p."createdBy",
   p."createdAt",
   p."updatedBy",

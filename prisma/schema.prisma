@@ -96,6 +96,7 @@ model projects {
   updatedBy     String?       @db.VarChar
   updatedAt     DateTime?     @updatedAt @db.Timestamptz(6)
   note          String?       @db.VarChar
+  status        String?       @default("active") @db.VarChar
   customer      currents      @relation("Customer", fields: [customerId], references: [id])
   dealer        currents?     @relation("Dealer", fields: [dealerId], references: [id])
   licenseType   licenseTypes? @relation(fields: [licenseTypeId], references: [id])
@@ -313,6 +314,7 @@ view vConnections {
 view vProjects {
   id              Int       @unique
   date            DateTime? @db.Date
+  status          String?   @db.VarChar
   createdBy       String?   @db.VarChar
   createdAt       DateTime? @db.Timestamptz(6)
   updatedBy       String?   @db.VarChar

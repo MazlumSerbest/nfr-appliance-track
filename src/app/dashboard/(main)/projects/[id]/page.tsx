@@ -21,6 +21,7 @@ import {
     getProducts,
     getLicenseTypes,
 } from "@/lib/data";
+import { projectStatus } from "@/lib/constants";
 
 interface IFormInput {
     date: string;
@@ -29,6 +30,7 @@ interface IFormInput {
     productId?: number;
     licenseTypeId?: number;
     note?: string;
+    status: string;
     updatedBy: string;
     customer?: Current;
     dealer?: Current;
@@ -123,6 +125,28 @@ export default function ProjectDetail({ params }: { params: { id: string } }) {
                             />
                         </div>
                         <div className="divide-y divide-zinc-200">
+                            <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                <label
+                                    htmlFor="status"
+                                    className="font-medium"
+                                >
+                                    Durum
+                                </label>
+                                <div className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full h-10 rounded-md border-0 px-3 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2">
+                                    <select
+                                        id="status"
+                                        className="w-full border-none text-sm text-zinc-700 outline-none"
+                                        {...register("status")}
+                                    >
+                                        {projectStatus?.map((ps) => (
+                                            <option key={ps.key} value={ps.key}>
+                                                {ps.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+
                             <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                 <label
                                     htmlFor="date"
