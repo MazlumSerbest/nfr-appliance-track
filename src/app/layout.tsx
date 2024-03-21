@@ -1,8 +1,9 @@
+import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
 import { Providers } from "./providers";
 import { Toaster } from "react-hot-toast";
+import NextTopLoader from "nextjs-toploader";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,12 +20,18 @@ export default function RootLayout({
     return (
         <html lang="tr">
             <body className={inter.className}>
+                <NextTopLoader
+                    color="rgb(56 189 248)"
+                    // showSpinner={false}
+                    height={5}
+                    easing="ease"
+                />
                 <Providers>{children}</Providers>
                 <Toaster
                     position="bottom-center"
                     toastOptions={{
                         duration: 4000,
-                        className: "text-blue-400",
+                        className: "text-sky-400",
                     }}
                 />
             </body>
