@@ -132,7 +132,7 @@ export default function NavLayout() {
                                 })}
                         </ListboxSection>
                         <ListboxSection
-                            showDivider
+                            showDivider={others ? false : true}
                             title="Tanımlamalar"
                             className="mb-0"
                             classNames={{
@@ -170,43 +170,45 @@ export default function NavLayout() {
                                     );
                                 })}
                         </ListboxSection>
-                        <ListboxSection
-                            className="mb-0"
-                            classNames={{
-                                heading: "text-zinc-500",
-                            }}
-                        >
-                            {others
-                                .filter((p) =>
-                                    p.roles?.includes(user?.role ?? ""),
-                                )
-                                .map((p) => {
-                                    return (
-                                        <ListboxItem
-                                            key={p.key}
-                                            startContent={p.icon}
-                                            className={
-                                                "font-semibold" +
-                                                (withoutFullLink == p.path
-                                                    ? " bg-sky-100"
-                                                    : "")
-                                            }
-                                        >
-                                            <NextLink
-                                                className="absolute inset-0 outline-none"
-                                                href={p.path}
-                                                onClick={() =>
-                                                    setShowSidebar(false)
+                        {others ? (
+                            <ListboxSection
+                                className="mb-0"
+                                classNames={{
+                                    heading: "text-zinc-500",
+                                }}
+                            >
+                                {others
+                                    .filter((p) =>
+                                        p.roles?.includes(user?.role ?? ""),
+                                    )
+                                    .map((p) => {
+                                        return (
+                                            <ListboxItem
+                                                key={p.key}
+                                                startContent={p.icon}
+                                                className={
+                                                    "font-semibold" +
+                                                    (withoutFullLink == p.path
+                                                        ? " bg-sky-100"
+                                                        : "")
                                                 }
-                                                onTouchEnd={() =>
-                                                    setShowSidebar(false)
-                                                }
-                                            />
-                                            {p.name}
-                                        </ListboxItem>
-                                    );
-                                })}
-                        </ListboxSection>
+                                            >
+                                                <NextLink
+                                                    className="absolute inset-0 outline-none"
+                                                    href={p.path}
+                                                    onClick={() =>
+                                                        setShowSidebar(false)
+                                                    }
+                                                    onTouchEnd={() =>
+                                                        setShowSidebar(false)
+                                                    }
+                                                />
+                                                {p.name}
+                                            </ListboxItem>
+                                        );
+                                    })}
+                            </ListboxSection>
+                        ) : <></>}
                     </Listbox>
                 </div>
                 <Divider />

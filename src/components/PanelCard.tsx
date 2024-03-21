@@ -3,7 +3,7 @@ import { on } from "events";
 
 type Props = {
     content: React.ReactNode;
-    header: string;
+    header?: string;
     icon?: React.ReactNode;
     color?: string;
     onClick?: () => void;
@@ -54,33 +54,37 @@ export default function PanelCard(props: Props) {
 
     return (
         <Card
-            // className={`border-b-3 ${
-            //     colors.find((c) => c.name == color)?.border
-            // } ${onClick ? "cursor-pointer active:bg-gray-100" : ""}`}
-            className={
-                "min-w-72 max-w-80" +
-                (onClick ? "cursor-pointer active:bg-gray-100" : "")
-            }
+            className={`w-full h-full min-w-72 border-1 border-b-3 ${
+                colors.find((c) => c.name == color)?.border
+            } ${onClick ? "cursor-pointer active:bg-gray-100" : ""}`}
+            // className={
+            //     "min-w-72 max-w-80" +
+            //     (onClick ? "cursor-pointer active:bg-gray-100" : "")
+            // }
         >
             <CardBody
                 className="flex flex-row p-6 pt-4 items-center overflow-hidden"
                 onClick={onClick}
             >
-                <div
-                    className={`text-5xl md:text-5xl ${
-                        colors.find((c) => c.name == color)?.icon
-                    }`}
-                >
-                    {icon}
-                </div>
-                <div className="flex flex-col flex-1 gap-2 items-center">
-                    <h6
-                        className={`text-sm uppercase font-bold ${
-                            colors.find((c) => c.name == color)?.text
+                {icon && (
+                    <div
+                        className={`text-5xl md:text-5xl ${
+                            colors.find((c) => c.name == color)?.icon
                         }`}
                     >
-                        {header}
-                    </h6>
+                        {icon}
+                    </div>
+                )}
+                <div className="flex flex-col flex-1 gap-2 items-center">
+                    {header && (
+                        <h6
+                            className={`text-sm uppercase font-bold ${
+                                colors.find((c) => c.name == color)?.text
+                            }`}
+                        >
+                            {header}
+                        </h6>
+                    )}
                     <div className="flex flex-1 items-center font-bold text-6xl text-zinc-500 break-words px-2">
                         {content}
                     </div>

@@ -206,16 +206,16 @@ export const definitions: Path[] = [
 ];
 
 export const others: Path[] = [
-    {
-        path: "/dashboard/settings",
-        key: "settings",
-        name: "Ayarlar",
-        roles: ["admin", "technical", "seller"],
-        icon: (
-            <BiCog
-                className="text-2xl text-zinc-500"
-                aria-label="Ayarlar Sayfası"
-            />
-        ),
-    },
+    // {
+    //     path: "/dashboard/settings",
+    //     key: "settings",
+    //     name: "Ayarlar",
+    //     roles: ["admin", "technical", "seller"],
+    //     icon: (
+    //         <BiCog
+    //             className="text-2xl text-zinc-500"
+    //             aria-label="Ayarlar Sayfası"
+    //         />
+    //     ),
+    // },
 ]

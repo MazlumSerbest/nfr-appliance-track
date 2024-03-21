@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
+import NextLink from "next/link";
 
 import { useDisclosure } from "@nextui-org/react";
 import { Avatar, AvatarIcon } from "@nextui-org/avatar";
@@ -7,7 +9,6 @@ import { Button } from "@nextui-org/button";
 
 import { BiLogOut } from "react-icons/bi";
 import useUserStore from "@/store/user";
-import { useEffect } from "react";
 
 export default function UserCard() {
     const { isOpen, onClose, onOpenChange } = useDisclosure();
@@ -41,21 +42,23 @@ export default function UserCard() {
         <>
             {user ? (
                 <div className="flex gap-2 items-center">
-                    <Avatar
-                        icon={<AvatarIcon />}
-                        classNames={{
-                            base: "bg-sky-200",
-                            icon: "text-sky-400",
-                        }}
-                    />
-                    <div className="flex-1 min-w-0">
-                        <p className="truncate text-sm font-bold text-sky-500">
-                            {user?.name ?? user?.username}
-                        </p>
-                        <p className="truncate text-xs text-zinc-500">
-                            {user?.email}
-                        </p>
-                    </div>
+                    <NextLink className="group flex-1 flex gap-2 items-center" href={"/dashboard/settings"}>
+                        <Avatar
+                            icon={<AvatarIcon />}
+                            classNames={{
+                                base: "bg-sky-200",
+                                icon: "text-sky-400",
+                            }}
+                        />
+                        <div className="flex-1 min-w-0 hover:">
+                            <p className="truncate text-sm font-bold text-sky-500 group-hover:underline">
+                                {user?.name ?? user?.username}
+                            </p>
+                            <p className="truncate text-xs text-zinc-500">
+                                {user?.email}
+                            </p>
+                        </div>
+                    </NextLink>
                     <Popover
                         placement="top"
                         isOpen={isOpen}
@@ -105,7 +108,7 @@ export default function UserCard() {
                         <div className="h-4 bg-slate-200 rounded"></div>
                         <div className="h-3 bg-slate-200 rounded"></div>
                     </div>
-                    <div className="rounded bg-slate-200 h-8 w-8"></div>
+                    <div className="rounded bg-slate-200 size-8"></div>
                 </div>
             )}
         </>
