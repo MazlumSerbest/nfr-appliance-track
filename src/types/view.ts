@@ -49,3 +49,10 @@ type vApplianceCounts = {
     orderCount?: number;
     activeCount?: number;
 };
+
+type vProjectCounts = {
+    id: number;
+    activeCount?: number;
+    winCount?: number;
+    lostCount?: number;
+};

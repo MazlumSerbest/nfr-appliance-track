@@ -346,6 +346,13 @@ view vLicenseCounts {
   continuesCount BigInt?
 }
 
+view vProjectCounts {
+  id          Int @unique
+  activeCount BigInt?
+  winCount    BigInt?
+  lostCount   BigInt?
+}
+
 view vLicenseTypes {
   id        Int       @unique
   active    Boolean?

@@ -162,6 +162,12 @@ export async function getApplianceCounts() {
     return applianceCounts;
 }
 
+export async function getProjectCounts() {
+    const projectCounts = await prisma.vProjectCounts.findFirst();
+
+    return projectCounts;
+}
+
 // export async function setMainAuthorizedPerson(
 //     currentId: number,
 //     authorizedPersonId: number,
