@@ -11,6 +11,7 @@ type vLicense = License & {
     productBrand?: string;
     licenseType?: string;
     licenseDuration?: string;
+    licenseBrand?: string;
 };
 
 type vProject = Project & {

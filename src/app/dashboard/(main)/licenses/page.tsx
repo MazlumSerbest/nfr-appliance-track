@@ -160,6 +160,34 @@ export default function Licenses() {
             width: 100,
         },
         {
+            key: "customerName",
+            name: "Müşteri",
+            width: 120,
+            searchable: true,
+            sortable: true,
+        },
+        {
+            key: "dealerName",
+            name: "Bayi",
+            width: 120,
+            searchable: true,
+            sortable: true,
+        },
+        {
+            key: "subDealerName",
+            name: "Alt Bayi",
+            width: 120,
+            searchable: true,
+            sortable: true,
+        },
+        {
+            key: "supplierName",
+            name: "Tedarikçi",
+            width: 120,
+            searchable: true,
+            sortable: true,
+        },
+        {
             key: "boughtAt",
             name: "Alım Tarihi",
             width: 150,
@@ -190,32 +218,9 @@ export default function Licenses() {
             sortable: true,
         },
         {
-            key: "customerName",
-            name: "Müşteri",
-            width: 120,
-            searchable: true,
-            sortable: true,
-        },
-        {
-            key: "dealerName",
-            name: "Bayi",
-            width: 120,
-            searchable: true,
-            sortable: true,
-        },
-        {
-            key: "subDealerName",
-            name: "Alt Bayi",
-            width: 120,
-            searchable: true,
-            sortable: true,
-        },
-        {
-            key: "supplierName",
-            name: "Tedarikçi",
-            width: 120,
-            searchable: true,
-            sortable: true,
+            key: "expiryStatus",
+            name: "Süre",
+            width: 80,
         },
         {
             key: "createdBy",
@@ -239,11 +244,6 @@ export default function Licenses() {
             width: 150,
             sortable: true,
         },
-        {
-            key: "expiryStatus",
-            name: "Süre",
-            width: 80,
-        },
     ];
 
     const renderCell = React.useCallback(
@@ -252,9 +252,9 @@ export default function Licenses() {
 
             switch (columnKey) {
                 case "product":
-                    return license.productBrand + " " + license.productModel;
+                    return license.productBrand ? license.productBrand + " " + license.productModel : "-";
                 case "licenseType":
-                    return license.licenseType + " " + license.licenseDuration;
+                    return license.licenseBrand + " " + license.licenseType + " " + license.licenseDuration;
                 case "isStock":
                     return <BoolChip value={cellValue} />;
                 case "applianceSerialNo":

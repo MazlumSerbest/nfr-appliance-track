@@ -36,6 +36,7 @@ SELECT
   a."productBrand",
   lt.type AS "licenseType",
   lt.duration AS "licenseDuration",
+  b.name AS "licenseBrand",
   bt.type AS "boughtType",
   c.name AS "customerName",
   d.name AS "dealerName",
@@ -57,12 +58,15 @@ FROM
           (
             (
               (
-                licenses l
-                LEFT JOIN "vAppliances" a ON ((l."applianceId" = a.id))
+                (
+                  licenses l
+                  LEFT JOIN "vAppliances" a ON ((l."applianceId" = a.id))
+                )
+                LEFT JOIN "licenseTypes" lt ON ((l."licenseTypeId" = lt.id))
               )
-              LEFT JOIN "licenseTypes" lt ON ((l."licenseTypeId" = lt.id))
+              LEFT JOIN "boughtTypes" bt ON ((l."boughtTypeId" = bt.id))
             )
-            LEFT JOIN "boughtTypes" bt ON ((l."boughtTypeId" = bt.id))
+            LEFT JOIN brands b ON ((lt."brandId" = b.id))
           )
           LEFT JOIN currents c ON ((l."customerId" = c.id))
         )
