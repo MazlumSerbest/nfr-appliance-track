@@ -8,7 +8,7 @@ SELECT
   ) AS "activeCount",
   count(
     CASE
-      WHEN ((STATUS) :: text = 'win' :: text) THEN 1
+      WHEN ((STATUS) :: text = 'won' :: text) THEN 1
       ELSE NULL :: integer
     END
   ) AS "winCount",

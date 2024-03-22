@@ -110,11 +110,6 @@ export default function Licenses() {
             sortable: true,
         },
         {
-            key: "date",
-            name: "Proje Tarihi",
-            width: 150,
-        },
-        {
             key: "productModel",
             name: "Ürün",
             width: 150,
@@ -133,6 +128,11 @@ export default function Licenses() {
             name: "Lisans Tipi",
             width: 150,
             searchable: true,
+        },
+        {
+            key: "date",
+            name: "Proje Tarihi",
+            width: 150,
         },
         {
             key: "createdBy",

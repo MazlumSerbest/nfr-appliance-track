@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import PanelCard from "@/components/PanelCard";
 
-import { CircularProgress, Progress } from "@nextui-org/progress";
 import { Divider } from "@nextui-org/divider";
 
 import {
@@ -13,8 +12,7 @@ import {
     BiBriefcase,
     BiShield,
 } from "react-icons/bi";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import { Pie, Doughnut } from "react-chartjs-2";
+import { Chart } from "react-google-charts";
 import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
 import {
     getLicenseCounts,
@@ -22,8 +20,7 @@ import {
     getProjectCounts,
 } from "@/lib/prisma";
 import { Card, CardBody } from "@nextui-org/react";
-
-ChartJS.register(ArcElement, Tooltip, Legend);
+import { color } from "framer-motion";
 
 export default function Dashboard() {
     const router = useRouter();
@@ -168,53 +165,6 @@ export default function Dashboard() {
                 <Divider className="mt-3 mb-4" />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 md:mt-0">
-                    <Card className="w-full min-w-72 border-1 border-b-3">
-                        <CardBody className="flex flex-col gap-2">
-                            <div className="w-full text-center">
-                                <h6
-                                    className={`text-sm uppercase font-bold text-zinc-700`}
-                                >
-                                    SİPARİŞLER
-                                </h6>
-                            </div>
-
-                            <Divider />
-
-                            <div className="flex flex-1 items-center">
-                                <Pie
-                                    options={{
-                                        plugins: {
-                                            legend: {
-                                                position: "bottom",
-                                            },
-                                        },
-                                    }}
-                                    data={{
-                                        labels: ["Sipariş", "Bekleyen"],
-                                        datasets: [
-                                            {
-                                                label: "Sipariş Sayısı",
-                                                data: [
-                                                    Number(
-                                                        licenseCounts?.orderCount,
-                                                    ),
-                                                    Number(
-                                                        licenseCounts?.waitingCount,
-                                                    ),
-                                                ],
-                                                backgroundColor: [
-                                                    "rgb(250 204 21)",
-                                                    "rgb(251 146 60)",
-                                                ],
-                                                borderWidth: 1,
-                                            },
-                                        ],
-                                    }}
-                                />
-                            </div>
-                        </CardBody>
-                    </Card>
-
                     <div className="flex flex-col gap-4 items-center">
                         <PanelCard
                             header="STOK"
@@ -226,19 +176,6 @@ export default function Dashboard() {
                                 </span>
                             }
                             icon={<BiShieldPlus />}
-                        />
-                        <PanelCard
-                            header="SİPARİŞ"
-                            color="yellow"
-                            content={
-                                <span className="flex-wrap break-all text-pretty">
-                                    {(
-                                        (licenseCounts?.waitingCount ?? 0) +
-                                        (licenseCounts?.orderCount ?? 0)
-                                    )?.toLocaleString() || "0"}
-                                </span>
-                            }
-                            icon={<BiShield />}
                         />
                         <PanelCard
                             header="AKTİF"
@@ -256,7 +193,87 @@ export default function Dashboard() {
                         />
                     </div>
 
+                    <div className="flex flex-col gap-4 items-center">
+                        <PanelCard
+                            header="SİPARİŞ"
+                            color="yellow"
+                            content={
+                                <span className="flex-wrap break-all text-pretty">
+                                    {licenseCounts?.orderCount?.toLocaleString() ||
+                                        "0"}
+                                </span>
+                            }
+                            icon={<BiShield />}
+                        />
+                        <PanelCard
+                            header="BEKLEYEN SİPARİŞ"
+                            color="orange"
+                            content={
+                                <span className="flex-wrap break-all text-pretty">
+                                    {licenseCounts?.waitingCount?.toLocaleString() ||
+                                        "0"}
+                                </span>
+                            }
+                            icon={<BiShield />}
+                        />
+                    </div>
+
                     <Card className="w-full min-w-72 border-1 border-b-3">
+                        <CardBody className="flex flex-col gap-2">
+                            <div className="w-full text-center">
+                                <h6
+                                    className={`text-sm uppercase font-bold text-zinc-700`}
+                                >
+                                    SİPARİŞLER
+                                </h6>
+                            </div>
+
+                            <Divider />
+
+                            <div className="flex flex-1 items-center">
+                                <Chart
+                                    chartType="PieChart"
+                                    width="100%"
+                                    height={300}
+                                    data={[
+                                        ["Durum", "Lisans Sayısı"],
+                                        [
+                                            "Sipariş",
+                                            Number(licenseCounts?.orderCount),
+                                        ],
+                                        [
+                                            "Bekleyen",
+                                            Number(licenseCounts?.waitingCount),
+                                        ],
+                                    ]}
+                                    options={{
+                                        // is3D: true,
+                                        // title: "Siparişler",
+                                        fontSize: 12,
+                                        colors: [
+                                            "rgb(250, 204, 21)",
+                                            "rgb(251, 146, 60)",
+                                        ],
+                                        chartArea: {
+                                            top: 12,
+                                            width: "100%",
+                                            height: 250,
+                                        },
+                                        legend: {
+                                            position: "bottom",
+                                            alignment: "center",
+                                            maxLines: 2,
+                                            textStyle: {
+                                                color: "gray",
+                                            },
+                                        },
+                                    }}
+                                />
+                            </div>
+                        </CardBody>
+                    </Card>
+
+                    {/* <Card className="w-full min-w-72 border-1 border-b-3">
                         <CardBody className="flex flex-col gap-2">
                             <div className="w-full text-center">
                                 <h6 className="text-sm uppercase font-bold text-zinc-700">
@@ -267,73 +284,146 @@ export default function Dashboard() {
                             <Divider />
 
                             <div className="flex flex-1 items-center">
-                                <Doughnut
+                                <Chart
+                                    chartType="PieChart"
+                                    width="100%"
+                                    height={300}
+                                    data={[
+                                        ["Süre", "Lisans Sayısı"],
+                                        [
+                                            "Devam Eden",
+                                            Number(
+                                                licenseCounts?.continuesCount,
+                                            ),
+                                        ],
+                                        [
+                                            "30 Günden Az",
+                                            Number(licenseCounts?.endingCount),
+                                        ],
+                                        [
+                                            "Süresi Dolan",
+                                            Number(licenseCounts?.endedCount),
+                                        ],
+                                    ]}
                                     options={{
-                                        plugins: {
-                                            // title: {
-                                            //     position: "top",
-                                            //     text: "Süresi Dolanlar",
-                                            // },
-                                            legend: {
-                                                position: "bottom",
+                                        // is3D: true,
+                                        // title: "My Daily Activities",
+                                        pieHole: 0.4,
+                                        fontSize: 12,
+                                        colors: [
+                                            "rgb(34, 197, 94)",
+                                            "rgb(250, 204, 21)",
+                                            "rgb(239, 68, 68)",
+                                        ],
+                                        chartArea: {
+                                            top: 12,
+                                            width: "100%",
+                                            height: 250,
+                                        },
+                                        legend: {
+                                            position: "bottom",
+                                            alignment: "center",
+                                            maxLines: 3,
+                                            textStyle: {
+                                                color: "gray",
                                             },
                                         },
                                     }}
-                                    data={{
-                                        labels: [
-                                            "Devam Eden",
+                                />
+                            </div>
+                        </CardBody>
+                    </Card> */}
+
+                    <Card className="col-span-3 xl:col-span-2 w-full min-w-72 border-1 border-b-3">
+                        <CardBody className="flex flex-col gap-2 place-items-center">
+                            <div className="w-full text-center">
+                                <h6 className="text-sm uppercase font-bold text-zinc-700">
+                                    SÜRESİ DOLANLAR
+                                </h6>
+                            </div>
+
+                            <Divider />
+
+                            <div className="flex flex-1 items-center py-2">
+                                <Chart
+                                    chartType="BarChart"
+                                    data={[
+                                        [
+                                            "Süre",
+                                            "Lisans Sayısı",
+                                            { role: "style" },
+                                            { role: "annotation" },
+                                        ],
+                                        [
+                                            "Süresi Dolan",
+                                            10 ||
+                                                Number(
+                                                    licenseCounts?.endedCount,
+                                                ),
+                                            "rgb(239, 68, 68)",
+                                            10 ||
+                                                Number(
+                                                    licenseCounts?.endedCount,
+                                                ),
+                                        ],
+                                        [
                                             "30 Günden Az",
-                                            "Biten",
+                                            Number(
+                                                licenseCounts?.endingCount,
+                                            ) || 17,
+                                            "rgb(250, 204, 21)",
+                                            Number(
+                                                licenseCounts?.endingCount,
+                                            ) || 17,
                                         ],
-                                        datasets: [
-                                            {
-                                                label: "Lisans Sayısı",
-                                                data: [
-                                                    Number(
-                                                        licenseCounts?.continuesCount,
-                                                    ),
-                                                    Number(
-                                                        licenseCounts?.endingCount,
-                                                    ),
-                                                    Number(
-                                                        licenseCounts?.endedCount,
-                                                    ),
-                                                ],
-                                                backgroundColor: [
-                                                    "rgb(34 197 94)",
-                                                    "rgb(250 204 21)",
-                                                    "rgb(239 68 68)",
-                                                ],
-                                                borderWidth: 1,
+                                        [
+                                            "Devam Eden",
+                                            150 ||
+                                                Number(
+                                                    licenseCounts?.continuesCount,
+                                                ),
+                                            "rgb(34, 197, 94)",
+                                            150 ||
+                                                Number(
+                                                    licenseCounts?.continuesCount,
+                                                ),
+                                        ],
+                                    ]}
+                                    options={{
+                                        isStacked: true,
+                                        width: 600,
+                                        height: 300,
+                                        fontSize: 12,
+                                        bar: { groupWidth: '75%'},
+                                        chartArea: {
+                                            top: 20,
+                                            width: "80%",
+                                            height: "80%"
+                                        },
+                                        hAxis: {
+                                            title: "Lisans Sayısı",
+                                            titleTextStyle: {
+                                                color: "gray",
                                             },
-                                        ],
+                                            textStyle: { color: "gray" },
+                                            baselineColor: "gray",
+                                        },
+                                        vAxis: {
+                                            textStyle: { color: "gray" },
+                                        },
+                                        legend: {
+                                            position: "none",
+                                            alignment: "center",
+                                            maxLines: 3,
+                                            textStyle: {
+                                                color: "gray",
+                                            },
+                                        },
                                     }}
                                 />
                             </div>
                         </CardBody>
                     </Card>
-                    {/* <PanelCard
-                        header="SİPARİŞ"
-                        color="yellow"
-                        content={
-                            <span className="flex-wrap break-all text-pretty">
-                                {licenseCounts?.orderCount?.toLocaleString() ||
-                                    "-"}
-                            </span>
-                        }
-                        icon={<BiShieldMinus />}
-                    />
-                    <PanelCard
-                        header="BEKLEYEN"
-                        color="orange"
-                        content={
-                            <span className="flex-wrap break-all text-pretty">
-                                {licenseCounts?.waitingCount?.toLocaleString() ||
-                                    "-"}
-                            </span>
-                        }
-                        icon={<BiShieldQuarter />}
-                    /> */}
                 </div>
 
                 {/* <Divider className="my-4" /> */}
