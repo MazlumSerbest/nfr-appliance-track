@@ -28,6 +28,7 @@ import {
     getDealers,
     getSuppliers,
 } from "@/lib/data";
+import { setApplianceDemoStatus } from "@/lib/prisma";
 
 interface IFormInput {
     id: number;
@@ -136,7 +137,8 @@ export default function ApplianceDetail({
                     <CardBody className="gap-3">
                         <div className="flex items-center pb-2 pl-1">
                             <p className="text-3xl font-bold text-sky-500">
-                                {data.serialNo}
+                                {data.serialNo +
+                                    (data.isDemo ? " (Demo Cihaz)" : "")}
                             </p>
                             <div className="flex-1"></div>
                             <BiX
@@ -148,7 +150,11 @@ export default function ApplianceDetail({
                             <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
                                 <dt className="font-medium">Durum</dt>
                                 <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                    {(!data.customerId ? (
+                                    {(data.isDemo ? (
+                                        <span className="inline-flex items-center rounded-md bg-zinc-50 px-2 py-1 text-sm font-medium text-zinc-500 ring-1 ring-inset ring-zinc-500/20">
+                                            Demo
+                                        </span>
+                                    ) : !data.customerId ? (
                                         <span className="inline-flex items-center rounded-md bg-sky-50 px-2 py-1 text-sm font-medium text-sky-500 ring-1 ring-inset ring-sky-500/20">
                                             Stok
                                         </span>
@@ -344,6 +350,7 @@ export default function ApplianceDetail({
                     {currUser?.role === "technical" ? undefined : (
                         <CardFooter className="flex gap-2">
                             <div className="flex-1"></div>
+
                             <RegInfo
                                 data={data}
                                 isButton
@@ -356,6 +363,32 @@ export default function ApplianceDetail({
                                     </Button>
                                 }
                             />
+
+                            <Button
+                                color="primary"
+                                className="bg-zinc-500"
+                                onClick={async () => {
+                                    const res = await setApplianceDemoStatus(
+                                        data.id,
+                                        !data.isDemo,
+                                        currUser?.username,
+                                    );
+                                    mutate();
+
+                                    if (res)
+                                        toast.success(
+                                            "Cihaz durumu başarıyla güncellendi.",
+                                        );
+                                    else
+                                        toast.error(
+                                            "Cihaz durumu güncellenirken bir hata oluştu.",
+                                        );
+                                }}
+                            >
+                                {data.isDemo
+                                    ? "Demolardan Çıkart"
+                                    : "Demo Cihaz Yap"}
+                            </Button>
 
                             <DeleteButton
                                 table="appliances"

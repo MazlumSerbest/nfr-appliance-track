@@ -331,7 +331,7 @@ export default function DataTable(props: Props) {
                         cursor: "bg-sky-500 text-white",
                     }}
                     color="default"
-                    isDisabled={hasSearchFilter}
+                    // isDisabled={hasSearchFilter}
                     page={page}
                     total={pages}
                     onChange={setPage}
@@ -343,7 +343,7 @@ export default function DataTable(props: Props) {
                 </span> */}
             </div>
         );
-    }, [, /*selectedKeys*/ page, pages, hasSearchFilter]);
+    }, [, /*selectedKeys*/ page, pages]);
     //#endregion
 
     return (

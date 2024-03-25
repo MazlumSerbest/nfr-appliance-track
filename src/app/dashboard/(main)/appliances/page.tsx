@@ -35,6 +35,7 @@ interface IFormInput {
     boughtAt: string;
     soldAt: string;
     note?: string;
+    isDemo: boolean;
     customerId: number;
     dealerId: number;
     subDealerId: number;
@@ -56,6 +57,9 @@ export default function Appliances() {
     const [activeAppliances, setActiveAppliances] = useState<
         vAppliance[] | null
     >(null);
+    const [demoAppliances, setDemoAppliances] = useState<vAppliance[] | null>(
+        null,
+    );
 
     const [products, setProducts] = useState<ListBoxItem[] | null>(null);
     const [customers, setCustomers] = useState<ListBoxItem[] | null>(null);
@@ -66,7 +70,7 @@ export default function Appliances() {
     const { register, reset, handleSubmit, control } = useForm<IFormInput>({});
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         data.createdBy = currUser?.username ?? "";
-
+        
         await fetch("/api/appliance", {
             method: "POST",
             body: JSON.stringify(data),
@@ -248,14 +252,15 @@ export default function Appliances() {
     const { data, error, mutate } = useSWR("/api/appliance", null, {
         onSuccess: (data) => {
             setStockAppliances(
-                data.filter((a: vAppliance) => a.status == "stock"),
+                data.filter((a: vAppliance) => a.status == "stock" && !a.isDemo),
             );
             setOrderAppliances(
-                data.filter((a: vAppliance) => a.status == "order"),
+                data.filter((a: vAppliance) => a.status == "order" && !a.isDemo),
             );
             setActiveAppliances(
-                data.filter((a: vAppliance) => a.status == "active"),
+                data.filter((a: vAppliance) => a.status == "active" && !a.isDemo),
             );
+            setDemoAppliances(data.filter((a: vAppliance) => a.isDemo));
         },
     });
 
@@ -276,11 +281,37 @@ export default function Appliances() {
                     aria-label="Appliance Tab"
                     color="primary"
                     size="md"
+                    defaultSelectedKey="stock"
                     classNames={{
                         cursor: "w-full bg-sky-500",
                         tab: "px-10",
                     }}
                 >
+                    <Tab key="demo" title="Demo" className="w-full">
+                        <DataTable
+                            isCompact
+                            isStriped
+                            emptyContent="Herhangi bir cihaz bulunamadı!"
+                            defaultRowsPerPage={20}
+                            data={demoAppliances || []}
+                            columns={columns}
+                            renderCell={renderCell}
+                            sortOption={sort}
+                            initialVisibleColumNames={visibleColumns}
+                            activeOptions={[]}
+                            onAddNew={
+                                currUser?.role == "technical"
+                                    ? undefined
+                                    : () => {
+                                          reset({ isDemo: true });
+                                          onOpen();
+                                      }
+                            }
+                            onDoubleClick={(item) => {
+                                router.push(`/dashboard/appliances/${item.id}`);
+                            }}
+                        />
+                    </Tab>
                     <Tab key="stock" title="Stok" className="w-full">
                         <DataTable
                             isCompact
@@ -380,14 +411,13 @@ export default function Appliances() {
                             className="flex flex-col gap-2"
                             onSubmit={handleSubmit(onSubmit)}
                         >
-
-                        <div className="relative flex items-center">
-                            <div className="flex-grow border-t border-zinc-200"></div>
-                            <span className="flex-shrink mx-4 text-base text-zinc-500">
-                                Ürün Bilgileri
-                            </span>
-                            <div className="flex-grow border-t border-zinc-200"></div>
-                        </div>
+                            <div className="relative flex items-center">
+                                <div className="flex-grow border-t border-zinc-200"></div>
+                                <span className="flex-shrink mx-4 text-base text-zinc-500">
+                                    Ürün Bilgileri
+                                </span>
+                                <div className="flex-grow border-t border-zinc-200"></div>
+                            </div>
 
                             <div>
                                 <label

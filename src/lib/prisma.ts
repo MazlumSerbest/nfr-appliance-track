@@ -86,6 +86,26 @@ export async function setLicenseAppliance(
     else return false;
 }
 
+export async function setApplianceDemoStatus(
+    applianceId: number,
+    isDemo: boolean,
+    updatedBy?: string,
+) {
+    if (!updatedBy) return false;
+
+    const appliance = await prisma.appliances.update({
+        data: {
+            isDemo: isDemo,
+        },
+        where: {
+            id: applianceId,
+        },
+    });
+
+    if (appliance.isDemo == isDemo) return true;
+    else return false;
+}
+
 export async function newAuthorizedPerson(
     authorizedPerson: AuthorizedPerson,
     createdBy?: string,
