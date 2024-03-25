@@ -80,10 +80,10 @@ export async function PUT(
             appliance.updatedAt = new Date().toISOString();
             appliance.boughtAt = appliance.boughtAt
                 ? new Date(appliance.boughtAt).toISOString()
-                : undefined;
+                : null;
             appliance.soldAt = appliance.soldAt
                 ? new Date(appliance.soldAt).toISOString()
-                : undefined;
+                : null;
 
             // const checkSerialNo = await prisma.appliances.findUnique({
             //     where: {

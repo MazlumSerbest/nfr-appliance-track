@@ -72,7 +72,7 @@ model licenses {
   subDealerId   Int?
   boughtTypeId  Int?
   note          String?      @db.VarChar
-  orderedAt     DateTime?    @db.Timestamptz(6)
+  orderedAt     DateTime?    @db.Date
   appSerialNo   String?      @db.VarChar
   appliance     appliances?  @relation(fields: [applianceId], references: [id])
   boughtType    boughtTypes? @relation(fields: [boughtTypeId], references: [id])

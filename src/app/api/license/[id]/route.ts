@@ -74,19 +74,19 @@ export async function PUT(
             license.updatedAt = new Date().toISOString();
             license.startDate = license.startDate
                 ? new Date(license.startDate).toISOString()
-                : undefined;
+                : null;
             license.expiryDate = license.expiryDate
                 ? new Date(license.expiryDate).toISOString()
-                : undefined;
+                : null;
             license.boughtAt = license.boughtAt
                 ? new Date(license.boughtAt).toISOString()
-                : undefined;
+                : null;
             license.soldAt = license.soldAt
                 ? new Date(license.soldAt).toISOString()
-                : undefined;
+                : null;
             license.orderedAt = license.orderedAt
                 ? new Date(license.orderedAt).toISOString()
-                : undefined;
+                : null;
 
             // const checkSerialNo = await prisma.licenses.findUnique({
             //     where: {

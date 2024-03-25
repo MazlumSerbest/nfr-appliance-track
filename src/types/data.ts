@@ -22,9 +22,10 @@ type Appliance = Entity & {
     subDealerId: number;
     supplierId: number;
     serialNo: string;
-    boughtAt?: string;
-    soldAt?: string;
+    boughtAt?: string | null;
+    soldAt?: string | null;
     note?: string;
+    isDemo: boolean;
 };
 
 type License = Entity & {
@@ -35,11 +36,11 @@ type License = Entity & {
     supplierId: number;
     licenseTypeId: number;
     boughtTypeId?: number;
-    startDate?: string;
-    expiryDate?: string;
-    boughtAt?: string;
-    soldAt?: string;
-    orderedAt?: string;
+    startDate?: string | null;
+    expiryDate?: string | null;
+    boughtAt?: string | null;
+    soldAt?: string | null;
+    orderedAt?: string | null;
     note?: string;
     appSerialNo?: string;
     licenseType: any;
