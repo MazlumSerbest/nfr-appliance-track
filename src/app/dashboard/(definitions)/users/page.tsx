@@ -19,6 +19,7 @@ import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
 import DataTable from "@/components/DataTable";
 import BoolChip from "@/components/BoolChip";
 import DeleteButton from "@/components/buttons/DeleteButton";
+import ResetButton from "@/components/buttons/ResetButton";
 import RegInfo from "@/components/buttons/RegInfo";
 import { BiInfoCircle, BiTrash } from "react-icons/bi";
 import { DateTimeFormat } from "@/utils/date";
@@ -214,16 +215,9 @@ export default function Users() {
                                                     </span>
                                                 }
                                             />
-                                            {/* <Tooltip
-                                                key={user.id + "-pass"}
-                                                content="Şifre Değiştir"
-                                            >
-                                                <span className="text-xl text-sky-500 active:opacity-50 cursor-pointer">
-                                                    <BiLockAlt
-                                                        onClick={() => {}}
-                                                    />
-                                                </span>
-                                            </Tooltip> */}
+
+                                            <ResetButton userId={user.id} />
+
                                             <DeleteButton
                                                 table="users"
                                                 data={user}

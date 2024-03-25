@@ -1,5 +1,4 @@
 import { ReactNode } from "react";
-import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 import { useDisclosure } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/popover";
@@ -73,7 +72,7 @@ export default function DeleteButton(props: Props) {
                         variant="solid"
                         color="danger"
                         className="bg-red-600"
-                        onClick={async () => {
+                        onPress={async () => {
                             const res = await deleteData(
                                 table,
                                 data.id,

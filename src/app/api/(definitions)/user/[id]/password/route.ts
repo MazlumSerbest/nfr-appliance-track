@@ -1,17 +1,18 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import prisma from "@/utils/db";
 import bcrypt from "bcrypt";
 
 export async function PUT(
-    request: Request,
-    { params }: { params: { id: string } },
+    request: NextRequest,
+    { params }: { params: { id: string; reset: boolean } },
 ) {
     try {
         const session = await getServerSession();
 
         if (session) {
             const data: any = await request.json();
+            const reset: boolean = request.nextUrl.searchParams.get("reset") === "true";
 
             const user = await prisma.users.findFirst({
                 where: {
@@ -20,6 +21,35 @@ export async function PUT(
             });
 
             if (user) {
+                if (reset) {
+                    const hashedNewPassword = await bcrypt.hash("123456", 10);
+
+                    const updateUser = await prisma.users.update({
+                        where: {
+                            id: Number(params.id),
+                        },
+                        data: {
+                            password: hashedNewPassword,
+                            updatedAt: new Date().toISOString(),
+                            updatedBy: user?.username,
+                        },
+                    });
+
+                    if (hashedNewPassword == updateUser.password) {
+                        return NextResponse.json({
+                            message: "Şifre başarıyla sıfırlandı!",
+                            status: 200,
+                            ok: true,
+                        });
+                    } else {
+                        return NextResponse.json({
+                            message: "Şifre sıfırlanamadı!",
+                            status: 400,
+                            ok: false,
+                        });
+                    }
+                }
+
                 const passwordsMatch = await bcrypt.compare(
                     data.password,
                     user.password,
