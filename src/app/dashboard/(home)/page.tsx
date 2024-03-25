@@ -356,37 +356,25 @@ export default function Dashboard() {
                                         ],
                                         [
                                             "Süresi Dolan",
-                                            10 ||
-                                                Number(
-                                                    licenseCounts?.endedCount,
-                                                ),
+                                            Number(licenseCounts?.endedCount),
                                             "rgb(239, 68, 68)",
-                                            10 ||
-                                                Number(
-                                                    licenseCounts?.endedCount,
-                                                ),
+                                            Number(licenseCounts?.endedCount),
                                         ],
                                         [
                                             "30 Günden Az",
-                                            Number(
-                                                licenseCounts?.endingCount,
-                                            ) || 17,
+                                            Number(licenseCounts?.endingCount),
                                             "rgb(250, 204, 21)",
-                                            Number(
-                                                licenseCounts?.endingCount,
-                                            ) || 17,
+                                            Number(licenseCounts?.endingCount),
                                         ],
                                         [
                                             "Devam Eden",
-                                            150 ||
-                                                Number(
-                                                    licenseCounts?.continuesCount,
-                                                ),
+                                            Number(
+                                                licenseCounts?.continuesCount,
+                                            ),
                                             "rgb(34, 197, 94)",
-                                            150 ||
-                                                Number(
-                                                    licenseCounts?.continuesCount,
-                                                ),
+                                            Number(
+                                                licenseCounts?.continuesCount,
+                                            ),
                                         ],
                                     ]}
                                     options={{
@@ -394,11 +382,11 @@ export default function Dashboard() {
                                         width: 600,
                                         height: 300,
                                         fontSize: 12,
-                                        bar: { groupWidth: '75%'},
+                                        bar: { groupWidth: "75%" },
                                         chartArea: {
                                             top: 20,
                                             width: "80%",
-                                            height: "80%"
+                                            height: "80%",
                                         },
                                         hAxis: {
                                             title: "Lisans Sayısı",
