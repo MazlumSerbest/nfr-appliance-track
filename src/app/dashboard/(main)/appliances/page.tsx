@@ -70,7 +70,7 @@ export default function Appliances() {
     const { register, reset, handleSubmit, control } = useForm<IFormInput>({});
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         data.createdBy = currUser?.username ?? "";
-        
+
         await fetch("/api/appliance", {
             method: "POST",
             body: JSON.stringify(data),
@@ -252,13 +252,19 @@ export default function Appliances() {
     const { data, error, mutate } = useSWR("/api/appliance", null, {
         onSuccess: (data) => {
             setStockAppliances(
-                data.filter((a: vAppliance) => a.status == "stock" && !a.isDemo),
+                data.filter(
+                    (a: vAppliance) => a.status == "stock" && !a.isDemo,
+                ),
             );
             setOrderAppliances(
-                data.filter((a: vAppliance) => a.status == "order" && !a.isDemo),
+                data.filter(
+                    (a: vAppliance) => a.status == "order" && !a.isDemo,
+                ),
             );
             setActiveAppliances(
-                data.filter((a: vAppliance) => a.status == "active" && !a.isDemo),
+                data.filter(
+                    (a: vAppliance) => a.status == "active" && !a.isDemo,
+                ),
             );
             setDemoAppliances(data.filter((a: vAppliance) => a.isDemo));
         },
@@ -371,7 +377,10 @@ export default function Appliances() {
                             data={activeAppliances || []}
                             columns={columns}
                             renderCell={renderCell}
-                            sortOption={sort}
+                            sortOption={{
+                                column: "soldAt",
+                                direction: "descending",
+                            }}
                             initialVisibleColumNames={visibleColumns}
                             activeOptions={[]}
                             onAddNew={

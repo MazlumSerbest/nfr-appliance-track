@@ -484,7 +484,10 @@ export default function Licenses() {
                             columns={columns}
                             renderCell={renderCell}
                             searchValue={""}
-                            sortOption={sort}
+                            sortOption={{
+                                column: "orderedAt",
+                                direction: "descending",
+                            }}
                             initialVisibleColumNames={visibleColumns}
                             activeOptions={[]}
                             onAddNew={
