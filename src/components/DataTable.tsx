@@ -1,4 +1,4 @@
-import React, { Key, ReactNode } from "react";
+import React, { Key, ReactNode, useEffect } from "react";
 import {
     Table,
     TableHeader,
@@ -25,14 +25,15 @@ type Props = {
     columns: Column[];
     data: any;
     emptyContent?: ReactNode;
-    defaultRowsPerPage?: 10 | 20 | 50;
     isCompact: boolean;
     isStriped: boolean;
     className?: string;
     activeOptions?: ActiveOption[];
     renderCell: (item: any, columnKey: Key) => ReactNode;
     sortOption: SortDescriptor;
+    storageKey?: string;
     searchValue?: string;
+    defaultRowsPerPage?: 10 | 20 | 50;
     initialVisibleColumNames: string[];
     onDoubleClick?: (item: any) => any;
     onAddNew?: () => void;
@@ -43,21 +44,22 @@ export default function DataTable(props: Props) {
         columns,
         data,
         emptyContent,
-        defaultRowsPerPage,
         isCompact,
         isStriped,
         className,
         activeOptions,
         renderCell,
         sortOption,
-        searchValue,
+        storageKey = "",
+        searchValue = "",
+        defaultRowsPerPage,
         initialVisibleColumNames,
         onDoubleClick,
         onAddNew,
     } = props;
 
     type DataType = (typeof data)[0];
-    const [filterValue, setFilterValue] = React.useState(searchValue ?? "");
+    const [filterValue, setFilterValue] = React.useState(searchValue);
     // const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
     //     new Set([]),
     // );
@@ -65,9 +67,7 @@ export default function DataTable(props: Props) {
         new Set(initialVisibleColumNames),
     );
     const [activeFilter, setActiveFilter] = React.useState<Selection>("all");
-    const [rowsPerPage, setRowsPerPage] = React.useState<number>(
-        defaultRowsPerPage || 10,
-    );
+    const [rowsPerPage, setRowsPerPage] = React.useState<number>(defaultRowsPerPage || 10);
     const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
         column: sortOption.column,
         direction: sortOption.direction,
@@ -155,18 +155,31 @@ export default function DataTable(props: Props) {
         (e: React.ChangeEvent<HTMLSelectElement>) => {
             setRowsPerPage(Number(e.target.value));
             setPage(1);
+
+            window.localStorage.setItem(
+                `${storageKey}RowsPerPage`,
+                JSON.stringify(Number(e.target.value)),
+            );
         },
-        [],
+        [storageKey],
     );
 
-    const onSearchChange = React.useCallback((value?: string) => {
-        if (value) {
-            setFilterValue(value);
-            setPage(1);
-        } else {
-            setFilterValue("");
-        }
-    }, []);
+    const onSearchChange = React.useCallback(
+        (value?: string) => {
+            if (value) {
+                setFilterValue(value);
+                setPage(1);
+            } else {
+                setFilterValue("");
+            }
+
+            window.localStorage.setItem(
+                `${storageKey}SearchValue`,
+                JSON.stringify(value),
+            );
+        },
+        [storageKey],
+    );
 
     //#region Top Content
     const topContent = React.useMemo(() => {
@@ -190,7 +203,13 @@ export default function DataTable(props: Props) {
                         value={filterValue}
                         variant="bordered"
                         onClear={() => setFilterValue("")}
-                        onValueChange={onSearchChange}
+                        onValueChange={(v) => {
+                            onSearchChange(v);
+                            window.localStorage.setItem(
+                                `${storageKey}SearchValue`,
+                                JSON.stringify(v),
+                            );
+                        }}
                     />
                     <div className="flex gap-3">
                         {activeOptions?.length ? (
@@ -245,7 +264,16 @@ export default function DataTable(props: Props) {
                                 closeOnSelect={false}
                                 selectedKeys={visibleColumns}
                                 selectionMode="multiple"
-                                onSelectionChange={setVisibleColumns}
+                                onSelectionChange={(keys) => {
+                                    setVisibleColumns(keys);
+
+                                    window.localStorage.setItem(
+                                        `${storageKey}VisibleColumns`,
+                                        JSON.stringify(
+                                            Array.from(keys).map((key) => key),
+                                        ),
+                                    );
+                                }}
                             >
                                 {columns.map((column) => (
                                     <DropdownItem
@@ -282,22 +310,13 @@ export default function DataTable(props: Props) {
                             className="bg-transparent outline-none text-zinc-400 text-sm ml-2"
                             onChange={onRowsPerPageChange}
                         >
-                            <option
-                                value="10"
-                                selected={defaultRowsPerPage == 10}
-                            >
+                            <option value="10" selected={rowsPerPage == 10}>
                                 10
                             </option>
-                            <option
-                                value="20"
-                                selected={defaultRowsPerPage == 20}
-                            >
+                            <option value="20" selected={rowsPerPage == 20}>
                                 20
                             </option>
-                            <option
-                                value="50"
-                                selected={defaultRowsPerPage == 50}
-                            >
+                            <option value="50" selected={rowsPerPage == 50}>
                                 50
                             </option>
                         </select>
@@ -306,16 +325,17 @@ export default function DataTable(props: Props) {
             </div>
         );
     }, [
-        columns,
-        activeOptions,
         filterValue,
+        activeOptions,
         activeFilter,
         visibleColumns,
-        onSearchChange,
-        onRowsPerPageChange,
+        columns,
         onAddNew,
         data.length,
-        defaultRowsPerPage,
+        onRowsPerPageChange,
+        rowsPerPage,
+        onSearchChange,
+        storageKey,
     ]);
     //#endregion
 
@@ -334,7 +354,13 @@ export default function DataTable(props: Props) {
                     // isDisabled={hasSearchFilter}
                     page={page}
                     total={pages}
-                    onChange={setPage}
+                    onChange={(p) => {
+                        setPage(p);
+                        window.localStorage.setItem(
+                            `${storageKey}CurrentPage`,
+                            JSON.stringify(p),
+                        );
+                    }}
                 />
                 {/* <span className="text-sm text-zinc-400">
                     {selectedKeys === "all"
@@ -343,8 +369,32 @@ export default function DataTable(props: Props) {
                 </span> */}
             </div>
         );
-    }, [, /*selectedKeys*/ page, pages]);
+    }, [page, pages, storageKey]);
     //#endregion
+
+    useEffect(() => {
+        if (storageKey) {
+            let searchValue = window.localStorage.getItem(
+                `${storageKey}SearchValue`,
+            );
+            let currentPage = window.localStorage.getItem(
+                `${storageKey}CurrentPage`,
+            );
+            let visibleColumns = window.localStorage.getItem(
+                `${storageKey}VisibleColumns`,
+            );
+            let rowsPerPage = window.localStorage.getItem(
+                `${storageKey}RowsPerPage`,
+            );
+
+            searchValue ? setFilterValue(JSON.parse(searchValue)) : null;
+            currentPage ? setPage(parseInt(currentPage)) : null;
+            visibleColumns
+                ? setVisibleColumns(JSON.parse(visibleColumns))
+                : null;
+            rowsPerPage ? setRowsPerPage(parseInt(rowsPerPage)) : null;
+        }
+    }, [storageKey]);
 
     return (
         <Table
