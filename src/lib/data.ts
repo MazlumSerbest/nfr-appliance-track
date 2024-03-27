@@ -91,12 +91,12 @@ export async function getLicenseTypes(
 
     if (forListBox)
         return licenseTypes
-            .filter((lt: LicenseType) => lt.active)
-            .map((lt: LicenseType) => ({
+            .filter((lt: vLicenseType) => lt.active)
+            .map((lt: vLicenseType) => ({
                 id: lt.id,
-                name: lt.type + " - " + lt.duration + " ay" + (lt.brand?.name ? ` (${lt.brand?.name})` : ""),
+                name: lt.brandName + " " + lt.type + " - " + lt.duration + " ay",
             }));
-    return licenseTypes.filter((lt: LicenseType) => lt.active);
+    return licenseTypes.filter((lt: vLicenseType) => lt.active);
 }
 
 export async function getBoughtTypes(forListBox?: boolean) {

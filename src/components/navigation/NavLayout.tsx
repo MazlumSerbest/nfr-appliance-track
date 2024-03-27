@@ -55,7 +55,9 @@ export default function NavLayout() {
                 }
             >
                 <Logo width={181} height={60} />
+
                 <Divider />
+
                 <div className="flex flex-col flex-grow overflow-x-hidden overflow-y-auto min-h-0">
                     <Listbox
                         variant="bordered"
@@ -208,10 +210,14 @@ export default function NavLayout() {
                                         );
                                     })}
                             </ListboxSection>
-                        ) : <></>}
+                        ) : (
+                            <></>
+                        )}
                     </Listbox>
                 </div>
+
                 <Divider />
+
                 <UserCard />
             </div>
         </>
