@@ -67,7 +67,9 @@ export default function DataTable(props: Props) {
         new Set(initialVisibleColumNames),
     );
     const [activeFilter, setActiveFilter] = React.useState<Selection>("all");
-    const [rowsPerPage, setRowsPerPage] = React.useState<number>(defaultRowsPerPage || 10);
+    const [rowsPerPage, setRowsPerPage] = React.useState<number>(
+        defaultRowsPerPage || 10,
+    );
     const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
         column: sortOption.column,
         direction: sortOption.direction,
@@ -156,9 +158,19 @@ export default function DataTable(props: Props) {
             setRowsPerPage(Number(e.target.value));
             setPage(1);
 
+            if(!storageKey) return;
+            let tableStateJSON = window.localStorage.getItem(
+                `${storageKey}TableState`,
+            );
+            let tableState: TableState = tableStateJSON
+                ? JSON.parse(tableStateJSON)
+                : null;
             window.localStorage.setItem(
-                `${storageKey}RowsPerPage`,
-                JSON.stringify(Number(e.target.value)),
+                `${storageKey}TableState`,
+                JSON.stringify({
+                    ...tableState,
+                    rowsPerPage: Number(e.target.value),
+                }),
             );
         },
         [storageKey],
@@ -173,9 +185,19 @@ export default function DataTable(props: Props) {
                 setFilterValue("");
             }
 
+            if(!storageKey) return;
+            let tableStateJSON = window.localStorage.getItem(
+                `${storageKey}TableState`,
+            );
+            let tableState: TableState = tableStateJSON
+                ? JSON.parse(tableStateJSON)
+                : null;
             window.localStorage.setItem(
-                `${storageKey}SearchValue`,
-                JSON.stringify(value),
+                `${storageKey}TableState`,
+                JSON.stringify({
+                    ...tableState,
+                    searchValue: value,
+                }),
             );
         },
         [storageKey],
@@ -203,13 +225,7 @@ export default function DataTable(props: Props) {
                         value={filterValue}
                         variant="bordered"
                         onClear={() => setFilterValue("")}
-                        onValueChange={(v) => {
-                            onSearchChange(v);
-                            window.localStorage.setItem(
-                                `${storageKey}SearchValue`,
-                                JSON.stringify(v),
-                            );
-                        }}
+                        onValueChange={onSearchChange}
                     />
                     <div className="flex gap-3">
                         {activeOptions?.length ? (
@@ -267,11 +283,22 @@ export default function DataTable(props: Props) {
                                 onSelectionChange={(keys) => {
                                     setVisibleColumns(keys);
 
+                                    if(!storageKey) return;
+                                    let tableStateJSON =
+                                        window.localStorage.getItem(
+                                            `${storageKey}TableState`,
+                                        );
+                                    let tableState: TableState = tableStateJSON
+                                        ? JSON.parse(tableStateJSON)
+                                        : null;
                                     window.localStorage.setItem(
-                                        `${storageKey}VisibleColumns`,
-                                        JSON.stringify(
-                                            Array.from(keys).map((key) => key),
-                                        ),
+                                        `${storageKey}TableState`,
+                                        JSON.stringify({
+                                            ...tableState,
+                                            visibleColumns: Array.from(
+                                                keys,
+                                            ).map((key) => key),
+                                        }),
                                     );
                                 }}
                             >
@@ -356,9 +383,20 @@ export default function DataTable(props: Props) {
                     total={pages}
                     onChange={(p) => {
                         setPage(p);
+
+                        if(!storageKey) return;
+                        let tableStateJSON = window.localStorage.getItem(
+                            `${storageKey}TableState`,
+                        );
+                        let tableState: TableState = tableStateJSON
+                            ? JSON.parse(tableStateJSON)
+                            : null;
                         window.localStorage.setItem(
-                            `${storageKey}CurrentPage`,
-                            JSON.stringify(p),
+                            `${storageKey}TableState`,
+                            JSON.stringify({
+                                ...tableState,
+                                currentPage: p,
+                            }),
                         );
                     }}
                 />
@@ -373,26 +411,20 @@ export default function DataTable(props: Props) {
     //#endregion
 
     useEffect(() => {
-        if (storageKey) {
-            let searchValue = window.localStorage.getItem(
-                `${storageKey}SearchValue`,
-            );
-            let currentPage = window.localStorage.getItem(
-                `${storageKey}CurrentPage`,
-            );
-            let visibleColumns = window.localStorage.getItem(
-                `${storageKey}VisibleColumns`,
-            );
-            let rowsPerPage = window.localStorage.getItem(
-                `${storageKey}RowsPerPage`,
-            );
+        let tableStateJSON = window.localStorage.getItem(
+            `${storageKey}TableState`,
+        );
+        let tableState: TableState = tableStateJSON
+            ? JSON.parse(tableStateJSON)
+            : null;
 
-            searchValue ? setFilterValue(JSON.parse(searchValue)) : null;
-            currentPage ? setPage(parseInt(currentPage)) : null;
-            visibleColumns
-                ? setVisibleColumns(JSON.parse(visibleColumns))
+        if (tableState) {
+            setFilterValue(tableState.searchValue);
+            setPage(tableState.currentPage);
+            tableState.visibleColumns
+                ? setVisibleColumns(new Set(tableState.visibleColumns))
                 : null;
-            rowsPerPage ? setRowsPerPage(parseInt(rowsPerPage)) : null;
+            setRowsPerPage(tableState.rowsPerPage);
         }
     }, [storageKey]);
 

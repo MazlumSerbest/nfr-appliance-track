@@ -14,3 +14,14 @@ type Path = {
     roles?: string[];
     icon: React.ReactNode;
 };
+
+type PageState = {
+    openTab?: string;
+}
+
+type TableState = {
+    searchValue: string;
+    currentPage: number;
+    visibleColumns: string[];
+    rowsPerPage: number;
+}
