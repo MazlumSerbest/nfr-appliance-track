@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import { useRouter } from "next/navigation";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import { useReadLocalStorage } from "usehooks-ts";
 import toast from "react-hot-toast";
 
 import {
@@ -15,7 +16,6 @@ import {
 import { Tabs, Tab } from "@nextui-org/tabs";
 import { SortDescriptor } from "@nextui-org/table";
 import { Button } from "@nextui-org/button";
-import { Divider } from "@nextui-org/divider";
 
 import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
 import DataTable from "@/components/DataTable";
@@ -47,6 +47,7 @@ export default function Appliances() {
     const router = useRouter();
     const { user: currUser } = useUserStore();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
+    const [selectedTab, setSelectedTab] = useState();
 
     const [stockAppliances, setStockAppliances] = useState<vAppliance[] | null>(
         null,
@@ -247,10 +248,19 @@ export default function Appliances() {
     useEffect(() => {
         getData();
     }, []);
+
+    const openTab = useReadLocalStorage("appliancesOpenTab");
     //#endregion
 
     const { data, error, mutate } = useSWR("/api/appliance", null, {
         onSuccess: (data) => {
+            data.forEach(
+                (a: vAppliance) =>
+                    (a.product =
+                        (a.productBrand ? a.productBrand + " " : "") +
+                        (a.productModel ? a.productModel : "")),
+            );
+
             setStockAppliances(
                 data.filter(
                     (a: vAppliance) => a.status == "stock" && !a.isDemo,
@@ -287,14 +297,24 @@ export default function Appliances() {
                     aria-label="Appliance Tab"
                     color="primary"
                     size="md"
-                    defaultSelectedKey="stock"
+                    selectedKey={selectedTab}
+                    defaultSelectedKey={(openTab as any) || "stock"}
                     classNames={{
                         cursor: "w-full bg-sky-500",
                         tab: "px-10",
                     }}
+                    onSelectionChange={(key: any) => {
+                        setSelectedTab(key);
+
+                        window.localStorage.setItem(
+                            "appliancesOpenTab",
+                            JSON.stringify(key),
+                        );
+                    }}
                 >
                     <Tab key="demo" title="Demo" className="w-full">
                         <DataTable
+                            storageKey="demoAppliances"
                             isCompact
                             isStriped
                             emptyContent="Herhangi bir cihaz bulunamadı!"
@@ -320,6 +340,7 @@ export default function Appliances() {
                     </Tab>
                     <Tab key="stock" title="Stok" className="w-full">
                         <DataTable
+                            storageKey="stockAppliances"
                             isCompact
                             isStriped
                             emptyContent="Herhangi bir cihaz bulunamadı!"
@@ -345,6 +366,7 @@ export default function Appliances() {
                     </Tab>
                     <Tab key="order" title="Sipariş" className="w-full">
                         <DataTable
+                            storageKey="orderAppliances"
                             isCompact
                             isStriped
                             emptyContent="Herhangi bir cihaz bulunamadı!"
@@ -370,6 +392,7 @@ export default function Appliances() {
                     </Tab>
                     <Tab key="active" title="Aktif" className="w-full">
                         <DataTable
+                            storageKey="activeAppliances"
                             isCompact
                             isStriped
                             emptyContent="Herhangi bir cihaz bulunamadı!"

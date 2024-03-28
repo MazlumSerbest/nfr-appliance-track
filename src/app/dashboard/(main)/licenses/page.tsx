@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import { useRouter } from "next/navigation";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import { useReadLocalStorage } from "usehooks-ts";
 import toast from "react-hot-toast";
 
 import {
@@ -15,7 +16,6 @@ import {
 import { Tab, Tabs } from "@nextui-org/tabs";
 import { SortDescriptor } from "@nextui-org/table";
 import { Button } from "@nextui-org/button";
-import { Divider } from "@nextui-org/divider";
 
 import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
 import DataTable from "@/components/DataTable";
@@ -63,6 +63,7 @@ export default function Licenses() {
     const router = useRouter();
     const { user: currUser } = useUserStore();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
+    const [selectedTab, setSelectedTab] = useState();
 
     const [stockLicenses, setStockLicenses] = useState<vLicense[] | null>(null);
     const [orderLicenses, setOrderLicenses] = useState<vLicense[] | null>(null);
@@ -354,6 +355,8 @@ export default function Licenses() {
     useEffect(() => {
         getData();
     }, []);
+
+    const openTab = useReadLocalStorage('licensesOpenTab')
     //#endregion
 
     const { data, error, mutate } = useSWR("/api/license", null, {
@@ -390,13 +393,24 @@ export default function Licenses() {
                     aria-label="License Tab"
                     color="primary"
                     size="md"
+                    selectedKey={selectedTab}
+                    defaultSelectedKey={openTab as any}
                     classNames={{
                         cursor: "w-full bg-sky-500",
                         tab: "px-10",
                     }}
+                    onSelectionChange={(key: any) => {
+                        setSelectedTab(key);
+
+                        window.localStorage.setItem(
+                            "licensesOpenTab",
+                            JSON.stringify(key),
+                        );
+                    }}
                 >
                     <Tab key="stock" title="Stok" className="w-full">
                         <DataTable
+                            storageKey="stockLicenses"
                             isCompact
                             isStriped
                             emptyContent="Herhangi bir lisans bulunamadı!"
@@ -422,6 +436,7 @@ export default function Licenses() {
                     </Tab>
                     <Tab key="order" title="Sipariş" className="w-full">
                         <DataTable
+                            storageKey="orderLicenses"
                             isCompact
                             isStriped
                             emptyContent="Herhangi bir lisans bulunamadı!"
@@ -451,6 +466,7 @@ export default function Licenses() {
                         className="w-full"
                     >
                         <DataTable
+                            storageKey="waitingOrderLicenses"
                             isCompact
                             isStriped
                             emptyContent="Herhangi bir lisans bulunamadı!"
@@ -476,6 +492,7 @@ export default function Licenses() {
                     </Tab>
                     <Tab key="active" title="Aktif" className="w-full">
                         <DataTable
+                            storageKey="activeLicenses"
                             isCompact
                             isStriped
                             emptyContent="Herhangi bir lisans bulunamadı!"

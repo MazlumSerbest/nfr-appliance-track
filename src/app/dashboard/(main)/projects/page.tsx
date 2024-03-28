@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import { useRouter } from "next/navigation";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import { useReadLocalStorage } from "usehooks-ts";
 import toast from "react-hot-toast";
 
 import {
@@ -43,6 +44,7 @@ export default function Licenses() {
     const router = useRouter();
     const { user: currUser } = useUserStore();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
+    const [selectedTab, setSelectedTab] = useState();
 
     const [projects, setProjects] = useState<vProject[] | null>(null);
     const [wonProjects, setWonProjects] = useState<vProject[] | null>(null);
@@ -205,11 +207,12 @@ export default function Licenses() {
     useEffect(() => {
         getData();
     }, []);
+
+    const openTab = useReadLocalStorage('projectsOpenTab')
     //#endregion
 
     const { data, error, mutate } = useSWR("/api/project", null, {
         onSuccess: (data) => {
-            console.log(data)
             setProjects(data.filter((p: vProject) => p.status == "active"));
             setWonProjects(data.filter((p: vProject) => p.status == "won"));
             setLostProjects(data.filter((p: vProject) => p.status == "lost"));
@@ -233,13 +236,24 @@ export default function Licenses() {
                     aria-label="License Tab"
                     color="primary"
                     size="md"
+                    selectedKey={selectedTab}
+                    defaultSelectedKey={openTab as any}
                     classNames={{
                         cursor: "w-full bg-sky-500",
                         tab: "px-10",
                     }}
+                    onSelectionChange={(key: any) => {
+                        setSelectedTab(key);
+
+                        window.localStorage.setItem(
+                            "projectsOpenTab",
+                            JSON.stringify(key),
+                        );
+                    }}
                 >
                     <Tab key="projects" title="Projeler" className="w-full">
                         <DataTable
+                            storageKey="projects"
                             isCompact
                             isStriped
                             className="mt-4 mb-2"
@@ -265,6 +279,7 @@ export default function Licenses() {
                     </Tab>
                     <Tab key="won" title="Kazanılan" className="w-full">
                         <DataTable
+                            storageKey="wonProjects"
                             isCompact
                             isStriped
                             className="mt-4 mb-2"
@@ -290,6 +305,7 @@ export default function Licenses() {
                     </Tab>
                     <Tab key="lost" title="Kaybedilen" className="w-full">
                         <DataTable
+                            storageKey="lostProjects"
                             isCompact
                             isStriped
                             className="mt-4 mb-2"
