@@ -190,6 +190,7 @@ export default function BrandsPage() {
     return (
         <>
             <DataTable
+                storageKey="brands"
                 isCompact
                 isStriped
                 className="mt-4 mb-2"

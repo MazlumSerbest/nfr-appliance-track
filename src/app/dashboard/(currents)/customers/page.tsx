@@ -190,6 +190,7 @@ export default function Customers() {
     return (
         <>
             <DataTable
+                storageKey="customers"
                 isCompact
                 isStriped
                 className="mt-4 mb-2"
@@ -208,6 +209,7 @@ export default function Customers() {
                     router.push(`/dashboard/customers/${item.id}`);
                 }}
             />
+            
             <Modal
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}

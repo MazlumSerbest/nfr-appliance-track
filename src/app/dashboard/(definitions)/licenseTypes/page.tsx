@@ -229,6 +229,7 @@ export default function LicenseTypes() {
     return (
         <>
             <DataTable
+                storageKey="licenseTypes"
                 isCompact
                 isStriped
                 className="mt-4 mb-2"

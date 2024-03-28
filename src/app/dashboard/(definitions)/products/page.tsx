@@ -78,7 +78,7 @@ export default function Products() {
 
     const onSubmitUpdate: SubmitHandler<IFormInput> = async (data) => {
         data.updatedBy = currUser?.username ?? "";
-        
+
         delete data["brandName"];
         delete data["productType"];
 
@@ -102,7 +102,13 @@ export default function Products() {
     //#endregion
 
     //#region Table
-    const visibleColumns = ["brandName", "model", "productType", "active", "actions"];
+    const visibleColumns = [
+        "brandName",
+        "model",
+        "productType",
+        "active",
+        "actions",
+    ];
 
     const sort: SortDescriptor = {
         column: "createdAt",
@@ -232,6 +238,7 @@ export default function Products() {
     return (
         <>
             <DataTable
+                storageKey="products"
                 isCompact
                 isStriped
                 className="mt-4 mb-2"

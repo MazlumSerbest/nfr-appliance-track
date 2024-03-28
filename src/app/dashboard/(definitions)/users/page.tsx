@@ -256,6 +256,7 @@ export default function Users() {
     return (
         <>
             <DataTable
+                storageKey="users"
                 isCompact
                 isStriped
                 className="mt-4 mb-2"

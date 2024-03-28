@@ -190,6 +190,7 @@ export default function Dealers() {
     return (
         <>
             <DataTable
+                storageKey="dealers"
                 isCompact
                 isStriped
                 className="mt-4 mb-2"
@@ -208,6 +209,7 @@ export default function Dealers() {
                     router.push(`/dashboard/dealers/${item.id}`);
                 }}
             />
+
             <Modal
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}

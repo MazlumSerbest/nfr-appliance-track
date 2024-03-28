@@ -208,6 +208,7 @@ export default function BoughtTypes() {
     return (
         <>
             <DataTable
+                storageKey="boughtTypes"
                 isCompact
                 isStriped
                 className="mt-4 mb-2"

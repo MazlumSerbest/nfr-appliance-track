@@ -35,10 +35,11 @@ interface IFormInput {
 
 export default function Connections() {
     const router = useRouter();
+    const { user: currUser } = useUserStore();
+
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
     const [customers, setCustomers] = useState<ListBoxItem[] | null>(null);
     const [brands, setBrands] = useState<ListBoxItem[] | null>(null);
-    const { user: currUser } = useUserStore();
 
     //#region Form
     const { register, reset, handleSubmit, control } = useForm<IFormInput>();
@@ -65,7 +66,13 @@ export default function Connections() {
     //#endregion
 
     //#region Table
-    const visibleColumns = ["brandName", "ip", "login", "customerName", "note"];
+    const initialVisibleColumns = [
+        "brandName",
+        "ip",
+        "login",
+        "customerName",
+        "note",
+    ];
 
     const sort: SortDescriptor = {
         column: "createdAt",
@@ -197,6 +204,7 @@ export default function Connections() {
     return (
         <>
             <DataTable
+                storageKey="connections"
                 isCompact
                 isStriped
                 className="mt-4 mb-2"
@@ -205,8 +213,7 @@ export default function Connections() {
                 columns={columns}
                 renderCell={renderCell}
                 sortOption={sort}
-                initialVisibleColumNames={visibleColumns}
-                // activeOptions={[]}
+                initialVisibleColumNames={initialVisibleColumns}
                 onAddNew={() => {
                     reset({});
                     onOpen();
