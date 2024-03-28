@@ -208,17 +208,6 @@ export default function Appliances() {
                 appliance[columnKey as keyof typeof appliance];
 
             switch (columnKey) {
-                case "product":
-                    return (
-                        <p>
-                            {(appliance.productBrand
-                                ? appliance.productBrand + " "
-                                : "") +
-                                (appliance.productModel
-                                    ? appliance.productModel
-                                    : "")}
-                        </p>
-                    );
                 case "boughtAt":
                     return <p>{DateFormat(cellValue)}</p>;
                 case "soldAt":
@@ -267,13 +256,6 @@ export default function Appliances() {
 
     const { data, error, mutate } = useSWR("/api/appliance", null, {
         onSuccess: (data) => {
-            data.forEach(
-                (a: vAppliance) =>
-                    (a.product =
-                        (a.productBrand ? a.productBrand + " " : "") +
-                        (a.productModel ? a.productModel : "")),
-            );
-
             setStockAppliances(
                 data.filter(
                     (a: vAppliance) => a.status == "stock" && !a.isDemo,

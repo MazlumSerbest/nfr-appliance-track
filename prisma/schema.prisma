@@ -261,6 +261,7 @@ view vAppliances {
   deleted       Boolean?
   isDemo        Boolean?
   productId     Int?
+  product       String?
   productModel  String?   @db.VarChar
   productBrand  String?   @db.VarChar
   customerName  String?   @db.VarChar
@@ -277,7 +278,7 @@ view vLicenses {
   expiryDate        DateTime? @db.Date
   boughtAt          DateTime? @db.Date
   soldAt            DateTime? @db.Date
-  orderedAt         DateTime? @db.Timestamptz(6)
+  orderedAt         DateTime? @db.Date
   createdBy         String?   @db.VarChar
   createdAt         DateTime? @db.Timestamptz(6)
   updatedBy         String?   @db.VarChar

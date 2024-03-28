@@ -25,6 +25,7 @@ SELECT
   a.deleted,
   a."isDemo",
   a."productId",
+  (((b.name) :: text || ' ' :: text) || (p.model) :: text) AS product,
   p.model AS "productModel",
   b.name AS "productBrand",
   c.name AS "customerName",

@@ -1,5 +1,6 @@
 type vAppliance = Appliance & {
     status: string;
+    product?: string;
     productBrand?: string;
     productModel?: string;
 };
