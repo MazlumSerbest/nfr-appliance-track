@@ -1,4 +1,4 @@
-import React, { Key, ReactNode, useEffect } from "react";
+import React from "react";
 import {
     Table,
     TableHeader,
@@ -24,12 +24,12 @@ import Loader from "./loaders/Loader";
 type Props = {
     columns: Column[];
     data: any;
-    emptyContent?: ReactNode;
+    emptyContent?: React.ReactNode;
     isCompact: boolean;
     isStriped: boolean;
     className?: string;
     activeOptions?: ActiveOption[];
-    renderCell: (item: any, columnKey: Key) => ReactNode;
+    renderCell: (item: any, columnKey: React.Key) => React.ReactNode;
     sortOption: SortDescriptor;
     storageKey?: string;
     searchValue?: string;
@@ -59,7 +59,18 @@ export default function DataTable(props: Props) {
     } = props;
 
     type DataType = (typeof data)[0];
-    const [filterValue, setFilterValue] = React.useState(searchValue);
+    const [filterValue, setFilterValue] = React.useState(() => {
+        if (searchValue) return searchValue;
+
+        let storageValueJSON = window.localStorage.getItem(
+            `${storageKey}SearchValue`,
+        );
+        let storageValue: string = storageValueJSON ? JSON.parse(storageValueJSON) : null;
+
+        console.log("storageValue", storageValue);
+        if (!storageValue) return "";
+        return storageValue;
+    });
     // const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
     //     new Set([]),
     // );
@@ -99,7 +110,7 @@ export default function DataTable(props: Props) {
                     fitem[e.key]
                         ?.toString()
                         ?.toLowerCase()
-                        .includes(filterValue.toLowerCase()),
+                        .includes(filterValue?.toLowerCase()),
                 );
             });
         }
@@ -158,7 +169,7 @@ export default function DataTable(props: Props) {
             setRowsPerPage(Number(e.target.value));
             setPage(1);
 
-            if(!storageKey) return;
+            if (!storageKey) return;
             let tableStateJSON = window.localStorage.getItem(
                 `${storageKey}TableState`,
             );
@@ -185,19 +196,10 @@ export default function DataTable(props: Props) {
                 setFilterValue("");
             }
 
-            if(!storageKey) return;
-            let tableStateJSON = window.localStorage.getItem(
-                `${storageKey}TableState`,
-            );
-            let tableState: TableState = tableStateJSON
-                ? JSON.parse(tableStateJSON)
-                : null;
+            if (!storageKey) return;
             window.localStorage.setItem(
-                `${storageKey}TableState`,
-                JSON.stringify({
-                    ...tableState,
-                    searchValue: value,
-                }),
+                `${storageKey}SearchValue`,
+                JSON.stringify(value || ""),
             );
         },
         [storageKey],
@@ -283,7 +285,7 @@ export default function DataTable(props: Props) {
                                 onSelectionChange={(keys) => {
                                     setVisibleColumns(keys);
 
-                                    if(!storageKey) return;
+                                    if (!storageKey) return;
                                     let tableStateJSON =
                                         window.localStorage.getItem(
                                             `${storageKey}TableState`,
@@ -384,7 +386,7 @@ export default function DataTable(props: Props) {
                     onChange={(p) => {
                         setPage(p);
 
-                        if(!storageKey) return;
+                        if (!storageKey) return;
                         let tableStateJSON = window.localStorage.getItem(
                             `${storageKey}TableState`,
                         );
@@ -410,7 +412,7 @@ export default function DataTable(props: Props) {
     }, [page, pages, storageKey]);
     //#endregion
 
-    useEffect(() => {
+    React.useEffect(() => {
         let tableStateJSON = window.localStorage.getItem(
             `${storageKey}TableState`,
         );
@@ -419,7 +421,6 @@ export default function DataTable(props: Props) {
             : null;
 
         if (tableState) {
-            setFilterValue(tableState.searchValue);
             setPage(tableState.currentPage);
             tableState.visibleColumns
                 ? setVisibleColumns(new Set(tableState.visibleColumns))

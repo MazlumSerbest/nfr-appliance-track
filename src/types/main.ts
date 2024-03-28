@@ -20,7 +20,6 @@ type PageState = {
 }
 
 type TableState = {
-    searchValue: string;
     currentPage: number;
     visibleColumns: string[];
     rowsPerPage: number;
