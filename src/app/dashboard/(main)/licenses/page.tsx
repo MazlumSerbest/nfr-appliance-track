@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import useSWR from "swr";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { useReadLocalStorage } from "usehooks-ts";
 import toast from "react-hot-toast";
@@ -61,9 +61,24 @@ interface IFormInput {
 
 export default function Licenses() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const { user: currUser } = useUserStore();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
-    const [selectedTab, setSelectedTab] = useState();
+    const [selectedTab, setSelectedTab] = useState(() => {
+        let param = searchParams.get("tab");
+        if (param) return param;
+        else {
+            if (typeof window !== "undefined") {
+                let openTabJSON = localStorage?.getItem("licensesOpenTab");
+
+                if (openTabJSON) {
+                    return JSON.parse(openTabJSON);
+                } else {
+                    return "stock";
+                }
+            }
+        }
+    });
 
     const [stockLicenses, setStockLicenses] = useState<vLicense[] | null>(null);
     const [orderLicenses, setOrderLicenses] = useState<vLicense[] | null>(null);
@@ -253,9 +268,17 @@ export default function Licenses() {
 
             switch (columnKey) {
                 case "product":
-                    return license.productBrand ? license.productBrand + " " + license.productModel : "-";
+                    return license.productBrand
+                        ? license.productBrand + " " + license.productModel
+                        : "-";
                 case "licenseType":
-                    return license.licenseBrand + " " + license.licenseType + " " + license.licenseDuration;
+                    return (
+                        license.licenseBrand +
+                        " " +
+                        license.licenseType +
+                        " " +
+                        license.licenseDuration
+                    );
                 case "isStock":
                     return <BoolChip value={cellValue} />;
                 case "applianceSerialNo":
@@ -355,8 +378,6 @@ export default function Licenses() {
     useEffect(() => {
         getData();
     }, []);
-
-    const openTab = useReadLocalStorage('licensesOpenTab')
     //#endregion
 
     const { data, error, mutate } = useSWR("/api/license", null, {
@@ -393,12 +414,11 @@ export default function Licenses() {
                     aria-label="License Tab"
                     color="primary"
                     size="md"
-                    selectedKey={selectedTab}
-                    defaultSelectedKey={openTab as any}
                     classNames={{
                         cursor: "w-full bg-sky-500",
                         tab: "px-10",
                     }}
+                    selectedKey={selectedTab}
                     onSelectionChange={(key: any) => {
                         setSelectedTab(key);
 

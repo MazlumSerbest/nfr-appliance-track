@@ -77,6 +77,7 @@ export default function Dashboard() {
                             </span>
                         }
                         icon={<BiBriefcase />}
+                        onClick={() => router.push("/dashboard/projects?tab=projects")}
                     />
                     <PanelCard
                         header="KAZANILAN"
@@ -88,6 +89,7 @@ export default function Dashboard() {
                             </span>
                         }
                         icon={<BiBriefcase />}
+                        onClick={() => router.push("/dashboard/projects?tab=won")}
                     />
                     <PanelCard
                         header="KAYBEDİLEN"
@@ -99,6 +101,7 @@ export default function Dashboard() {
                             </span>
                         }
                         icon={<BiBriefcase />}
+                        onClick={() => router.push("/dashboard/projects?tab=lost")}
                     />
                 </div>
             </section>
@@ -126,6 +129,7 @@ export default function Dashboard() {
                             </span>
                         }
                         icon={<BiServer />}
+                        onClick={() => router.push("/dashboard/appliances?tab=stock")}
                     />
                     <PanelCard
                         header="SİPARİŞ"
@@ -137,6 +141,7 @@ export default function Dashboard() {
                             </span>
                         }
                         icon={<BiServer />}
+                        onClick={() => router.push("/dashboard/appliances?tab=order")}
                     />
                     <PanelCard
                         header="AKTİF"
@@ -148,6 +153,7 @@ export default function Dashboard() {
                             </span>
                         }
                         icon={<BiServer />}
+                        onClick={() => router.push("/dashboard/appliances?tab=active")}
                     />
                 </div>
             </section>
@@ -176,6 +182,7 @@ export default function Dashboard() {
                                 </span>
                             }
                             icon={<BiShieldPlus />}
+                            onClick={() => router.push("/dashboard/licenses?tab=stock")}
                         />
                         <PanelCard
                             header="AKTİF"
@@ -187,9 +194,7 @@ export default function Dashboard() {
                                 </span>
                             }
                             icon={<BiShieldQuarter />}
-                            onClick={() => {
-                                router.push("/dashboard/licenses");
-                            }}
+                            onClick={() => router.push("/dashboard/licenses?tab=active")}
                         />
                     </div>
 
@@ -204,6 +209,7 @@ export default function Dashboard() {
                                 </span>
                             }
                             icon={<BiShield />}
+                            onClick={() => router.push("/dashboard/licenses?tab=order")}
                         />
                         <PanelCard
                             header="BEKLEYEN SİPARİŞ"
@@ -215,6 +221,7 @@ export default function Dashboard() {
                                 </span>
                             }
                             icon={<BiShield />}
+                            onClick={() => router.push("/dashboard/licenses?tab=waitingOrder")}
                         />
                     </div>
 

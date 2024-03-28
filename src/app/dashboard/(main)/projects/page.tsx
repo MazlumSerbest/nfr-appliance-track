@@ -1,7 +1,7 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { useReadLocalStorage } from "usehooks-ts";
 import toast from "react-hot-toast";
@@ -42,9 +42,22 @@ interface IFormInput {
 
 export default function Licenses() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const { user: currUser } = useUserStore();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
-    const [selectedTab, setSelectedTab] = useState();
+    const [selectedTab, setSelectedTab] = useState(() => {
+        let param = searchParams.get("tab");
+        if (param) return param;
+        if (typeof window !== "undefined") {
+            let openTabJSON = localStorage?.getItem("projectsOpenTab");
+
+            if (openTabJSON) {
+                return JSON.parse(openTabJSON);
+            } else {
+                return "projects";
+            }
+        }
+    });
 
     const [projects, setProjects] = useState<vProject[] | null>(null);
     const [wonProjects, setWonProjects] = useState<vProject[] | null>(null);
@@ -207,8 +220,6 @@ export default function Licenses() {
     useEffect(() => {
         getData();
     }, []);
-
-    const openTab = useReadLocalStorage('projectsOpenTab')
     //#endregion
 
     const { data, error, mutate } = useSWR("/api/project", null, {
@@ -236,12 +247,11 @@ export default function Licenses() {
                     aria-label="License Tab"
                     color="primary"
                     size="md"
-                    selectedKey={selectedTab}
-                    defaultSelectedKey={openTab as any}
                     classNames={{
                         cursor: "w-full bg-sky-500",
                         tab: "px-10",
                     }}
+                    selectedKey={selectedTab}
                     onSelectionChange={(key: any) => {
                         setSelectedTab(key);
 
