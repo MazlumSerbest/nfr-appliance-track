@@ -427,9 +427,9 @@ export default function DataTable(props: Props) {
                 ? setVisibleColumns(new Set(tableState.visibleColumns))
                 : null;
             tableState.visibleColumns
-                ? setRowsPerPage(tableState.rowsPerPage)
+                ? setRowsPerPage(tableState.rowsPerPage || 10)
                 : null;
-            tableState.currentPage ? setPage(tableState.currentPage) : null;
+            tableState.currentPage ? setPage(tableState.currentPage || 1) : null;
         }
     }, [storageKey]);
 
