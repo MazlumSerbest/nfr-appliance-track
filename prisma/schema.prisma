@@ -8,6 +8,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model logs {
+  id          Int      @id @default(autoincrement())
+  action      String   @db.VarChar
+  table       String   @db.VarChar
+  user        String   @db.VarChar
+  date        DateTime @default(now()) @db.Timestamptz(6)
+  description String   @db.VarChar
+  data        String   @db.VarChar
+}
+
 model users {
   id        Int       @id @default(autoincrement())
   username  String    @unique @db.VarChar
