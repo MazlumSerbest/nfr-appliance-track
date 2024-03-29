@@ -65,9 +65,10 @@ export default function DataTable(props: Props) {
         let storageValueJSON = window.localStorage.getItem(
             `${storageKey}SearchValue`,
         );
-        let storageValue: string = storageValueJSON ? JSON.parse(storageValueJSON) : null;
+        let storageValue: string = storageValueJSON
+            ? JSON.parse(storageValueJSON)
+            : null;
 
-        console.log("storageValue", storageValue);
         if (!storageValue) return "";
         return storageValue;
     });
@@ -421,11 +422,14 @@ export default function DataTable(props: Props) {
             : null;
 
         if (tableState) {
-            setPage(tableState.currentPage);
+            // setPage(tableState.currentPage);
             tableState.visibleColumns
                 ? setVisibleColumns(new Set(tableState.visibleColumns))
                 : null;
-            setRowsPerPage(tableState.rowsPerPage);
+            tableState.visibleColumns
+                ? setRowsPerPage(tableState.rowsPerPage)
+                : null;
+            tableState.currentPage ? setPage(tableState.currentPage) : null;
         }
     }, [storageKey]);
 
