@@ -11,7 +11,7 @@ export default function Loader() {
 
 export function MainLoader() {
     return (
-        <div className="flex animate-pulse w-screen h-screen items-center justify-center bg-white rounded-full">
+        <div className="flex animate-pulse w-screen h-dvh items-center justify-center bg-white rounded-full">
             <Logo
                 width={280}
                 height={150}
