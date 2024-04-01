@@ -34,6 +34,17 @@ export async function deleteData(
         res = await prisma.$queryRaw`${Prisma.raw(query)}`;
     }
 
+    await prisma.logs.create({
+        data: {
+            action: "delete",
+            table: table,
+            user: updatedBy || "",
+            date: date,
+            description: `Deleted: ${id}`,
+            data: JSON.stringify({ id: id, updatedBy: date }),
+        },
+    });
+
     if (res) return true;
     else return false;
 }
