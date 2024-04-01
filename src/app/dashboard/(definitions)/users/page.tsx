@@ -253,6 +253,8 @@ export default function Users() {
                 </Skeleton>
             </div>
         );
+    if (currUser?.role != "admin")
+        return <div>Bu sayfayı görme yetkiniz yoktur!</div>;
     return (
         <>
             <DataTable

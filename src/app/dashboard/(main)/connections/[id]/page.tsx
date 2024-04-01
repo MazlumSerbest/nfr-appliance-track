@@ -96,6 +96,8 @@ export default function ConnectionDetail({
                 </Skeleton>
             </div>
         );
+    if (currUser?.role == "seller")
+        return <div>Bu sayfayı görme yetkiniz yoktur!</div>;
     return (
         <div className="flex flex-col gap-4">
             <Card className="mt-4 px-1 py-2">
