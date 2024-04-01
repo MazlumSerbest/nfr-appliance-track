@@ -267,18 +267,6 @@ export default function Licenses() {
             const cellValue: any = license[columnKey as keyof typeof license];
 
             switch (columnKey) {
-                case "product":
-                    return license.productBrand
-                        ? license.productBrand + " " + license.productModel
-                        : "-";
-                case "licenseType":
-                    return (
-                        license.licenseBrand +
-                        " " +
-                        license.licenseType +
-                        " " +
-                        license.licenseDuration
-                    );
                 case "isStock":
                     return <BoolChip value={cellValue} />;
                 case "applianceSerialNo":

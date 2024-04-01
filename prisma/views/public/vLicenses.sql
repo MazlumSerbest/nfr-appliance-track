@@ -31,12 +31,15 @@ SELECT
   l."updatedAt",
   l.deleted,
   l."appSerialNo",
-  a."serialNo" AS "applianceSerialNo",
+  COALESCE(a."serialNo", l."appSerialNo") AS "applianceSerialNo",
+  a.product,
   a."productModel",
   a."productBrand",
-  lt.type AS "licenseType",
-  lt.duration AS "licenseDuration",
-  b.name AS "licenseBrand",
+  (
+    (
+      (((b.name) :: text || ' ' :: text) || (lt.type) :: text) || ' ' :: text
+    ) || lt.duration
+  ) AS "licenseType",
   bt.type AS "boughtType",
   c.name AS "customerName",
   d.name AS "dealerName",

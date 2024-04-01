@@ -296,11 +296,10 @@ view vLicenses {
   deleted           Boolean?
   appSerialNo       String?   @db.VarChar
   applianceSerialNo String?   @db.VarChar
+  product           String?
   productModel      String?   @db.VarChar
   productBrand      String?   @db.VarChar
-  licenseType       String?   @db.VarChar
-  licenseDuration   Int?
-  licenseBrand      String?   @db.VarChar
+  licenseType       String?
   boughtType        String?   @db.VarChar
   customerName      String?   @db.VarChar
   dealerName        String?   @db.VarChar
