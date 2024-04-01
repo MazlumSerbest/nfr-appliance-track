@@ -88,7 +88,7 @@ export default function ConnectionDetail({
     );
 
     if (error) return <div>Yükleme Hatası!</div>;
-    if (!data)
+    if (!data || !customers || !brands)
         return (
             <div className="flex flex-col mt-4">
                 <Skeleton>

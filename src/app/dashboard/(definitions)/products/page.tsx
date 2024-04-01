@@ -227,7 +227,7 @@ export default function Products() {
     //#endregion
 
     if (error) return <div>Yükleme Hatası!</div>;
-    if (!data)
+    if (!data || !brands || !productTypes)
         return (
             <div className="flex flex-col mt-4">
                 <Skeleton>

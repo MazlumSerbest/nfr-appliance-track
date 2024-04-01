@@ -176,7 +176,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
     //#endregion
 
     if (error) return <div>Yükleme Hatası!</div>;
-    if (!data)
+    if (!data || !suppliers || !dealers || !customers || !boughtTypes || !licenseTypes)
         return (
             <div className="flex flex-col mt-4">
                 <Skeleton>
