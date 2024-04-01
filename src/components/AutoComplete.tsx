@@ -18,9 +18,9 @@ export default function AutoComplete(props: Props) {
             ? data
             : data.filter((data) =>
                   data.name
-                      .toLowerCase()
+                      .toLocaleLowerCase("tr")
                       .replace(/\s+/g, "")
-                      .includes(query.toLowerCase().replace(/\s+/g, "")),
+                      .includes(query.toLocaleLowerCase("tr").replace(/\s+/g, "")),
               ) || [];
 
     return (

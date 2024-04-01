@@ -110,8 +110,8 @@ export default function DataTable(props: Props) {
                 return filterColumns.some((e) =>
                     fitem[e.key]
                         ?.toString()
-                        ?.toLowerCase()
-                        .includes(filterValue?.toLowerCase()),
+                        ?.toLocaleLowerCase("tr")
+                        .includes(filterValue?.toLocaleLowerCase("tr")),
                 );
             });
         }
