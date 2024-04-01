@@ -83,6 +83,17 @@ export async function POST(request: Request) {
                 });
 
                 if (newUser.id) {
+                    await prisma.logs.create({
+                        data: {
+                            action: "create",
+                            table: "users",
+                            user: newUser.createdBy,
+                            date: new Date().toISOString(),
+                            description: `User created: ${newUser.id}`,
+                            data: JSON.stringify(newUser),
+                        },
+                    });
+
                     return NextResponse.json({
                         message: "Kullanıcı başarıyla oluşturuldu!",
                         status: 200,

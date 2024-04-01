@@ -43,11 +43,22 @@ export async function POST(request: Request) {
             const current: Current = await request.json();
             const currType = current.type;
 
-            const newDealer = await prisma.currents.create({
+            const newCurrent = await prisma.currents.create({
                 data: current,
             });
 
-            if (newDealer.id) {
+            if (newCurrent.id) {
+                await prisma.logs.create({
+                    data: {
+                        action: "create",
+                        table: "currents",
+                        user: newCurrent.createdBy,
+                        date: new Date().toISOString(),
+                        description: `Current created: ${newCurrent.id}`,
+                        data: JSON.stringify(newCurrent),
+                    },
+                });
+
                 return NextResponse.json({
                     message: `${
                         currentTypes.find((e) => e.key == currType)?.name

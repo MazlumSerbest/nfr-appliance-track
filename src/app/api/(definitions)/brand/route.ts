@@ -38,6 +38,17 @@ export async function POST(request: Request) {
             });
 
             if (newBrand.id) {
+                await prisma.logs.create({
+                    data: {
+                        action: "create",
+                        table: "brands",
+                        user: newBrand.createdBy,
+                        date: new Date().toISOString(),
+                        description: `Brand created: ${newBrand.id}`,
+                        data: JSON.stringify(newBrand),
+                    },
+                });
+
                 return NextResponse.json({
                     message: "Marka başarıyla kaydedildi!",
                     status: 200,

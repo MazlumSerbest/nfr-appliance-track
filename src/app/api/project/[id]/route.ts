@@ -48,14 +48,25 @@ export async function PUT(
             project.updatedAt = new Date().toISOString();
             project.date = new Date(project.date).toISOString();
 
-            const updateProject = await prisma.projects.update({
+            const updatedProject = await prisma.projects.update({
                 where: {
                     id: Number(params.id),
                 },
                 data: project,
             });
 
-            if (updateProject.id) {
+            if (updatedProject.id) {
+                await prisma.logs.create({
+                    data: {
+                        action: "update",
+                        table: "projects",
+                        user: updatedProject.updatedBy || "",
+                        date: new Date().toISOString(),
+                        description: `Project updated: ${updatedProject.id}`,
+                        data: JSON.stringify(updatedProject),
+                    },
+                });
+
                 return NextResponse.json({
                     message: "Proje başarıyla güncellendi!",
                     status: 200,

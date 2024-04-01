@@ -24,7 +24,7 @@ export async function PUT(
                 if (reset) {
                     const hashedNewPassword = await bcrypt.hash("123456", 10);
 
-                    const updateUser = await prisma.users.update({
+                    const updatedUser = await prisma.users.update({
                         where: {
                             id: Number(params.id),
                         },
@@ -35,7 +35,7 @@ export async function PUT(
                         },
                     });
 
-                    if (hashedNewPassword == updateUser.password) {
+                    if (hashedNewPassword == updatedUser.password) {
                         return NextResponse.json({
                             message: "Şifre başarıyla sıfırlandı!",
                             status: 200,

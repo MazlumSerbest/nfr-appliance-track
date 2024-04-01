@@ -104,14 +104,25 @@ export async function PUT(
             //         ok: false,
             //     });
 
-            const updateLicense = await prisma.licenses.update({
+            const updatedLicense = await prisma.licenses.update({
                 data: license,
                 where: {
                     id: Number(params.id),
                 },
             });
 
-            if (updateLicense.id) {
+            if (updatedLicense.id) {
+                await prisma.logs.create({
+                    data: {
+                        action: "update",
+                        table: "licenses",
+                        user: updatedLicense.updatedBy || "",
+                        date: new Date().toISOString(),
+                        description: `License updated: ${updatedLicense.id}`,
+                        data: JSON.stringify(updatedLicense),
+                    },
+                });
+
                 return NextResponse.json({
                     message: "Lisans başarıyla güncellendi!",
                     status: 200,
@@ -147,7 +158,7 @@ export async function DELETE(
             const license: License = await request.json();
             license.updatedAt = new Date().toISOString();
 
-            await prisma.licenses.update({
+            const deletedLicense = await prisma.licenses.update({
                 data: {
                     deleted: true,
                 },
@@ -156,11 +167,30 @@ export async function DELETE(
                 },
             });
 
-            return NextResponse.json({
-                message: "Lisans silindi!",
-                status: 200,
-                ok: true,
-            });
+            if (deletedLicense.id) {
+                await prisma.logs.create({
+                    data: {
+                        action: "delete",
+                        table: "licenses",
+                        user: deletedLicense.updatedBy || "",
+                        date: new Date().toISOString(),
+                        description: `License deleted: ${deletedLicense.id}`,
+                        data: JSON.stringify(deletedLicense),
+                    },
+                });
+
+                return NextResponse.json({
+                    message: "Lisans silindi!",
+                    status: 200,
+                    ok: true,
+                });
+            } else {
+                return NextResponse.json({
+                    message: "Lisans silinirken bir hata oluştu!",
+                    status: 400,
+                    ok: false,
+                });
+            }
         }
 
         return NextResponse.json({

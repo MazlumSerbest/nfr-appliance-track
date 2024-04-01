@@ -40,14 +40,25 @@ export async function PUT(
             const licenseType: any = await request.json();
             licenseType.updatedAt = new Date().toISOString();
 
-            const updateLicenseType = await prisma.licenseTypes.update({
+            const updatedLicenseType = await prisma.licenseTypes.update({
                 where: {
                     id: Number(params.id),
                 },
                 data: licenseType,
             });
 
-            if (updateLicenseType.id) {
+            if (updatedLicenseType.id) {
+                await prisma.logs.create({
+                    data: {
+                        action: "update",
+                        table: "licenseTypes",
+                        user: updatedLicenseType.updatedBy || "",
+                        date: new Date().toISOString(),
+                        description: `License type updated: ${updatedLicenseType.id}`,
+                        data: JSON.stringify(updatedLicenseType),
+                    },
+                });
+
                 return NextResponse.json({
                     message: "Lisans tipi başarıyla güncellendi!",
                     status: 200,

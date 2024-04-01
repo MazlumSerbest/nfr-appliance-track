@@ -46,14 +46,25 @@ export async function PUT(
             const currType = current.type;
             current.updatedAt = new Date().toISOString();
 
-            const updateCurrent = await prisma.currents.update({
+            const updatedCurrent = await prisma.currents.update({
                 where: {
                     id: Number(params.id),
                 },
                 data: current,
             });
 
-            if (updateCurrent.id) {
+            if (updatedCurrent.id) {
+                await prisma.logs.create({
+                    data: {
+                        action: "update",
+                        table: "currents",
+                        user: updatedCurrent.updatedBy || "",
+                        date: new Date().toISOString(),
+                        description: `Current updated: ${updatedCurrent.id}`,
+                        data: JSON.stringify(updatedCurrent),
+                    },
+                });
+
                 return NextResponse.json({
                     message: `${
                         currentTypes.find((e) => e.key == currType)?.name

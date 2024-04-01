@@ -40,6 +40,17 @@ export async function POST(request: Request) {
             });
 
             if (newBoughtType.id) {
+                await prisma.logs.create({
+                    data: {
+                        action: "create",
+                        table: "boughtTypes",
+                        user: newBoughtType.createdBy,
+                        date: new Date().toISOString(),
+                        description: `Bought type created: ${newBoughtType.id}`,
+                        data: JSON.stringify(newBoughtType),
+                    },
+                });
+
                 return NextResponse.json({
                     message: "Alım tipi başarıyla kaydedildi!",
                     status: 200,

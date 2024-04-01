@@ -86,6 +86,17 @@ export async function POST(request: Request) {
             });
 
             if (newAppliance.id) {
+                await prisma.logs.create({
+                    data: {
+                        action: "create",
+                        table: "appliances",
+                        user: newAppliance.createdBy,
+                        date: new Date().toISOString(),
+                        description: `Appliances created: ${newAppliance.id}`,
+                        data: JSON.stringify(newAppliance),
+                    },
+                });
+
                 return NextResponse.json({
                     message: "Cihaz başarıyla kaydedildi!",
                     status: 200,

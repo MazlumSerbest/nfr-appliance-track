@@ -52,14 +52,25 @@ export async function PUT(
             const user: User = await request.json();
             user.updatedAt = new Date().toISOString();
 
-            const updateUser = await prisma.users.update({
+            const updatedUser = await prisma.users.update({
                 where: {
                     id: Number(params.id),
                 },
                 data: user,
             });
 
-            if (updateUser.id) {
+            if (updatedUser.id) {
+                await prisma.logs.create({
+                    data: {
+                        action: "update",
+                        table: "users",
+                        user: updatedUser.updatedBy || "",
+                        date: new Date().toISOString(),
+                        description: `User updated: ${updatedUser.id}`,
+                        data: JSON.stringify(updatedUser),
+                    },
+                });
+
                 return NextResponse.json({
                     message: "Kullanıcı başarıyla güncellendi!",
                     status: 200,

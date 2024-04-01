@@ -41,6 +41,17 @@ export async function POST(request: Request) {
             });
 
             if (newProject.id) {
+                await prisma.logs.create({
+                    data: {
+                        action: "create",
+                        table: "projects",
+                        user: newProject.createdBy,
+                        date: new Date().toISOString(),
+                        description: `Projects created: ${newProject.id}`,
+                        data: JSON.stringify(newProject),
+                    },
+                });
+
                 return NextResponse.json({
                     message: "Proje başarıyla kaydedildi!",
                     status: 200,

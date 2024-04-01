@@ -40,14 +40,25 @@ export async function PUT(
             const brand: Brand = await request.json();
             brand.updatedAt = new Date().toISOString();
 
-            const updateBrand = await prisma.brands.update({
+            const updatedBrand = await prisma.brands.update({
                 where: {
                     id: Number(params.id),
                 },
                 data: brand,
             });
 
-            if (updateBrand.id) {
+            if (updatedBrand.id) {
+                await prisma.logs.create({
+                    data: {
+                        action: "update",
+                        table: "brands",
+                        user: updatedBrand.updatedBy || "",
+                        date: new Date().toISOString(),
+                        description: `Brand updated: ${updatedBrand.id}`,
+                        data: JSON.stringify(updatedBrand),
+                    },
+                });
+
                 return NextResponse.json({
                     message: "Marka başarıyla güncellendi!",
                     status: 200,

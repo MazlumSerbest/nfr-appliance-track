@@ -40,6 +40,17 @@ export async function POST(request: Request) {
             });
 
             if (newConnection.id) {
+                await prisma.logs.create({
+                    data: {
+                        action: "create",
+                        table: "connections",
+                        user: newConnection.createdBy,
+                        date: new Date().toISOString(),
+                        description: `Connection created: ${newConnection.id}`,
+                        data: JSON.stringify(newConnection),
+                    },
+                });
+
                 return NextResponse.json({
                     message: "Bağlantı başarıyla kaydedildi!",
                     status: 200,

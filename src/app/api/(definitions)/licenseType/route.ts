@@ -40,6 +40,17 @@ export async function POST(request: Request) {
             });
 
             if (newLicenseType.id) {
+                await prisma.logs.create({
+                    data: {
+                        action: "create",
+                        table: "licenseTypes",
+                        user: newLicenseType.createdBy,
+                        date: new Date().toISOString(),
+                        description: `License type created: ${newLicenseType.id}`,
+                        data: JSON.stringify(newLicenseType),
+                    },
+                });
+
                 return NextResponse.json({
                     message: "Lisans tipi başarıyla kaydedildi!",
                     status: 200,

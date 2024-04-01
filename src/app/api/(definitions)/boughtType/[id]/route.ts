@@ -40,14 +40,25 @@ export async function PUT(
             const boughtType: BoughtType = await request.json();
             boughtType.updatedAt = new Date().toISOString();
 
-            const updateBoughtType = await prisma.boughtTypes.update({
+            const updatedBoughtType = await prisma.boughtTypes.update({
                 where: {
                     id: Number(params.id),
                 },
                 data: boughtType,
             });
 
-            if (updateBoughtType.id) {
+            if (updatedBoughtType.id) {
+                await prisma.logs.create({
+                    data: {
+                        action: "update",
+                        table: "boughtTypes",
+                        user: updatedBoughtType.updatedBy || "",
+                        date: new Date().toISOString(),
+                        description: `Bought type updated: ${updatedBoughtType.id}`,
+                        data: JSON.stringify(updatedBoughtType),
+                    },
+                });
+
                 return NextResponse.json({
                     message: "Alım tipi başarıyla güncellendi!",
                     status: 200,

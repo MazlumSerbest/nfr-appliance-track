@@ -38,6 +38,17 @@ export async function POST(request: Request) {
             });
 
             if (newProduct.id) {
+                await prisma.logs.create({
+                    data: {
+                        action: "create",
+                        table: "products",
+                        user: newProduct.createdBy,
+                        date: new Date().toISOString(),
+                        description: `Product created: ${newProduct.id}`,
+                        data: JSON.stringify(newProduct),
+                    },
+                });
+
                 return NextResponse.json({
                     message: "Ürün başarıyla kaydedildi!",
                     status: 200,

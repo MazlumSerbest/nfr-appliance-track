@@ -120,14 +120,25 @@ export async function PUT(
             //         });
             // }
 
-            const updateAppliance = await prisma.appliances.update({
+            const updatedAppliance = await prisma.appliances.update({
                 where: {
                     id: Number(params.id),
                 },
                 data: appliance,
             });
 
-            if (updateAppliance.id) {
+            if (updatedAppliance.id) {
+                await prisma.logs.create({
+                    data: {
+                        action: "update",
+                        table: "appliances",
+                        user: updatedAppliance.updatedBy || "",
+                        date: new Date().toISOString(),
+                        description: `Appliance updated: ${updatedAppliance.id}`,
+                        data: JSON.stringify(updatedAppliance),
+                    },
+                });
+
                 return NextResponse.json({
                     message: "Cihaz başarıyla güncellendi!",
                     status: 200,
@@ -163,7 +174,7 @@ export async function DELETE(
             const appliance: Appliance = await request.json();
             appliance.updatedAt = new Date().toISOString();
 
-            await prisma.appliances.update({
+            const deletedAppliance = await prisma.appliances.update({
                 where: {
                     id: Number(params.id),
                 },
@@ -172,10 +183,31 @@ export async function DELETE(
                 },
             });
 
-            return NextResponse.json({
-                message: "Cihaz silindi!",
-                status: 200,
-            });
+            if (deletedAppliance.id) {
+                await prisma.logs.create({
+                    data: {
+                        action: "delete",
+                        table: "appliances",
+                        user: deletedAppliance.updatedBy || "",
+                        date: new Date().toISOString(),
+                        description: `Appliance deleted: ${deletedAppliance.id}`,
+                        data: JSON.stringify(deletedAppliance),
+                    },
+                });
+
+                return NextResponse.json({
+                    message: "Cihaz silindi!",
+                    status: 200,
+                    ok: true,
+                });
+            } else {
+                return NextResponse.json({
+                    message: "Cihaz silinirken bir hata oluştu!",
+                    status: 400,
+                    ok: false,
+                });
+            }
+
         }
 
         return NextResponse.json({
