@@ -327,15 +327,12 @@ export default function Licenses() {
                         </>
                     );
                 case "startDate":
-                    return <p>{DateFormat(cellValue)}</p>;
                 case "expiryDate":
-                    return <p>{DateFormat(cellValue)}</p>;
                 case "boughtAt":
-                    return <p>{DateFormat(cellValue)}</p>;
                 case "soldAt":
+                case "orderedAt":
                     return <p>{DateFormat(cellValue)}</p>;
                 case "createdAt":
-                    return <p>{DateTimeFormat(cellValue)}</p>;
                 case "updatedAt":
                     return <p>{DateTimeFormat(cellValue)}</p>;
                 default:

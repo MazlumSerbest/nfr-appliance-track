@@ -208,10 +208,6 @@ export default function Appliances() {
                 appliance[columnKey as keyof typeof appliance];
 
             switch (columnKey) {
-                case "boughtAt":
-                    return <p>{DateFormat(cellValue)}</p>;
-                case "soldAt":
-                    return <p>{DateFormat(cellValue)}</p>;
                 case "customerName":
                 case "dealerName":
                 case "subDealerName":
@@ -225,8 +221,10 @@ export default function Appliances() {
                                 : "-"}
                         </p>
                     );
+                case "boughtAt":
+                case "soldAt":
+                    return <p>{DateFormat(cellValue)}</p>;
                 case "createdAt":
-                    return <p>{DateTimeFormat(cellValue)}</p>;
                 case "updatedAt":
                     return <p>{DateTimeFormat(cellValue)}</p>;
                 default:
