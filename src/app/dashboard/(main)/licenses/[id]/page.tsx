@@ -204,26 +204,26 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                 <dt className="font-medium">Durum</dt>
                                 <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
                                     {!data.customerId &&
-                                    !data.orderedAt &&
-                                    !data.expiryDate ? (
+                                        !data.orderedAt &&
+                                        !data.expiryDate ? (
                                         <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-sm font-medium text-sky-500 ring-1 ring-inset ring-sky-500/20">
                                             Aktif
                                         </span>
                                     ) : data.customerId &&
-                                      !data.orderedAt &&
-                                      !data.expiryDate ? (
+                                        !data.orderedAt &&
+                                        !data.expiryDate ? (
                                         <span className="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-sm font-medium text-yellow-500 ring-1 ring-inset ring-yellow-500/20">
                                             Sipariş
                                         </span>
                                     ) : data.customerId &&
-                                      data.orderedAt &&
-                                      !data.expiryDate ? (
+                                        data.orderedAt &&
+                                        !data.expiryDate ? (
                                         <span className="inline-flex items-center rounded-md bg-orange-50 px-2 py-1 text-sm font-medium text-orange-500 ring-1 ring-inset ring-orange-500/20">
                                             Bekleyen Sipariş
                                         </span>
                                     ) : data.customerId &&
-                                      data.orderedAt &&
-                                      data.expiryDate ? (
+                                        data.orderedAt &&
+                                        data.expiryDate ? (
                                         <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-sm font-medium text-green-600 ring-1 ring-inset ring-green-600/20">
                                             Aktif
                                         </span>
@@ -579,6 +579,19 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                     {data?.appliance ? (
                         <>
                             <div className="divide-y divide-zinc-200 text-zinc-500">
+                                <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base p-2">
+                                    <dt className="font-medium">Marka</dt>
+                                    <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
+                                        {data.appliance?.product?.brand?.name || "-"}
+                                    </dd>
+                                </div>
+                                <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base p-2">
+                                    <dt className="font-medium">Model</dt>
+                                    <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
+                                        {data.appliance?.product?.model || "-"}
+                                    </dd>
+                                </div>
+
                                 <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base p-2">
                                     <dt className="font-medium">Seri No</dt>
                                     <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">

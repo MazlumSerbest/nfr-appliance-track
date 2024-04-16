@@ -18,6 +18,16 @@ export async function GET(
                             serialNo: true,
                             boughtAt: true,
                             soldAt: true,
+                            product: {
+                                select: {
+                                    model: true,
+                                    brand: {
+                                        select: {
+                                            name: true,
+                                        },
+                                    },
+                                },
+                            },
                         },
                     },
                     licenseType: {

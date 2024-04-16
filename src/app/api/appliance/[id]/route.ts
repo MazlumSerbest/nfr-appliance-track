@@ -15,13 +15,11 @@ export async function GET(
                     id: Number(params.id),
                 },
                 include: {
-                    // product: {
-                    //     select: {
-                    //         brand: { select: { name: true } },
-                    //         productType: { select: { type: true } },
-                    //         model: true,
-                    //     },
-                    // },
+                    product: {
+                        select: {
+                            brand: { select: { name: true } },
+                        },
+                    },
                     licenses: {
                         select: {
                             id: true,
@@ -31,6 +29,11 @@ export async function GET(
                                 select: {
                                     type: true,
                                     duration: true,
+                                    brand: {
+                                        select: {
+                                            name: true,
+                                        },
+                                    },
                                 },
                             },
                         },
@@ -207,7 +210,6 @@ export async function DELETE(
                     ok: false,
                 });
             }
-
         }
 
         return NextResponse.json({

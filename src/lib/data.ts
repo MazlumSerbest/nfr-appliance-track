@@ -58,10 +58,10 @@ export async function getProducts(forListBox?: boolean) {
     if (!products) return toast.error("Ürün bulunamadı!");
     if (forListBox)
         return products
-            .filter((p: Product) => p.active)
-            .map((p: Product) => ({
+            .filter((p: vProduct) => p.active)
+            .map((p: vProduct) => ({
                 id: p.id,
-                name: (p.brand?.name ? p.brand?.name + " " : "") + p.model,
+                name: (p.brandName ? p.brandName + " " : "") + p.model,
             }));
     return products.filter((p: Product) => p.active);
 }

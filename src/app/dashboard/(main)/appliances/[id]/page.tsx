@@ -460,7 +460,7 @@ export default function ApplianceDetail({
                                         <div className="flex flex-1 gap-x-4">
                                             <div className="min-w-0 flex-auto">
                                                 <p className="text-sm font-semibold leading-6 text-zinc-600">
-                                                    {lic.licenseType?.type}
+                                                    {lic.licenseType?.brand?.name + " " + lic.licenseType?.type}
                                                     {lic.licenseType
                                                         ?.duration ? (
                                                         <span className="inline-flex items-center rounded-md bg-sky-50 px-2 py-1 text-xs font-medium text-sky-600 ring-1 ring-inset ring-sky-600/20 ml-2">
