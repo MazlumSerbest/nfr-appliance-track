@@ -190,7 +190,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                     boughtTypeId: Number(data.boughtTypeId || null),
                 }
             }
-            console.log(licenseWithNewHistory);
+            
             await fetch(`/api/license/${data.id}/history`, {
                 method: "PUT",
                 body: JSON.stringify(licenseWithNewHistory),
