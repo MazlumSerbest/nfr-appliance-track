@@ -44,7 +44,19 @@ type License = Entity & {
     note?: string;
     appSerialNo?: string;
     licenseType: any;
+    history: any;
     // boughtType: any;
+};
+
+type LicenseHistory = Entity & {
+    licenseId: number;
+    serialNo?: string;
+    licenseTypeId: number;
+    boughtTypeId?: number;
+    startDate: string;
+    expiryDate: string;
+    licenseType: any;
+    boughtType: any;
 };
 
 type Project = Entity & {

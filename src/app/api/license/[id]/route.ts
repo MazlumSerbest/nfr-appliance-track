@@ -36,6 +36,29 @@ export async function GET(
                             duration: true,
                         },
                     },
+                    history: {
+                        select: {
+                            serialNo: true,
+                            startDate: true,
+                            expiryDate: true,
+                            licenseType: {
+                                select: {
+                                    type: true,
+                                    duration: true,
+                                    brand: {
+                                        select: {
+                                            name: true,
+                                        },
+                                    },
+                                },
+                            },
+                            boughtType: {
+                                select: {
+                                    type: true,
+                                },
+                            },
+                        },
+                    },
                     // boughtType: {
                     //     select: {
                     //         type: true,

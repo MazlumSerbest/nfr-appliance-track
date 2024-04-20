@@ -1,0 +1,88 @@
+import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import prisma from "@/utils/db";
+import { create } from "domain";
+
+export async function PUT(
+    request: Request,
+    { params }: { params: { id: string } },
+) {
+    try {
+        const session = await getServerSession();
+
+        if (session) {
+            const license = await request.json();
+            license.updatedAt = new Date().toISOString();
+            license.startDate = license.startDate
+                ? new Date(license.startDate).toISOString()
+                : null;
+            license.expiryDate = license.expiryDate
+                ? new Date(license.expiryDate).toISOString()
+                : null;
+
+            const updatedLicense = await prisma.licenses.update({
+                data: {
+                    ...license,
+                    history: {
+                        createMany: {
+                            data: [
+                                {
+                                    serialNo: license.history.serialNo,
+                                    startDate: new Date(
+                                        license.history.startDate,
+                                    ).toISOString(),
+                                    expiryDate: new Date(
+                                        license.history.expiryDate,
+                                    ).toISOString(),
+                                    licenseTypeId: license.history.licenseTypeId,
+                                    boughtTypeId: license.history.boughtTypeId,
+                                    createdBy: license.updatedBy,
+                                    createdAt: new Date().toISOString(),
+                                },
+                            ],
+                        },
+                    },
+                },
+                where: {
+                    id: Number(params.id),
+                },
+                include: {
+                    history: true,
+                },
+            });
+
+            if (updatedLicense.id) {
+                await prisma.logs.create({
+                    data: {
+                        action: "update",
+                        table: "licenseHistory",
+                        user: updatedLicense.updatedBy || "",
+                        date: new Date().toISOString(),
+                        description: `License history added: ${updatedLicense.id}`,
+                        data: JSON.stringify(updatedLicense),
+                    },
+                });
+
+                return NextResponse.json({
+                    message: "Lisans geçmişi başarıyla güncellendi!",
+                    status: 200,
+                    ok: true,
+                });
+            } else {
+                return NextResponse.json({
+                    message: "Lisans geçmişi güncellenemedi!",
+                    status: 400,
+                    ok: false,
+                });
+            }
+        }
+
+        return NextResponse.json({
+            message: "Authorization Needed!",
+            status: 401,
+            ok: false,
+        });
+    } catch (error) {
+        return NextResponse.json({ message: error, status: 500, ok: false });
+    }
+}

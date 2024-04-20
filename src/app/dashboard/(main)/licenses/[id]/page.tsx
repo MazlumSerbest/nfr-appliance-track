@@ -25,6 +25,7 @@ import {
     BiInfoCircle,
     BiPlus,
     BiServer,
+    BiShieldQuarter,
     BiX,
 } from "react-icons/bi";
 import { setLicenseAppliance } from "@/lib/prisma";
@@ -65,6 +66,18 @@ interface IFormInput {
     dealer?: Current;
     subDealer?: Current;
     supplier?: Current;
+    history?: LicenseHistory[];
+}
+
+interface IHistoryFormInput {
+    id: number;
+    licenseId: number;
+    serialNo: string;
+    startDate: string;
+    expiryDate: string;
+    boughtTypeId: number;
+    licenseTypeId: number;
+    updatedBy: string;
 }
 
 export default function LicenseDetail({ params }: { params: { id: string } }) {
@@ -75,6 +88,12 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
         onClose: onCloseApp,
         onOpen: onOpenApp,
         onOpenChange: onOpenChangeApp,
+    } = useDisclosure();
+    const {
+        isOpen: isOpenHistory,
+        onClose: onCloseHistory,
+        onOpen: onOpenHistory,
+        onOpenChange: onOpenChangeHistory,
     } = useDisclosure();
 
     const [products, setProducts] = useState<ListBoxItem[] | null>(null);
@@ -114,6 +133,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
             delete data["dealer"];
             delete data["subDealer"];
             delete data["supplier"];
+            delete data["history"];
 
             await fetch(`/api/license/${data.id}`, {
                 method: "PUT",
@@ -148,6 +168,47 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
             } else toast.error("Bir hata oluştu! Lütfen tekrar deneyiniz.");
         }
     };
+
+    const { register: registerHistory, reset: resetHistory, handleSubmit: handleHistorySubmit, control: controlHistory } =
+        useForm<IHistoryFormInput>();
+
+    const onSubmitHistory: SubmitHandler<IHistoryFormInput> = async (d) => {
+        if (currUser) {
+            const licenseWithNewHistory = {
+                id: data.id,
+                serialNo: d.serialNo || null,
+                startDate: d.startDate || null,
+                expiryDate: d.expiryDate || null,
+                licenseTypeId: Number(d.licenseTypeId),
+                boughtTypeId: Number(d.boughtTypeId || null),
+                updatedBy: currUser?.username ?? "",
+                history: {
+                    serialNo: data.serialNo || null,
+                    startDate: data.startDate,
+                    expiryDate: data.expiryDate,
+                    licenseTypeId: Number(data.licenseTypeId),
+                    boughtTypeId: Number(data.boughtTypeId || null),
+                }
+            }
+            console.log(licenseWithNewHistory);
+            await fetch(`/api/license/${data.id}/history`, {
+                method: "PUT",
+                body: JSON.stringify(licenseWithNewHistory),
+                headers: { "Content-Type": "application/json" },
+            }).then(async (res) => {
+                const result = await res.json();
+                if (result.ok) {
+                    mutate();
+                    resetHistory();
+                    onCloseHistory();
+                    toast.success(result.message);
+                } else {
+                    toast.error(result.message);
+                }
+                return result;
+            });
+        }
+    }
     //#endregion
 
     //#region Data
@@ -176,7 +237,14 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
     //#endregion
 
     if (error) return <div>Yükleme Hatası!</div>;
-    if (!data || !suppliers || !dealers || !customers || !boughtTypes || !licenseTypes)
+    if (
+        !data ||
+        !suppliers ||
+        !dealers ||
+        !customers ||
+        !boughtTypes ||
+        !licenseTypes
+    )
         return (
             <div className="flex flex-col mt-4">
                 <Skeleton>
@@ -526,6 +594,14 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                 }
                             />
 
+                            <Button
+                                color="primary"
+                                className="bg-yellow-500"
+                                onPress={onOpenHistory}
+                            >
+                                Yeni Satın Alım Ekle
+                            </Button>
+
                             <DeleteButton
                                 table="licenses"
                                 data={data}
@@ -582,7 +658,8 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                 <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base p-2">
                                     <dt className="font-medium">Marka</dt>
                                     <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                        {data.appliance?.product?.brand?.name || "-"}
+                                        {data.appliance?.product?.brand?.name ||
+                                            "-"}
                                     </dd>
                                 </div>
                                 <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base p-2">
@@ -692,6 +769,113 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                 </AccordionItem>
             </Accordion>
 
+            <Accordion
+                selectionMode="multiple"
+                variant="splitted"
+                defaultExpandedKeys={data.history.length != 0 ? ["history"] : []}
+                className="p-0"
+                itemClasses={{
+                    title: "font-medium text-zinc-600",
+                    base: "px-1 py-2",
+                }}
+            >
+                <AccordionItem
+                    key="history"
+                    aria-label="applihistoryance"
+                    title="Geçmiş Lisans Bilgileri"
+                    subtitle="Bu lisansın geçmiş satın alım bilgileri"
+                    indicator={
+                        <BiChevronLeft className="text-3xl text-zinc-500" />
+                    }
+                    startContent={
+                        <BiShieldQuarter className="text-4xl text-sky-500/60" />
+                    }
+                >
+                    {data.history.length > 0 ? (
+                        <>
+                            <ul
+                                role="list"
+                                className="divide-y divide-zinc-200">
+                                <li key={0}></li>
+                                {data.history.map((h: LicenseHistory) => (
+                                    <li
+                                        key={h.id}
+                                        className="flex justify-between py-2 items-center"
+                                    >
+                                        <div className="min-w-0 flex-auto">
+                                            <p className="text-sm font-semibold leading-6 text-zinc-600">
+                                                {h.licenseType?.brand?.name + " " + h.licenseType?.type}
+                                                {h.licenseType
+                                                    ?.duration ? (
+                                                    <span className="inline-flex items-center rounded-md bg-sky-50 px-2 py-1 text-xs font-medium text-sky-600 ring-1 ring-inset ring-sky-600/20 ml-2">
+                                                        {h.licenseType
+                                                            ?.duration +
+                                                            " ay"}
+                                                    </span>
+                                                ) : (
+                                                    <> </>
+                                                )}
+                                                {h.boughtType ? (
+                                                    <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-600 ring-1 ring-inset ring-green-600/20 ml-2">
+                                                        {h.boughtType?.type}
+                                                    </span>
+                                                ) : (
+                                                    <></>
+                                                )}
+                                            </p>
+                                            <div className="max-w-fit text-xs leading-5 text-zinc-400">
+                                                {
+                                                    h.serialNo ? (
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        <dt className="font-semibold text-zinc-500">
+                                                            {
+                                                                "Seri No:"
+                                                            }
+                                                        </dt>
+                                                        <dd>
+                                                            {h.serialNo}
+                                                        </dd>
+                                                    </div>
+                                                    ) : null
+                                                }
+
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <dt className="font-semibold text-zinc-500">
+                                                        {
+                                                            "Başlangıç Tarihi:"
+                                                        }
+                                                    </dt>
+                                                    <dd>
+                                                        {DateFormat(
+                                                            h.startDate,
+                                                        )}
+                                                    </dd>
+                                                </div>
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <dt className="font-semibold text-zinc-500">
+                                                        {"Bitiş Tarihi:"}
+                                                    </dt>
+                                                    <dd>
+                                                        {DateFormat(
+                                                            h.expiryDate,
+                                                        )}
+                                                    </dd>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        </>
+                    )
+                        : (<div className="w-full py-6 text-center">
+                            <p className="text-zinc-400">
+                                Bu lisansın geçmişte herhangi bir satın alımı bulunmuyor.
+                            </p>
+                        </div>)}
+                </AccordionItem>
+            </Accordion>
+
             <Modal
                 isOpen={isOpenApp}
                 onOpenChange={onOpenChangeApp}
@@ -708,7 +892,6 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                     </ModalHeader>
                     <ModalBody>
                         <form
-                            action=""
                             autoComplete="off"
                             className="flex flex-col gap-2"
                             onSubmit={handleSubmit(onSubmitApp)}
@@ -763,6 +946,148 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                 <Button
                                     color="danger"
                                     onPress={onCloseApp}
+                                    className="bg-red-600"
+                                >
+                                    Kapat
+                                </Button>
+                                <Button
+                                    type="submit"
+                                    color="success"
+                                    className="text-white bg-green-600"
+                                >
+                                    Kaydet
+                                </Button>
+                            </div>
+                        </form>
+                    </ModalBody>
+                </ModalContent>
+            </Modal>
+
+            <Modal
+                isOpen={isOpenHistory}
+                onOpenChange={onOpenChangeHistory}
+                size="lg"
+                placement="center"
+                backdrop="opaque"
+                shadow="lg"
+                isDismissable={false}
+                scrollBehavior="outside">
+                <ModalContent>
+                    <ModalHeader className="flex flex-col gap-1 text-zinc-500">
+                        Yeni Satın Alım
+                    </ModalHeader>
+                    <ModalBody>
+                        <form
+                            autoComplete="off"
+                            className="flex flex-col gap-2"
+                            onSubmit={handleHistorySubmit(onSubmitHistory)}
+                        >
+                            <div>
+                                <label
+                                    htmlFor="boughtTypeId"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Alım Tipi
+                                </label>
+                                <div className="block w-full h-10 rounded-md border-0 px-3 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2">
+                                    <select
+                                        id="boughtTypeId"
+                                        className="w-full border-none text-sm text-zinc-700 outline-none"
+                                        {...registerHistory("boughtTypeId")}
+                                    >
+                                        <option selected value="">
+                                            Satın alım tipi Seçiniz...
+                                        </option>
+                                        {boughtTypes?.map((bt) => (
+                                            <option key={bt.id} value={bt.id}>
+                                                {bt.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label
+                                    htmlFor="licenseTypeId"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                >
+                                    Lisans Tipi
+                                </label>
+                                <Controller
+                                    control={controlHistory}
+                                    name="licenseTypeId"
+                                    rules={{ required: true }}
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <AutoComplete
+                                            onChange={onChange}
+                                            value={value}
+                                            data={licenseTypes || []}
+                                        />
+                                    )}
+                                />
+                            </div>
+
+                            <div>
+                                <label
+                                    htmlFor="serialNo"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Lisans Seri Numarası
+                                </label>
+                                <input
+                                    type="text"
+                                    id="serialNo"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    {...registerHistory("serialNo", {
+                                        maxLength: 50,
+                                    })}
+                                />
+                            </div>
+
+                            <div>
+                                <label
+                                    htmlFor="startDate"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                >
+                                    Başlangıç Tarihi
+                                </label>
+                                <input
+                                    required
+                                    type="date"
+                                    id="startDate"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    {...registerHistory("startDate", {
+                                        required: true,
+                                    })}
+                                />
+                            </div>
+
+                            <div>
+                                <label
+                                    htmlFor="expiryDate"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                >
+                                    Bitiş Tarihi
+                                </label>
+                                <input
+                                    required
+                                    type="date"
+                                    id="expiryDate"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    {...registerHistory("expiryDate", {
+                                        required: true,
+                                    })}
+                                />
+                            </div>
+
+                            <div className="flex flex-row gap-2 mt-4">
+                                <div className="flex-1"></div>
+                                <Button
+                                    color="danger"
+                                    onPress={onCloseHistory}
                                     className="bg-red-600"
                                 >
                                     Kapat

@@ -446,7 +446,7 @@ export default function ApplianceDetail({
                                 role="list"
                                 className="divide-y divide-zinc-200"
                             >
-                                <li></li>
+                                <li key={0}></li>
                                 {data?.licenses.map((lic: License) => (
                                     <li
                                         onClick={() =>
