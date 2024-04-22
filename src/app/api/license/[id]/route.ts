@@ -30,6 +30,16 @@ export async function GET(
                             },
                         },
                     },
+                    product: {
+                        select: {
+                            model: true,
+                            brand: {
+                                select: {
+                                    name: true,
+                                },
+                            },
+                        },
+                    },
                     licenseType: {
                         select: {
                             type: true,
@@ -120,6 +130,8 @@ export async function PUT(
             license.orderedAt = license.orderedAt
                 ? new Date(license.orderedAt).toISOString()
                 : null;
+
+            license.applianceId ? license.productId = null : null;
 
             // const checkSerialNo = await prisma.licenses.findUnique({
             //     where: {

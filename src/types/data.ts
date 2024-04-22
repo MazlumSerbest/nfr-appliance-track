@@ -42,7 +42,9 @@ type License = Entity & {
     soldAt?: string | null;
     orderedAt?: string | null;
     note?: string;
+    applianceId?: number | null;
     appSerialNo?: string;
+    productId?: number | null;
     licenseType: any;
     history: any;
     // boughtType: any;

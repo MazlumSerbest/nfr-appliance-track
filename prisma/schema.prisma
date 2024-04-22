@@ -84,6 +84,7 @@ model licenses {
   note          String?          @db.VarChar
   orderedAt     DateTime?        @db.Date
   appSerialNo   String?          @db.VarChar
+  productId     Int?
   appliance     appliances?      @relation(fields: [applianceId], references: [id])
   boughtType    boughtTypes?     @relation(fields: [boughtTypeId], references: [id])
   customer      currents?        @relation("Customer", fields: [customerId], references: [id])
@@ -91,6 +92,7 @@ model licenses {
   licenseType   licenseTypes     @relation(fields: [licenseTypeId], references: [id])
   subDealer     currents?        @relation("SubDealer", fields: [subDealerId], references: [id])
   supplier      currents?        @relation("Supplier", fields: [supplierId], references: [id])
+  product       products?        @relation(fields: [productId], references: [id])
   history       licenseHistory[]
 }
 
@@ -174,6 +176,7 @@ model products {
   brand         brands?       @relation(fields: [brandId], references: [id])
   productType   productTypes? @relation(fields: [productTypeId], references: [id])
   projects      projects[]
+  licenses      licenses[]
 }
 
 model productTypes {

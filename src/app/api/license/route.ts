@@ -53,6 +53,8 @@ export async function POST(request: Request) {
                 ? new Date(license.orderedAt).toISOString()
                 : undefined;
 
+            license.applianceId ? license.productId = null : null;
+
             // const checkSerialNo = await prisma.licenses.findUnique({
             //     where: {
             //         serialNo: license.serialNo,

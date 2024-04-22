@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
-import { useReadLocalStorage } from "usehooks-ts";
 import toast from "react-hot-toast";
 
 import {
@@ -51,6 +50,7 @@ interface IFormInput {
     note?: string;
     applianceId: number;
     appSerialNo: string;
+    productId?: number;
     licenseTypeId: number;
     customerId: number;
     dealerId: number;
@@ -105,6 +105,7 @@ export default function Licenses() {
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         data.createdBy = currUser?.username ?? "";
         data.boughtTypeId = Number(data.boughtTypeId || undefined);
+        data.productId = Number(data.productId || undefined);
 
         await fetch("/api/license", {
             method: "POST",
@@ -430,9 +431,9 @@ export default function Licenses() {
                                 currUser?.role == "technical"
                                     ? undefined
                                     : () => {
-                                          reset({});
-                                          onOpen();
-                                      }
+                                        reset({});
+                                        onOpen();
+                                    }
                             }
                             onDoubleClick={(item) => {
                                 router.push(`/dashboard/licenses/${item.id}`);
@@ -456,9 +457,9 @@ export default function Licenses() {
                                 currUser?.role == "technical"
                                     ? undefined
                                     : () => {
-                                          reset({});
-                                          onOpen();
-                                      }
+                                        reset({});
+                                        onOpen();
+                                    }
                             }
                             onDoubleClick={(item) => {
                                 router.push(`/dashboard/licenses/${item.id}`);
@@ -486,9 +487,9 @@ export default function Licenses() {
                                 currUser?.role == "technical"
                                     ? undefined
                                     : () => {
-                                          reset({});
-                                          onOpen();
-                                      }
+                                        reset({});
+                                        onOpen();
+                                    }
                             }
                             onDoubleClick={(item) => {
                                 router.push(`/dashboard/licenses/${item.id}`);
@@ -516,9 +517,9 @@ export default function Licenses() {
                                 currUser?.role == "technical"
                                     ? undefined
                                     : () => {
-                                          reset({});
-                                          onOpen();
-                                      }
+                                        reset({});
+                                        onOpen();
+                                    }
                             }
                             onDoubleClick={(item) => {
                                 router.push(`/dashboard/licenses/${item.id}`);
@@ -558,19 +559,28 @@ export default function Licenses() {
 
                             <div>
                                 <label
-                                    htmlFor="product"
+                                    htmlFor="productId"
                                     className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
                                 >
                                     Ürün
                                 </label>
-                                <AutoComplete
-                                    onChange={async (e) => {
-                                        resetField("applianceId");
-                                        const appliances: ListBoxItem[] =
-                                            await getAppliances(true, e);
-                                        setAppliances(appliances);
-                                    }}
-                                    data={products || []}
+                                <Controller
+                                    control={control}
+                                    name="productId"
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (<AutoComplete
+                                        value={value}
+                                        data={products || []}
+                                        onChange={async (e) => {
+                                            onChange(e);
+                                            resetField("applianceId");
+                                            const appliances: ListBoxItem[] =
+                                                await getAppliances(true, e);
+                                            setAppliances(appliances);
+                                        }}
+                                    />
+                                    )}
                                 />
                             </div>
                             <div>

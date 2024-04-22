@@ -15,6 +15,8 @@ import {
 } from "@nextui-org/modal";
 import { Accordion, AccordionItem } from "@nextui-org/accordion";
 import { Button } from "@nextui-org/button";
+import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/popover";
+import { Tab, Tabs } from "@nextui-org/tabs";
 
 import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
 import AutoComplete from "@/components/AutoComplete";
@@ -59,6 +61,7 @@ interface IFormInput {
     applianceId: number;
     updatedBy: string;
     appSerialNo?: string;
+    productId?: number;
     appliance?: Appliance;
     licenseType?: LicenseType;
     boughtType?: BoughtType;
@@ -67,6 +70,7 @@ interface IFormInput {
     subDealer?: Current;
     supplier?: Current;
     history?: LicenseHistory[];
+    product?: Product;
 }
 
 interface IHistoryFormInput {
@@ -95,6 +99,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
         onOpen: onOpenHistory,
         onOpenChange: onOpenChangeHistory,
     } = useDisclosure();
+    const { isOpen: isAppDeleteOpen, onClose: onAppDeleteClose, onOpenChange: onAppDeleteOpenChange } = useDisclosure();
 
     const [products, setProducts] = useState<ListBoxItem[] | null>(null);
     const [appliances, setAppliances] = useState<ListBoxItem[] | null>(null);
@@ -125,6 +130,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
         if (currUser) {
             data.updatedBy = currUser?.username ?? "";
             data.boughtTypeId = Number(data.boughtTypeId || undefined);
+            data.productId = Number(data.productId || undefined);
 
             delete data["appliance"];
             delete data["licenseType"];
@@ -134,6 +140,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
             delete data["subDealer"];
             delete data["supplier"];
             delete data["history"];
+            delete data["product"];
 
             await fetch(`/api/license/${data.id}`, {
                 method: "PUT",
@@ -190,7 +197,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                     boughtTypeId: Number(data.boughtTypeId || null),
                 }
             }
-            
+
             await fetch(`/api/license/${data.id}/history`, {
                 method: "PUT",
                 body: JSON.stringify(licenseWithNewHistory),
@@ -212,7 +219,6 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
     //#endregion
 
     //#region Data
-
     useEffect(() => {
         async function getData() {
             const pro: ListBoxItem[] = await getProducts(true);
@@ -301,6 +307,43 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                         </span>
                                     )}
                                 </dd>
+                            </div>
+
+                            <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2 items-center">
+                                {
+                                    data.applianceId ? (
+                                        <>
+                                            <dt className="font-medium">
+                                                Ürün
+                                            </dt>
+                                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
+                                                {data?.appliance?.product?.brand?.name
+                                                    + " " + data?.appliance?.product?.model}
+                                            </dd>
+                                        </>
+                                    ) : <>
+                                        <label
+                                            htmlFor="productId"
+                                            className="font-medium"
+                                        >
+                                            Ürün
+                                        </label>
+                                        <Controller
+                                            control={control}
+                                            name="productId"
+                                            render={({
+                                                field: { onChange, value },
+                                            }) => (
+                                                <AutoComplete
+                                                    onChange={onChange}
+                                                    value={value}
+                                                    data={products || []}
+                                                    className="md:col-span-2 xl:col-span-1 my-1 sm:my-0"
+                                                />
+                                            )}
+                                        />
+                                    </>
+                                }
                             </div>
 
                             <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2 items-center">
@@ -708,36 +751,72 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                 </Button>
                                 {currUser?.role === "technical" ? undefined : (
                                     <>
-                                        <Button
-                                            color="primary"
-                                            className="bg-red-500"
-                                            onPress={async () => {
-                                                if (currUser) {
-                                                    const updatedBy =
-                                                        currUser?.username ??
-                                                        "";
-
-                                                    const lic =
-                                                        await setLicenseAppliance(
-                                                            Number(params.id),
-                                                            null,
-                                                            updatedBy,
-                                                        );
-                                                    if (lic) {
-                                                        onCloseApp();
-                                                        mutate();
-                                                        toast.success(
-                                                            "Lisans cihazdan silindi!",
-                                                        );
-                                                    } else
-                                                        toast.error(
-                                                            "Bir hata oluştu! Lütfen tekrar deneyiniz.",
-                                                        );
-                                                }
-                                            }}
+                                        <Popover
+                                            key={data.id}
+                                            placement="top"
+                                            color="default"
+                                            backdrop="opaque"
+                                            isOpen={isAppDeleteOpen}
+                                            onOpenChange={onAppDeleteOpenChange}
                                         >
-                                            Cihazı Sil
-                                        </Button>
+                                            <PopoverTrigger>
+                                                <Button
+                                                    color="primary"
+                                                    className="bg-red-500"
+                                                >
+                                                    Cihazı Sil
+                                                </Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="flex flex-col gap-2 p-3">
+                                                <h2 className="text-lg font-semibold text-zinc-600">
+                                                    Seçili kayıt silinecektir!
+                                                </h2>
+                                                <p className="text-sm text-zinc-500 pb-2">
+                                                    Devam etmek istediğinizden emin misiniz?
+                                                </p>
+                                                <div className="flex gap-2">
+                                                    <Button
+                                                        variant="bordered"
+                                                        color="default"
+                                                        onPress={onAppDeleteClose}
+                                                    >
+                                                        Kapat
+                                                    </Button>
+                                                    <Button
+                                                        variant="solid"
+                                                        color="danger"
+                                                        className="bg-red-600"
+                                                        onPress={async () => {
+                                                            if (currUser) {
+                                                                const updatedBy =
+                                                                    currUser?.username ??
+                                                                    "";
+
+                                                                const lic =
+                                                                    await setLicenseAppliance(
+                                                                        Number(params.id),
+                                                                        null,
+                                                                        updatedBy,
+                                                                    );
+                                                                if (lic) {
+                                                                    onAppDeleteClose();
+                                                                    mutate();
+                                                                    toast.success(
+                                                                        "Lisans cihazdan silindi!",
+                                                                    );
+                                                                } else
+                                                                    toast.error(
+                                                                        "Bir hata oluştu! Lütfen tekrar deneyiniz.",
+                                                                    );
+                                                            }
+                                                        }}
+                                                    >
+                                                        Sil
+                                                    </Button>
+                                                </div>
+                                            </PopoverContent>
+                                        </Popover>
+
                                         <Button
                                             color="primary"
                                             className="bg-green-600"
@@ -826,16 +905,16 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                             <div className="max-w-fit text-xs leading-5 text-zinc-400">
                                                 {
                                                     h.serialNo ? (
-                                                    <div className="grid grid-cols-2 gap-4">
-                                                        <dt className="font-semibold text-zinc-500">
-                                                            {
-                                                                "Seri No:"
-                                                            }
-                                                        </dt>
-                                                        <dd>
-                                                            {h.serialNo}
-                                                        </dd>
-                                                    </div>
+                                                        <div className="grid grid-cols-2 gap-4">
+                                                            <dt className="font-semibold text-zinc-500">
+                                                                {
+                                                                    "Seri No:"
+                                                                }
+                                                            </dt>
+                                                            <dd>
+                                                                {h.serialNo}
+                                                            </dd>
+                                                        </div>
                                                     ) : null
                                                 }
 
@@ -890,75 +969,89 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                     <ModalHeader className="flex flex-col gap-1 text-zinc-500">
                         Cihaz Ekleme
                     </ModalHeader>
-                    <ModalBody>
-                        <form
-                            autoComplete="off"
-                            className="flex flex-col gap-2"
-                            onSubmit={handleSubmit(onSubmitApp)}
-                        >
-                            <div>
-                                <label
-                                    htmlFor="product"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                    <ModalBody className="flex items-center w-full">
+                        <Tabs
+                            aria-label="Appliance Tab"
+                            color="primary"
+                            size="sm"
+                            classNames={{
+                                cursor: "w-full bg-sky-500",
+                                tab: "px-8",
+                            }}>
+                            <Tab key="registered" title="Kayıtlı" className="w-full">
+                                <form
+                                    autoComplete="off"
+                                    className="flex flex-col gap-2"
+                                    onSubmit={handleSubmit(onSubmitApp)}
                                 >
-                                    Ürün
-                                </label>
-                                <AutoComplete
-                                    onChange={async (e) => {
-                                        resetField("applianceId");
-                                        const appliances: ListBoxItem[] =
-                                            await getAppliances(true, e);
-                                        setAppliances(appliances);
-                                    }}
-                                    data={products || []}
-                                />
-                            </div>
-                            <div>
-                                <label
-                                    htmlFor="applianceId"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
-                                >
-                                    Cihaz
-                                </label>
-                                <span className="flex flex-row font-normal text-xs text-zinc-400 items-center gap-1 mb-1">
-                                    <BiInfoCircle />
-                                    Cihaz seçmek için ürün seçimi yapmanız
-                                    gereklidir!
-                                </span>
-                                <Controller
-                                    control={control}
-                                    name="applianceId"
-                                    rules={{ required: true }}
-                                    render={({
-                                        field: { onChange, value },
-                                    }) => (
+                                    <div>
+                                        <label
+                                            htmlFor="product"
+                                            className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                        >
+                                            Ürün
+                                        </label>
                                         <AutoComplete
-                                            onChange={onChange}
-                                            value={value}
-                                            data={appliances || []}
+                                            onChange={async (e) => {
+                                                resetField("applianceId");
+                                                const appliances: ListBoxItem[] =
+                                                    await getAppliances(true, e);
+                                                setAppliances(appliances);
+                                            }}
+                                            data={products || []}
                                         />
-                                    )}
-                                />
-                            </div>
+                                    </div>
+                                    <div>
+                                        <label
+                                            htmlFor="applianceId"
+                                            className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                        >
+                                            Cihaz
+                                        </label>
+                                        <span className="flex flex-row font-normal text-xs text-zinc-400 items-center gap-1 mb-1">
+                                            <BiInfoCircle />
+                                            Cihaz seçmek için ürün seçimi yapmanız
+                                            gereklidir!
+                                        </span>
+                                        <Controller
+                                            control={control}
+                                            name="applianceId"
+                                            rules={{ required: true }}
+                                            render={({
+                                                field: { onChange, value },
+                                            }) => (
+                                                <AutoComplete
+                                                    onChange={onChange}
+                                                    value={value}
+                                                    data={appliances || []}
+                                                />
+                                            )}
+                                        />
+                                    </div>
 
-                            <div className="flex flex-row gap-2 mt-4">
-                                <div className="flex-1"></div>
-                                <Button
-                                    color="danger"
-                                    onPress={onCloseApp}
-                                    className="bg-red-600"
-                                >
-                                    Kapat
-                                </Button>
-                                <Button
-                                    type="submit"
-                                    color="success"
-                                    className="text-white bg-green-600"
-                                >
-                                    Kaydet
-                                </Button>
-                            </div>
-                        </form>
+                                    <div className="flex flex-row gap-2 mt-4">
+                                        <div className="flex-1"></div>
+                                        <Button
+                                            color="danger"
+                                            onPress={onCloseApp}
+                                            className="bg-red-600"
+                                        >
+                                            Kapat
+                                        </Button>
+                                        <Button
+                                            type="submit"
+                                            color="success"
+                                            className="text-white bg-green-600"
+                                        >
+                                            Kaydet
+                                        </Button>
+                                    </div>
+                                </form>
+                            </Tab>
+                            <Tab key="new" title="Yeni" className="w-full">
+
+                            </Tab>
+                        </Tabs>
                     </ModalBody>
                 </ModalContent>
             </Modal>
