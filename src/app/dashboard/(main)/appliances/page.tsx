@@ -304,32 +304,6 @@ export default function Appliances() {
                         );
                     }}
                 >
-                    <Tab key="demo" title="Demo" className="w-full">
-                        <DataTable
-                            storageKey="demoAppliances"
-                            isCompact
-                            isStriped
-                            emptyContent="Herhangi bir cihaz bulunamadı!"
-                            defaultRowsPerPage={20}
-                            data={demoAppliances || []}
-                            columns={columns}
-                            renderCell={renderCell}
-                            sortOption={sort}
-                            initialVisibleColumNames={visibleColumns}
-                            activeOptions={[]}
-                            onAddNew={
-                                currUser?.role == "technical"
-                                    ? undefined
-                                    : () => {
-                                          reset({ isDemo: true });
-                                          onOpen();
-                                      }
-                            }
-                            onDoubleClick={(item) => {
-                                router.push(`/dashboard/appliances/${item.id}`);
-                            }}
-                        />
-                    </Tab>
                     <Tab key="stock" title="Stok" className="w-full">
                         <DataTable
                             storageKey="stockAppliances"
@@ -403,6 +377,32 @@ export default function Appliances() {
                                     ? undefined
                                     : () => {
                                           reset({});
+                                          onOpen();
+                                      }
+                            }
+                            onDoubleClick={(item) => {
+                                router.push(`/dashboard/appliances/${item.id}`);
+                            }}
+                        />
+                    </Tab>
+                    <Tab key="demo" title="Demo" className="w-full">
+                        <DataTable
+                            storageKey="demoAppliances"
+                            isCompact
+                            isStriped
+                            emptyContent="Herhangi bir cihaz bulunamadı!"
+                            defaultRowsPerPage={20}
+                            data={demoAppliances || []}
+                            columns={columns}
+                            renderCell={renderCell}
+                            sortOption={sort}
+                            initialVisibleColumNames={visibleColumns}
+                            activeOptions={[]}
+                            onAddNew={
+                                currUser?.role == "technical"
+                                    ? undefined
+                                    : () => {
+                                          reset({ isDemo: true });
                                           onOpen();
                                       }
                             }
