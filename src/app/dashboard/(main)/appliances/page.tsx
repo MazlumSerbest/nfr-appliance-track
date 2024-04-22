@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
-import { useReadLocalStorage } from "usehooks-ts";
 import toast from "react-hot-toast";
 
 import {
@@ -84,6 +83,7 @@ export default function Appliances() {
 
     //#region Form
     const { register, reset, handleSubmit, control } = useForm<IFormInput>({});
+    
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         data.createdBy = currUser?.username ?? "";
 

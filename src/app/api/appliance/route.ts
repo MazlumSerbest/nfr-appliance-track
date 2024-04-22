@@ -101,6 +101,7 @@ export async function POST(request: Request) {
                     message: "Cihaz başarıyla kaydedildi!",
                     status: 200,
                     ok: true,
+                    data: newAppliance,
                 });
             } else {
                 return NextResponse.json({

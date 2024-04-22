@@ -42,6 +42,7 @@ import {
     getSuppliers,
     getBoughtTypes,
 } from "@/lib/data";
+import ApplicationForm from "@/components/ApplicationForm";
 
 interface IFormInput {
     id: number;
@@ -99,7 +100,11 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
         onOpen: onOpenHistory,
         onOpenChange: onOpenChangeHistory,
     } = useDisclosure();
-    const { isOpen: isAppDeleteOpen, onClose: onAppDeleteClose, onOpenChange: onAppDeleteOpenChange } = useDisclosure();
+    const {
+        isOpen: isAppDeleteOpen,
+        onClose: onAppDeleteClose,
+        onOpenChange: onAppDeleteOpenChange
+    } = useDisclosure();
 
     const [products, setProducts] = useState<ListBoxItem[] | null>(null);
     const [appliances, setAppliances] = useState<ListBoxItem[] | null>(null);
@@ -1049,7 +1054,14 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                 </form>
                             </Tab>
                             <Tab key="new" title="Yeni" className="w-full">
-
+                                <ApplicationForm
+                                    licenseId={Number(params.id)}
+                                    onClose={onCloseApp}
+                                    products={products || []}
+                                    customers={customers || []}
+                                    dealers={dealers || []}
+                                    suppliers={suppliers || []}
+                                />
                             </Tab>
                         </Tabs>
                     </ModalBody>
