@@ -21,7 +21,8 @@ type Props = {
         | "boughtTypes"
         | "currents"
         | "authorizedPersons"
-        | "addresses";
+        | "addresses"
+        | "licenseHistory";
     data: any;
     mutate?: () => void;
     trigger: ReactNode;

@@ -65,6 +65,7 @@ export default function ApplianceDetail({
     //#region Form
     const { register, reset, handleSubmit, control, setValue } =
         useForm<IFormInput>({});
+
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         data.updatedBy = currUser?.username ?? "";
 

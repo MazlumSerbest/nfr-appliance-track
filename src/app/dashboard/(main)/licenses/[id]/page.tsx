@@ -29,6 +29,8 @@ import {
     BiServer,
     BiShieldQuarter,
     BiX,
+    BiTrash,
+    BiEdit
 } from "react-icons/bi";
 import { setLicenseAppliance } from "@/lib/prisma";
 import { DateFormat } from "@/utils/date";
@@ -83,11 +85,14 @@ interface IHistoryFormInput {
     boughtTypeId: number;
     licenseTypeId: number;
     updatedBy: string;
+    licenseType?: LicenseType;
+    boughtType?: BoughtType;
 }
 
 export default function LicenseDetail({ params }: { params: { id: string } }) {
     const router = useRouter();
     const { user: currUser } = useUserStore();
+    const [historyIsNew, setHistoryIsNew] = useState(false);
     const {
         isOpen: isOpenApp,
         onClose: onCloseApp,
@@ -181,7 +186,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
         }
     };
 
-    const { register: registerHistory, reset: resetHistory, handleSubmit: handleHistorySubmit, control: controlHistory } =
+    const { register: registerHistory, reset: resetHistory, setValue: setHistoryValue, handleSubmit: handleHistorySubmit, control: controlHistory } =
         useForm<IHistoryFormInput>();
 
     const onSubmitHistory: SubmitHandler<IHistoryFormInput> = async (d) => {
@@ -206,6 +211,35 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
             await fetch(`/api/license/${data.id}/history`, {
                 method: "PUT",
                 body: JSON.stringify(licenseWithNewHistory),
+                headers: { "Content-Type": "application/json" },
+            }).then(async (res) => {
+                const result = await res.json();
+                if (result.ok) {
+                    mutate();
+                    resetHistory();
+                    onCloseHistory();
+                    toast.success(result.message);
+                } else {
+                    toast.error(result.message);
+                }
+                return result;
+            });
+        }
+    }
+
+    const onSubmitHistoryUpdate: SubmitHandler<IHistoryFormInput> = async (data) => {
+        if (currUser) {
+            data.updatedBy = currUser?.username ?? "";
+            data.licenseTypeId = Number(data.licenseTypeId || null);
+            data.boughtTypeId = Number(data.boughtTypeId || null);
+            console.log(data);
+
+            delete data["licenseType"];
+            delete data["boughtType"];
+
+            await fetch(`/api/license/${params.id}/history/${data.id}`, {
+                method: "PUT",
+                body: JSON.stringify(data),
                 headers: { "Content-Type": "application/json" },
             }).then(async (res) => {
                 const result = await res.json();
@@ -645,7 +679,12 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                             <Button
                                 color="primary"
                                 className="bg-yellow-500"
-                                onPress={onOpenHistory}
+                                onPress={() => {
+                                    setHistoryIsNew(true);
+                                    resetHistory({});
+                                    resetHistory({});
+                                    onOpenHistory()
+                                }}
                             >
                                 Yeni Satın Alım Ekle
                             </Button>
@@ -887,26 +926,54 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                         className="flex justify-between py-2 items-center"
                                     >
                                         <div className="min-w-0 flex-auto">
-                                            <p className="text-sm font-semibold leading-6 text-zinc-600">
-                                                {h.licenseType?.brand?.name + " " + h.licenseType?.type}
-                                                {h.licenseType
-                                                    ?.duration ? (
-                                                    <span className="inline-flex items-center rounded-md bg-sky-50 px-2 py-1 text-xs font-medium text-sky-600 ring-1 ring-inset ring-sky-600/20 ml-2">
-                                                        {h.licenseType
-                                                            ?.duration +
-                                                            " ay"}
-                                                    </span>
-                                                ) : (
-                                                    <> </>
-                                                )}
-                                                {h.boughtType ? (
-                                                    <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-600 ring-1 ring-inset ring-green-600/20 ml-2">
-                                                        {h.boughtType?.type}
-                                                    </span>
-                                                ) : (
-                                                    <></>
-                                                )}
-                                            </p>
+                                            <div className="flex flex-row gap-2 items-center">
+                                                <p className="text-sm font-semibold leading-6 text-zinc-600">
+                                                    {h.licenseType?.brand?.name + " " + h.licenseType?.type}
+                                                </p>
+                                                {currUser?.role == "technical"
+                                                    ? <></>
+                                                    : <>
+                                                        <BiEdit
+                                                            className="text-xl text-green-600 cursor-pointer"
+                                                            onClick={() => {
+                                                                setHistoryIsNew(false);
+                                                                resetHistory(h);
+                                                                setHistoryValue("startDate", h.startDate?.split("T")[0]);
+                                                                setHistoryValue("expiryDate", h.expiryDate?.split("T")[0]);
+                                                                onOpenHistory();
+                                                            }}
+                                                        />
+
+                                                        <DeleteButton
+                                                            table="licenseHistory"
+                                                            data={h}
+                                                            mutate={mutate}
+                                                            trigger={
+                                                                <span>
+                                                                    <BiTrash />
+                                                                </span>
+                                                            }
+                                                        />
+                                                    </>
+                                                }
+                                            </div>
+                                            {h.licenseType
+                                                ?.duration ? (
+                                                <span className="inline-flex items-center rounded-md bg-sky-50 px-2 py-1 text-xs font-medium text-sky-600 ring-1 ring-inset ring-sky-600/20">
+                                                    {h.licenseType
+                                                        ?.duration +
+                                                        " ay"}
+                                                </span>
+                                            ) : (
+                                                <> </>
+                                            )}
+                                            {h.boughtType ? (
+                                                <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-600 ring-1 ring-inset ring-green-600/20 ml-2 mb-2">
+                                                    {h.boughtType?.type}
+                                                </span>
+                                            ) : (
+                                                <></>
+                                            )}
                                             <div className="max-w-fit text-xs leading-5 text-zinc-400">
                                                 {
                                                     h.serialNo ? (
@@ -920,7 +987,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                                                 {h.serialNo}
                                                             </dd>
                                                         </div>
-                                                    ) : null
+                                                    ) : <></>
                                                 }
 
                                                 <div className="grid grid-cols-2 gap-4">
@@ -1079,13 +1146,13 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                 scrollBehavior="outside">
                 <ModalContent>
                     <ModalHeader className="flex flex-col gap-1 text-zinc-500">
-                        Yeni Satın Alım
+                        {historyIsNew ? "Yeni Satın Alım" : "Satın Alım Güncelleme"}
                     </ModalHeader>
                     <ModalBody>
                         <form
                             autoComplete="off"
                             className="flex flex-col gap-2"
-                            onSubmit={handleHistorySubmit(onSubmitHistory)}
+                            onSubmit={historyIsNew ? handleHistorySubmit(onSubmitHistory) : handleHistorySubmit(onSubmitHistoryUpdate)}
                         >
                             <div>
                                 <label

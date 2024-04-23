@@ -48,9 +48,12 @@ export async function GET(
                     },
                     history: {
                         select: {
+                            id: true,
                             serialNo: true,
                             startDate: true,
                             expiryDate: true,
+                            licenseTypeId: true,
+                            boughtTypeId: true,
                             licenseType: {
                                 select: {
                                     type: true,

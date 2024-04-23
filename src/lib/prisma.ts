@@ -16,7 +16,8 @@ export async function deleteData(
         | "boughtTypes"
         | "currents"
         | "authorizedPersons"
-        | "addresses",
+        | "addresses"
+        | "licenseHistory",
     id: number,
     updatedBy?: string,
 ) {

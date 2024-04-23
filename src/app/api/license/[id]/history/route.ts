@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import prisma from "@/utils/db";
-import { create } from "domain";
 
 export async function PUT(
     request: Request,
