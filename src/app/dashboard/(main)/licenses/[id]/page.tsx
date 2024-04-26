@@ -84,9 +84,15 @@ interface IHistoryFormInput {
     expiryDate: string;
     boughtTypeId: number;
     licenseTypeId: number;
+    dealerId: number;
+    subDealerId: number;
+    supplierId: number;
     updatedBy: string;
     licenseType?: LicenseType;
     boughtType?: BoughtType;
+    dealer?: Current;
+    subDealer?: Current;
+    supplier?: Current;
 }
 
 export default function LicenseDetail({ params }: { params: { id: string } }) {
@@ -191,20 +197,27 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
 
     const onSubmitHistory: SubmitHandler<IHistoryFormInput> = async (d) => {
         if (currUser) {
+            console.log(d)
             const licenseWithNewHistory = {
                 id: data.id,
                 serialNo: d.serialNo || null,
                 startDate: d.startDate || null,
                 expiryDate: d.expiryDate || null,
                 licenseTypeId: Number(d.licenseTypeId),
-                boughtTypeId: Number(d.boughtTypeId || null),
+                boughtTypeId: Number(d.boughtTypeId) || null,
+                dealerId: Number(d.dealerId) || null,
+                subDealerId: Number(d.subDealerId) || null,
+                supplierId: Number(d.supplierId) || null,
                 updatedBy: currUser?.username ?? "",
                 history: {
                     serialNo: data.serialNo || null,
                     startDate: data.startDate,
                     expiryDate: data.expiryDate,
-                    licenseTypeId: Number(data.licenseTypeId),
-                    boughtTypeId: Number(data.boughtTypeId || null),
+                    licenseTypeId: data.licenseTypeId,
+                    boughtTypeId: data.boughtTypeId || null,
+                    dealerId: data.dealerId || null,
+                    subDealerId: data.subDealerId || null,
+                    supplierId: data.supplierId || null,
                 }
             }
 
@@ -236,6 +249,9 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
 
             delete data["licenseType"];
             delete data["boughtType"];
+            delete data["dealer"];
+            delete data["subDealer"];
+            delete data["supplier"];
 
             await fetch(`/api/license/${params.id}/history/${data.id}`, {
                 method: "PUT",
@@ -683,6 +699,9 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                     setHistoryIsNew(true);
                                     resetHistory({});
                                     resetHistory({});
+                                    setHistoryValue("dealerId", data.dealerId);
+                                    setHistoryValue("subDealerId", data.subDealerId);
+                                    setHistoryValue("supplierId", data.supplierId);
                                     onOpenHistory()
                                 }}
                             >
@@ -940,6 +959,9 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                                                 resetHistory(h);
                                                                 setHistoryValue("startDate", h.startDate?.split("T")[0]);
                                                                 setHistoryValue("expiryDate", h.expiryDate?.split("T")[0]);
+                                                                setHistoryValue("dealerId", h.dealer?.id);
+                                                                setHistoryValue("subDealerId", h.subDealer?.id);
+                                                                setHistoryValue("supplierId", h.supplier?.id);
                                                                 onOpenHistory();
                                                             }}
                                                         />
@@ -967,6 +989,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                             ) : (
                                                 <> </>
                                             )}
+
                                             {h.boughtType ? (
                                                 <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-600 ring-1 ring-inset ring-green-600/20 ml-2 mb-2">
                                                     {h.boughtType?.type}
@@ -974,16 +997,15 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                             ) : (
                                                 <></>
                                             )}
-                                            <div className="max-w-fit text-xs leading-5 text-zinc-400">
+
+                                            <div className="max-w-96 text-xs leading-5 text-zinc-400">
                                                 {
                                                     h.serialNo ? (
                                                         <div className="grid grid-cols-2 gap-4">
                                                             <dt className="font-semibold text-zinc-500">
-                                                                {
-                                                                    "Seri No:"
-                                                                }
+                                                                Seri No:
                                                             </dt>
-                                                            <dd>
+                                                            <dd className="truncate">
                                                                 {h.serialNo}
                                                             </dd>
                                                         </div>
@@ -992,9 +1014,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
 
                                                 <div className="grid grid-cols-2 gap-4">
                                                     <dt className="font-semibold text-zinc-500">
-                                                        {
-                                                            "Başlangıç Tarihi:"
-                                                        }
+                                                        Başlangıç Tarihi:
                                                     </dt>
                                                     <dd>
                                                         {DateFormat(
@@ -1002,9 +1022,10 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                                         )}
                                                     </dd>
                                                 </div>
+
                                                 <div className="grid grid-cols-2 gap-4">
                                                     <dt className="font-semibold text-zinc-500">
-                                                        {"Bitiş Tarihi:"}
+                                                        Bitiş Tarihi:
                                                     </dt>
                                                     <dd>
                                                         {DateFormat(
@@ -1012,6 +1033,45 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                                         )}
                                                     </dd>
                                                 </div>
+
+                                                {
+                                                    h.dealer ? (
+                                                        <div className="grid grid-cols-2 gap-4">
+                                                            <dt className="font-semibold text-zinc-500">
+                                                                Bayi:
+                                                            </dt>
+                                                            <dd className="truncate">
+                                                                {h.dealer.name}
+                                                            </dd>
+                                                        </div>
+                                                    ) : <></>
+                                                }
+
+                                                {
+                                                    h.subDealer ? (
+                                                        <div className="grid grid-cols-2 gap-4">
+                                                            <dt className="font-semibold text-zinc-500">
+                                                                Alt Bayi:
+                                                            </dt>
+                                                            <dd className="truncate">
+                                                                {h.subDealer.name}
+                                                            </dd>
+                                                        </div>
+                                                    ) : <></>
+                                                }
+
+                                                {
+                                                    h.supplier ? (
+                                                        <div className="grid grid-cols-2 gap-4">
+                                                            <dt className="font-semibold text-zinc-500">
+                                                                Tedarikçi:
+                                                            </dt>
+                                                            <dd className="truncate">
+                                                                {h.supplier.name}
+                                                            </dd>
+                                                        </div>
+                                                    ) : <></>
+                                                }
                                             </div>
                                         </div>
                                     </li>
@@ -1252,6 +1312,78 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                     {...registerHistory("expiryDate", {
                                         required: true,
                                     })}
+                                />
+                            </div>
+
+                            <div className="relative flex items-center mt-6">
+                                <div className="flex-grow border-t border-zinc-200"></div>
+                                <span className="flex-shrink mx-4 text-base text-zinc-500">
+                                    Cari Bilgileri
+                                </span>
+                                <div className="flex-grow border-t border-zinc-200"></div>
+                            </div>
+
+                            <div>
+                                <label
+                                    htmlFor="dealerId"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                >
+                                    Bayi
+                                </label>
+                                <Controller
+                                    control={controlHistory}
+                                    name="dealerId"
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <AutoComplete
+                                            onChange={onChange}
+                                            value={value}
+                                            data={dealers || []}
+                                        />
+                                    )}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="subDealerId"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                >
+                                    Alt Bayi
+                                </label>
+                                <Controller
+                                    control={controlHistory}
+                                    name="subDealerId"
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <AutoComplete
+                                            onChange={onChange}
+                                            value={value}
+                                            data={dealers || []}
+                                        />
+                                    )}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="supplierId"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                >
+                                    Tedarikçi
+                                </label>
+                                <Controller
+                                    control={controlHistory}
+                                    name="supplierId"
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <AutoComplete
+                                            onChange={onChange}
+                                            value={value}
+                                            data={suppliers || []}
+                                        />
+                                    )}
                                 />
                             </div>
 

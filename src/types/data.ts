@@ -57,8 +57,14 @@ type LicenseHistory = Entity & {
     boughtTypeId?: number;
     startDate: string;
     expiryDate: string;
+    dealerId: number;
+    subDealerId: number;
+    supplierId: number;
     licenseType: any;
     boughtType: any;
+    dealer: any;
+    subDealer: any;
+    supplier: any;
 };
 
 type Project = Entity & {

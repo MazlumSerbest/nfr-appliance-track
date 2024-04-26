@@ -51,6 +51,7 @@ model appliances {
   subDealerId   Int?
   note          String?     @db.VarChar
   isDemo        Boolean     @default(false)
+  cusName       String?     @db.VarChar
   customer      currents?   @relation("Customer", fields: [customerId], references: [id])
   dealer        currents?   @relation("Dealer", fields: [dealerId], references: [id])
   predecessor   appliances? @relation("ApplienceHistory", fields: [predecessorId], references: [id])
@@ -85,6 +86,7 @@ model licenses {
   orderedAt     DateTime?        @db.Date
   appSerialNo   String?          @db.VarChar
   productId     Int?
+  cusName       String?          @db.VarChar
   appliance     appliances?      @relation(fields: [applianceId], references: [id])
   boughtType    boughtTypes?     @relation(fields: [boughtTypeId], references: [id])
   customer      currents?        @relation("Customer", fields: [customerId], references: [id])
@@ -108,9 +110,16 @@ model licenseHistory {
   createdAt     DateTime     @default(now()) @db.Timestamptz(6)
   updatedBy     String?      @db.VarChar
   updatedAt     DateTime?    @updatedAt @db.Timestamptz(6)
+  dealerId      Int?
+  supplierId    Int?
+  customerId    Int?
+  subDealerId   Int?
   license       licenses     @relation(fields: [licenseId], references: [id])
   licenseType   licenseTypes @relation(fields: [licenseTypeId], references: [id])
   boughtType    boughtTypes? @relation(fields: [boughtTypeId], references: [id])
+  dealer        currents?    @relation("Dealer", fields: [dealerId], references: [id])
+  subDealer     currents?    @relation("SubDealer", fields: [subDealerId], references: [id])
+  supplier      currents?    @relation("Supplier", fields: [supplierId], references: [id])
 }
 
 model projects {
@@ -220,37 +229,40 @@ model boughtTypes {
 }
 
 model currents {
-  id                  Int                 @id @default(autoincrement())
-  active              Boolean             @default(true)
-  type                CurrentType         @default(customer)
-  name                String              @db.VarChar
-  phone               String?             @db.VarChar
-  email               String?             @db.VarChar
-  address             String?             @db.VarChar
-  city                String?             @db.VarChar
-  taxOffice           String?             @db.VarChar
-  taxNo               String?             @db.VarChar
-  createdAt           DateTime            @default(now()) @db.Timestamptz(6)
-  createdBy           String              @db.VarChar
-  updatedBy           String?             @db.VarChar
-  updatedAt           DateTime?           @updatedAt @db.Timestamptz(6)
-  paymentPlan         String?             @db.VarChar
-  paymentNumber       String?             @db.VarChar
-  authorizedName      String?             @db.VarChar
-  authorizedTitle     String?             @db.VarChar
-  addresses           addresses[]
-  customerAppliances  appliances[]        @relation("Customer")
-  dealerAppliances    appliances[]        @relation("Dealer")
-  subDealerAppliances appliances[]        @relation("SubDealer")
-  supplierAppliances  appliances[]        @relation("Supplier")
-  authorizedPersons   authorizedPersons[]
-  connections         connections[]
-  customerLicenses    licenses[]          @relation("Customer")
-  dealerLicenses      licenses[]          @relation("Dealer")
-  subDealerLicenses   licenses[]          @relation("SubDealer")
-  supplierLicenses    licenses[]          @relation("Supplier")
-  customerProjects    projects[]          @relation("Customer")
-  dealerProjects      projects[]          @relation("Dealer")
+  id                      Int                 @id @default(autoincrement())
+  active                  Boolean             @default(true)
+  type                    CurrentType         @default(customer)
+  name                    String              @db.VarChar
+  phone                   String?             @db.VarChar
+  email                   String?             @db.VarChar
+  address                 String?             @db.VarChar
+  city                    String?             @db.VarChar
+  taxOffice               String?             @db.VarChar
+  taxNo                   String?             @db.VarChar
+  createdAt               DateTime            @default(now()) @db.Timestamptz(6)
+  createdBy               String              @db.VarChar
+  updatedBy               String?             @db.VarChar
+  updatedAt               DateTime?           @updatedAt @db.Timestamptz(6)
+  paymentPlan             String?             @db.VarChar
+  paymentNumber           String?             @db.VarChar
+  authorizedName          String?             @db.VarChar
+  authorizedTitle         String?             @db.VarChar
+  addresses               addresses[]
+  customerAppliances      appliances[]        @relation("Customer")
+  dealerAppliances        appliances[]        @relation("Dealer")
+  subDealerAppliances     appliances[]        @relation("SubDealer")
+  supplierAppliances      appliances[]        @relation("Supplier")
+  authorizedPersons       authorizedPersons[]
+  connections             connections[]
+  customerLicenses        licenses[]          @relation("Customer")
+  dealerLicenses          licenses[]          @relation("Dealer")
+  subDealerLicenses       licenses[]          @relation("SubDealer")
+  supplierLicenses        licenses[]          @relation("Supplier")
+  customerProjects        projects[]          @relation("Customer")
+  dealerProjects          projects[]          @relation("Dealer")
+  dealerLicenseHistory    licenseHistory[]    @relation("Dealer")
+  subDealerLicenseHistory licenseHistory[]    @relation("SubDealer")
+  supplierLicenseHistory  licenseHistory[]    @relation("Supplier")
 }
 
 model authorizedPersons {

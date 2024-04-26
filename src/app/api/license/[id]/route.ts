@@ -70,6 +70,15 @@ export async function GET(
                                     type: true,
                                 },
                             },
+                            dealer: {
+                                select: { id: true, name: true },
+                            },
+                            subDealer: {
+                                select: { id: true, name: true },
+                            },
+                            supplier: {
+                                select: { id: true, name: true },
+                            },
                         },
                     },
                     // boughtType: {
@@ -134,7 +143,7 @@ export async function PUT(
                 ? new Date(license.orderedAt).toISOString()
                 : null;
 
-            license.applianceId ? license.productId = null : null;
+            license.applianceId ? (license.productId = null) : null;
 
             // const checkSerialNo = await prisma.licenses.findUnique({
             //     where: {
