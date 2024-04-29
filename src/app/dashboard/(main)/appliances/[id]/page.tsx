@@ -156,7 +156,7 @@ export default function ApplianceDetail({
                                         <span className="inline-flex items-center rounded-md bg-zinc-50 px-2 py-1 text-sm font-medium text-zinc-500 ring-1 ring-inset ring-zinc-500/20">
                                             Demo
                                         </span>
-                                    ) : !data.customerId ? (
+                                    ) : !data.customerId && !data.cusName ? (
                                         <span className="inline-flex items-center rounded-md bg-sky-50 px-2 py-1 text-sm font-medium text-sky-500 ring-1 ring-inset ring-sky-500/20">
                                             Stok
                                         </span>
@@ -259,7 +259,7 @@ export default function ApplianceDetail({
                                     })}
                                 />
                             </div>
-                            
+
                             <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                 <label
                                     htmlFor="customerId"
