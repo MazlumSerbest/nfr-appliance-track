@@ -198,7 +198,6 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
 
     const onSubmitHistory: SubmitHandler<IHistoryFormInput> = async (d) => {
         if (currUser) {
-            console.log(d)
             const licenseWithNewHistory = {
                 id: data.id,
                 serialNo: d.serialNo || null,
@@ -246,7 +245,6 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
             data.updatedBy = currUser?.username ?? "";
             data.licenseTypeId = Number(data.licenseTypeId || null);
             data.boughtTypeId = Number(data.boughtTypeId || null);
-            console.log(data);
 
             delete data["licenseType"];
             delete data["boughtType"];
@@ -950,7 +948,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                         <BiChevronLeft className="text-3xl text-zinc-500" />
                     }
                     startContent={
-                        <BiShieldQuarter className="text-4xl text-sky-500/60" />
+                        <BiShieldQuarter className="text-4xl text-yellow-500/60" />
                     }
                 >
                     {data.history.length > 0 ? (
@@ -972,6 +970,15 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                                 {currUser?.role == "technical"
                                                     ? <></>
                                                     : <>
+                                                        <RegInfo
+                                                            data={h}
+                                                            trigger={
+                                                                <span>
+                                                                    <BiInfoCircle />
+                                                                </span>
+                                                            }
+                                                        />
+
                                                         <BiEdit
                                                             className="text-xl text-green-600 cursor-pointer"
                                                             onClick={() => {

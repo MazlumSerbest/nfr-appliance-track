@@ -47,8 +47,15 @@ export async function GET(
                         },
                     },
                     history: {
+                        orderBy: {
+                            expiryDate: "desc",
+                        },
                         select: {
                             id: true,
+                            createdBy: true,
+                            createdAt: true,
+                            updatedBy: true,
+                            updatedAt: true,
                             serialNo: true,
                             startDate: true,
                             expiryDate: true,

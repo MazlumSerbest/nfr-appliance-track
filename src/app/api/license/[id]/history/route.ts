@@ -56,7 +56,7 @@ export async function PUT(
             if (updatedLicense.id) {
                 await prisma.logs.create({
                     data: {
-                        action: "update",
+                        action: "create",
                         table: "licenseHistory",
                         user: updatedLicense.updatedBy || "",
                         date: new Date().toISOString(),
