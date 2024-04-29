@@ -112,7 +112,6 @@ model licenseHistory {
   updatedAt     DateTime?    @updatedAt @db.Timestamptz(6)
   dealerId      Int?
   supplierId    Int?
-  customerId    Int?
   subDealerId   Int?
   license       licenses     @relation(fields: [licenseId], references: [id])
   licenseType   licenseTypes @relation(fields: [licenseTypeId], references: [id])

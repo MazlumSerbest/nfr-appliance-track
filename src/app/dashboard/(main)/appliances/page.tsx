@@ -36,6 +36,7 @@ interface IFormInput {
     note?: string;
     isDemo: boolean;
     customerId: number;
+    cusName: string;
     dealerId: number;
     subDealerId: number;
     supplierId: number;
@@ -83,7 +84,7 @@ export default function Appliances() {
 
     //#region Form
     const { register, reset, handleSubmit, control } = useForm<IFormInput>({});
-    
+
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         data.createdBy = currUser?.username ?? "";
 
@@ -321,9 +322,9 @@ export default function Appliances() {
                                 currUser?.role == "technical"
                                     ? undefined
                                     : () => {
-                                          reset({});
-                                          onOpen();
-                                      }
+                                        reset({});
+                                        onOpen();
+                                    }
                             }
                             onDoubleClick={(item) => {
                                 router.push(`/dashboard/appliances/${item.id}`);
@@ -347,9 +348,9 @@ export default function Appliances() {
                                 currUser?.role == "technical"
                                     ? undefined
                                     : () => {
-                                          reset({});
-                                          onOpen();
-                                      }
+                                        reset({});
+                                        onOpen();
+                                    }
                             }
                             onDoubleClick={(item) => {
                                 router.push(`/dashboard/appliances/${item.id}`);
@@ -376,9 +377,9 @@ export default function Appliances() {
                                 currUser?.role == "technical"
                                     ? undefined
                                     : () => {
-                                          reset({});
-                                          onOpen();
-                                      }
+                                        reset({});
+                                        onOpen();
+                                    }
                             }
                             onDoubleClick={(item) => {
                                 router.push(`/dashboard/appliances/${item.id}`);
@@ -402,9 +403,9 @@ export default function Appliances() {
                                 currUser?.role == "technical"
                                     ? undefined
                                     : () => {
-                                          reset({ isDemo: true });
-                                          onOpen();
-                                      }
+                                        reset({ isDemo: true });
+                                        onOpen();
+                                    }
                             }
                             onDoubleClick={(item) => {
                                 router.push(`/dashboard/appliances/${item.id}`);
@@ -446,7 +447,7 @@ export default function Appliances() {
                             <div>
                                 <label
                                     htmlFor="serialNo"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2 after:content-['*'] after:ml-0.5 after:text-red-500"
                                 >
                                     Seri Numarası
                                 </label>
@@ -454,7 +455,7 @@ export default function Appliances() {
                                     type="text"
                                     id="serialNo"
                                     required
-                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
                                     {...register("serialNo", {
                                         required: true,
                                         maxLength: 50,
@@ -487,28 +488,28 @@ export default function Appliances() {
                             <div>
                                 <label
                                     htmlFor="boughtAt"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
                                 >
                                     Alım Tarihi
                                 </label>
                                 <input
                                     type="date"
                                     id="boughtAt"
-                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
                                     {...register("boughtAt")}
                                 />
                             </div>
                             <div>
                                 <label
                                     htmlFor="soldAt"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
                                 >
                                     Satış Tarihi
                                 </label>
                                 <input
                                     type="date"
                                     id="soldAt"
-                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
                                     {...register("soldAt")}
                                 />
                             </div>
@@ -517,6 +518,32 @@ export default function Appliances() {
                                 <div className="flex-grow border-t border-zinc-200"></div>
                                 <span className="flex-shrink mx-4 text-base text-zinc-500">
                                     Cari Bilgileri
+                                </span>
+                                <div className="flex-grow border-t border-zinc-200"></div>
+                            </div>
+
+                            <div>
+                                <label
+                                    htmlFor="cusName"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2 after:content-['*'] after:ml-0.5"
+                                >
+                                    Müşteri Adı
+                                </label>
+                                <input
+                                    type="text"
+                                    id="cusName"
+                                    placeholder="Müşteri seçimi yapılmayacaksa bu alanı doldurunuz!"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                    {...register("cusName", {
+                                        maxLength: 250,
+                                    })}
+                                />
+                            </div>
+
+                            <div className="relative flex items-center mt-2">
+                                <div className="flex-grow border-t border-zinc-200"></div>
+                                <span className="flex-shrink mx-4 text-xs text-zinc-500">
+                                    veya
                                 </span>
                                 <div className="flex-grow border-t border-zinc-200"></div>
                             </div>
@@ -542,6 +569,7 @@ export default function Appliances() {
                                     )}
                                 />
                             </div>
+
                             <div>
                                 <label
                                     htmlFor="dealerId"
@@ -613,7 +641,7 @@ export default function Appliances() {
                             <div>
                                 <label
                                     htmlFor="note"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
                                 >
                                     Not
                                 </label>

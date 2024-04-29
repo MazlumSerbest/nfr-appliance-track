@@ -53,6 +53,7 @@ interface IFormInput {
     productId?: number;
     licenseTypeId: number;
     customerId: number;
+    cusName: string;
     dealerId: number;
     subDealerId: number;
     supplierId: number;
@@ -621,7 +622,7 @@ export default function Licenses() {
                             <div>
                                 <label
                                     htmlFor="appSerialNo"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
                                 >
                                     Cihaz Seri Numarası
                                 </label>
@@ -646,7 +647,7 @@ export default function Licenses() {
                             <div>
                                 <label
                                     htmlFor="licenseTypeId"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2 after:content-['*'] after:ml-0.5 after:text-red-500"
                                 >
                                     Lisans Tipi
                                 </label>
@@ -669,14 +670,14 @@ export default function Licenses() {
                             <div>
                                 <label
                                     htmlFor="serialNo"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
                                 >
                                     Lisans Seri Numarası
                                 </label>
                                 <input
                                     type="text"
                                     id="serialNo"
-                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
                                     {...register("serialNo", {
                                         maxLength: 50,
                                     })}
@@ -686,14 +687,14 @@ export default function Licenses() {
                             <div>
                                 <label
                                     htmlFor="startDate"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
                                 >
                                     Başlangıç Tarihi
                                 </label>
                                 <input
                                     type="date"
                                     id="startDate"
-                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
                                     {...register("startDate")}
                                 />
                             </div>
@@ -701,14 +702,14 @@ export default function Licenses() {
                             <div>
                                 <label
                                     htmlFor="expiryDate"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
                                 >
                                     Bitiş Tarihi
                                 </label>
                                 <input
                                     type="date"
                                     id="expiryDate"
-                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
                                     {...register("expiryDate")}
                                 />
                             </div>
@@ -724,11 +725,11 @@ export default function Licenses() {
                             <div>
                                 <label
                                     htmlFor="boughtTypeId"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
                                 >
                                     Alım Tipi
                                 </label>
-                                <div className="block w-full h-10 rounded-md border-0 px-3 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2">
+                                <div className="block w-full h-10 rounded-md border-0 px-3 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:text-sm sm:leading-6 outline-none">
                                     <select
                                         id="boughtTypeId"
                                         className="w-full border-none text-sm text-zinc-700 outline-none"
@@ -748,42 +749,42 @@ export default function Licenses() {
                             <div>
                                 <label
                                     htmlFor="boughtAt"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
                                 >
                                     Alım Tarihi
                                 </label>
                                 <input
                                     type="date"
                                     id="boughtAt"
-                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
                                     {...register("boughtAt")}
                                 />
                             </div>
                             <div>
                                 <label
                                     htmlFor="soldAt"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
                                 >
                                     Satış Tarihi
                                 </label>
                                 <input
                                     type="date"
                                     id="soldAt"
-                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
                                     {...register("soldAt")}
                                 />
                             </div>
                             <div>
                                 <label
                                     htmlFor="orderedAt"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
                                 >
                                     Sipariş Tarihi
                                 </label>
                                 <input
                                     type="date"
                                     id="orderedAt"
-                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
                                     {...register("orderedAt")}
                                 />
                             </div>
@@ -792,6 +793,32 @@ export default function Licenses() {
                                 <div className="flex-grow border-t border-zinc-200"></div>
                                 <span className="flex-shrink mx-4 text-base text-zinc-500">
                                     Cari Bilgileri
+                                </span>
+                                <div className="flex-grow border-t border-zinc-200"></div>
+                            </div>
+
+                            <div>
+                                <label
+                                    htmlFor="cusName"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2 after:content-['*'] after:ml-0.5"
+                                >
+                                    Müşteri Adı
+                                </label>
+                                <input
+                                    type="text"
+                                    id="cusName"
+                                    placeholder="Müşteri seçimi yapılmayacaksa bu alanı doldurunuz!"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                    {...register("cusName", {
+                                        maxLength: 250,
+                                    })}
+                                />
+                            </div>
+
+                            <div className="relative flex items-center mt-2">
+                                <div className="flex-grow border-t border-zinc-200"></div>
+                                <span className="flex-shrink mx-4 text-xs text-zinc-500">
+                                    veya
                                 </span>
                                 <div className="flex-grow border-t border-zinc-200"></div>
                             </div>
@@ -817,6 +844,7 @@ export default function Licenses() {
                                     )}
                                 />
                             </div>
+
                             <div>
                                 <label
                                     htmlFor="dealerId"
@@ -888,7 +916,7 @@ export default function Licenses() {
                             <div>
                                 <label
                                     htmlFor="note"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
                                 >
                                     Not
                                 </label>
