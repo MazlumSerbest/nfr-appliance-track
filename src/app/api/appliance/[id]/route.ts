@@ -43,6 +43,26 @@ export async function GET(
                             },
                         ],
                     },
+
+                    history: {
+                        orderBy: {
+                            soldAt: "desc",
+                        },
+                        select: {
+                            id: true,
+                            createdBy: true,
+                            createdAt: true,
+                            updatedBy: true,
+                            updatedAt: true,
+                            cusName: true,
+                            boughtAt: true,
+                            soldAt: true,
+                            customerId: true,
+                            customer: {
+                                select: { id: true, name: true },
+                            },
+                        },
+                    },
                     // customer: {
                     //     select: { name: true },
                     // },

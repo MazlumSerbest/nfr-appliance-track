@@ -8,6 +8,13 @@ import toast from "react-hot-toast";
 import { Card, CardBody, CardFooter } from "@nextui-org/card";
 import { Accordion, AccordionItem } from "@nextui-org/accordion";
 import { Button } from "@nextui-org/button";
+import {
+    Modal,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    useDisclosure,
+} from "@nextui-org/modal";
 
 import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
 import RegInfo from "@/components/buttons/RegInfo";
@@ -18,7 +25,10 @@ import {
     BiCheckShield,
     BiChevronLeft,
     BiChevronRight,
-    BiServer,
+    BiUserCircle,
+    BiEdit,
+    BiTrash,
+    BiInfoCircle,
 } from "react-icons/bi";
 import useUserStore from "@/store/user";
 import { DateFormat } from "@/utils/date";
@@ -49,6 +59,18 @@ interface IFormInput {
     dealer?: Current;
     subDealer?: Current;
     supplier?: Current;
+    history?: ApplianceHistory[];
+}
+
+interface IHistoryFormInput {
+    id: number;
+    applianceId: number;
+    customerId?: number;
+    cusName: string;
+    boughtAt?: string | null;
+    soldAt?: string | null;
+    updatedBy: string;
+    customer?: Current;
 }
 
 export default function ApplianceDetail({
@@ -58,6 +80,15 @@ export default function ApplianceDetail({
 }) {
     const router = useRouter();
     const { user: currUser } = useUserStore();
+    const [historyIsNew, setHistoryIsNew] = useState(false);
+
+    const {
+        isOpen: isOpenHistory,
+        onClose: onCloseHistory,
+        onOpen: onOpenHistory,
+        onOpenChange: onOpenChangeHistory,
+    } = useDisclosure();
+
     const [products, setProducts] = useState<ListBoxItem[] | null>(null);
     const [customers, setCustomers] = useState<ListBoxItem[] | null>(null);
     const [dealers, setDealers] = useState<ListBoxItem[] | null>(null);
@@ -92,6 +123,70 @@ export default function ApplianceDetail({
             return result;
         });
     };
+
+    const { register: registerHistory, reset: resetHistory, setValue: setHistoryValue, handleSubmit: handleHistorySubmit, control: controlHistory } =
+        useForm<IHistoryFormInput>();
+
+    const onSubmitHistory: SubmitHandler<IHistoryFormInput> = async (d) => {
+        if (currUser) {
+            const applianceWithNewHistory = {
+                id: data.id,
+                customerId: Number(d.customerId) || null,
+                cusName: d.cusName || null,
+                boughtAt: d.boughtAt || null,
+                soldAt: d.soldAt || null,
+                updatedBy: currUser?.username ?? "",
+                history: {
+                    customerId: data.customerId || null,
+                    cusName: data.cusName || null,
+                    boughtAt: data.boughtAt || null,
+                    soldAt: data.soldAt || null,
+                }
+            }
+
+            await fetch(`/api/appliance/${data.id}/history`, {
+                method: "PUT",
+                body: JSON.stringify(applianceWithNewHistory),
+                headers: { "Content-Type": "application/json" },
+            }).then(async (res) => {
+                const result = await res.json();
+                if (result.ok) {
+                    mutate();
+                    resetHistory();
+                    onCloseHistory();
+                    toast.success(result.message);
+                } else {
+                    toast.error(result.message);
+                }
+                return result;
+            });
+        }
+    }
+
+    const onSubmitHistoryUpdate: SubmitHandler<IHistoryFormInput> = async (data) => {
+        if (currUser) {
+            data.updatedBy = currUser?.username ?? "";
+
+            delete data["customer"];
+
+            await fetch(`/api/appliance/${params.id}/history/${data.id}`, {
+                method: "PUT",
+                body: JSON.stringify(data),
+                headers: { "Content-Type": "application/json" },
+            }).then(async (res) => {
+                const result = await res.json();
+                if (result.ok) {
+                    mutate();
+                    resetHistory();
+                    onCloseHistory();
+                    toast.success(result.message);
+                } else {
+                    toast.error(result.message);
+                }
+                return result;
+            });
+        }
+    }
     //#endregion
 
     //#region Data
@@ -410,6 +505,20 @@ export default function ApplianceDetail({
                                     : "Demo Cihaz Yap"}
                             </Button>
 
+                            <Button
+                                color="primary"
+                                className="bg-yellow-500"
+                                onPress={() => {
+                                    setHistoryIsNew(true);
+                                    resetHistory({});
+                                    resetHistory({});
+                                    setHistoryValue("customerId", data.customerId);
+                                    onOpenHistory()
+                                }}
+                            >
+                                Yeni Müşteri Ekle
+                            </Button>
+
                             <DeleteButton
                                 table="appliances"
                                 data={data}
@@ -499,7 +608,7 @@ export default function ApplianceDetail({
                                                         <></>
                                                     )} */}
                                                 </p>
-                                                <div className="max-w-fit text-xs leading-5 text-zinc-400">
+                                                <div className="max-w-96 text-xs leading-5 text-zinc-400">
                                                     <div className="grid grid-cols-2 gap-4">
                                                         <dt className="font-semibold text-zinc-500">
                                                             {
@@ -539,6 +648,240 @@ export default function ApplianceDetail({
                     )}
                 </AccordionItem>
             </Accordion>
+
+
+            <Accordion
+                selectionMode="multiple"
+                variant="splitted"
+                defaultExpandedKeys={data.history.length != 0 ? ["history"] : []}
+                className="p-0"
+                itemClasses={{
+                    title: "font-medium text-zinc-600",
+                    base: "px-1 py-2",
+                }}
+            >
+                <AccordionItem
+                    key="history"
+                    aria-label="applihistoryance"
+                    title="Geçmiş Müşteri Bilgileri"
+                    subtitle="Bu cihazın geçmiş müşteri bilgileri"
+                    indicator={
+                        <BiChevronLeft className="text-3xl text-zinc-500" />
+                    }
+                    startContent={
+                        <BiUserCircle className="text-4xl text-yellow-500/60" />
+                    }
+                >
+                    {data.history.length > 0 ? (
+                        <>
+                            <ul
+                                role="list"
+                                className="divide-y divide-zinc-200">
+                                <li key={0}></li>
+                                {data.history.map((h: ApplianceHistory) => (
+                                    <li
+                                        key={h.id}
+                                        className="flex justify-between py-2 items-center"
+                                    >
+                                        <div className="min-w-0 flex-auto">
+                                            <div className="flex flex-row gap-2 items-center">
+                                                <p className="text-sm font-semibold leading-6 text-zinc-600">
+                                                    {h.customer?.name || h.cusName}
+                                                </p>
+                                                {currUser?.role == "technical"
+                                                    ? <></>
+                                                    : <>
+                                                        <RegInfo
+                                                            data={h}
+                                                            trigger={
+                                                                <span>
+                                                                    <BiInfoCircle />
+                                                                </span>
+                                                            }
+                                                        />
+
+                                                        <BiEdit
+                                                            className="text-xl text-green-600 cursor-pointer"
+                                                            onClick={() => {
+                                                                setHistoryIsNew(false);
+                                                                resetHistory(h);
+                                                                setHistoryValue("boughtAt", h.boughtAt?.split("T")[0]);
+                                                                setHistoryValue("soldAt", h.soldAt?.split("T")[0]);
+                                                                setHistoryValue("customerId", h.customer?.id);
+                                                                onOpenHistory();
+                                                            }}
+                                                        />
+
+                                                        <DeleteButton
+                                                            table="applianceHistory"
+                                                            data={h}
+                                                            mutate={mutate}
+                                                            trigger={
+                                                                <span>
+                                                                    <BiTrash />
+                                                                </span>
+                                                            }
+                                                        />
+                                                    </>
+                                                }
+                                            </div>
+
+                                            <div className="max-w-96 text-xs leading-5 text-zinc-400">
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <dt className="font-semibold text-zinc-500">
+                                                        Alım Tarihi:
+                                                    </dt>
+                                                    <dd>
+                                                        {h.boughtAt ? DateFormat(
+                                                            h.boughtAt,
+                                                        ) : "-"}
+                                                    </dd>
+                                                </div>
+
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <dt className="font-semibold text-zinc-500">
+                                                        Satış Tarihi:
+                                                    </dt>
+                                                    <dd>
+                                                        {DateFormat(
+                                                            h.soldAt,
+                                                        ) || "-"}
+                                                    </dd>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        </>
+                    )
+                        : (<div className="w-full py-6 text-center">
+                            <p className="text-zinc-400">
+                                Bu cihazın geçmişte herhangi bir müşterisi bulunmuyor.
+                            </p>
+                        </div>)}
+                </AccordionItem>
+            </Accordion>
+
+            <Modal
+                isOpen={isOpenHistory}
+                onOpenChange={onOpenChangeHistory}
+                size="lg"
+                placement="center"
+                backdrop="opaque"
+                shadow="lg"
+                isDismissable={false}
+                scrollBehavior="outside">
+                <ModalContent>
+                    <ModalHeader className="flex flex-col gap-1 text-zinc-500">
+                        {historyIsNew ? "Yeni Satın Alım" : "Satın Alım Güncelleme"}
+                    </ModalHeader>
+                    <ModalBody>
+                        <form
+                            autoComplete="off"
+                            className="flex flex-col gap-2"
+                            onSubmit={historyIsNew ? handleHistorySubmit(onSubmitHistory) : handleHistorySubmit(onSubmitHistoryUpdate)}
+                        >
+                            <div>
+                                <label
+                                    htmlFor="cusName"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2 after:content-['*'] after:ml-0.5"
+                                >
+                                    Müşteri Adı
+                                </label>
+                                <input
+                                    type="text"
+                                    id="cusName"
+                                    placeholder="Müşteri seçimi yapılmayacaksa bu alanı doldurunuz!"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                    {...registerHistory("cusName", {
+                                        maxLength: 250,
+                                    })}
+                                />
+                            </div>
+
+                            <div className="relative flex items-center mt-2">
+                                <div className="flex-grow border-t border-zinc-200"></div>
+                                <span className="flex-shrink mx-4 text-xs text-zinc-500">
+                                    veya
+                                </span>
+                                <div className="flex-grow border-t border-zinc-200"></div>
+                            </div>
+
+                            <div>
+                                <label
+                                    htmlFor="dealerId"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                >
+                                    Müşteri
+                                </label>
+                                <Controller
+                                    control={controlHistory}
+                                    name="customerId"
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <AutoComplete
+                                            onChange={onChange}
+                                            value={value}
+                                            data={customers || []}
+                                        />
+                                    )}
+                                />
+                            </div>
+
+                            <div>
+                                <label
+                                    htmlFor="boughtAt"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                >
+                                    Alım Tarihi
+                                </label>
+                                <input
+                                    type="date"
+                                    id="boughtAt"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                    {...registerHistory("boughtAt")}
+                                />
+                            </div>
+
+                            <div>
+                                <label
+                                    htmlFor="soldAt"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                >
+                                    Satış Tarihi
+                                </label>
+                                <input
+                                    required
+                                    type="date"
+                                    id="soldAt"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                    {...registerHistory("soldAt", { required: true })}
+                                />
+                            </div>
+
+                            <div className="flex flex-row gap-2 mt-4">
+                                <div className="flex-1"></div>
+                                <Button
+                                    color="danger"
+                                    onPress={onCloseHistory}
+                                    className="bg-red-600"
+                                >
+                                    Kapat
+                                </Button>
+                                <Button
+                                    type="submit"
+                                    color="success"
+                                    className="text-white bg-green-600"
+                                >
+                                    Kaydet
+                                </Button>
+                            </div>
+                        </form>
+                    </ModalBody>
+                </ModalContent>
+            </Modal>
         </div>
     );
 }

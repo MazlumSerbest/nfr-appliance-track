@@ -26,6 +26,16 @@ type Appliance = Entity & {
     soldAt?: string | null;
     note?: string;
     isDemo: boolean;
+    history: any;
+};
+
+type ApplianceHistory = Entity & {
+    applianceId: number;
+    customerId?: number;
+    cusName?: string;
+    boughtAt?: string | null;
+    soldAt?: string | null;
+    customer: any;
 };
 
 type License = Entity & {

@@ -33,33 +33,49 @@ model users {
 }
 
 model appliances {
-  id            Int         @id @default(autoincrement())
+  id            Int                @id @default(autoincrement())
   customerId    Int?
   productId     Int
-  active        Boolean     @default(true)
-  createdAt     DateTime    @default(now()) @db.Timestamptz(6)
-  createdBy     String      @db.VarChar
+  active        Boolean            @default(true)
+  createdAt     DateTime           @default(now()) @db.Timestamptz(6)
+  createdBy     String             @db.VarChar
   dealerId      Int?
-  serialNo      String?     @db.VarChar
+  serialNo      String?            @db.VarChar
   supplierId    Int?
-  updatedBy     String?     @db.VarChar
-  boughtAt      DateTime?   @db.Date
-  soldAt        DateTime?   @db.Date
-  predecessorId Int?        @unique
-  updatedAt     DateTime?   @updatedAt @db.Timestamptz(6)
-  deleted       Boolean     @default(false)
+  updatedBy     String?            @db.VarChar
+  boughtAt      DateTime?          @db.Date
+  soldAt        DateTime?          @db.Date
+  predecessorId Int?               @unique
+  updatedAt     DateTime?          @updatedAt @db.Timestamptz(6)
+  deleted       Boolean            @default(false)
   subDealerId   Int?
-  note          String?     @db.VarChar
-  isDemo        Boolean     @default(false)
-  cusName       String?     @db.VarChar
-  customer      currents?   @relation("Customer", fields: [customerId], references: [id])
-  dealer        currents?   @relation("Dealer", fields: [dealerId], references: [id])
-  predecessor   appliances? @relation("ApplienceHistory", fields: [predecessorId], references: [id])
-  successor     appliances? @relation("ApplienceHistory")
-  product       products    @relation(fields: [productId], references: [id])
-  subDealer     currents?   @relation("SubDealer", fields: [subDealerId], references: [id])
-  supplier      currents?   @relation("Supplier", fields: [supplierId], references: [id])
+  note          String?            @db.VarChar
+  isDemo        Boolean            @default(false)
+  cusName       String?            @db.VarChar
+  customer      currents?          @relation("Customer", fields: [customerId], references: [id])
+  dealer        currents?          @relation("Dealer", fields: [dealerId], references: [id])
+  predecessor   appliances?        @relation("ApplienceHistory", fields: [predecessorId], references: [id])
+  successor     appliances?        @relation("ApplienceHistory")
+  product       products           @relation(fields: [productId], references: [id])
+  subDealer     currents?          @relation("SubDealer", fields: [subDealerId], references: [id])
+  supplier      currents?          @relation("Supplier", fields: [supplierId], references: [id])
   licenses      licenses[]
+  history       applianceHistory[]
+}
+
+model applianceHistory {
+  id          Int        @id @default(autoincrement())
+  customerId  Int?
+  cusName     String?    @db.VarChar
+  applianceId Int
+  boughtAt    DateTime?  @db.Date
+  soldAt      DateTime?  @db.Date
+  createdBy   String     @db.VarChar
+  createdAt   DateTime   @default(now()) @db.Timestamptz(6)
+  updatedBy   String?    @db.VarChar
+  updatedAt   DateTime?  @updatedAt @db.Timestamptz(6)
+  customer    currents?  @relation(fields: [customerId], references: [id])
+  appliance   appliances @relation(fields: [applianceId], references: [id])
 }
 
 model licenses {
@@ -262,6 +278,7 @@ model currents {
   dealerLicenseHistory    licenseHistory[]    @relation("Dealer")
   subDealerLicenseHistory licenseHistory[]    @relation("SubDealer")
   supplierLicenseHistory  licenseHistory[]    @relation("Supplier")
+  applianceHistory        applianceHistory[]
 }
 
 model authorizedPersons {
