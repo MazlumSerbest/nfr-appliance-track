@@ -100,6 +100,7 @@ export default function ApplianceDetail({
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         data.updatedBy = currUser?.username ?? "";
+        console.log(data);
 
         delete data["product"];
         delete data["licenses"];
@@ -107,6 +108,7 @@ export default function ApplianceDetail({
         delete data["dealer"];
         delete data["subDealer"];
         delete data["supplier"];
+        delete data["history"];
 
         await fetch(`/api/appliance/${data.id}`, {
             method: "PUT",
