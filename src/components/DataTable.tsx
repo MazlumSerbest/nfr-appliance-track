@@ -442,6 +442,7 @@ export default function DataTable(props: Props) {
             classNames={{
                 tr: "hover:!bg-sky-300",
                 td: [
+                    "text-xs",
                     "data-[selected=true]:before:!bg-sky-200",
                     // changing the rows border radius
                     // first
