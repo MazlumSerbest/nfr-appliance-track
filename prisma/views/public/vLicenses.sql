@@ -3,16 +3,23 @@ SELECT
   CASE
     WHEN (
       (l."customerId" IS NULL)
+      AND (((l."cusName") :: text = '' :: text) IS NOT FALSE)
       AND (l."orderedAt" IS NULL)
       AND (l."expiryDate" IS NULL)
     ) THEN 'stock' :: text
     WHEN (
-      (l."customerId" IS NOT NULL)
+      (
+        (l."customerId" IS NOT NULL)
+        OR (l."cusName" IS NOT NULL)
+      )
       AND (l."orderedAt" IS NULL)
       AND (l."expiryDate" IS NULL)
     ) THEN 'order' :: text
     WHEN (
-      (l."customerId" IS NOT NULL)
+      (
+        (l."customerId" IS NOT NULL)
+        OR (l."cusName" IS NOT NULL)
+      )
       AND (l."orderedAt" IS NOT NULL)
       AND (l."expiryDate" IS NULL)
     ) THEN 'waiting' :: text
@@ -41,7 +48,7 @@ SELECT
     ) || lt.duration
   ) AS "licenseType",
   bt.type AS "boughtType",
-  c.name AS "customerName",
+  COALESCE(c.name, l."cusName") AS "customerName",
   d.name AS "dealerName",
   sd.name AS "subDealerName",
   s.name AS "supplierName",

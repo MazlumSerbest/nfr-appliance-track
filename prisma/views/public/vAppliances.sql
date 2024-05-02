@@ -3,14 +3,21 @@ SELECT
   CASE
     WHEN (
       (a."customerId" IS NULL)
+      AND (((a."cusName") :: text = '' :: text) IS NOT FALSE)
       AND (a."soldAt" IS NULL)
     ) THEN 'stock' :: text
     WHEN (
-      (a."customerId" IS NOT NULL)
+      (
+        (a."customerId" IS NOT NULL)
+        OR (a."cusName" IS NOT NULL)
+      )
       AND (a."soldAt" IS NULL)
     ) THEN 'order' :: text
     WHEN (
-      (a."customerId" IS NOT NULL)
+      (
+        (a."customerId" IS NOT NULL)
+        OR (a."cusName" IS NOT NULL)
+      )
       AND (a."soldAt" IS NOT NULL)
     ) THEN 'active' :: text
     ELSE 'order' :: text
@@ -28,7 +35,7 @@ SELECT
   (((b.name) :: text || ' ' :: text) || (p.model) :: text) AS product,
   p.model AS "productModel",
   b.name AS "productBrand",
-  c.name AS "customerName",
+  COALESCE(c.name, a."cusName") AS "customerName",
   d.name AS "dealerName",
   sd.name AS "subDealerName",
   s.name AS "supplierName"

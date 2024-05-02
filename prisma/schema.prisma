@@ -52,6 +52,7 @@ model appliances {
   note          String?            @db.VarChar
   isDemo        Boolean            @default(false)
   cusName       String?            @db.VarChar
+  history       applianceHistory[]
   customer      currents?          @relation("Customer", fields: [customerId], references: [id])
   dealer        currents?          @relation("Dealer", fields: [dealerId], references: [id])
   predecessor   appliances?        @relation("ApplienceHistory", fields: [predecessorId], references: [id])
@@ -60,7 +61,6 @@ model appliances {
   subDealer     currents?          @relation("SubDealer", fields: [subDealerId], references: [id])
   supplier      currents?          @relation("Supplier", fields: [supplierId], references: [id])
   licenses      licenses[]
-  history       applianceHistory[]
 }
 
 model applianceHistory {
@@ -74,8 +74,8 @@ model applianceHistory {
   createdAt   DateTime   @default(now()) @db.Timestamptz(6)
   updatedBy   String?    @db.VarChar
   updatedAt   DateTime?  @updatedAt @db.Timestamptz(6)
-  customer    currents?  @relation(fields: [customerId], references: [id])
   appliance   appliances @relation(fields: [applianceId], references: [id])
+  customer    currents?  @relation(fields: [customerId], references: [id])
 }
 
 model licenses {
@@ -103,15 +103,15 @@ model licenses {
   appSerialNo   String?          @db.VarChar
   productId     Int?
   cusName       String?          @db.VarChar
+  history       licenseHistory[]
   appliance     appliances?      @relation(fields: [applianceId], references: [id])
   boughtType    boughtTypes?     @relation(fields: [boughtTypeId], references: [id])
   customer      currents?        @relation("Customer", fields: [customerId], references: [id])
   dealer        currents?        @relation("Dealer", fields: [dealerId], references: [id])
   licenseType   licenseTypes     @relation(fields: [licenseTypeId], references: [id])
+  product       products?        @relation(fields: [productId], references: [id])
   subDealer     currents?        @relation("SubDealer", fields: [subDealerId], references: [id])
   supplier      currents?        @relation("Supplier", fields: [supplierId], references: [id])
-  product       products?        @relation(fields: [productId], references: [id])
-  history       licenseHistory[]
 }
 
 model licenseHistory {
@@ -127,12 +127,12 @@ model licenseHistory {
   updatedBy     String?      @db.VarChar
   updatedAt     DateTime?    @updatedAt @db.Timestamptz(6)
   dealerId      Int?
-  supplierId    Int?
   subDealerId   Int?
-  license       licenses     @relation(fields: [licenseId], references: [id])
-  licenseType   licenseTypes @relation(fields: [licenseTypeId], references: [id])
+  supplierId    Int?
   boughtType    boughtTypes? @relation(fields: [boughtTypeId], references: [id])
   dealer        currents?    @relation("Dealer", fields: [dealerId], references: [id])
+  license       licenses     @relation(fields: [licenseId], references: [id])
+  licenseType   licenseTypes @relation(fields: [licenseTypeId], references: [id])
   subDealer     currents?    @relation("SubDealer", fields: [subDealerId], references: [id])
   supplier      currents?    @relation("Supplier", fields: [supplierId], references: [id])
 }
@@ -197,10 +197,10 @@ model products {
   brandId       Int?
   productTypeId Int?
   appliances    appliances[]
+  licenses      licenses[]
   brand         brands?       @relation(fields: [brandId], references: [id])
   productType   productTypes? @relation(fields: [productTypeId], references: [id])
   projects      projects[]
-  licenses      licenses[]
 }
 
 model productTypes {
@@ -225,10 +225,10 @@ model licenseTypes {
   updatedAt      DateTime?        @updatedAt @db.Timestamptz(6)
   updatedBy      String?          @db.VarChar
   brandId        Int?
+  licenseHistory licenseHistory[]
   brand          brands?          @relation(fields: [brandId], references: [id])
   licenses       licenses[]
   projects       projects[]
-  licenseHistory licenseHistory[]
 }
 
 model boughtTypes {
@@ -239,8 +239,8 @@ model boughtTypes {
   createdBy      String           @db.VarChar
   updatedAt      DateTime?        @updatedAt @db.Timestamptz(6)
   updatedBy      String?          @db.VarChar
-  licenses       licenses[]
   licenseHistory licenseHistory[]
+  licenses       licenses[]
 }
 
 model currents {
@@ -263,22 +263,22 @@ model currents {
   authorizedName          String?             @db.VarChar
   authorizedTitle         String?             @db.VarChar
   addresses               addresses[]
+  applianceHistory        applianceHistory[]
   customerAppliances      appliances[]        @relation("Customer")
   dealerAppliances        appliances[]        @relation("Dealer")
   subDealerAppliances     appliances[]        @relation("SubDealer")
   supplierAppliances      appliances[]        @relation("Supplier")
   authorizedPersons       authorizedPersons[]
   connections             connections[]
+  dealerLicenseHistory    licenseHistory[]    @relation("Dealer")
+  subDealerLicenseHistory licenseHistory[]    @relation("SubDealer")
+  supplierLicenseHistory  licenseHistory[]    @relation("Supplier")
   customerLicenses        licenses[]          @relation("Customer")
   dealerLicenses          licenses[]          @relation("Dealer")
   subDealerLicenses       licenses[]          @relation("SubDealer")
   supplierLicenses        licenses[]          @relation("Supplier")
   customerProjects        projects[]          @relation("Customer")
   dealerProjects          projects[]          @relation("Dealer")
-  dealerLicenseHistory    licenseHistory[]    @relation("Dealer")
-  subDealerLicenseHistory licenseHistory[]    @relation("SubDealer")
-  supplierLicenseHistory  licenseHistory[]    @relation("Supplier")
-  applianceHistory        applianceHistory[]
 }
 
 model authorizedPersons {
