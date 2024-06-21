@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import { useForm, SubmitHandler, Controller, set } from "react-hook-form";
 import toast from "react-hot-toast";
 
 import {
@@ -101,7 +101,7 @@ export default function Licenses() {
     const [suppliers, setSuppliers] = useState<ListBoxItem[] | null>(null);
 
     //#region Form
-    const { register, reset, resetField, handleSubmit, control } =
+    const { register, reset, resetField, handleSubmit, control, setValue } =
         useForm<IFormInput>();
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         data.createdBy = currUser?.username ?? "";
@@ -432,9 +432,9 @@ export default function Licenses() {
                                 currUser?.role == "technical"
                                     ? undefined
                                     : () => {
-                                        reset({});
-                                        onOpen();
-                                    }
+                                          reset({});
+                                          onOpen();
+                                      }
                             }
                             onDoubleClick={(item) => {
                                 router.push(`/dashboard/licenses/${item.id}`);
@@ -458,9 +458,9 @@ export default function Licenses() {
                                 currUser?.role == "technical"
                                     ? undefined
                                     : () => {
-                                        reset({});
-                                        onOpen();
-                                    }
+                                          reset({});
+                                          onOpen();
+                                      }
                             }
                             onDoubleClick={(item) => {
                                 router.push(`/dashboard/licenses/${item.id}`);
@@ -488,9 +488,9 @@ export default function Licenses() {
                                 currUser?.role == "technical"
                                     ? undefined
                                     : () => {
-                                        reset({});
-                                        onOpen();
-                                    }
+                                          reset({});
+                                          onOpen();
+                                      }
                             }
                             onDoubleClick={(item) => {
                                 router.push(`/dashboard/licenses/${item.id}`);
@@ -518,9 +518,9 @@ export default function Licenses() {
                                 currUser?.role == "technical"
                                     ? undefined
                                     : () => {
-                                        reset({});
-                                        onOpen();
-                                    }
+                                          reset({});
+                                          onOpen();
+                                      }
                             }
                             onDoubleClick={(item) => {
                                 router.push(`/dashboard/licenses/${item.id}`);
@@ -570,17 +570,21 @@ export default function Licenses() {
                                     name="productId"
                                     render={({
                                         field: { onChange, value },
-                                    }) => (<AutoComplete
-                                        value={value}
-                                        data={products || []}
-                                        onChange={async (e) => {
-                                            onChange(e);
-                                            resetField("applianceId");
-                                            const appliances: ListBoxItem[] =
-                                                await getAppliances(true, e);
-                                            setAppliances(appliances);
-                                        }}
-                                    />
+                                    }) => (
+                                        <AutoComplete
+                                            value={value}
+                                            data={products || []}
+                                            onChange={async (e) => {
+                                                onChange(e);
+                                                resetField("applianceId");
+                                                const appliances: ListBoxItem[] =
+                                                    await getAppliances(
+                                                        true,
+                                                        e,
+                                                    );
+                                                setAppliances(appliances);
+                                            }}
+                                        />
                                     )}
                                 />
                             </div>
@@ -603,7 +607,33 @@ export default function Licenses() {
                                         field: { onChange, value },
                                     }) => (
                                         <AutoComplete
-                                            onChange={onChange}
+                                            onChange={async (v) => {
+                                                onChange(v);
+
+                                                await fetch(
+                                                    `/api/appliance/${v}`,
+                                                )
+                                                    .then(async (res) => {
+                                                        const app = await res.json();
+                                                        console.log(app);
+                                                        setValue(
+                                                            "customerId",
+                                                            app.customerId,
+                                                        );
+                                                        setValue(
+                                                            "dealerId",
+                                                            app.dealerId,
+                                                        );
+                                                        setValue(
+                                                            "subDealerId",
+                                                            app.subDealerId,
+                                                        );
+                                                        setValue(
+                                                            "supplierId",
+                                                            app.supplierId,
+                                                        );
+                                                    });
+                                            }}
                                             value={value}
                                             data={appliances || []}
                                         />

@@ -1268,7 +1268,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                             </Tab>
                             <Tab key="new" title="Yeni" className="w-full">
                                 <ApplicationForm
-                                    licenseId={Number(params.id)}
+                                    license={data}
                                     onClose={onCloseApp}
                                     products={products || []}
                                     customers={customers || []}

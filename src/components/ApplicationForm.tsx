@@ -1,4 +1,3 @@
-
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
 
@@ -23,19 +22,33 @@ interface IFormInput {
 }
 
 type Props = {
-    licenseId: number;
+    license: License;
     onClose: () => void;
     products: ListBoxItem[];
     customers: ListBoxItem[];
     dealers: ListBoxItem[];
     suppliers: ListBoxItem[];
-}
+};
 
-export default function ApplicationForm({ licenseId, onClose, products, customers, dealers, suppliers }: Props) {
+export default function ApplicationForm({
+    license,
+    onClose,
+    products,
+    customers,
+    dealers,
+    suppliers,
+}: Props) {
     const { user: currUser } = useUserStore();
-
+    
     //#region Form
-    const { register, reset, handleSubmit, control } = useForm<IFormInput>({});
+    const { register, reset, handleSubmit, control } = useForm<IFormInput>({
+        defaultValues: {
+            customerId: license.customerId,
+            dealerId: license.dealerId,
+            subDealerId: license.subDealerId,
+            supplierId: license.supplierId,
+        },
+    });
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         data.createdBy = currUser?.username ?? "";
@@ -49,12 +62,12 @@ export default function ApplicationForm({ licenseId, onClose, products, customer
 
             if (result.ok) {
                 const lic = {
-                    id: licenseId,
+                    id: license.id,
                     applianceId: result.data.id,
                     updatedBy: currUser?.username ?? "",
-                }
+                };
 
-                await fetch(`/api/license/${licenseId}`, {
+                await fetch(`/api/license/${license.id}`, {
                     method: "PUT",
                     body: JSON.stringify(lic),
                     headers: { "Content-Type": "application/json" },
@@ -121,9 +134,7 @@ export default function ApplicationForm({ licenseId, onClose, products, customer
                     control={control}
                     name="productId"
                     rules={{ required: true }}
-                    render={({
-                        field: { onChange, value },
-                    }) => (
+                    render={({ field: { onChange, value } }) => (
                         <AutoComplete
                             onChange={onChange}
                             value={value}
@@ -180,9 +191,7 @@ export default function ApplicationForm({ licenseId, onClose, products, customer
                 <Controller
                     control={control}
                     name="customerId"
-                    render={({
-                        field: { onChange, value },
-                    }) => (
+                    render={({ field: { onChange, value } }) => (
                         <AutoComplete
                             onChange={onChange}
                             value={value}
@@ -201,9 +210,7 @@ export default function ApplicationForm({ licenseId, onClose, products, customer
                 <Controller
                     control={control}
                     name="dealerId"
-                    render={({
-                        field: { onChange, value },
-                    }) => (
+                    render={({ field: { onChange, value } }) => (
                         <AutoComplete
                             onChange={onChange}
                             value={value}
@@ -222,9 +229,7 @@ export default function ApplicationForm({ licenseId, onClose, products, customer
                 <Controller
                     control={control}
                     name="subDealerId"
-                    render={({
-                        field: { onChange, value },
-                    }) => (
+                    render={({ field: { onChange, value } }) => (
                         <AutoComplete
                             onChange={onChange}
                             value={value}
@@ -243,9 +248,7 @@ export default function ApplicationForm({ licenseId, onClose, products, customer
                 <Controller
                     control={control}
                     name="supplierId"
-                    render={({
-                        field: { onChange, value },
-                    }) => (
+                    render={({ field: { onChange, value } }) => (
                         <AutoComplete
                             onChange={onChange}
                             value={value}
@@ -280,11 +283,7 @@ export default function ApplicationForm({ licenseId, onClose, products, customer
 
             <div className="flex flex-row gap-2 mt-4">
                 <div className="flex-1"></div>
-                <Button
-                    color="danger"
-                    onPress={onClose}
-                    className="bg-red-600"
-                >
+                <Button color="danger" onPress={onClose} className="bg-red-600">
                     Kapat
                 </Button>
                 <Button
@@ -296,5 +295,5 @@ export default function ApplicationForm({ licenseId, onClose, products, customer
                 </Button>
             </div>
         </form>
-    )
+    );
 }
