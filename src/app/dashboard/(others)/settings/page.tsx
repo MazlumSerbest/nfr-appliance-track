@@ -1,10 +1,11 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
 import { Accordion, AccordionItem } from "@nextui-org/accordion";
 import { Button } from "@nextui-org/button";
+import { Checkbox } from "@nextui-org/react";
 import {
     Modal,
     ModalBody,
@@ -16,7 +17,7 @@ import {
 import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
 import useUserStore from "@/store/user";
 import { userTypes } from "@/lib/constants";
-import { BiChevronLeft, BiUserCircle, BiLockAlt } from "react-icons/bi";
+import { BiChevronLeft, BiUserCircle, BiLockAlt, BiCog } from "react-icons/bi";
 
 interface IFormInput {
     id: number;
@@ -35,6 +36,7 @@ interface IFormInputPassword {
 export default function Settings() {
     const { user: currUser } = useUserStore();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
+    const [isSelected, setIsSelected] = useState(false);
 
     //#region Form
     const { register, reset, handleSubmit } = useForm<IFormInput>({});
@@ -92,6 +94,12 @@ export default function Settings() {
 
     useEffect(() => {
         reset(currUser);
+
+        setIsSelected(
+            JSON.parse(
+                window.localStorage.getItem("saveSearchValue") ?? "false",
+            ),
+        );
     }, [reset, currUser]);
 
     if (!currUser)
@@ -107,7 +115,7 @@ export default function Settings() {
             <Accordion
                 selectionMode="multiple"
                 variant="splitted"
-                defaultExpandedKeys={["user"]}
+                defaultExpandedKeys={["user", "preferences"]}
                 className="mt-4 p-0"
                 itemClasses={{
                     title: "font-medium text-zinc-500",
@@ -192,6 +200,37 @@ export default function Settings() {
                             </Button>
                         </div>
                     </form>
+                </AccordionItem>
+
+                <AccordionItem
+                    key="preferences"
+                    aria-label="preferences"
+                    title="Seçenekler"
+                    indicator={
+                        <BiChevronLeft className="text-3xl text-zinc-500" />
+                    }
+                    startContent={
+                        <BiCog className="text-4xl text-yellow-500/60" />
+                    }
+                >
+                    <div className="divide-y divide-zinc-200">
+                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                            <label htmlFor="name" className="font-medium">
+                                Aramalar Kalıcı Olsun
+                            </label>
+                            <Checkbox
+                                isSelected={isSelected}
+                                onValueChange={(value) => {
+                                    window.localStorage.setItem(
+                                        "saveSearchValue",
+                                        JSON.stringify(value),
+                                    );
+                                    setIsSelected(value);
+                                }}
+                                color="default"
+                            ></Checkbox>
+                        </div>
+                    </div>
                 </AccordionItem>
             </Accordion>
 

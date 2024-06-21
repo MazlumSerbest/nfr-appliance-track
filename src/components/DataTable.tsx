@@ -62,6 +62,14 @@ export default function DataTable(props: Props) {
     const [filterValue, setFilterValue] = React.useState(() => {
         if (searchValue) return searchValue;
 
+        let saveSearchValueJSON =
+            window.localStorage.getItem("saveSearchValue");
+        let saveSearchValue: boolean = saveSearchValueJSON
+            ? JSON.parse(saveSearchValueJSON)
+            : false;
+
+        if (saveSearchValue == false) return "";
+
         let storageValueJSON = window.localStorage.getItem(
             `${storageKey}SearchValue`,
         );
@@ -429,7 +437,9 @@ export default function DataTable(props: Props) {
             tableState.visibleColumns
                 ? setRowsPerPage(tableState.rowsPerPage || 10)
                 : null;
-            tableState.currentPage ? setPage(tableState.currentPage || 1) : null;
+            tableState.currentPage
+                ? setPage(tableState.currentPage || 1)
+                : null;
         }
     }, [storageKey]);
 
