@@ -68,6 +68,7 @@ export default function CustomerDetail({ params }: { params: { id: string } }) {
     //#endregion
 
     const { data, error, mutate } = useSWR(`/api/current/${params.id}`, null, {
+        revalidateOnFocus: false,
         onSuccess: (cus) => {
             reset(cus);
         },
@@ -401,10 +402,7 @@ export default function CustomerDetail({ params }: { params: { id: string } }) {
                             data={data}
                             isButton
                             trigger={
-                                <Button
-                                    color="primary"
-                                    className="bg-sky-500"
-                                >
+                                <Button color="primary" className="bg-sky-500">
                                     Kayıt Bilgisi
                                 </Button>
                             }
@@ -417,10 +415,7 @@ export default function CustomerDetail({ params }: { params: { id: string } }) {
                             isButton={true}
                             router={router}
                             trigger={
-                                <Button
-                                    color="primary"
-                                    className="bg-red-500"
-                                >
+                                <Button color="primary" className="bg-red-500">
                                     Sil
                                 </Button>
                             }

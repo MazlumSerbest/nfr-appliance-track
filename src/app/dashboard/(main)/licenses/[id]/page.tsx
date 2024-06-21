@@ -30,7 +30,7 @@ import {
     BiShieldQuarter,
     BiX,
     BiTrash,
-    BiEdit
+    BiEdit,
 } from "react-icons/bi";
 import { setLicenseAppliance } from "@/lib/prisma";
 import { DateFormat } from "@/utils/date";
@@ -115,7 +115,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
     const {
         isOpen: isAppDeleteOpen,
         onClose: onAppDeleteClose,
-        onOpenChange: onAppDeleteOpenChange
+        onOpenChange: onAppDeleteOpenChange,
     } = useDisclosure();
 
     const [products, setProducts] = useState<ListBoxItem[] | null>(null);
@@ -129,6 +129,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
     const [suppliers, setSuppliers] = useState<ListBoxItem[] | null>(null);
 
     const { data, error, mutate } = useSWR(`/api/license/${params.id}`, null, {
+        revalidateOnFocus: false,
         onSuccess: (lic) => {
             reset(lic);
             setValue("startDate", lic.startDate?.split("T")[0]);
@@ -193,8 +194,13 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
         }
     };
 
-    const { register: registerHistory, reset: resetHistory, setValue: setHistoryValue, handleSubmit: handleHistorySubmit, control: controlHistory } =
-        useForm<IHistoryFormInput>();
+    const {
+        register: registerHistory,
+        reset: resetHistory,
+        setValue: setHistoryValue,
+        handleSubmit: handleHistorySubmit,
+        control: controlHistory,
+    } = useForm<IHistoryFormInput>();
 
     const onSubmitHistory: SubmitHandler<IHistoryFormInput> = async (d) => {
         if (currUser) {
@@ -218,8 +224,8 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                     dealerId: data.dealerId || null,
                     subDealerId: data.subDealerId || null,
                     supplierId: data.supplierId || null,
-                }
-            }
+                },
+            };
 
             await fetch(`/api/license/${data.id}/history`, {
                 method: "PUT",
@@ -238,9 +244,11 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                 return result;
             });
         }
-    }
+    };
 
-    const onSubmitHistoryUpdate: SubmitHandler<IHistoryFormInput> = async (data) => {
+    const onSubmitHistoryUpdate: SubmitHandler<IHistoryFormInput> = async (
+        data,
+    ) => {
         if (currUser) {
             data.updatedBy = currUser?.username ?? "";
             data.licenseTypeId = Number(data.licenseTypeId || null);
@@ -269,7 +277,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                 return result;
             });
         }
-    }
+    };
     //#endregion
 
     //#region Data
@@ -332,27 +340,27 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                 <dt className="font-medium">Durum</dt>
                                 <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
                                     {!data.customerId &&
-                                        !data.cusName &&
-                                        !data.orderedAt &&
-                                        !data.expiryDate ? (
+                                    !data.cusName &&
+                                    !data.orderedAt &&
+                                    !data.expiryDate ? (
                                         <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-sm font-medium text-sky-500 ring-1 ring-inset ring-sky-500/20">
                                             Aktif
                                         </span>
                                     ) : (data.customerId || data.cusName) &&
-                                        !data.orderedAt &&
-                                        !data.expiryDate ? (
+                                      !data.orderedAt &&
+                                      !data.expiryDate ? (
                                         <span className="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-sm font-medium text-yellow-500 ring-1 ring-inset ring-yellow-500/20">
                                             Sipariş
                                         </span>
                                     ) : (data.customerId || data.cusName) &&
-                                        data.orderedAt &&
-                                        !data.expiryDate ? (
+                                      data.orderedAt &&
+                                      !data.expiryDate ? (
                                         <span className="inline-flex items-center rounded-md bg-orange-50 px-2 py-1 text-sm font-medium text-orange-500 ring-1 ring-inset ring-orange-500/20">
                                             Bekleyen Sipariş
                                         </span>
                                     ) : (data.customerId || data.cusName) &&
-                                        data.orderedAt &&
-                                        data.expiryDate ? (
+                                      data.orderedAt &&
+                                      data.expiryDate ? (
                                         <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-sm font-medium text-green-600 ring-1 ring-inset ring-green-600/20">
                                             Aktif
                                         </span>
@@ -365,18 +373,18 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                             </div>
 
                             <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2 items-center">
-                                {
-                                    data.applianceId ? (
-                                        <>
-                                            <dt className="font-medium">
-                                                Ürün
-                                            </dt>
-                                            <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                                {data?.appliance?.product?.brand?.name
-                                                    + " " + data?.appliance?.product?.model}
-                                            </dd>
-                                        </>
-                                    ) : <>
+                                {data.applianceId ? (
+                                    <>
+                                        <dt className="font-medium">Ürün</dt>
+                                        <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
+                                            {data?.appliance?.product?.brand
+                                                ?.name +
+                                                " " +
+                                                data?.appliance?.product?.model}
+                                        </dd>
+                                    </>
+                                ) : (
+                                    <>
                                         <label
                                             htmlFor="productId"
                                             className="font-medium"
@@ -398,7 +406,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                             )}
                                         />
                                     </>
-                                }
+                                )}
                             </div>
 
                             <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2 items-center">
@@ -718,9 +726,15 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                     resetHistory({});
                                     resetHistory({});
                                     setHistoryValue("dealerId", data.dealerId);
-                                    setHistoryValue("subDealerId", data.subDealerId);
-                                    setHistoryValue("supplierId", data.supplierId);
-                                    onOpenHistory()
+                                    setHistoryValue(
+                                        "subDealerId",
+                                        data.subDealerId,
+                                    );
+                                    setHistoryValue(
+                                        "supplierId",
+                                        data.supplierId,
+                                    );
+                                    onOpenHistory();
                                 }}
                             >
                                 Yeni Satın Alım Ekle
@@ -853,13 +867,16 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                                     Seçili kayıt silinecektir!
                                                 </h2>
                                                 <p className="text-sm text-zinc-500 pb-2">
-                                                    Devam etmek istediğinizden emin misiniz?
+                                                    Devam etmek istediğinizden
+                                                    emin misiniz?
                                                 </p>
                                                 <div className="flex gap-2">
                                                     <Button
                                                         variant="bordered"
                                                         color="default"
-                                                        onPress={onAppDeleteClose}
+                                                        onPress={
+                                                            onAppDeleteClose
+                                                        }
                                                     >
                                                         Kapat
                                                     </Button>
@@ -875,7 +892,9 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
 
                                                                 const lic =
                                                                     await setLicenseAppliance(
-                                                                        Number(params.id),
+                                                                        Number(
+                                                                            params.id,
+                                                                        ),
                                                                         null,
                                                                         updatedBy,
                                                                     );
@@ -932,7 +951,9 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
             <Accordion
                 selectionMode="multiple"
                 variant="splitted"
-                defaultExpandedKeys={data.history.length != 0 ? ["history"] : []}
+                defaultExpandedKeys={
+                    data.history.length != 0 ? ["history"] : []
+                }
                 className="p-0"
                 itemClasses={{
                     title: "font-medium text-zinc-600",
@@ -955,7 +976,8 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                         <>
                             <ul
                                 role="list"
-                                className="divide-y divide-zinc-200">
+                                className="divide-y divide-zinc-200"
+                            >
                                 <li key={0}></li>
                                 {data.history.map((h: LicenseHistory) => (
                                     <li
@@ -965,11 +987,16 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                         <div className="min-w-0 flex-auto">
                                             <div className="flex flex-row gap-2 items-center">
                                                 <p className="text-sm font-semibold leading-6 text-zinc-600">
-                                                    {h.licenseType?.brand?.name + " " + h.licenseType?.type}
+                                                    {h.licenseType?.brand
+                                                        ?.name +
+                                                        " " +
+                                                        h.licenseType?.type}
                                                 </p>
-                                                {currUser?.role == "technical"
-                                                    ? <></>
-                                                    : <>
+                                                {currUser?.role ==
+                                                "technical" ? (
+                                                    <></>
+                                                ) : (
+                                                    <>
                                                         <RegInfo
                                                             data={h}
                                                             trigger={
@@ -982,13 +1009,37 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                                         <BiEdit
                                                             className="text-xl text-green-600 cursor-pointer"
                                                             onClick={() => {
-                                                                setHistoryIsNew(false);
+                                                                setHistoryIsNew(
+                                                                    false,
+                                                                );
                                                                 resetHistory(h);
-                                                                setHistoryValue("startDate", h.startDate?.split("T")[0]);
-                                                                setHistoryValue("expiryDate", h.expiryDate?.split("T")[0]);
-                                                                setHistoryValue("dealerId", h.dealer?.id);
-                                                                setHistoryValue("subDealerId", h.subDealer?.id);
-                                                                setHistoryValue("supplierId", h.supplier?.id);
+                                                                setHistoryValue(
+                                                                    "startDate",
+                                                                    h.startDate?.split(
+                                                                        "T",
+                                                                    )[0],
+                                                                );
+                                                                setHistoryValue(
+                                                                    "expiryDate",
+                                                                    h.expiryDate?.split(
+                                                                        "T",
+                                                                    )[0],
+                                                                );
+                                                                setHistoryValue(
+                                                                    "dealerId",
+                                                                    h.dealer
+                                                                        ?.id,
+                                                                );
+                                                                setHistoryValue(
+                                                                    "subDealerId",
+                                                                    h.subDealer
+                                                                        ?.id,
+                                                                );
+                                                                setHistoryValue(
+                                                                    "supplierId",
+                                                                    h.supplier
+                                                                        ?.id,
+                                                                );
                                                                 onOpenHistory();
                                                             }}
                                                         />
@@ -1004,13 +1055,11 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                                             }
                                                         />
                                                     </>
-                                                }
+                                                )}
                                             </div>
-                                            {h.licenseType
-                                                ?.duration ? (
+                                            {h.licenseType?.duration ? (
                                                 <span className="inline-flex items-center rounded-md bg-sky-50 px-2 py-1 text-xs font-medium text-sky-600 ring-1 ring-inset ring-sky-600/20">
-                                                    {h.licenseType
-                                                        ?.duration +
+                                                    {h.licenseType?.duration +
                                                         " ay"}
                                                 </span>
                                             ) : (
@@ -1026,18 +1075,18 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                             )}
 
                                             <div className="max-w-96 text-xs leading-5 text-zinc-400">
-                                                {
-                                                    h.serialNo ? (
-                                                        <div className="grid grid-cols-2 gap-4">
-                                                            <dt className="font-semibold text-zinc-500">
-                                                                Seri No:
-                                                            </dt>
-                                                            <dd className="truncate">
-                                                                {h.serialNo}
-                                                            </dd>
-                                                        </div>
-                                                    ) : <></>
-                                                }
+                                                {h.serialNo ? (
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        <dt className="font-semibold text-zinc-500">
+                                                            Seri No:
+                                                        </dt>
+                                                        <dd className="truncate">
+                                                            {h.serialNo}
+                                                        </dd>
+                                                    </div>
+                                                ) : (
+                                                    <></>
+                                                )}
 
                                                 <div className="grid grid-cols-2 gap-4">
                                                     <dt className="font-semibold text-zinc-500">
@@ -1061,56 +1110,58 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                                     </dd>
                                                 </div>
 
-                                                {
-                                                    h.dealer ? (
-                                                        <div className="grid grid-cols-2 gap-4">
-                                                            <dt className="font-semibold text-zinc-500">
-                                                                Bayi:
-                                                            </dt>
-                                                            <dd className="truncate">
-                                                                {h.dealer.name}
-                                                            </dd>
-                                                        </div>
-                                                    ) : <></>
-                                                }
+                                                {h.dealer ? (
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        <dt className="font-semibold text-zinc-500">
+                                                            Bayi:
+                                                        </dt>
+                                                        <dd className="truncate">
+                                                            {h.dealer.name}
+                                                        </dd>
+                                                    </div>
+                                                ) : (
+                                                    <></>
+                                                )}
 
-                                                {
-                                                    h.subDealer ? (
-                                                        <div className="grid grid-cols-2 gap-4">
-                                                            <dt className="font-semibold text-zinc-500">
-                                                                Alt Bayi:
-                                                            </dt>
-                                                            <dd className="truncate">
-                                                                {h.subDealer.name}
-                                                            </dd>
-                                                        </div>
-                                                    ) : <></>
-                                                }
+                                                {h.subDealer ? (
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        <dt className="font-semibold text-zinc-500">
+                                                            Alt Bayi:
+                                                        </dt>
+                                                        <dd className="truncate">
+                                                            {h.subDealer.name}
+                                                        </dd>
+                                                    </div>
+                                                ) : (
+                                                    <></>
+                                                )}
 
-                                                {
-                                                    h.supplier ? (
-                                                        <div className="grid grid-cols-2 gap-4">
-                                                            <dt className="font-semibold text-zinc-500">
-                                                                Tedarikçi:
-                                                            </dt>
-                                                            <dd className="truncate">
-                                                                {h.supplier.name}
-                                                            </dd>
-                                                        </div>
-                                                    ) : <></>
-                                                }
+                                                {h.supplier ? (
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        <dt className="font-semibold text-zinc-500">
+                                                            Tedarikçi:
+                                                        </dt>
+                                                        <dd className="truncate">
+                                                            {h.supplier.name}
+                                                        </dd>
+                                                    </div>
+                                                ) : (
+                                                    <></>
+                                                )}
                                             </div>
                                         </div>
                                     </li>
                                 ))}
                             </ul>
                         </>
-                    )
-                        : (<div className="w-full py-6 text-center">
+                    ) : (
+                        <div className="w-full py-6 text-center">
                             <p className="text-zinc-400">
-                                Bu lisansın geçmişte herhangi bir satın alımı bulunmuyor.
+                                Bu lisansın geçmişte herhangi bir satın alımı
+                                bulunmuyor.
                             </p>
-                        </div>)}
+                        </div>
+                    )}
                 </AccordionItem>
             </Accordion>
 
@@ -1136,8 +1187,13 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                             classNames={{
                                 cursor: "w-full bg-sky-500",
                                 tab: "px-8",
-                            }}>
-                            <Tab key="registered" title="Kayıtlı" className="w-full">
+                            }}
+                        >
+                            <Tab
+                                key="registered"
+                                title="Kayıtlı"
+                                className="w-full"
+                            >
                                 <form
                                     autoComplete="off"
                                     className="flex flex-col gap-2"
@@ -1154,7 +1210,10 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                             onChange={async (e) => {
                                                 resetField("applianceId");
                                                 const appliances: ListBoxItem[] =
-                                                    await getAppliances(true, e);
+                                                    await getAppliances(
+                                                        true,
+                                                        e,
+                                                    );
                                                 setAppliances(appliances);
                                             }}
                                             data={products || []}
@@ -1169,8 +1228,8 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                         </label>
                                         <span className="flex flex-row font-normal text-xs text-zinc-400 items-center gap-1 mb-1">
                                             <BiInfoCircle />
-                                            Cihaz seçmek için ürün seçimi yapmanız
-                                            gereklidir!
+                                            Cihaz seçmek için ürün seçimi
+                                            yapmanız gereklidir!
                                         </span>
                                         <Controller
                                             control={control}
@@ -1230,16 +1289,23 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                 backdrop="opaque"
                 shadow="lg"
                 isDismissable={false}
-                scrollBehavior="outside">
+                scrollBehavior="outside"
+            >
                 <ModalContent>
                     <ModalHeader className="flex flex-col gap-1 text-zinc-500">
-                        {historyIsNew ? "Yeni Satın Alım" : "Satın Alım Güncelleme"}
+                        {historyIsNew
+                            ? "Yeni Satın Alım"
+                            : "Satın Alım Güncelleme"}
                     </ModalHeader>
                     <ModalBody>
                         <form
                             autoComplete="off"
                             className="flex flex-col gap-2"
-                            onSubmit={historyIsNew ? handleHistorySubmit(onSubmitHistory) : handleHistorySubmit(onSubmitHistoryUpdate)}
+                            onSubmit={
+                                historyIsNew
+                                    ? handleHistorySubmit(onSubmitHistory)
+                                    : handleHistorySubmit(onSubmitHistoryUpdate)
+                            }
                         >
                             <div>
                                 <label

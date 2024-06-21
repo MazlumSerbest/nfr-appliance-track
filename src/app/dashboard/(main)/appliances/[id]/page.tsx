@@ -126,8 +126,13 @@ export default function ApplianceDetail({
         });
     };
 
-    const { register: registerHistory, reset: resetHistory, setValue: setHistoryValue, handleSubmit: handleHistorySubmit, control: controlHistory } =
-        useForm<IHistoryFormInput>();
+    const {
+        register: registerHistory,
+        reset: resetHistory,
+        setValue: setHistoryValue,
+        handleSubmit: handleHistorySubmit,
+        control: controlHistory,
+    } = useForm<IHistoryFormInput>();
 
     const onSubmitHistory: SubmitHandler<IHistoryFormInput> = async (d) => {
         if (currUser) {
@@ -143,8 +148,8 @@ export default function ApplianceDetail({
                     cusName: data.cusName || null,
                     boughtAt: data.boughtAt || null,
                     soldAt: data.soldAt || null,
-                }
-            }
+                },
+            };
 
             await fetch(`/api/appliance/${data.id}/history`, {
                 method: "PUT",
@@ -163,9 +168,11 @@ export default function ApplianceDetail({
                 return result;
             });
         }
-    }
+    };
 
-    const onSubmitHistoryUpdate: SubmitHandler<IHistoryFormInput> = async (data) => {
+    const onSubmitHistoryUpdate: SubmitHandler<IHistoryFormInput> = async (
+        data,
+    ) => {
         if (currUser) {
             data.updatedBy = currUser?.username ?? "";
 
@@ -188,7 +195,7 @@ export default function ApplianceDetail({
                 return result;
             });
         }
-    }
+    };
     //#endregion
 
     //#region Data
@@ -212,6 +219,7 @@ export default function ApplianceDetail({
         `/api/appliance/${params.id}`,
         null,
         {
+            revalidateOnFocus: false,
             onSuccess: (app) => {
                 reset(app);
                 setValue("boughtAt", app.boughtAt?.split("T")[0]);
@@ -514,8 +522,11 @@ export default function ApplianceDetail({
                                     setHistoryIsNew(true);
                                     resetHistory({});
                                     resetHistory({});
-                                    setHistoryValue("customerId", data.customerId);
-                                    onOpenHistory()
+                                    setHistoryValue(
+                                        "customerId",
+                                        data.customerId,
+                                    );
+                                    onOpenHistory();
                                 }}
                             >
                                 Yeni Müşteri Ekle
@@ -591,7 +602,10 @@ export default function ApplianceDetail({
                                         <div className="flex flex-1 gap-x-4">
                                             <div className="min-w-0 flex-auto">
                                                 <p className="text-sm font-semibold leading-6 text-zinc-600">
-                                                    {lic.licenseType?.brand?.name + " " + lic.licenseType?.type}
+                                                    {lic.licenseType?.brand
+                                                        ?.name +
+                                                        " " +
+                                                        lic.licenseType?.type}
                                                     {lic.licenseType
                                                         ?.duration ? (
                                                         <span className="inline-flex items-center rounded-md bg-sky-50 px-2 py-1 text-xs font-medium text-sky-600 ring-1 ring-inset ring-sky-600/20 ml-2">
@@ -651,11 +665,12 @@ export default function ApplianceDetail({
                 </AccordionItem>
             </Accordion>
 
-
             <Accordion
                 selectionMode="multiple"
                 variant="splitted"
-                defaultExpandedKeys={data.history.length != 0 ? ["history"] : []}
+                defaultExpandedKeys={
+                    data.history.length != 0 ? ["history"] : []
+                }
                 className="p-0"
                 itemClasses={{
                     title: "font-medium text-zinc-600",
@@ -678,7 +693,8 @@ export default function ApplianceDetail({
                         <>
                             <ul
                                 role="list"
-                                className="divide-y divide-zinc-200">
+                                className="divide-y divide-zinc-200"
+                            >
                                 <li key={0}></li>
                                 {data.history.map((h: ApplianceHistory) => (
                                     <li
@@ -688,11 +704,14 @@ export default function ApplianceDetail({
                                         <div className="min-w-0 flex-auto">
                                             <div className="flex flex-row gap-2 items-center">
                                                 <p className="text-sm font-semibold leading-6 text-zinc-600">
-                                                    {h.customer?.name || h.cusName}
+                                                    {h.customer?.name ||
+                                                        h.cusName}
                                                 </p>
-                                                {currUser?.role == "technical"
-                                                    ? <></>
-                                                    : <>
+                                                {currUser?.role ==
+                                                "technical" ? (
+                                                    <></>
+                                                ) : (
+                                                    <>
                                                         <RegInfo
                                                             data={h}
                                                             trigger={
@@ -705,11 +724,27 @@ export default function ApplianceDetail({
                                                         <BiEdit
                                                             className="text-xl text-green-600 cursor-pointer"
                                                             onClick={() => {
-                                                                setHistoryIsNew(false);
+                                                                setHistoryIsNew(
+                                                                    false,
+                                                                );
                                                                 resetHistory(h);
-                                                                setHistoryValue("boughtAt", h.boughtAt?.split("T")[0]);
-                                                                setHistoryValue("soldAt", h.soldAt?.split("T")[0]);
-                                                                setHistoryValue("customerId", h.customer?.id);
+                                                                setHistoryValue(
+                                                                    "boughtAt",
+                                                                    h.boughtAt?.split(
+                                                                        "T",
+                                                                    )[0],
+                                                                );
+                                                                setHistoryValue(
+                                                                    "soldAt",
+                                                                    h.soldAt?.split(
+                                                                        "T",
+                                                                    )[0],
+                                                                );
+                                                                setHistoryValue(
+                                                                    "customerId",
+                                                                    h.customer
+                                                                        ?.id,
+                                                                );
                                                                 onOpenHistory();
                                                             }}
                                                         />
@@ -725,7 +760,7 @@ export default function ApplianceDetail({
                                                             }
                                                         />
                                                     </>
-                                                }
+                                                )}
                                             </div>
 
                                             <div className="max-w-96 text-xs leading-5 text-zinc-400">
@@ -734,9 +769,11 @@ export default function ApplianceDetail({
                                                         Alım Tarihi:
                                                     </dt>
                                                     <dd>
-                                                        {h.boughtAt ? DateFormat(
-                                                            h.boughtAt,
-                                                        ) : "-"}
+                                                        {h.boughtAt
+                                                            ? DateFormat(
+                                                                  h.boughtAt,
+                                                              )
+                                                            : "-"}
                                                     </dd>
                                                 </div>
 
@@ -745,9 +782,8 @@ export default function ApplianceDetail({
                                                         Satış Tarihi:
                                                     </dt>
                                                     <dd>
-                                                        {DateFormat(
-                                                            h.soldAt,
-                                                        ) || "-"}
+                                                        {DateFormat(h.soldAt) ||
+                                                            "-"}
                                                     </dd>
                                                 </div>
                                             </div>
@@ -756,12 +792,14 @@ export default function ApplianceDetail({
                                 ))}
                             </ul>
                         </>
-                    )
-                        : (<div className="w-full py-6 text-center">
+                    ) : (
+                        <div className="w-full py-6 text-center">
                             <p className="text-zinc-400">
-                                Bu cihazın geçmişte herhangi bir müşterisi bulunmuyor.
+                                Bu cihazın geçmişte herhangi bir müşterisi
+                                bulunmuyor.
                             </p>
-                        </div>)}
+                        </div>
+                    )}
                 </AccordionItem>
             </Accordion>
 
@@ -773,16 +811,23 @@ export default function ApplianceDetail({
                 backdrop="opaque"
                 shadow="lg"
                 isDismissable={false}
-                scrollBehavior="outside">
+                scrollBehavior="outside"
+            >
                 <ModalContent>
                     <ModalHeader className="flex flex-col gap-1 text-zinc-500">
-                        {historyIsNew ? "Yeni Satın Alım" : "Satın Alım Güncelleme"}
+                        {historyIsNew
+                            ? "Yeni Satın Alım"
+                            : "Satın Alım Güncelleme"}
                     </ModalHeader>
                     <ModalBody>
                         <form
                             autoComplete="off"
                             className="flex flex-col gap-2"
-                            onSubmit={historyIsNew ? handleHistorySubmit(onSubmitHistory) : handleHistorySubmit(onSubmitHistoryUpdate)}
+                            onSubmit={
+                                historyIsNew
+                                    ? handleHistorySubmit(onSubmitHistory)
+                                    : handleHistorySubmit(onSubmitHistoryUpdate)
+                            }
                         >
                             <div>
                                 <label
@@ -859,7 +904,9 @@ export default function ApplianceDetail({
                                     type="date"
                                     id="soldAt"
                                     className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
-                                    {...registerHistory("soldAt", { required: true })}
+                                    {...registerHistory("soldAt", {
+                                        required: true,
+                                    })}
                                 />
                             </div>
 

@@ -94,6 +94,7 @@ export default function ProjectDetail({ params }: { params: { id: string } }) {
     //#endregion
 
     const { data, error, mutate } = useSWR(`/api/project/${params.id}`, null, {
+        revalidateOnFocus: false,
         onSuccess: (pro) => {
             reset(pro);
             setValue("date", pro.date?.split("T")[0]);

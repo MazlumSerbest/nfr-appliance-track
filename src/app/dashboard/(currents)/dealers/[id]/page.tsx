@@ -68,6 +68,7 @@ export default function DealerDetail({ params }: { params: { id: string } }) {
     //#endregion
 
     const { data, error, mutate } = useSWR(`/api/current/${params.id}`, null, {
+        revalidateOnFocus: false,
         onSuccess: (dea) => {
             reset(dea);
         },

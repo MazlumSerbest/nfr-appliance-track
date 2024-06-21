@@ -81,6 +81,7 @@ export default function ConnectionDetail({
         `/api/connection/${params.id}`,
         null,
         {
+            revalidateOnFocus: false,
             onSuccess: (con) => {
                 reset(con);
             },
