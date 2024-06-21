@@ -36,7 +36,8 @@ interface IFormInputPassword {
 export default function Settings() {
     const { user: currUser } = useUserStore();
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
-    const [isSelected, setIsSelected] = useState(false);
+    const [saveSearchValue, setSaveSearchValue] = useState(false);
+    const [saveCurrentPage, setSaveCurrentPage] = useState(false);
 
     //#region Form
     const { register, reset, handleSubmit } = useForm<IFormInput>({});
@@ -95,9 +96,14 @@ export default function Settings() {
     useEffect(() => {
         reset(currUser);
 
-        setIsSelected(
+        setSaveSearchValue(
             JSON.parse(
                 window.localStorage.getItem("saveSearchValue") ?? "false",
+            ),
+        );
+        setSaveCurrentPage(
+            JSON.parse(
+                window.localStorage.getItem("saveCurrentPage") ?? "false",
             ),
         );
     }, [reset, currUser]);
@@ -210,24 +216,41 @@ export default function Settings() {
                         <BiChevronLeft className="text-3xl text-zinc-500" />
                     }
                     startContent={
-                        <BiCog className="text-4xl text-yellow-500/60" />
+                        <BiCog className="text-4xl text-sky-500/60" />
                     }
                 >
                     <div className="divide-y divide-zinc-200">
-                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                        <div className="flex justify-between md:grid md:grid-cols-2 w-full text-base text-zinc-500 p-2">
                             <label htmlFor="name" className="font-medium">
                                 Aramalar Kalıcı Olsun
                             </label>
                             <Checkbox
-                                isSelected={isSelected}
+                                color="default"
+                                isSelected={saveSearchValue}
                                 onValueChange={(value) => {
                                     window.localStorage.setItem(
                                         "saveSearchValue",
                                         JSON.stringify(value),
                                     );
-                                    setIsSelected(value);
+                                    setSaveSearchValue(value);
                                 }}
+                            ></Checkbox>
+                        </div>
+
+                        <div className="flex justify-between md:grid md:grid-cols-2 w-full text-base text-zinc-500 p-2">
+                            <label htmlFor="name" className="font-medium">
+                                Son Sayfa Açık Kalsın
+                            </label>
+                            <Checkbox
                                 color="default"
+                                isSelected={saveCurrentPage}
+                                onValueChange={(value) => {
+                                    window.localStorage.setItem(
+                                        "saveCurrentPage",
+                                        JSON.stringify(value),
+                                    );
+                                    setSaveCurrentPage(value);
+                                }}
                             ></Checkbox>
                         </div>
                     </div>

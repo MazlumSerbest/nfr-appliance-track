@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import {
     Table,
     TableHeader,
@@ -59,7 +59,7 @@ export default function DataTable(props: Props) {
     } = props;
 
     type DataType = (typeof data)[0];
-    const [filterValue, setFilterValue] = React.useState(() => {
+    const [filterValue, setFilterValue] = useState(() => {
         if (searchValue) return searchValue;
 
         let saveSearchValueJSON =
@@ -83,24 +83,24 @@ export default function DataTable(props: Props) {
     // const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
     //     new Set([]),
     // );
-    const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
+    const [visibleColumns, setVisibleColumns] = useState<Selection>(
         new Set(initialVisibleColumNames),
     );
-    const [activeFilter, setActiveFilter] = React.useState<Selection>("all");
-    const [rowsPerPage, setRowsPerPage] = React.useState<number>(
+    const [activeFilter, setActiveFilter] = useState<Selection>("all");
+    const [rowsPerPage, setRowsPerPage] = useState<number>(
         defaultRowsPerPage || 10,
     );
-    const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
+    const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
         column: sortOption.column,
         direction: sortOption.direction,
     });
-    const [page, setPage] = React.useState(1);
+    const [page, setPage] = useState(1);
 
     // const pages = Math.ceil(data.length / rowsPerPage);
 
     const hasSearchFilter = Boolean(filterValue);
 
-    const headerColumns = React.useMemo(() => {
+    const headerColumns = useMemo(() => {
         if (visibleColumns === "all") return columns;
 
         return columns.filter((column) =>
@@ -108,7 +108,7 @@ export default function DataTable(props: Props) {
         );
     }, [columns, visibleColumns]);
 
-    const filteredItems = React.useMemo(() => {
+    const filteredItems = useMemo(() => {
         let filteredItems = [...data];
 
         if (hasSearchFilter) {
@@ -144,17 +144,17 @@ export default function DataTable(props: Props) {
         columns,
     ]);
 
-    // const items = React.useMemo(() => {
+    // const items = useMemo(() => {
     const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
-    const sortedItems = React.useMemo(() => {
+    const sortedItems = useMemo(() => {
         const start = (page - 1) * rowsPerPage;
         const end = start + rowsPerPage;
 
         //     return filteredItems.slice(start, end);
         // }, [page, filteredItems, rowsPerPage]);
 
-        // const sortedItems = React.useMemo(() => {
+        // const sortedItems = useMemo(() => {
         //     return [...items].sort((a: DataType, b: DataType) => {
         return [...filteredItems]
             .sort((a: DataType, b: DataType) => {
@@ -173,7 +173,7 @@ export default function DataTable(props: Props) {
             .slice(start, end);
     }, [sortDescriptor, page, filteredItems, rowsPerPage]);
 
-    const onRowsPerPageChange = React.useCallback(
+    const onRowsPerPageChange = useCallback(
         (e: React.ChangeEvent<HTMLSelectElement>) => {
             setRowsPerPage(Number(e.target.value));
             setPage(1);
@@ -196,7 +196,7 @@ export default function DataTable(props: Props) {
         [storageKey],
     );
 
-    const onSearchChange = React.useCallback(
+    const onSearchChange = useCallback(
         (value?: string) => {
             if (value) {
                 setFilterValue(value);
@@ -215,7 +215,7 @@ export default function DataTable(props: Props) {
     );
 
     //#region Top Content
-    const topContent = React.useMemo(() => {
+    const topContent = useMemo(() => {
         return (
             <div className="flex flex-col gap-4">
                 <div className="flex justify-between gap-3 items-end">
@@ -378,7 +378,7 @@ export default function DataTable(props: Props) {
     //#endregion
 
     //#region Bottom Content
-    const bottomContent = React.useMemo(() => {
+    const bottomContent = useMemo(() => {
         return (
             <div className="py-2 px-2 flex justify-center items-center">
                 <Pagination
@@ -421,13 +421,19 @@ export default function DataTable(props: Props) {
     }, [page, pages, storageKey]);
     //#endregion
 
-    React.useEffect(() => {
+    useEffect(() => {
         let tableStateJSON = window.localStorage.getItem(
             `${storageKey}TableState`,
         );
         let tableState: TableState = tableStateJSON
             ? JSON.parse(tableStateJSON)
             : null;
+
+        let saveCurrentPageJSON =
+            window.localStorage.getItem("saveCurrentPage");
+        let saveCurrentPage: boolean = saveCurrentPageJSON
+            ? JSON.parse(saveCurrentPageJSON)
+            : false;
 
         if (tableState) {
             // setPage(tableState.currentPage);
@@ -437,9 +443,10 @@ export default function DataTable(props: Props) {
             tableState.visibleColumns
                 ? setRowsPerPage(tableState.rowsPerPage || 10)
                 : null;
-            tableState.currentPage
-                ? setPage(tableState.currentPage || 1)
-                : null;
+            if (saveCurrentPage)
+                tableState.currentPage
+                    ? setPage(tableState.currentPage || 1)
+                    : null;
         }
     }, [storageKey]);
 
