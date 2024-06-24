@@ -221,6 +221,10 @@ export default function DataTable(props: Props) {
                 <div className="flex justify-between gap-3 items-end">
                     <Input
                         isClearable
+                        autoComplete="off"
+                        autoCorrect="off"
+                        autoCapitalize="off"
+                        spellCheck="false"
                         classNames={{
                             base: "w-full sm:max-w-[44%]",
                             inputWrapper:
