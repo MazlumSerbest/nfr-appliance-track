@@ -10,7 +10,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
                 fetcher: (url) => fetch(url).then((res) => res.json()),
             }}
         >
-            <NextUIProvider>{children}</NextUIProvider>
+            <NextUIProvider locale="tr-TR">{children}</NextUIProvider>
         </SWRConfig>
     );
 }
