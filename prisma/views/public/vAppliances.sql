@@ -35,7 +35,21 @@ SELECT
   (((b.name) :: text || ' ' :: text) || (p.model) :: text) AS product,
   p.model AS "productModel",
   b.name AS "productBrand",
-  COALESCE(c.name, a."cusName") AS "customerName",
+  CASE
+    WHEN (
+      (c.name IS NOT NULL)
+      AND (a."cusName" IS NOT NULL)
+      AND ((a."cusName") :: text <> '' :: text)
+    ) THEN (
+      (
+        (
+          ((c.name) :: text || '(' :: text) || (a."cusName") :: text
+        ) || ')' :: text
+      )
+    ) :: character varying
+    WHEN (c.name IS NULL) THEN a."cusName"
+    ELSE c.name
+  END AS "customerName",
   d.name AS "dealerName",
   sd.name AS "subDealerName",
   s.name AS "supplierName"
