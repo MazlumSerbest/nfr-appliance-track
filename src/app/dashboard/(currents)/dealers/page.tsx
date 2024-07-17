@@ -111,6 +111,7 @@ export default function Dealers() {
             key: "authorizedName",
             name: "Yetkili Adı",
             width: 200,
+            searchable: true,
         },
         {
             key: "authorizedTitle",
