@@ -257,7 +257,7 @@ export default function ApplianceDetail({
                             <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
                                 <dt className="font-medium">Durum</dt>
                                 <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                    {(data.isDemo ? (
+                                    {data.isDemo ? (
                                         <span className="inline-flex items-center rounded-md bg-zinc-50 px-2 py-1 text-sm font-medium text-zinc-500 ring-1 ring-inset ring-zinc-500/20">
                                             Demo
                                         </span>
@@ -273,7 +273,7 @@ export default function ApplianceDetail({
                                         <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-sm font-medium text-green-600 ring-1 ring-inset ring-green-600/20">
                                             Aktif
                                         </span>
-                                    )) || "-"}
+                                    )}
                                 </dd>
                             </div>
 
