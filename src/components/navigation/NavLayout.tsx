@@ -24,7 +24,7 @@ export default function NavLayout() {
     // const t = useTranslations("General.Pages");
 
     const pathName = usePathname();
-    let withoutFullLink = pathName.substring(pathName.indexOf("/panel"));
+    let withoutFullLink = pathName.substring(pathName.indexOf("/dashboard"));
 
     const ref = useRef(null);
     useOnClickOutside(ref, (_) => {
@@ -76,7 +76,11 @@ export default function NavLayout() {
                                         startContent={p.icon}
                                         className={
                                             "font-semibold" +
-                                            (withoutFullLink == p.path
+                                            (p.path === withoutFullLink ||
+                                            (p.path != "/dashboard" &&
+                                                withoutFullLink.includes(
+                                                    p.path,
+                                                ))
                                                 ? " bg-sky-100"
                                                 : "")
                                         }
@@ -113,7 +117,11 @@ export default function NavLayout() {
                                             startContent={p.icon}
                                             className={
                                                 "font-semibold" +
-                                                (withoutFullLink == p.path
+                                                (p.path === withoutFullLink ||
+                                                (p.path != "/dashboard" &&
+                                                    withoutFullLink.includes(
+                                                        p.path,
+                                                    ))
                                                     ? " bg-sky-100"
                                                     : "")
                                             }
@@ -152,7 +160,11 @@ export default function NavLayout() {
                                             startContent={p.icon}
                                             className={
                                                 "font-semibold" +
-                                                (withoutFullLink == p.path
+                                                (p.path === withoutFullLink ||
+                                                (p.path != "/dashboard" &&
+                                                    withoutFullLink.includes(
+                                                        p.path,
+                                                    ))
                                                     ? " bg-sky-100"
                                                     : "")
                                             }
@@ -190,7 +202,12 @@ export default function NavLayout() {
                                                 startContent={p.icon}
                                                 className={
                                                     "font-semibold" +
-                                                    (withoutFullLink == p.path
+                                                    (p.path ===
+                                                        withoutFullLink ||
+                                                    (p.path != "/dashboard" &&
+                                                        withoutFullLink.includes(
+                                                            p.path,
+                                                        ))
                                                         ? " bg-sky-100"
                                                         : "")
                                                 }
