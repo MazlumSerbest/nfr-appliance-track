@@ -93,18 +93,18 @@ export async function GET(
                     //         type: true,
                     //     },
                     // },
-                    // customer: {
-                    //     select: { name: true },
-                    // },
-                    // dealer: {
-                    //     select: { name: true },
-                    // },
-                    // subDealer: {
-                    //     select: { name: true },
-                    // },
-                    // supplier: {
-                    //     select: { name: true },
-                    // },
+                    customer: {
+                        select: { name: true, email: true },
+                    },
+                    dealer: {
+                        select: { name: true, email: true },
+                    },
+                    subDealer: {
+                        select: { name: true, email: true },
+                    },
+                    supplier: {
+                        select: { name: true },
+                    }
                 },
                 where: {
                     id: Number(params.id),

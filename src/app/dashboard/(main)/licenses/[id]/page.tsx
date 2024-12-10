@@ -31,6 +31,8 @@ import {
     BiX,
     BiTrash,
     BiEdit,
+    BiSend,
+    BiMailSend,
 } from "react-icons/bi";
 import { setLicenseAppliance } from "@/lib/prisma";
 import { DateFormat } from "@/utils/date";
@@ -45,6 +47,8 @@ import {
     getBoughtTypes,
 } from "@/lib/data";
 import ApplicationForm from "@/components/ApplicationForm";
+import { Tooltip } from "@nextui-org/react";
+import SendLicenseMail from "@/components/buttons/SendLicenseMail";
 
 interface IFormInput {
     id: number;
@@ -600,20 +604,51 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                 >
                                     Müşteri
                                 </label>
-                                <Controller
-                                    control={control}
-                                    name="customerId"
-                                    render={({
-                                        field: { onChange, value },
-                                    }) => (
-                                        <AutoComplete
-                                            onChange={onChange}
-                                            value={value}
-                                            data={customers || []}
-                                            className="md:col-span-2 xl:col-span-1 my-1 sm:my-0"
+                                <div className="flex flex-row gap-1 md:col-span-2 xl:col-span-1 my-1 sm:my-0">
+                                    <Controller
+                                        control={control}
+                                        name="customerId"
+                                        render={({
+                                            field: { onChange, value },
+                                        }) => (
+                                            <AutoComplete
+                                                onChange={onChange}
+                                                value={value}
+                                                data={customers || []}
+                                                className="flex-1"
+                                            />
+                                        )}
+                                    />
+                                    {data.customerId ? (
+                                        <SendLicenseMail
+                                            current={data.customer}
+                                            licenseType={
+                                                data?.licenseType?.type
+                                            }
+                                            appliance={
+                                                data?.appliance
+                                                    ? data?.appliance?.product
+                                                          ?.brand?.name +
+                                                      " " +
+                                                      data?.appliance?.product
+                                                          ?.model
+                                                    : data?.product
+                                                    ? data?.product?.brand
+                                                          ?.name +
+                                                      " " +
+                                                      data?.product?.model
+                                                    : null
+                                            }
+                                            serialNo={
+                                                data?.applianceId
+                                                    ? data?.appliance?.serialNo
+                                                    : data?.appSerialNo
+                                            }
+                                            startDate={data?.startDate}
+                                            expiryDate={data?.expiryDate}
                                         />
-                                    )}
-                                />
+                                    ) : null}
+                                </div>
                             </div>
 
                             <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
@@ -623,20 +658,51 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                 >
                                     Bayi
                                 </label>
-                                <Controller
-                                    control={control}
-                                    name="dealerId"
-                                    render={({
-                                        field: { onChange, value },
-                                    }) => (
-                                        <AutoComplete
-                                            onChange={onChange}
-                                            value={value}
-                                            data={dealers || []}
-                                            className="md:col-span-2 xl:col-span-1 my-1 sm:my-0"
+                                <div className="flex flex-row gap-1 md:col-span-2 xl:col-span-1 my-1 sm:my-0">
+                                    <Controller
+                                        control={control}
+                                        name="dealerId"
+                                        render={({
+                                            field: { onChange, value },
+                                        }) => (
+                                            <AutoComplete
+                                                onChange={onChange}
+                                                value={value}
+                                                data={dealers || []}
+                                                className="flex-1"
+                                            />
+                                        )}
+                                    />
+                                    {data.dealerId ? (
+                                        <SendLicenseMail
+                                            current={data?.dealer}
+                                            licenseType={
+                                                data?.licenseType?.type
+                                            }
+                                            appliance={
+                                                data?.appliance
+                                                    ? data?.appliance?.product
+                                                          ?.brand?.name +
+                                                      " " +
+                                                      data?.appliance?.product
+                                                          ?.model
+                                                    : data?.product
+                                                    ? data?.product?.brand
+                                                          ?.name +
+                                                      " " +
+                                                      data?.product?.model
+                                                    : null
+                                            }
+                                            serialNo={
+                                                data?.applianceId
+                                                    ? data?.appliance?.serialNo
+                                                    : data?.appSerialNo
+                                            }
+                                            startDate={data?.startDate}
+                                            expiryDate={data?.expiryDate}
                                         />
-                                    )}
-                                />
+                                    ) : null}
+                                </div>
                             </div>
 
                             <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
@@ -646,20 +712,51 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                 >
                                     Alt Bayi
                                 </label>
-                                <Controller
-                                    control={control}
-                                    name="subDealerId"
-                                    render={({
-                                        field: { onChange, value },
-                                    }) => (
-                                        <AutoComplete
-                                            onChange={onChange}
-                                            value={value}
-                                            data={dealers || []}
-                                            className="md:col-span-2 xl:col-span-1 my-1 sm:my-0"
+                                <div className="flex flex-row gap-1 md:col-span-2 xl:col-span-1 my-1 sm:my-0">
+                                    <Controller
+                                        control={control}
+                                        name="subDealerId"
+                                        render={({
+                                            field: { onChange, value },
+                                        }) => (
+                                            <AutoComplete
+                                                onChange={onChange}
+                                                value={value}
+                                                data={dealers || []}
+                                                className="flex-1"
+                                            />
+                                        )}
+                                    />
+                                    {data.subDealerId ? (
+                                        <SendLicenseMail
+                                            current={data?.subDealer}
+                                            licenseType={
+                                                data?.licenseType?.type
+                                            }
+                                            appliance={
+                                                data?.appliance
+                                                    ? data?.appliance?.product
+                                                          ?.brand?.name +
+                                                      " " +
+                                                      data?.appliance?.product
+                                                          ?.model
+                                                    : data?.product
+                                                    ? data?.product?.brand
+                                                          ?.name +
+                                                      " " +
+                                                      data?.product?.model
+                                                    : null
+                                            }
+                                            serialNo={
+                                                data?.applianceId
+                                                    ? data?.appliance?.serialNo
+                                                    : data?.appSerialNo
+                                            }
+                                            startDate={data?.startDate}
+                                            expiryDate={data?.expiryDate}
                                         />
-                                    )}
-                                />
+                                    ) : null}
+                                </div>
                             </div>
 
                             <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
@@ -679,7 +776,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                             onChange={onChange}
                                             value={value}
                                             data={suppliers || []}
-                                            className="md:col-span-2 xl:col-span-1 my-1 sm:my-0"
+                                            className="flex-1"
                                         />
                                     )}
                                 />
