@@ -564,10 +564,10 @@ export default function ApplianceDetail({
                 selectionMode="multiple"
                 variant="splitted"
                 defaultExpandedKeys={data.licenses.length ? ["licenses"] : []}
-                className="p-0"
+                className="!p-0"
                 itemClasses={{
                     title: "font-medium text-zinc-600",
-                    base: "px-1 py-2",
+                    base: "px-4 py-3",
                 }}
             >
                 <AccordionItem
@@ -671,10 +671,10 @@ export default function ApplianceDetail({
                 defaultExpandedKeys={
                     data.history.length != 0 ? ["history"] : []
                 }
-                className="p-0"
+                className="!p-0"
                 itemClasses={{
                     title: "font-medium text-zinc-600",
-                    base: "px-1 py-2",
+                    base: "px-4 py-3",
                 }}
             >
                 <AccordionItem

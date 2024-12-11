@@ -644,7 +644,6 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                                     ? data?.appliance?.serialNo
                                                     : data?.appSerialNo
                                             }
-                                            startDate={data?.startDate}
                                             expiryDate={data?.expiryDate}
                                         />
                                     ) : null}
@@ -698,7 +697,6 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                                     ? data?.appliance?.serialNo
                                                     : data?.appSerialNo
                                             }
-                                            startDate={data?.startDate}
                                             expiryDate={data?.expiryDate}
                                         />
                                     ) : null}
@@ -752,7 +750,6 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                                     ? data?.appliance?.serialNo
                                                     : data?.appSerialNo
                                             }
-                                            startDate={data?.startDate}
                                             expiryDate={data?.expiryDate}
                                         />
                                     ) : null}
@@ -869,10 +866,10 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                 selectionMode="multiple"
                 variant="splitted"
                 defaultExpandedKeys={data.appliance ? ["appliance"] : []}
-                className="p-0"
+                className="!p-0"
                 itemClasses={{
                     title: "font-medium text-zinc-600",
-                    base: "px-1 py-2",
+                    base: "px-4 py-3",
                 }}
             >
                 <AccordionItem
@@ -1051,10 +1048,10 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                 defaultExpandedKeys={
                     data.history.length != 0 ? ["history"] : []
                 }
-                className="p-0"
+                className="!p-0"
                 itemClasses={{
                     title: "font-medium text-zinc-600",
-                    base: "px-1 py-2",
+                    base: "px-4 py-3",
                 }}
             >
                 <AccordionItem

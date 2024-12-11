@@ -90,10 +90,10 @@ export default function AuthorizedPersons(props: Props) {
                 selectionMode="multiple"
                 variant="splitted"
                 defaultExpandedKeys={personList.length ? ["authorized"] : []}
-                className="p-0"
+                className="!p-0"
                 itemClasses={{
                     title: "font-medium text-zinc-600",
-                    base: "px-1 py-2",
+                    base: "px-4 py-3",
                 }}
             >
                 <AccordionItem

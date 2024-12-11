@@ -122,10 +122,10 @@ export default function Settings() {
                 selectionMode="multiple"
                 variant="splitted"
                 defaultExpandedKeys={["user", "preferences"]}
-                className="mt-4 p-0"
+                className="mt-4 !p-0"
                 itemClasses={{
                     title: "font-medium text-zinc-500",
-                    base: "px-1 py-2",
+                    base: "px-4 py-3",
                 }}
             >
                 <AccordionItem
