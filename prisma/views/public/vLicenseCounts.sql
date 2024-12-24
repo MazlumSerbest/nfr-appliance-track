@@ -26,6 +26,18 @@ SELECT
   ) AS "activeCount",
   count(
     CASE
+      WHEN (STATUS = 'lost' :: text) THEN 1
+      ELSE NULL :: integer
+    END
+  ) AS "lostCount",
+  count(
+    CASE
+      WHEN (STATUS = 'passive' :: text) THEN 1
+      ELSE NULL :: integer
+    END
+  ) AS "passiveCount",
+  count(
+    CASE
       WHEN ("expiryStatus" = 'undefined' :: text) THEN 1
       ELSE NULL :: integer
     END

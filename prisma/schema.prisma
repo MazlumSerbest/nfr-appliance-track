@@ -103,6 +103,8 @@ model licenses {
   appSerialNo   String?          @db.VarChar
   productId     Int?
   cusName       String?          @db.VarChar
+  isLost        Boolean          @default(false)
+  isPassive     Boolean          @default(false)
   history       licenseHistory[]
   appliance     appliances?      @relation(fields: [applianceId], references: [id])
   boughtType    boughtTypes?     @relation(fields: [boughtTypeId], references: [id])
@@ -357,6 +359,8 @@ view vLicenses {
   subDealerName     String?   @db.VarChar
   supplierName      String?   @db.VarChar
   expiryStatus      String?
+  isLost            Boolean?
+  isPassive         Boolean?
 }
 
 view vConnections {
@@ -402,6 +406,8 @@ view vLicenseCounts {
   orderCount     BigInt?
   waitingCount   BigInt?
   activeCount    BigInt?
+  lostCount      BigInt?
+  passiveCount   BigInt?
   undefinedCount BigInt?
   endedCount     BigInt?
   endingCount    BigInt?

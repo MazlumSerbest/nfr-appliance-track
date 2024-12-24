@@ -55,6 +55,8 @@ type License = Entity & {
     applianceId?: number | null;
     appSerialNo?: string;
     productId?: number | null;
+    isLost: boolean;
+    isPassive: boolean;
     licenseType: any;
     history: any;
     // boughtType: any;

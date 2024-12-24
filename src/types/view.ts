@@ -13,6 +13,8 @@ type vLicense = License & {
     licenseType?: string;
     licenseDuration?: string;
     licenseBrand?: string;
+    isLost?: boolean;
+    isPassive?: boolean;
 };
 
 type vProject = Project & {
@@ -39,6 +41,8 @@ type vLicenseCounts = {
     orderCount?: number;
     waitingCount?: number;
     activeCount?: number;
+    lostCount?: number;
+    passiveCount?: number;
     undefinedCount?: number;
     endedCount?: number;
     endingCount?: number;

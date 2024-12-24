@@ -1,6 +1,8 @@
 SELECT
   l.id,
   CASE
+    WHEN (l."isLost" IS TRUE) THEN 'lost' :: text
+    WHEN (l."isPassive" IS TRUE) THEN 'passive' :: text
     WHEN (
       (l."customerId" IS NULL)
       AND (((l."cusName") :: text = '' :: text) IS NOT FALSE)
@@ -82,7 +84,9 @@ SELECT
       l."expiryDate" <= (CURRENT_DATE + '30 days' :: INTERVAL)
     ) THEN 'ending' :: text
     ELSE 'continues' :: text
-  END AS "expiryStatus"
+  END AS "expiryStatus",
+  l."isLost",
+  l."isPassive"
 FROM
   (
     (
