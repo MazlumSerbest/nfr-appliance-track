@@ -17,6 +17,7 @@ import { Accordion, AccordionItem } from "@nextui-org/accordion";
 import { Button } from "@nextui-org/button";
 import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/popover";
 import { Tab, Tabs } from "@nextui-org/tabs";
+import { Tooltip } from "@nextui-org/react";
 
 import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
 import AutoComplete from "@/components/AutoComplete";
@@ -31,10 +32,11 @@ import {
     BiX,
     BiTrash,
     BiEdit,
-    BiSend,
-    BiMailSend,
+    BiError,
+    BiCheck,
+    BiXCircle,
 } from "react-icons/bi";
-import { setLicenseAppliance } from "@/lib/prisma";
+import { setLicenseActiveStatus, setLicenseAppliance } from "@/lib/prisma";
 import { DateFormat } from "@/utils/date";
 import useUserStore from "@/store/user";
 import {
@@ -47,7 +49,6 @@ import {
     getBoughtTypes,
 } from "@/lib/data";
 import ApplicationForm from "@/components/ApplicationForm";
-import { Tooltip } from "@nextui-org/react";
 import SendLicenseMail from "@/components/buttons/SendLicenseMail";
 
 interface IFormInput {
@@ -342,13 +343,21 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                         <div className="divide-y divide-zinc-200">
                             <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
                                 <dt className="font-medium">Durum</dt>
-                                <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                    {!data.customerId &&
-                                    !data.cusName &&
-                                    !data.orderedAt &&
-                                    !data.expiryDate ? (
-                                        <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-sm font-medium text-sky-500 ring-1 ring-inset ring-sky-500/20">
-                                            Aktif
+                                <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0 gap-2">
+                                    {data.isLost ? (
+                                        <span className="inline-flex items-center rounded-md bg-indigo-50 px-2 py-1 text-sm font-medium text-indigo-500 ring-1 ring-inset ring-indigo-500/20">
+                                            Kayıp
+                                        </span>
+                                    ) : data.isPassive ? (
+                                        <span className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-sm font-medium text-red-500 ring-1 ring-inset ring-red-500/20">
+                                            Pasif
+                                        </span>
+                                    ) : !data.customerId &&
+                                      !data.cusName &&
+                                      !data.orderedAt &&
+                                      !data.expiryDate ? (
+                                        <span className="inline-flex items-center rounded-md bg-sky-50 px-2 py-1 text-sm font-medium text-sky-500 ring-1 ring-inset ring-sky-500/20">
+                                            Stok
                                         </span>
                                     ) : (data.customerId || data.cusName) &&
                                       !data.orderedAt &&
@@ -363,16 +372,85 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                             Bekleyen Sipariş
                                         </span>
                                     ) : (data.customerId || data.cusName) &&
-                                      data.orderedAt &&
-                                      data.expiryDate ? (
+                                      (data.orderedAt || data.expiryDate) ? (
                                         <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-sm font-medium text-green-600 ring-1 ring-inset ring-green-600/20">
                                             Aktif
                                         </span>
                                     ) : (
                                         <span className="inline-flex items-center rounded-md bg-orange-50 px-2 py-1 text-sm font-medium text-orange-500 ring-1 ring-inset ring-orange-500/20">
-                                            Bekleyen Sipariş
+                                            Belirsiz
                                         </span>
                                     )}
+
+                                    {currUser?.role != "technical" &&
+                                        (data.customerId || data.cusName) && (
+                                            <>
+                                                {(data.isPassive ||
+                                                    data.isLost) && (
+                                                    <Tooltip content="Aktif Olarak İşaretle">
+                                                        <Button
+                                                            isIconOnly
+                                                            color="primary"
+                                                            className="bg-green-600"
+                                                            size="sm"
+                                                            onPress={async () => {
+                                                                await setLicenseActiveStatus(
+                                                                    data.id,
+                                                                    "active",
+                                                                    currUser?.username,
+                                                                );
+                                                                mutate();
+                                                            }}
+                                                        >
+                                                            <BiCheck className="size-4"></BiCheck>
+                                                        </Button>
+                                                    </Tooltip>
+                                                )}
+
+                                                {(!data.isPassive &&
+                                                    !data.isLost) && (
+                                                    <>
+                                                        <Tooltip content="Kayıp Olarak İşaretle">
+                                                            <Button
+                                                                isIconOnly
+                                                                color="primary"
+                                                                className="bg-indigo-500"
+                                                                size="sm"
+                                                                onPress={async () => {
+                                                                    await setLicenseActiveStatus(
+                                                                        data.id,
+                                                                        "lost",
+                                                                        currUser?.username,
+                                                                    );
+                                                                    mutate();
+                                                                }}
+                                                            >
+                                                                <BiError className="size-4"></BiError>
+                                                            </Button>
+                                                        </Tooltip>
+
+                                                        <Tooltip content="Pasif Olarak İşaretle">
+                                                            <Button
+                                                                isIconOnly
+                                                                color="primary"
+                                                                className="bg-red-500"
+                                                                size="sm"
+                                                                onPress={async () => {
+                                                                    await setLicenseActiveStatus(
+                                                                        data.id,
+                                                                        "passive",
+                                                                        currUser?.username,
+                                                                    );
+                                                                    mutate();
+                                                                }}
+                                                            >
+                                                                <BiXCircle className="size-4"></BiXCircle>
+                                                            </Button>
+                                                        </Tooltip>
+                                                    </>
+                                                )}
+                                            </>
+                                        )}
                                 </dd>
                             </div>
 
@@ -619,7 +697,8 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                             />
                                         )}
                                     />
-                                    {data.customerId ? (
+                                    {currUser?.role != "technical" &&
+                                    data.customerId ? (
                                         <SendLicenseMail
                                             current={data.customer}
                                             licenseType={
@@ -672,7 +751,8 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                             />
                                         )}
                                     />
-                                    {data.dealerId ? (
+                                    {currUser?.role != "technical" &&
+                                    data.dealerId ? (
                                         <SendLicenseMail
                                             current={data?.dealer}
                                             licenseType={
@@ -725,7 +805,8 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                             />
                                         )}
                                     />
-                                    {data.subDealerId ? (
+                                    {currUser?.role != "technical" &&
+                                    data.subDealerId ? (
                                         <SendLicenseMail
                                             current={data?.subDealer}
                                             licenseType={

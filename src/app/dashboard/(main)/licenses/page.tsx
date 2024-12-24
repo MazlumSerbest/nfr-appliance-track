@@ -89,6 +89,10 @@ export default function Licenses() {
     const [activeLicenses, setActiveLicenses] = useState<vLicense[] | null>(
         null,
     );
+    const [lostLicenses, setLostLicenses] = useState<vLicense[] | null>(null);
+    const [passiveLicenses, setPassiveLicenses] = useState<vLicense[] | null>(
+        null,
+    );
 
     const [products, setProducts] = useState<ListBoxItem[] | null>(null);
     const [appliances, setAppliances] = useState<ListBoxItem[] | null>(null);
@@ -381,6 +385,10 @@ export default function Licenses() {
             setActiveLicenses(
                 data?.filter((l: vLicense) => l.status == "active"),
             );
+            setLostLicenses(data?.filter((l: vLicense) => l.status == "lost"));
+            setPassiveLicenses(
+                data?.filter((l: vLicense) => l.status == "passive"),
+            );
         },
     });
 
@@ -403,7 +411,7 @@ export default function Licenses() {
                     size="md"
                     classNames={{
                         cursor: "w-full bg-sky-500",
-                        tab: "px-10",
+                        // tab: "px-10",
                     }}
                     selectedKey={selectedTab}
                     onSelectionChange={(key: any) => {
@@ -441,6 +449,7 @@ export default function Licenses() {
                             }}
                         />
                     </Tab>
+
                     <Tab key="order" title="Sipariş" className="w-full">
                         <DataTable
                             storageKey="orderLicenses"
@@ -467,6 +476,7 @@ export default function Licenses() {
                             }}
                         />
                     </Tab>
+
                     <Tab
                         key="waitingOrder"
                         title="Bekleyen Sipariş"
@@ -497,6 +507,7 @@ export default function Licenses() {
                             }}
                         />
                     </Tab>
+
                     <Tab key="active" title="Aktif" className="w-full">
                         <DataTable
                             storageKey="activeLicenses"
@@ -522,6 +533,52 @@ export default function Licenses() {
                                           onOpen();
                                       }
                             }
+                            onDoubleClick={(item) => {
+                                router.push(`/dashboard/licenses/${item.id}`);
+                            }}
+                        />
+                    </Tab>
+
+                    <Tab key="lost" title="Kayıp" className="w-full">
+                        <DataTable
+                            storageKey="lostLicenses"
+                            isCompact
+                            isStriped
+                            emptyContent="Herhangi bir lisans bulunamadı!"
+                            defaultRowsPerPage={20}
+                            data={lostLicenses || []}
+                            columns={columns}
+                            renderCell={renderCell}
+                            searchValue={""}
+                            sortOption={{
+                                column: "orderedAt",
+                                direction: "descending",
+                            }}
+                            initialVisibleColumNames={visibleColumns}
+                            activeOptions={[]}
+                            onDoubleClick={(item) => {
+                                router.push(`/dashboard/licenses/${item.id}`);
+                            }}
+                        />
+                    </Tab>
+
+                    <Tab key="passive" title="Pasif" className="w-full">
+                        <DataTable
+                            storageKey="passiveLicenses"
+                            isCompact
+                            isStriped
+                            emptyContent="Herhangi bir lisans bulunamadı!"
+                            defaultRowsPerPage={20}
+                            data={passiveLicenses || []}
+                            columns={columns}
+                            renderCell={renderCell}
+                            searchValue={""}
+                            sortOption={{
+                                column: "orderedAt",
+                                direction: "descending",
+                            }}
+                            initialVisibleColumNames={visibleColumns}
+                            activeOptions={[]}
                             onDoubleClick={(item) => {
                                 router.push(`/dashboard/licenses/${item.id}`);
                             }}
@@ -612,27 +669,27 @@ export default function Licenses() {
 
                                                 await fetch(
                                                     `/api/appliance/${v}`,
-                                                )
-                                                    .then(async (res) => {
-                                                        const app = await res.json();
-                                                        console.log(app);
-                                                        setValue(
-                                                            "customerId",
-                                                            app.customerId,
-                                                        );
-                                                        setValue(
-                                                            "dealerId",
-                                                            app.dealerId,
-                                                        );
-                                                        setValue(
-                                                            "subDealerId",
-                                                            app.subDealerId,
-                                                        );
-                                                        setValue(
-                                                            "supplierId",
-                                                            app.supplierId,
-                                                        );
-                                                    });
+                                                ).then(async (res) => {
+                                                    const app =
+                                                        await res.json();
+                                                    console.log(app);
+                                                    setValue(
+                                                        "customerId",
+                                                        app.customerId,
+                                                    );
+                                                    setValue(
+                                                        "dealerId",
+                                                        app.dealerId,
+                                                    );
+                                                    setValue(
+                                                        "subDealerId",
+                                                        app.subDealerId,
+                                                    );
+                                                    setValue(
+                                                        "supplierId",
+                                                        app.supplierId,
+                                                    );
+                                                });
                                             }}
                                             value={value}
                                             data={appliances || []}

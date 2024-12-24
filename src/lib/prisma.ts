@@ -109,6 +109,8 @@ export async function setApplianceDemoStatus(
     const appliance = await prisma.appliances.update({
         data: {
             isDemo: isDemo,
+            updatedBy: updatedBy,
+            updatedAt: new Date().toISOString(),
         },
         where: {
             id: applianceId,
@@ -116,6 +118,29 @@ export async function setApplianceDemoStatus(
     });
 
     if (appliance.isDemo == isDemo) return true;
+    else return false;
+}
+
+export async function setLicenseActiveStatus(
+    licenseId: number,
+    status: string,
+    updatedBy?: string,
+) {
+    if (!updatedBy) return false;
+
+    const license = await prisma.licenses.update({
+        data: {
+            isLost: status == "lost" ? true : false,
+            isPassive: status == "passive" ? true : false,
+            updatedBy: updatedBy,
+            updatedAt: new Date().toISOString(),
+        },
+        where: {
+            id: licenseId,
+        },
+    });
+
+    if (license.id) return true;
     else return false;
 }
 
