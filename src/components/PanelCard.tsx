@@ -50,6 +50,12 @@ export default function PanelCard(props: Props) {
             icon: "text-orange-400/50",
             text: "text-orange-400",
         },
+        {
+            name: "indigo",
+            border: "border-indigo-400/50",
+            icon: "text-indigo-400/50",
+            text: "text-indigo-400",
+        },
     ];
 
     return (

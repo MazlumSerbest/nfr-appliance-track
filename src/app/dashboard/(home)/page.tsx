@@ -11,6 +11,8 @@ import {
     BiShieldQuarter,
     BiBriefcase,
     BiShield,
+    BiError,
+    BiXCircle,
 } from "react-icons/bi";
 import { Chart } from "react-google-charts";
 import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
@@ -20,7 +22,6 @@ import {
     getProjectCounts,
 } from "@/lib/prisma";
 import { Card, CardBody } from "@nextui-org/react";
-import { color } from "framer-motion";
 
 export default function Dashboard() {
     const router = useRouter();
@@ -77,7 +78,9 @@ export default function Dashboard() {
                             </span>
                         }
                         icon={<BiBriefcase />}
-                        onClick={() => router.push("/dashboard/projects?tab=projects")}
+                        onClick={() =>
+                            router.push("/dashboard/projects?tab=projects")
+                        }
                     />
                     <PanelCard
                         header="KAZANILAN"
@@ -89,7 +92,9 @@ export default function Dashboard() {
                             </span>
                         }
                         icon={<BiBriefcase />}
-                        onClick={() => router.push("/dashboard/projects?tab=won")}
+                        onClick={() =>
+                            router.push("/dashboard/projects?tab=won")
+                        }
                     />
                     <PanelCard
                         header="KAYBEDİLEN"
@@ -101,7 +106,9 @@ export default function Dashboard() {
                             </span>
                         }
                         icon={<BiBriefcase />}
-                        onClick={() => router.push("/dashboard/projects?tab=lost")}
+                        onClick={() =>
+                            router.push("/dashboard/projects?tab=lost")
+                        }
                     />
                 </div>
             </section>
@@ -129,7 +136,9 @@ export default function Dashboard() {
                             </span>
                         }
                         icon={<BiServer />}
-                        onClick={() => router.push("/dashboard/appliances?tab=stock")}
+                        onClick={() =>
+                            router.push("/dashboard/appliances?tab=stock")
+                        }
                     />
                     <PanelCard
                         header="SİPARİŞ"
@@ -141,7 +150,9 @@ export default function Dashboard() {
                             </span>
                         }
                         icon={<BiServer />}
-                        onClick={() => router.push("/dashboard/appliances?tab=order")}
+                        onClick={() =>
+                            router.push("/dashboard/appliances?tab=order")
+                        }
                     />
                     <PanelCard
                         header="AKTİF"
@@ -153,7 +164,9 @@ export default function Dashboard() {
                             </span>
                         }
                         icon={<BiServer />}
-                        onClick={() => router.push("/dashboard/appliances?tab=active")}
+                        onClick={() =>
+                            router.push("/dashboard/appliances?tab=active")
+                        }
                     />
                 </div>
             </section>
@@ -182,7 +195,9 @@ export default function Dashboard() {
                                 </span>
                             }
                             icon={<BiShieldPlus />}
-                            onClick={() => router.push("/dashboard/licenses?tab=stock")}
+                            onClick={() =>
+                                router.push("/dashboard/licenses?tab=stock")
+                            }
                         />
                         <PanelCard
                             header="AKTİF"
@@ -194,7 +209,9 @@ export default function Dashboard() {
                                 </span>
                             }
                             icon={<BiShieldQuarter />}
-                            onClick={() => router.push("/dashboard/licenses?tab=active")}
+                            onClick={() =>
+                                router.push("/dashboard/licenses?tab=active")
+                            }
                         />
                     </div>
 
@@ -209,7 +226,9 @@ export default function Dashboard() {
                                 </span>
                             }
                             icon={<BiShield />}
-                            onClick={() => router.push("/dashboard/licenses?tab=order")}
+                            onClick={() =>
+                                router.push("/dashboard/licenses?tab=order")
+                            }
                         />
                         <PanelCard
                             header="BEKLEYEN SİPARİŞ"
@@ -221,7 +240,11 @@ export default function Dashboard() {
                                 </span>
                             }
                             icon={<BiShield />}
-                            onClick={() => router.push("/dashboard/licenses?tab=waitingOrder")}
+                            onClick={() =>
+                                router.push(
+                                    "/dashboard/licenses?tab=waitingOrder",
+                                )
+                            }
                         />
                     </div>
 
@@ -279,67 +302,6 @@ export default function Dashboard() {
                             </div>
                         </CardBody>
                     </Card>
-
-                    {/* <Card className="w-full min-w-72 border-1 border-b-3">
-                        <CardBody className="flex flex-col gap-2">
-                            <div className="w-full text-center">
-                                <h6 className="text-sm uppercase font-bold text-zinc-700">
-                                    SÜRESİ DOLANLAR
-                                </h6>
-                            </div>
-
-                            <Divider />
-
-                            <div className="flex flex-1 items-center">
-                                <Chart
-                                    chartType="PieChart"
-                                    width="100%"
-                                    height={300}
-                                    data={[
-                                        ["Süre", "Lisans Sayısı"],
-                                        [
-                                            "Devam Eden",
-                                            Number(
-                                                licenseCounts?.continuesCount,
-                                            ),
-                                        ],
-                                        [
-                                            "30 Günden Az",
-                                            Number(licenseCounts?.endingCount),
-                                        ],
-                                        [
-                                            "Süresi Dolan",
-                                            Number(licenseCounts?.endedCount),
-                                        ],
-                                    ]}
-                                    options={{
-                                        // is3D: true,
-                                        // title: "My Daily Activities",
-                                        pieHole: 0.4,
-                                        fontSize: 12,
-                                        colors: [
-                                            "rgb(34, 197, 94)",
-                                            "rgb(250, 204, 21)",
-                                            "rgb(239, 68, 68)",
-                                        ],
-                                        chartArea: {
-                                            top: 12,
-                                            width: "100%",
-                                            height: 250,
-                                        },
-                                        legend: {
-                                            position: "bottom",
-                                            alignment: "center",
-                                            maxLines: 3,
-                                            textStyle: {
-                                                color: "gray",
-                                            },
-                                        },
-                                    }}
-                                />
-                            </div>
-                        </CardBody>
-                    </Card> */}
 
                     <Card className="col-span-3 xl:col-span-2 w-full min-w-72 border-1 border-b-3">
                         <CardBody className="flex flex-col gap-2 place-items-center">
@@ -419,51 +381,38 @@ export default function Dashboard() {
                             </div>
                         </CardBody>
                     </Card>
+
+                    <div className="flex flex-col gap-4 items-center">
+                        <PanelCard
+                            header="KAYIP"
+                            color="indigo"
+                            content={
+                                <span className="flex-wrap break-all text-pretty">
+                                    {licenseCounts?.lostCount?.toLocaleString() ||
+                                        "0"}
+                                </span>
+                            }
+                            icon={<BiError />}
+                            onClick={() =>
+                                router.push("/dashboard/licenses?tab=lost")
+                            }
+                        />
+                        <PanelCard
+                            header="PASİF"
+                            color="red"
+                            content={
+                                <span className="flex-wrap break-all text-pretty">
+                                    {licenseCounts?.passiveCount?.toLocaleString() ||
+                                        "0"}
+                                </span>
+                            }
+                            icon={<BiXCircle />}
+                            onClick={() =>
+                                router.push("/dashboard/licenses?tab=passive")
+                            }
+                        />
+                    </div>
                 </div>
-
-                {/* <Divider className="my-4" /> */}
-
-                {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 md:mt-0">
-                    <PanelCard
-                        header="DEVAM EDEN"
-                        color="green"
-                        content={
-                            <span className="flex-wrap break-all text-pretty">
-                                {licenseCounts?.continuesCount?.toLocaleString() ||
-                                    "-"}
-                            </span>
-                        }
-                        icon={<BiCheckCircle />}
-                        onClick={() => {
-                            router.push("/dashboard/licenses");
-                        }}
-                    />
-                    <PanelCard
-                        header="30 GÜNDEN AZ SÜRESİ OLAN"
-                        color="yellow"
-                        content={
-                            <span className="flex-wrap break-all text-pretty">
-                                {licenseCounts?.endingCount?.toLocaleString() ||
-                                    "-"}
-                            </span>
-                        }
-                        icon={<BiInfoCircle />}
-                        onClick={() => {
-                            router.push("/dashboard/licenses");
-                        }}
-                    />
-                    <PanelCard
-                        header="SÜRESİ BİTEN"
-                        color="red"
-                        content={
-                            <span className="flex-wrap break-all text-pretty">
-                                {licenseCounts?.endedCount?.toLocaleString() ||
-                                    "-"}
-                            </span>
-                        }
-                        icon={<BiErrorCircle />}
-                    />
-                </div> */}
             </section>
         </div>
     );
