@@ -12,13 +12,13 @@ import { BiMailSend } from "react-icons/bi";
 import { DateFormat } from "@/utils/date";
 import { validateEmail } from "@/utils/functions";
 import { sendMail } from "@/lib/sendmail";
+import toast from "react-hot-toast";
 
 type Props = {
     current: Current;
     licenseType: string;
     appliance: string | null;
     serialNo: string;
-    startDate: string;
     expiryDate: string;
 };
 
@@ -27,31 +27,34 @@ export default function SendLicenseMail({
     licenseType,
     appliance,
     serialNo,
-    startDate,
     expiryDate,
 }: Props) {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const emailValid = validateEmail(current?.email ?? "");
 
     async function onSend() {
-        const mail = await sendMail({
+        const html = `<div style="display: flex; flex-direction: column; color: white; font-family: Arial, sans-serif, 'Open Sans';"><div style="display: flex; justify-content: center; margin-bottom: 3rem; margin-top: 2rem;"><img style="width: 30%"  src="https://nfrbilisim.com/wp-content/uploads/2022/04/nfr-logo.png" /></div><div style="display: flex; justify-content: center;"><div style="background-color: rgba(14, 165, 233, 0.9); padding: 2rem; border-radius: 0.5rem; margin-bottom: 3rem; max-width: 768px;"><p>Merhabalar,</p><p>${
+            current?.name
+        } adına kayıtlı, seri numarası <strong>${serialNo}</strong> olan <strong>${appliance}</strong> cihazınızın <strong>"${licenseType}"</strong> lisansı <strong>${DateFormat(
+            expiryDate,
+        ).replaceAll(
+            ".",
+            "/",
+        )}</strong> tarihinde sona erecektir.</p><p>Lisansınız yenilenmesi için satış ekibimizle iletişime geçiniz.</p><p>İyi Çalışmalar Dileriz </br><strong>NFR Bilişim ve Güvenlik Teknolojileri A.Ş.</strong></p></div></div></div>`;
+
+        const mail: any = await sendMail({
             to: current?.email as string,
             cc: "",
             subject: "Lisans Süre Dolumu",
-            html: `
-                <p>Merhaba ${current?.name},</p>
-                <p>Lisans süreniz ${DateFormat(
-                    startDate,
-                )} tarihinde başladı ve ${DateFormat(
-                expiryDate,
-            )} tarihinde sona erecek.</p>
-                <p>Lütfen lisansınızı süresiz hale getirmek için bizimle iletişime geçin.</p>
-                <p>İyi çalışmalar dileriz.</p>
-            `,
+            html: html,
         });
         console.log(mail);
-        
-        if (mail) {
+
+
+        if (!mail.ok) {
+            toast.error(mail.message);
+        } else {
+            toast.success("Mail başarıyla gönderildi.");
             onOpenChange();
         }
     }
@@ -59,8 +62,14 @@ export default function SendLicenseMail({
     return (
         <>
             <Tooltip content="Lisans Süre Dolum Maili Gönder">
-                <Button color="secondary" isIconOnly onPress={onOpen}>
-                    <BiMailSend />
+                <Button
+                    color="primary"
+                    className="bg-indigo-500 rounded-md"
+                    radius="sm"
+                    isIconOnly
+                    onPress={onOpen}
+                >
+                    <BiMailSend className="size-5" />
                 </Button>
             </Tooltip>
 

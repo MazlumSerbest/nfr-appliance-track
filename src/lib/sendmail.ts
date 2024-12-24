@@ -3,12 +3,11 @@ import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST as string,
-    port: parseInt(process.env.SMTP_PORT as string, 10),
-    // tls: {
-    //     ciphers: "SSLv3",
-    //     rejectUnauthorized: false,
-    // },
-    secure: false,
+    port: Number(process.env.SMTP_PORT) || 587,
+    tls: {
+        ciphers: "SSLv3",
+        rejectUnauthorized: false,
+    },
     auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
@@ -27,26 +26,19 @@ export async function sendMail({ to, cc, subject, html }: Mail) {
         const info = await transporter.sendMail(
             {
                 from: process.env.SMTP_FROM, // sender address
-                to: "mazlum.serbest@d3bilisim.com.tr", // list of receivers
+                to: "portal@nfrbilisim.com", // list of receivers
                 cc: cc, // list of cc
                 subject: subject, // Subject line
                 html: html, // html body
             },
-            // (error: any, info: any) => {
-            //     if (error) {
-            //         return { message: error, status: 500, ok: false };
-            //     } else {
-            //         return {
-            //             message: "Mail başarıyla gönderildi!",
-            //             status: 200,
-            //             ok: true,
-            //         };
-            //     }
-            // },
         );
 
         return info;
-    } catch (error) {
-        return { message: error, status: 500, ok: false };
+    } catch (error: any) {
+        return {
+            message: error.response,
+            status: error.responseCode,
+            ok: false,
+        };
     }
 }
