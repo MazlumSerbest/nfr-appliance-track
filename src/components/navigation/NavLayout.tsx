@@ -58,11 +58,11 @@ export default function NavLayout() {
 
                 <Divider />
 
-                <div className="flex flex-col flex-grow overflow-x-hidden overflow-y-auto min-h-0">
+                <div className="flex flex-col flex-grow overflow-x-hidden min-h-0">
                     <Listbox
                         variant="bordered"
                         // color="primary"
-                        className="gap-1 text-md text-zinc-600"
+                        className="gap-1 text-md text-zinc-600 overflow-y-auto"
                         aria-label="Menu listbox"
                     >
                         <ListboxSection showDivider>
