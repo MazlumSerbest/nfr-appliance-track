@@ -384,22 +384,8 @@ export default function Dashboard() {
 
                     <div className="flex flex-col gap-4 items-center">
                         <PanelCard
-                            header="KAYIP"
-                            color="indigo"
-                            content={
-                                <span className="flex-wrap break-all text-pretty">
-                                    {licenseCounts?.lostCount?.toLocaleString() ||
-                                        "0"}
-                                </span>
-                            }
-                            icon={<BiError />}
-                            onClick={() =>
-                                router.push("/dashboard/licenses?tab=lost")
-                            }
-                        />
-                        <PanelCard
                             header="PASİF"
-                            color="red"
+                            color="indigo"
                             content={
                                 <span className="flex-wrap break-all text-pretty">
                                     {licenseCounts?.passiveCount?.toLocaleString() ||
@@ -409,6 +395,20 @@ export default function Dashboard() {
                             icon={<BiXCircle />}
                             onClick={() =>
                                 router.push("/dashboard/licenses?tab=passive")
+                            }
+                        />
+                        <PanelCard
+                            header="KAYIP"
+                            color="red"
+                            content={
+                                <span className="flex-wrap break-all text-pretty">
+                                    {licenseCounts?.lostCount?.toLocaleString() ||
+                                        "0"}
+                                </span>
+                            }
+                            icon={<BiError />}
+                            onClick={() =>
+                                router.push("/dashboard/licenses?tab=lost")
                             }
                         />
                     </div>

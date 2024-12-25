@@ -345,11 +345,11 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                 <dt className="font-medium">Durum</dt>
                                 <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0 gap-2">
                                     {data.isLost ? (
-                                        <span className="inline-flex items-center rounded-md bg-indigo-50 px-2 py-1 text-sm font-medium text-indigo-500 ring-1 ring-inset ring-indigo-500/20">
+                                        <span className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-sm font-medium text-red-500 ring-1 ring-inset ring-red-500/20">
                                             Kayıp
                                         </span>
                                     ) : data.isPassive ? (
-                                        <span className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-sm font-medium text-red-500 ring-1 ring-inset ring-red-500/20">
+                                        <span className="inline-flex items-center rounded-md bg-indigo-50 px-2 py-1 text-sm font-medium text-indigo-500 ring-1 ring-inset ring-indigo-500/20">
                                             Pasif
                                         </span>
                                     ) : !data.customerId &&
@@ -407,48 +407,48 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                                     </Tooltip>
                                                 )}
 
-                                                {(!data.isPassive &&
-                                                    !data.isLost) && (
-                                                    <>
-                                                        <Tooltip content="Kayıp Olarak İşaretle">
-                                                            <Button
-                                                                isIconOnly
-                                                                color="primary"
-                                                                className="bg-indigo-500"
-                                                                size="sm"
-                                                                onPress={async () => {
-                                                                    await setLicenseActiveStatus(
-                                                                        data.id,
-                                                                        "lost",
-                                                                        currUser?.username,
-                                                                    );
-                                                                    mutate();
-                                                                }}
-                                                            >
-                                                                <BiError className="size-4"></BiError>
-                                                            </Button>
-                                                        </Tooltip>
+                                                {!data.isPassive &&
+                                                    !data.isLost && (
+                                                        <>
+                                                            <Tooltip content="Pasif Olarak İşaretle">
+                                                                <Button
+                                                                    isIconOnly
+                                                                    color="primary"
+                                                                    className="bg-indigo-500"
+                                                                    size="sm"
+                                                                    onPress={async () => {
+                                                                        await setLicenseActiveStatus(
+                                                                            data.id,
+                                                                            "passive",
+                                                                            currUser?.username,
+                                                                        );
+                                                                        mutate();
+                                                                    }}
+                                                                >
+                                                                    <BiXCircle className="size-4"></BiXCircle>
+                                                                </Button>
+                                                            </Tooltip>
 
-                                                        <Tooltip content="Pasif Olarak İşaretle">
-                                                            <Button
-                                                                isIconOnly
-                                                                color="primary"
-                                                                className="bg-red-500"
-                                                                size="sm"
-                                                                onPress={async () => {
-                                                                    await setLicenseActiveStatus(
-                                                                        data.id,
-                                                                        "passive",
-                                                                        currUser?.username,
-                                                                    );
-                                                                    mutate();
-                                                                }}
-                                                            >
-                                                                <BiXCircle className="size-4"></BiXCircle>
-                                                            </Button>
-                                                        </Tooltip>
-                                                    </>
-                                                )}
+                                                            <Tooltip content="Kayıp Olarak İşaretle">
+                                                                <Button
+                                                                    isIconOnly
+                                                                    color="primary"
+                                                                    className="bg-red-500"
+                                                                    size="sm"
+                                                                    onPress={async () => {
+                                                                        await setLicenseActiveStatus(
+                                                                            data.id,
+                                                                            "lost",
+                                                                            currUser?.username,
+                                                                        );
+                                                                        mutate();
+                                                                    }}
+                                                                >
+                                                                    <BiError className="size-4"></BiError>
+                                                                </Button>
+                                                            </Tooltip>
+                                                        </>
+                                                    )}
                                             </>
                                         )}
                                 </dd>

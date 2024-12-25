@@ -385,10 +385,10 @@ export default function Licenses() {
             setActiveLicenses(
                 data?.filter((l: vLicense) => l.status == "active"),
             );
-            setLostLicenses(data?.filter((l: vLicense) => l.status == "lost"));
             setPassiveLicenses(
                 data?.filter((l: vLicense) => l.status == "passive"),
             );
+            setLostLicenses(data?.filter((l: vLicense) => l.status == "lost"));
         },
     });
 
@@ -539,14 +539,14 @@ export default function Licenses() {
                         />
                     </Tab>
 
-                    <Tab key="lost" title="Kayıp" className="w-full">
+                    <Tab key="passive" title="Pasif" className="w-full">
                         <DataTable
-                            storageKey="lostLicenses"
+                            storageKey="passiveLicenses"
                             isCompact
                             isStriped
                             emptyContent="Herhangi bir lisans bulunamadı!"
                             defaultRowsPerPage={20}
-                            data={lostLicenses || []}
+                            data={passiveLicenses || []}
                             columns={columns}
                             renderCell={renderCell}
                             searchValue={""}
@@ -562,14 +562,14 @@ export default function Licenses() {
                         />
                     </Tab>
 
-                    <Tab key="passive" title="Pasif" className="w-full">
+                    <Tab key="lost" title="Kayıp" className="w-full">
                         <DataTable
-                            storageKey="passiveLicenses"
+                            storageKey="lostLicenses"
                             isCompact
                             isStriped
                             emptyContent="Herhangi bir lisans bulunamadı!"
                             defaultRowsPerPage={20}
-                            data={passiveLicenses || []}
+                            data={lostLicenses || []}
                             columns={columns}
                             renderCell={renderCell}
                             searchValue={""}
