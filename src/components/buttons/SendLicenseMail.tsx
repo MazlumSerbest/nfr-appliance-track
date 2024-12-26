@@ -35,7 +35,9 @@ export default function SendLicenseMail({
     async function onSend() {
         const html = `<div style="display: flex; flex-direction: column; color: white; font-family: Arial, sans-serif, 'Open Sans';"><div style="display: flex; justify-content: center; margin-bottom: 3rem; margin-top: 2rem;"><img style="width: 30%"  src="https://nfrbilisim.com/wp-content/uploads/2022/04/nfr-logo.png" /></div><div style="display: flex; justify-content: center;"><div style="background-color: rgba(14, 165, 233, 0.9); padding: 2rem; border-radius: 0.5rem; margin-bottom: 3rem; max-width: 768px;"><p>Merhabalar,</p><p>${
             current?.name
-        } adına kayıtlı, seri numarası <strong>${serialNo}</strong> olan <strong>${appliance}</strong> cihazınızın <strong>"${licenseType}"</strong> lisansı <strong>${DateFormat(
+        } adına kayıtlı, seri numarası <strong>${serialNo}</strong> olan${
+            appliance ? <strong>{appliance}</strong> : ""
+        } cihazınızın <strong>"${licenseType}"</strong> lisansı <strong>${DateFormat(
             expiryDate,
         ).replaceAll(
             ".",
@@ -49,7 +51,6 @@ export default function SendLicenseMail({
             html: html,
         });
         console.log(mail);
-
 
         if (!mail.ok) {
             toast.error(mail.message);

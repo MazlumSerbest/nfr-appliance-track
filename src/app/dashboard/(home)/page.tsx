@@ -307,7 +307,7 @@ export default function Dashboard() {
                         <CardBody className="flex flex-col gap-2 place-items-center">
                             <div className="w-full text-center">
                                 <h6 className="text-sm uppercase font-bold text-zinc-700">
-                                    SÜRESİ DOLANLAR
+                                    SÜRESİ DOLANLAR (AKTİF LİSANSLAR)
                                 </h6>
                             </div>
 
