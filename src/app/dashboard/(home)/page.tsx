@@ -383,34 +383,22 @@ export default function Dashboard() {
                     </Card>
 
                     <div className="flex flex-col gap-4 items-center">
-                        <PanelCard
-                            header="PASİF"
-                            color="indigo"
-                            content={
-                                <span className="flex-wrap break-all text-pretty">
-                                    {licenseCounts?.passiveCount?.toLocaleString() ||
-                                        "0"}
-                                </span>
-                            }
-                            icon={<BiXCircle />}
-                            onClick={() =>
-                                router.push("/dashboard/licenses?tab=passive")
-                            }
-                        />
-                        <PanelCard
-                            header="KAYIP"
-                            color="red"
-                            content={
-                                <span className="flex-wrap break-all text-pretty">
-                                    {licenseCounts?.lostCount?.toLocaleString() ||
-                                        "0"}
-                                </span>
-                            }
-                            icon={<BiError />}
-                            onClick={() =>
-                                router.push("/dashboard/licenses?tab=lost")
-                            }
-                        />
+                        <div className="w-full basis-1/2">
+                            <PanelCard
+                                header="KAYIP"
+                                color="red"
+                                content={
+                                    <span className="flex-wrap break-all text-pretty">
+                                        {licenseCounts?.lostCount?.toLocaleString() ||
+                                            "0"}
+                                    </span>
+                                }
+                                icon={<BiError />}
+                                onClick={() =>
+                                    router.push("/dashboard/licenses?tab=lost")
+                                }
+                            />
+                        </div>
                     </div>
                 </div>
             </section>
