@@ -4,7 +4,7 @@ import prisma from "@/utils/db";
 
 export async function PUT(
     request: Request,
-    { params }: { params: { id: string, historyId: string } },
+    { params }: { params: { id: string; historyId: string } },
 ) {
     try {
         const session = await getServerSession();
@@ -12,12 +12,21 @@ export async function PUT(
         if (session) {
             const licenseHistory = await request.json();
             licenseHistory.updatedAt = new Date().toISOString();
-            licenseHistory.startDate = licenseHistory.startDate
-                ? new Date(licenseHistory.startDate).toISOString()
-                : null;
-            licenseHistory.expiryDate = licenseHistory.expiryDate
-                ? new Date(licenseHistory.expiryDate).toISOString()
-                : null;
+            licenseHistory.startDate =
+                licenseHistory.startDate &&
+                new Date(licenseHistory.startDate).toISOString();
+            licenseHistory.expiryDate =
+                licenseHistory.expiryDate &&
+                new Date(licenseHistory.expiryDate).toISOString();
+            licenseHistory.boughtAt =
+                licenseHistory.boughtAt &&
+                new Date(licenseHistory.boughtAt).toISOString() || null;
+            licenseHistory.soldAt =
+                licenseHistory.soldAt &&
+                new Date(licenseHistory.soldAt).toISOString() || null;
+            licenseHistory.orderedAt =
+                licenseHistory.orderedAt &&
+                new Date(licenseHistory.orderedAt).toISOString() || null;
 
             const updatedLicenseHistory = await prisma.licenseHistory.update({
                 data: licenseHistory,

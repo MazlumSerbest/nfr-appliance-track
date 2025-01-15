@@ -94,11 +94,20 @@ interface IHistoryFormInput {
     subDealerId: number;
     supplierId: number;
     updatedBy: string;
+    boughtAt?: string;
+    soldAt?: string;
+    orderedAt?: string;
+    applianceId?: number;
+    appSerialNo?: string;
+    productId?: number;
+    note?: string;
     licenseType?: LicenseType;
     boughtType?: BoughtType;
     dealer?: Current;
     subDealer?: Current;
     supplier?: Current;
+    appliance?: Appliance;
+    product?: Product;
 }
 
 export default function LicenseDetail({ params }: { params: { id: string } }) {
@@ -208,6 +217,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
     } = useForm<IHistoryFormInput>();
 
     const onSubmitHistory: SubmitHandler<IHistoryFormInput> = async (d) => {
+        console.log(d);
         if (currUser) {
             const licenseWithNewHistory = {
                 id: data.id,
@@ -215,11 +225,18 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                 startDate: d.startDate || null,
                 expiryDate: d.expiryDate || null,
                 licenseTypeId: Number(d.licenseTypeId),
-                boughtTypeId: Number(d.boughtTypeId) || null,
-                dealerId: Number(d.dealerId) || null,
-                subDealerId: Number(d.subDealerId) || null,
-                supplierId: Number(d.supplierId) || null,
+                boughtTypeId: Number(data.boughtTypeId || undefined),
+                dealerId: d.dealerId && Number(d.dealerId),
+                subDealerId: d.subDealerId && Number(d.subDealerId),
+                supplierId: d.supplierId && Number(d.supplierId),
                 updatedBy: currUser?.username ?? "",
+                boughtAt: d.boughtAt || null,
+                soldAt: d.soldAt || null,
+                orderedAt: d.orderedAt || null,
+                // applianceId: d.applianceId || null,
+                appSerialNo: d.appSerialNo || null,
+                productId: d.productId || null,
+                note: d.note || null,
                 history: {
                     serialNo: data.serialNo || null,
                     startDate: data.startDate,
@@ -229,6 +246,13 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                     dealerId: data.dealerId || null,
                     subDealerId: data.subDealerId || null,
                     supplierId: data.supplierId || null,
+                    boughtAt: data.boughtAt || null,
+                    soldAt: data.soldAt || null,
+                    orderedAt: data.orderedAt || null,
+                    applianceId: data.applianceId || null,
+                    appSerialNo: data.appSerialNo || null,
+                    productId: data.productId || null,
+                    note: data.note || null,
                 },
             };
 
@@ -256,8 +280,8 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
     ) => {
         if (currUser) {
             data.updatedBy = currUser?.username ?? "";
-            data.licenseTypeId = Number(data.licenseTypeId || null);
-            data.boughtTypeId = Number(data.boughtTypeId || null);
+            data.licenseTypeId = Number(data.licenseTypeId);
+            data.boughtTypeId = Number(data.boughtTypeId || undefined);
 
             delete data["licenseType"];
             delete data["boughtType"];
@@ -409,45 +433,24 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
 
                                                 {!data.isPassive &&
                                                     !data.isLost && (
-                                                        <>
-                                                            <Tooltip content="Pasif Olarak İşaretle">
-                                                                <Button
-                                                                    isIconOnly
-                                                                    color="primary"
-                                                                    className="bg-indigo-500"
-                                                                    size="sm"
-                                                                    onPress={async () => {
-                                                                        await setLicenseActiveStatus(
-                                                                            data.id,
-                                                                            "passive",
-                                                                            currUser?.username,
-                                                                        );
-                                                                        mutate();
-                                                                    }}
-                                                                >
-                                                                    <BiXCircle className="size-4"></BiXCircle>
-                                                                </Button>
-                                                            </Tooltip>
-
-                                                            <Tooltip content="Kayıp Olarak İşaretle">
-                                                                <Button
-                                                                    isIconOnly
-                                                                    color="primary"
-                                                                    className="bg-red-500"
-                                                                    size="sm"
-                                                                    onPress={async () => {
-                                                                        await setLicenseActiveStatus(
-                                                                            data.id,
-                                                                            "lost",
-                                                                            currUser?.username,
-                                                                        );
-                                                                        mutate();
-                                                                    }}
-                                                                >
-                                                                    <BiError className="size-4"></BiError>
-                                                                </Button>
-                                                            </Tooltip>
-                                                        </>
+                                                        <Tooltip content="Kayıp Olarak İşaretle">
+                                                            <Button
+                                                                isIconOnly
+                                                                color="primary"
+                                                                className="bg-red-500"
+                                                                size="sm"
+                                                                onPress={async () => {
+                                                                    await setLicenseActiveStatus(
+                                                                        data.id,
+                                                                        "lost",
+                                                                        currUser?.username,
+                                                                    );
+                                                                    mutate();
+                                                                }}
+                                                            >
+                                                                <BiError className="size-4"></BiError>
+                                                            </Button>
+                                                        </Tooltip>
                                                     )}
                                             </>
                                         )}
@@ -1187,34 +1190,43 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                                                 setHistoryIsNew(
                                                                     false,
                                                                 );
-                                                                resetHistory(h);
-                                                                setHistoryValue(
-                                                                    "startDate",
-                                                                    h.startDate?.split(
+                                                                resetHistory({
+                                                                    ...h,
+                                                                    startDate:
+                                                                        h.startDate?.split(
+                                                                            "T",
+                                                                        )[0],
+                                                                    expiryDate:
+                                                                        h.expiryDate?.split(
+                                                                            "T",
+                                                                        )[0],
+                                                                    boughtAt:
+                                                                        h.boughtAt?.split(
+                                                                            "T",
+                                                                        )[0],
+                                                                    soldAt: h.soldAt?.split(
                                                                         "T",
                                                                     )[0],
-                                                                );
-                                                                setHistoryValue(
-                                                                    "expiryDate",
-                                                                    h.expiryDate?.split(
-                                                                        "T",
-                                                                    )[0],
-                                                                );
-                                                                setHistoryValue(
-                                                                    "dealerId",
-                                                                    h.dealer
-                                                                        ?.id,
-                                                                );
-                                                                setHistoryValue(
-                                                                    "subDealerId",
-                                                                    h.subDealer
-                                                                        ?.id,
-                                                                );
-                                                                setHistoryValue(
-                                                                    "supplierId",
-                                                                    h.supplier
-                                                                        ?.id,
-                                                                );
+                                                                    orderedAt:
+                                                                        h.orderedAt?.split(
+                                                                            "T",
+                                                                        )[0],
+                                                                    productId:
+                                                                        h
+                                                                            .product
+                                                                            ?.id,
+                                                                    dealerId:
+                                                                        h.dealer
+                                                                            ?.id,
+                                                                    subDealerId:
+                                                                        h
+                                                                            .subDealer
+                                                                            ?.id,
+                                                                    supplierId:
+                                                                        h
+                                                                            .supplier
+                                                                            ?.id,
+                                                                });
                                                                 onOpenHistory();
                                                             }}
                                                         />
@@ -1482,30 +1494,48 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                     : handleHistorySubmit(onSubmitHistoryUpdate)
                             }
                         >
-                            <div>
-                                <label
-                                    htmlFor="boughtTypeId"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500"
-                                >
-                                    Alım Tipi
-                                </label>
-                                <div className="block w-full h-10 rounded-md border-0 px-3 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2">
-                                    <select
-                                        id="boughtTypeId"
-                                        className="w-full border-none text-sm text-zinc-700 outline-none"
-                                        {...registerHistory("boughtTypeId")}
-                                    >
-                                        <option selected value="">
-                                            Satın alım tipi Seçiniz...
-                                        </option>
-                                        {boughtTypes?.map((bt) => (
-                                            <option key={bt.id} value={bt.id}>
-                                                {bt.name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                            </div>
+                            {!data?.applianceId && (
+                                <>
+                                    <div>
+                                        <label
+                                            htmlFor="productId"
+                                            className="block text-sm font-semibold leading-6 text-zinc-500"
+                                        >
+                                            Ürün
+                                        </label>
+                                        <Controller
+                                            control={controlHistory}
+                                            name="productId"
+                                            render={({
+                                                field: { onChange, value },
+                                            }) => (
+                                                <AutoComplete
+                                                    onChange={onChange}
+                                                    value={value}
+                                                    data={products || []}
+                                                />
+                                            )}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label
+                                            htmlFor="appSerialNo"
+                                            className="block text-sm font-semibold leading-6 text-zinc-500"
+                                        >
+                                            Cihaz Seri Numarası
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="appSerialNo"
+                                            className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                            {...registerHistory("appSerialNo", {
+                                                maxLength: 50,
+                                            })}
+                                        />
+                                    </div>
+                                </>
+                            )}
 
                             <div>
                                 <label
@@ -1583,6 +1613,74 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                 />
                             </div>
 
+                            <div>
+                                <label
+                                    htmlFor="boughtTypeId"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Alım Tipi
+                                </label>
+                                <div className="block w-full h-10 rounded-md border-0 px-3 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2">
+                                    <select
+                                        id="boughtTypeId"
+                                        className="w-full border-none text-sm text-zinc-700 outline-none"
+                                        {...registerHistory("boughtTypeId")}
+                                    >
+                                        <option value={undefined}></option>
+                                        {boughtTypes?.map((bt) => (
+                                            <option key={bt.id} value={bt.id}>
+                                                {bt.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label
+                                    htmlFor="boughtAt"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Alım Tarihi
+                                </label>
+                                <input
+                                    type="date"
+                                    id="boughtAt"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    {...registerHistory("boughtAt")}
+                                />
+                            </div>
+
+                            <div>
+                                <label
+                                    htmlFor="soldAt"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Satış Tarihi
+                                </label>
+                                <input
+                                    type="date"
+                                    id="soldAt"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    {...registerHistory("soldAt")}
+                                />
+                            </div>
+
+                            <div>
+                                <label
+                                    htmlFor="orderedAt"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Sipariş Tarihi
+                                </label>
+                                <input
+                                    type="date"
+                                    id="orderedAt"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    {...registerHistory("orderedAt")}
+                                />
+                            </div>
+
                             <div className="relative flex items-center mt-6">
                                 <div className="flex-grow border-t border-zinc-200"></div>
                                 <span className="flex-shrink mx-4 text-base text-zinc-500">
@@ -1652,6 +1750,23 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                             data={suppliers || []}
                                         />
                                     )}
+                                />
+                            </div>
+
+                            <div>
+                                <label
+                                    htmlFor="note"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                >
+                                    Not
+                                </label>
+                                <textarea
+                                    id="note"
+                                    rows={4}
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                    {...registerHistory("note", {
+                                        maxLength: 500,
+                                    })}
                                 />
                             </div>
 

@@ -12,12 +12,22 @@ export async function PUT(
         if (session) {
             const license = await request.json();
             license.updatedAt = new Date().toISOString();
-            license.startDate = license.startDate
-                ? new Date(license.startDate).toISOString()
-                : null;
-            license.expiryDate = license.expiryDate
-                ? new Date(license.expiryDate).toISOString()
-                : null;
+            license.startDate =
+                license.startDate && new Date(license.startDate).toISOString();
+            license.expiryDate =
+                license.expiryDate &&
+                new Date(license.expiryDate).toISOString();
+            license.boughtAt =
+                (license.boughtAt &&
+                    new Date(license.boughtAt).toISOString()) ||
+                null;
+            license.soldAt =
+                (license.soldAt && new Date(license.soldAt).toISOString()) ||
+                null;
+            license.orderedAt =
+                (license.orderedAt &&
+                    new Date(license.orderedAt).toISOString()) ||
+                null;
 
             const updatedLicense = await prisma.licenses.update({
                 data: {
@@ -33,13 +43,36 @@ export async function PUT(
                                     expiryDate: new Date(
                                         license.history.expiryDate,
                                     ).toISOString(),
-                                    licenseTypeId: license.history.licenseTypeId,
+                                    licenseTypeId:
+                                        license.history.licenseTypeId,
                                     boughtTypeId: license.history.boughtTypeId,
                                     dealerId: license.history.dealerId,
                                     subDealerId: license.history.subDealerId,
                                     supplierId: license.history.supplierId,
                                     createdBy: license.updatedBy,
                                     createdAt: new Date().toISOString(),
+                                    boughtAt:
+                                        (license.history.boughtAt &&
+                                            new Date(
+                                                license.history.boughtAt,
+                                            ).toISOString()) ||
+                                        null,
+                                    soldAt:
+                                        (license.history.soldAt &&
+                                            new Date(
+                                                license.history.soldAt,
+                                            ).toISOString()) ||
+                                        null,
+                                    orderedAt:
+                                        (license.history.orderedAt &&
+                                            new Date(
+                                                license.history.orderedAt,
+                                            ).toISOString()) ||
+                                        null,
+                                    applianceId: license.history.applianceId,
+                                    appSerialNo: license.history.appSerialNo,
+                                    productId: license.history.productId,
+                                    note: license.history.note,
                                 },
                             ],
                         },
