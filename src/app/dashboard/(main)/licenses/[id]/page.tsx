@@ -212,12 +212,12 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
         register: registerHistory,
         reset: resetHistory,
         setValue: setHistoryValue,
+        resetField: resetHistoryField,
         handleSubmit: handleHistorySubmit,
         control: controlHistory,
     } = useForm<IHistoryFormInput>();
 
     const onSubmitHistory: SubmitHandler<IHistoryFormInput> = async (d) => {
-        console.log(d);
         if (currUser) {
             const licenseWithNewHistory = {
                 id: data.id,
@@ -233,7 +233,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                 boughtAt: d.boughtAt || null,
                 soldAt: d.soldAt || null,
                 orderedAt: d.orderedAt || null,
-                // applianceId: d.applianceId || null,
+                applianceId: d.applianceId || null,
                 appSerialNo: d.appSerialNo || null,
                 productId: d.productId || null,
                 note: d.note || null,
@@ -249,7 +249,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                     boughtAt: data.boughtAt || null,
                     soldAt: data.soldAt || null,
                     orderedAt: data.orderedAt || null,
-                    applianceId: data.applianceId || null,
+                    applianceId: data.appliance.id || null,
                     appSerialNo: data.appSerialNo || null,
                     productId: data.productId || null,
                     note: data.note || null,
@@ -282,12 +282,15 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
             data.updatedBy = currUser?.username ?? "";
             data.licenseTypeId = Number(data.licenseTypeId);
             data.boughtTypeId = Number(data.boughtTypeId || undefined);
+            console.log(data);
 
             delete data["licenseType"];
             delete data["boughtType"];
             delete data["dealer"];
             delete data["subDealer"];
             delete data["supplier"];
+            delete data["appliance"];
+            delete data["product"];
 
             await fetch(`/api/license/${params.id}/history/${data.id}`, {
                 method: "PUT",
@@ -901,17 +904,16 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                 className="bg-yellow-500"
                                 onPress={() => {
                                     setHistoryIsNew(true);
-                                    resetHistory({});
-                                    resetHistory({});
-                                    setHistoryValue("dealerId", data.dealerId);
-                                    setHistoryValue(
-                                        "subDealerId",
-                                        data.subDealerId,
-                                    );
-                                    setHistoryValue(
-                                        "supplierId",
-                                        data.supplierId,
-                                    );
+                                    resetHistory({
+                                        productId: data.productId,
+                                        applianceId: data.applianceId,
+                                        startDate: data.startDate.split("T")[0],
+                                        expiryDate:
+                                            data.expiryDate.split("T")[0],
+                                        dealerId: data.dealerId,
+                                        subDealerId: data.subDealerId,
+                                        supplierId: data.supplierId,
+                                    });
                                     onOpenHistory();
                                 }}
                             >
@@ -1215,6 +1217,10 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                                                         h
                                                                             .product
                                                                             ?.id,
+                                                                    applianceId:
+                                                                        h
+                                                                            .appliance
+                                                                            ?.id,
                                                                     dealerId:
                                                                         h.dealer
                                                                             ?.id,
@@ -1494,48 +1500,131 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                     : handleHistorySubmit(onSubmitHistoryUpdate)
                             }
                         >
-                            {!data?.applianceId && (
-                                <>
-                                    <div>
-                                        <label
-                                            htmlFor="productId"
-                                            className="block text-sm font-semibold leading-6 text-zinc-500"
-                                        >
-                                            Ürün
-                                        </label>
-                                        <Controller
-                                            control={controlHistory}
-                                            name="productId"
-                                            render={({
-                                                field: { onChange, value },
-                                            }) => (
-                                                <AutoComplete
-                                                    onChange={onChange}
-                                                    value={value}
-                                                    data={products || []}
-                                                />
-                                            )}
-                                        />
-                                    </div>
+                            <div className="relative flex items-center">
+                                <div className="flex-grow border-t border-zinc-200"></div>
+                                <span className="flex-shrink mx-4 text-base text-zinc-500">
+                                    Cihaz Bilgileri
+                                </span>
+                                <div className="flex-grow border-t border-zinc-200"></div>
+                            </div>
 
-                                    <div>
-                                        <label
-                                            htmlFor="appSerialNo"
-                                            className="block text-sm font-semibold leading-6 text-zinc-500"
-                                        >
-                                            Cihaz Seri Numarası
-                                        </label>
-                                        <input
-                                            type="text"
-                                            id="appSerialNo"
-                                            className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
-                                            {...registerHistory("appSerialNo", {
-                                                maxLength: 50,
-                                            })}
+                            <div>
+                                <label
+                                    htmlFor="productId"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Ürün
+                                </label>
+                                <Controller
+                                    control={controlHistory}
+                                    name="productId"
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <AutoComplete
+                                            value={value}
+                                            data={products || []}
+                                            onChange={async (e) => {
+                                                onChange(e);
+                                                resetHistoryField(
+                                                    "applianceId",
+                                                );
+                                                const appliances: ListBoxItem[] =
+                                                    await getAppliances(
+                                                        true,
+                                                        e,
+                                                    );
+                                                setAppliances(appliances);
+                                            }}
                                         />
-                                    </div>
-                                </>
-                            )}
+                                    )}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="applianceId"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Cihaz
+                                </label>
+                                <span className="flex flex-row font-normal text-xs text-zinc-400 items-center gap-1 mb-1">
+                                    <BiInfoCircle />
+                                    Cihaz seçmek için ürün seçimi yapmanız
+                                    gereklidir!
+                                </span>
+                                <Controller
+                                    control={controlHistory}
+                                    name="applianceId"
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <AutoComplete
+                                            onChange={async (v) => {
+                                                onChange(v);
+
+                                                await fetch(
+                                                    `/api/appliance/${v}`,
+                                                ).then(async (res) => {
+                                                    const app =
+                                                        await res.json();
+
+                                                    // setHistoryValue(
+                                                    //     "customerId",
+                                                    //     app.customerId,
+                                                    // );
+                                                    // setHistoryValue(
+                                                    //     "dealerId",
+                                                    //     app.dealerId,
+                                                    // );
+                                                    // setHistoryValue(
+                                                    //     "subDealerId",
+                                                    //     app.subDealerId,
+                                                    // );
+                                                    // setHistoryValue(
+                                                    //     "supplierId",
+                                                    //     app.supplierId,
+                                                    // );
+                                                });
+                                            }}
+                                            value={value}
+                                            data={appliances || []}
+                                        />
+                                    )}
+                                />
+                            </div>
+
+                            <div className="relative flex items-center mt-2">
+                                <div className="flex-grow border-t border-zinc-200"></div>
+                                <span className="flex-shrink mx-4 text-xs text-zinc-500">
+                                    veya
+                                </span>
+                                <div className="flex-grow border-t border-zinc-200"></div>
+                            </div>
+
+                            <div>
+                                <label
+                                    htmlFor="appSerialNo"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
+                                >
+                                    Cihaz Seri Numarası
+                                </label>
+                                <input
+                                    type="text"
+                                    id="appSerialNo"
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    {...registerHistory("appSerialNo", {
+                                        maxLength: 50,
+                                    })}
+                                />
+                            </div>
+
+                            <div className="relative flex items-center mt-6">
+                                <div className="flex-grow border-t border-zinc-200"></div>
+                                <span className="flex-shrink mx-4 text-base text-zinc-500">
+                                    Lisans Bilgileri
+                                </span>
+                                <div className="flex-grow border-t border-zinc-200"></div>
+                            </div>
 
                             <div>
                                 <label
@@ -1611,6 +1700,14 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                         required: true,
                                     })}
                                 />
+                            </div>
+
+                            <div className="relative flex items-center mt-6">
+                                <div className="flex-grow border-t border-zinc-200"></div>
+                                <span className="flex-shrink mx-4 text-base text-zinc-500">
+                                    Alım ve Satış Bilgileri
+                                </span>
+                                <div className="flex-grow border-t border-zinc-200"></div>
                             </div>
 
                             <div>

@@ -61,6 +61,8 @@ export async function GET(
                             expiryDate: true,
                             licenseTypeId: true,
                             boughtTypeId: true,
+                            productId: true,
+                            applianceId: true,
                             licenseType: {
                                 select: {
                                     type: true,
@@ -85,6 +87,35 @@ export async function GET(
                             },
                             supplier: {
                                 select: { id: true, name: true },
+                            },
+                            appliance: {
+                                select: {
+                                    id: true,
+                                    serialNo: true,
+                                    boughtAt: true,
+                                    soldAt: true,
+                                    product: {
+                                        select: {
+                                            model: true,
+                                            brand: {
+                                                select: {
+                                                    name: true,
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                            product: {
+                                select: {
+                                    id: true,
+                                    model: true,
+                                    brand: {
+                                        select: {
+                                            name: true,
+                                        },
+                                    },
+                                },
                             },
                         },
                     },

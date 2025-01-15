@@ -672,7 +672,7 @@ export default function Licenses() {
                                                 ).then(async (res) => {
                                                     const app =
                                                         await res.json();
-                                                    console.log(app);
+
                                                     setValue(
                                                         "customerId",
                                                         app.customerId,
