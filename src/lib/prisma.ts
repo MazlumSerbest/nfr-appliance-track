@@ -131,7 +131,6 @@ export async function setLicenseActiveStatus(
     const license = await prisma.licenses.update({
         data: {
             isLost: status == "lost" ? true : false,
-            isPassive: status == "passive" ? true : false,
             updatedBy: updatedBy,
             updatedAt: new Date().toISOString(),
         },

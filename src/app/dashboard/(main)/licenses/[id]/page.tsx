@@ -86,8 +86,8 @@ interface IHistoryFormInput {
     id: number;
     licenseId: number;
     serialNo: string;
-    startDate: string;
-    expiryDate: string;
+    startDate?: string;
+    expiryDate?: string;
     boughtTypeId: number;
     licenseTypeId: number;
     dealerId: number;
@@ -239,8 +239,8 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                 note: d.note || null,
                 history: {
                     serialNo: data.serialNo || null,
-                    startDate: data.startDate,
-                    expiryDate: data.expiryDate,
+                    startDate: data.startDate || null,
+                    expiryDate: data.expiryDate || null,
                     licenseTypeId: data.licenseTypeId,
                     boughtTypeId: data.boughtTypeId || null,
                     dealerId: data.dealerId || null,
@@ -249,7 +249,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                     boughtAt: data.boughtAt || null,
                     soldAt: data.soldAt || null,
                     orderedAt: data.orderedAt || null,
-                    applianceId: data.appliance.id || null,
+                    applianceId: data.appliance?.id || null,
                     appSerialNo: data.appSerialNo || null,
                     productId: data.productId || null,
                     note: data.note || null,
@@ -375,10 +375,6 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                         <span className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-sm font-medium text-red-500 ring-1 ring-inset ring-red-500/20">
                                             Kayıp
                                         </span>
-                                    ) : data.isPassive ? (
-                                        <span className="inline-flex items-center rounded-md bg-indigo-50 px-2 py-1 text-sm font-medium text-indigo-500 ring-1 ring-inset ring-indigo-500/20">
-                                            Pasif
-                                        </span>
                                     ) : !data.customerId &&
                                       !data.cusName &&
                                       !data.orderedAt &&
@@ -412,8 +408,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                     {currUser?.role != "technical" &&
                                         (data.customerId || data.cusName) && (
                                             <>
-                                                {(data.isPassive ||
-                                                    data.isLost) && (
+                                                {data.isLost && (
                                                     <Tooltip content="Aktif Olarak İşaretle">
                                                         <Button
                                                             isIconOnly
@@ -434,27 +429,26 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                                     </Tooltip>
                                                 )}
 
-                                                {!data.isPassive &&
-                                                    !data.isLost && (
-                                                        <Tooltip content="Kayıp Olarak İşaretle">
-                                                            <Button
-                                                                isIconOnly
-                                                                color="primary"
-                                                                className="bg-red-500"
-                                                                size="sm"
-                                                                onPress={async () => {
-                                                                    await setLicenseActiveStatus(
-                                                                        data.id,
-                                                                        "lost",
-                                                                        currUser?.username,
-                                                                    );
-                                                                    mutate();
-                                                                }}
-                                                            >
-                                                                <BiError className="size-4"></BiError>
-                                                            </Button>
-                                                        </Tooltip>
-                                                    )}
+                                                {!data.isLost && (
+                                                    <Tooltip content="Kayıp Olarak İşaretle">
+                                                        <Button
+                                                            isIconOnly
+                                                            color="primary"
+                                                            className="bg-red-500"
+                                                            size="sm"
+                                                            onPress={async () => {
+                                                                await setLicenseActiveStatus(
+                                                                    data.id,
+                                                                    "lost",
+                                                                    currUser?.username,
+                                                                );
+                                                                mutate();
+                                                            }}
+                                                        >
+                                                            <BiError className="size-4"></BiError>
+                                                        </Button>
+                                                    </Tooltip>
+                                                )}
                                             </>
                                         )}
                                 </dd>
@@ -907,9 +901,10 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                     resetHistory({
                                         productId: data.productId,
                                         applianceId: data.applianceId,
-                                        startDate: data.startDate.split("T")[0],
+                                        startDate:
+                                            data.startDate?.split("T")[0],
                                         expiryDate:
-                                            data.expiryDate.split("T")[0],
+                                            data.expiryDate?.split("T")[0],
                                         dealerId: data.dealerId,
                                         subDealerId: data.subDealerId,
                                         supplierId: data.supplierId,
@@ -1669,36 +1664,30 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                             <div>
                                 <label
                                     htmlFor="startDate"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
                                 >
                                     Başlangıç Tarihi
                                 </label>
                                 <input
-                                    required
                                     type="date"
                                     id="startDate"
                                     className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
-                                    {...registerHistory("startDate", {
-                                        required: true,
-                                    })}
+                                    {...registerHistory("startDate")}
                                 />
                             </div>
 
                             <div>
                                 <label
                                     htmlFor="expiryDate"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500"
                                 >
                                     Bitiş Tarihi
                                 </label>
                                 <input
-                                    required
                                     type="date"
                                     id="expiryDate"
                                     className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
-                                    {...registerHistory("expiryDate", {
-                                        required: true,
-                                    })}
+                                    {...registerHistory("expiryDate")}
                                 />
                             </div>
 

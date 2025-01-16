@@ -121,8 +121,8 @@ model licenseHistory {
   id            Int          @id @default(autoincrement())
   licenseId     Int
   serialNo      String?      @db.VarChar
-  startDate     DateTime     @db.Date
-  expiryDate    DateTime     @db.Date
+  startDate     DateTime?     @db.Date
+  expiryDate    DateTime?     @db.Date
   licenseTypeId Int
   boughtTypeId  Int?
   boughtAt      DateTime?    @db.Date
