@@ -90,9 +90,6 @@ export default function Licenses() {
         null,
     );
     const [lostLicenses, setLostLicenses] = useState<vLicense[] | null>(null);
-    const [passiveLicenses, setPassiveLicenses] = useState<vLicense[] | null>(
-        null,
-    );
 
     const [products, setProducts] = useState<ListBoxItem[] | null>(null);
     const [appliances, setAppliances] = useState<ListBoxItem[] | null>(null);
@@ -385,9 +382,6 @@ export default function Licenses() {
             setActiveLicenses(
                 data?.filter((l: vLicense) => l.status == "active"),
             );
-            setPassiveLicenses(
-                data?.filter((l: vLicense) => l.status == "passive"),
-            );
             setLostLicenses(data?.filter((l: vLicense) => l.status == "lost"));
         },
     });
@@ -533,29 +527,6 @@ export default function Licenses() {
                                           onOpen();
                                       }
                             }
-                            onDoubleClick={(item) => {
-                                router.push(`/dashboard/licenses/${item.id}`);
-                            }}
-                        />
-                    </Tab>
-
-                    <Tab key="passive" title="Pasif" className="w-full">
-                        <DataTable
-                            storageKey="passiveLicenses"
-                            isCompact
-                            isStriped
-                            emptyContent="Herhangi bir lisans bulunamadı!"
-                            defaultRowsPerPage={20}
-                            data={passiveLicenses || []}
-                            columns={columns}
-                            renderCell={renderCell}
-                            searchValue={""}
-                            sortOption={{
-                                column: "orderedAt",
-                                direction: "descending",
-                            }}
-                            initialVisibleColumNames={visibleColumns}
-                            activeOptions={[]}
                             onDoubleClick={(item) => {
                                 router.push(`/dashboard/licenses/${item.id}`);
                             }}
