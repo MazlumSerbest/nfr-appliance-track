@@ -16,6 +16,7 @@ import { CopyToClipboard } from "@/utils/functions";
 import { BiLinkExternal, BiX, BiShow, BiHide, BiCopy } from "react-icons/bi";
 import useUserStore from "@/store/user";
 import { getCustomers, getBrands } from "@/lib/data";
+import { Switch } from "@nextui-org/react";
 
 interface IFormInput {
     ip: string;
@@ -24,9 +25,11 @@ interface IFormInput {
     brandId: number;
     password: string;
     note?: string;
+    controlled: boolean;
     updatedBy: string;
     customer?: Current;
     brand?: Brand;
+    controlHistory?: ControlHistory[];
 }
 
 export default function ConnectionDetail({
@@ -44,8 +47,10 @@ export default function ConnectionDetail({
     const { register, reset, handleSubmit, control } = useForm<IFormInput>();
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         data.updatedBy = currUser?.username ?? "";
+
         delete data["customer"];
         delete data["brand"];
+        delete data["controlHistory"];
 
         await fetch(`/api/connection/${params.id}`, {
             method: "PUT",
@@ -122,6 +127,34 @@ export default function ConnectionDetail({
                             />
                         </div>
                         <div className="divide-y divide-zinc-200">
+                            <div className="grid grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                <div>
+                                    <label
+                                        htmlFor="active"
+                                        className="font-medium"
+                                    >
+                                        Gözetim Durumu
+                                    </label>
+                                </div>
+                                <Controller
+                                    control={control}
+                                    name="controlled"
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <Switch
+                                            color="primary"
+                                            onChange={onChange}
+                                            isSelected={value}
+                                            classNames={{
+                                                wrapper:
+                                                    "group-data-[selected=true]:bg-sky-500",
+                                            }}
+                                        />
+                                    )}
+                                />
+                            </div>
+
                             <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                 <label
                                     htmlFor="brandId"

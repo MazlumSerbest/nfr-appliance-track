@@ -108,12 +108,6 @@ export default function DealerDetail({ params }: { params: { id: string } }) {
                                         Aktif
                                     </label>
                                 </div>
-                                {/* <input
-                                    id="active"
-                                    type="checkbox"
-                                    className="md:col-span-2 my-1 sm:my-0 h-4 w-4 rounded-md border-zinc-300 ring-offset-1 focus:ring-2 focus:ring-sky-500 outline-none cursor-pointer accent-sky-600"
-                                    {...register("active")}
-                                /> */}
                                 <Controller
                                     control={control}
                                     name="active"
