@@ -11,9 +11,9 @@ import {
     ModalHeader,
     ModalBody,
     useDisclosure,
-} from "@nextui-org/modal";
-import { SortDescriptor } from "@nextui-org/table";
-import { Button } from "@nextui-org/button";
+} from "@heroui/modal";
+import { SortDescriptor } from "@heroui/table";
+import { Button } from "@heroui/button";
 
 import DataTable from "@/components/DataTable";
 import BoolChip from "@/components/BoolChip";
@@ -23,7 +23,7 @@ import { DateTimeFormat } from "@/utils/date";
 import AutoComplete from "@/components/AutoComplete";
 import { getCustomers, getBrands } from "@/lib/data";
 import { BiCheckSquare, BiSquare } from "react-icons/bi";
-import { Tooltip } from "@nextui-org/react";
+import { Tooltip } from "@heroui/react";
 import ControlButton from "@/components/buttons/ControlButton";
 
 interface IFormInput {

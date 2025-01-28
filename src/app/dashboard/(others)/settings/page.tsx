@@ -3,16 +3,16 @@ import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
-import { Accordion, AccordionItem } from "@nextui-org/accordion";
-import { Button } from "@nextui-org/button";
-import { Checkbox } from "@nextui-org/react";
+import { Accordion, AccordionItem } from "@heroui/accordion";
+import { Button } from "@heroui/button";
+import { Checkbox } from "@heroui/react";
 import {
     Modal,
     ModalBody,
     ModalContent,
     ModalHeader,
     useDisclosure,
-} from "@nextui-org/modal";
+} from "@heroui/modal";
 
 import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
 import useUserStore from "@/store/user";

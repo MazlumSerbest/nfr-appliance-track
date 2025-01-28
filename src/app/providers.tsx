@@ -1,5 +1,5 @@
 "use client";
-import { NextUIProvider } from "@nextui-org/react";
+import { HeroUIProvider } from "@heroui/react";
 import { SWRConfig } from "swr";
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -10,7 +10,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
                 fetcher: (url) => fetch(url).then((res) => res.json()),
             }}
         >
-            <NextUIProvider locale="tr-TR">{children}</NextUIProvider>
+            <HeroUIProvider locale="tr-TR">{children}</HeroUIProvider>
         </SWRConfig>
     );
 }

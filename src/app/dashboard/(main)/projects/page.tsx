@@ -11,11 +11,11 @@ import {
     ModalContent,
     ModalHeader,
     useDisclosure,
-} from "@nextui-org/modal";
-import { Tab, Tabs } from "@nextui-org/tabs";
-import { SortDescriptor } from "@nextui-org/table";
-import { Button } from "@nextui-org/button";
-import { Divider } from "@nextui-org/divider";
+} from "@heroui/modal";
+import { Tab, Tabs } from "@heroui/tabs";
+import { SortDescriptor } from "@heroui/table";
+import { Button } from "@heroui/button";
+import { Divider } from "@heroui/divider";
 
 import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
 import DataTable from "@/components/DataTable";

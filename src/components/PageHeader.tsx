@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { Divider } from "@nextui-org/divider";
+import { Divider } from "@heroui/divider";
 import { BiX } from "react-icons/bi";
 
 type Props = {

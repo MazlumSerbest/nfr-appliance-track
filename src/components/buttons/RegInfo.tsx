@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
-import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/popover";
-import { Tooltip } from "@nextui-org/tooltip";
+import { Popover, PopoverTrigger, PopoverContent } from "@heroui/popover";
+import { Tooltip } from "@heroui/tooltip";
 import { DateTimeFormat } from "@/utils/date";
 import useUserStore from "@/store/user";
 

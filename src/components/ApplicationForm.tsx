@@ -1,8 +1,8 @@
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
 
-import { useDisclosure } from "@nextui-org/modal";
-import { Button } from "@nextui-org/button";
+import { useDisclosure } from "@heroui/modal";
+import { Button } from "@heroui/button";
 
 import AutoComplete from "@/components/AutoComplete";
 import useUserStore from "@/store/user";

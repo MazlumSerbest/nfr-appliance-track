@@ -5,19 +5,19 @@ import { useRouter } from "next/navigation";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
 
-import { Card, CardBody, CardFooter } from "@nextui-org/card";
+import { Card, CardBody, CardFooter } from "@heroui/card";
 import {
     Modal,
     ModalContent,
     ModalHeader,
     ModalBody,
     useDisclosure,
-} from "@nextui-org/modal";
-import { Accordion, AccordionItem } from "@nextui-org/accordion";
-import { Button } from "@nextui-org/button";
-import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/popover";
-import { Tab, Tabs } from "@nextui-org/tabs";
-import { Tooltip } from "@nextui-org/react";
+} from "@heroui/modal";
+import { Accordion, AccordionItem } from "@heroui/accordion";
+import { Button } from "@heroui/button";
+import { Popover, PopoverTrigger, PopoverContent } from "@heroui/popover";
+import { Tab, Tabs } from "@heroui/tabs";
+import { Tooltip } from "@heroui/react";
 
 import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
 import AutoComplete from "@/components/AutoComplete";

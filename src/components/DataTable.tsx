@@ -8,16 +8,16 @@ import {
     TableCell,
     Selection,
     SortDescriptor,
-} from "@nextui-org/table";
+} from "@heroui/table";
 import {
     Dropdown,
     DropdownTrigger,
     DropdownMenu,
     DropdownItem,
-} from "@nextui-org/dropdown";
-import { Input } from "@nextui-org/input";
-import { Button } from "@nextui-org/button";
-import { Pagination } from "@nextui-org/pagination";
+} from "@heroui/dropdown";
+import { Input } from "@heroui/input";
+import { Button } from "@heroui/button";
+import { Pagination } from "@heroui/pagination";
 import { BiPlus, BiSearch, BiChevronDown } from "react-icons/bi";
 import Loader from "./loaders/Loader";
 

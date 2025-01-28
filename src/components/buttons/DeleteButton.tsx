@@ -1,9 +1,9 @@
 import { ReactNode } from "react";
 import toast from "react-hot-toast";
-import { useDisclosure } from "@nextui-org/react";
-import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/popover";
-import { Button } from "@nextui-org/button";
-import { Tooltip } from "@nextui-org/tooltip";
+import { useDisclosure } from "@heroui/react";
+import { Popover, PopoverTrigger, PopoverContent } from "@heroui/popover";
+import { Button } from "@heroui/button";
+import { Tooltip } from "@heroui/tooltip";
 import { deleteData } from "@/lib/prisma";
 import useUserStore from "@/store/user";
 

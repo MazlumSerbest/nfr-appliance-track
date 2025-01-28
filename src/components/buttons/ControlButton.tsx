@@ -1,5 +1,5 @@
 import toast from "react-hot-toast";
-import { Tooltip } from "@nextui-org/tooltip";
+import { Tooltip } from "@heroui/tooltip";
 import { BiCheckSquare, BiSquare } from "react-icons/bi";
 import useUserStore from "@/store/user";
 import { setControlStatus } from "@/lib/prisma";

@@ -1,5 +1,5 @@
-import { Tooltip } from "@nextui-org/tooltip";
-import { Button } from "@nextui-org/button";
+import { Tooltip } from "@heroui/tooltip";
+import { Button } from "@heroui/button";
 import {
     Modal,
     ModalContent,
@@ -7,7 +7,7 @@ import {
     ModalBody,
     ModalFooter,
     useDisclosure,
-} from "@nextui-org/modal";
+} from "@heroui/modal";
 import { BiMailSend } from "react-icons/bi";
 import { DateFormat } from "@/utils/date";
 import { validateEmail } from "@/utils/functions";

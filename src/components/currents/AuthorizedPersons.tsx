@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 
-import { Accordion, AccordionItem } from "@nextui-org/accordion";
+import { Accordion, AccordionItem } from "@heroui/accordion";
 import {
     Modal,
     ModalContent,
     ModalHeader,
     ModalBody,
     useDisclosure,
-} from "@nextui-org/modal";
-import { Button } from "@nextui-org/button";
-import { Tooltip } from "@nextui-org/tooltip";
+} from "@heroui/modal";
+import { Button } from "@heroui/button";
+import { Tooltip } from "@heroui/tooltip";
 
 import {
     BiChevronLeft,

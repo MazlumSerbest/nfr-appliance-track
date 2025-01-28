@@ -11,9 +11,9 @@ import UserCard from "./UserCard";
 import Logo from "./Logo";
 import { paths, currents, definitions, others } from "@/lib/paths";
 
-import { Button } from "@nextui-org/button";
-import { Divider } from "@nextui-org/divider";
-import { Listbox, ListboxSection, ListboxItem } from "@nextui-org/listbox";
+import { Button } from "@heroui/button";
+import { Divider } from "@heroui/divider";
+import { Listbox, ListboxSection, ListboxItem } from "@heroui/listbox";
 
 import { BiMenu } from "react-icons/bi";
 

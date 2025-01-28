@@ -4,9 +4,9 @@ import useSWR from "swr";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
 
-import { Card, CardBody, CardFooter } from "@nextui-org/card";
-import { Switch } from "@nextui-org/switch";
-import { Button } from "@nextui-org/button";
+import { Card, CardBody, CardFooter } from "@heroui/card";
+import { Switch } from "@heroui/switch";
+import { Button } from "@heroui/button";
 
 import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
 import RegInfo from "@/components/buttons/RegInfo";

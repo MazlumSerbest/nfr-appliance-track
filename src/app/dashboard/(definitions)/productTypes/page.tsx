@@ -10,10 +10,10 @@ import {
     ModalContent,
     ModalHeader,
     useDisclosure,
-} from "@nextui-org/modal";
-import { SortDescriptor } from "@nextui-org/table";
-import { Switch } from "@nextui-org/switch";
-import { Button } from "@nextui-org/button";
+} from "@heroui/modal";
+import { SortDescriptor } from "@heroui/table";
+import { Switch } from "@heroui/switch";
+import { Button } from "@heroui/button";
 
 import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
 import DataTable from "@/components/DataTable";

@@ -1,8 +1,8 @@
 import toast from "react-hot-toast";
-import { useDisclosure } from "@nextui-org/react";
-import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
-import { Tooltip } from "@nextui-org/tooltip";
-import { Button } from "@nextui-org/button";
+import { useDisclosure } from "@heroui/react";
+import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
+import { Tooltip } from "@heroui/tooltip";
+import { Button } from "@heroui/button";
 import { BiLockOpen } from "react-icons/bi";
 import useUserStore from "@/store/user";
 

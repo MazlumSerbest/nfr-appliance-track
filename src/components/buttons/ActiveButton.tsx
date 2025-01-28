@@ -1,5 +1,5 @@
 import toast from "react-hot-toast";
-import { Tooltip } from "@nextui-org/tooltip";
+import { Tooltip } from "@heroui/tooltip";
 import { BiCheckCircle, BiXCircle } from "react-icons/bi";
 import useUserStore from "@/store/user";
 import { setActiveStatus } from "@/lib/prisma";

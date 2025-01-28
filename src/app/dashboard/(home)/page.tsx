@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import PanelCard from "@/components/PanelCard";
 
-import { Divider } from "@nextui-org/divider";
+import { Divider } from "@heroui/divider";
 
 import {
     BiServer,
@@ -21,7 +21,7 @@ import {
     getApplianceCounts,
     getProjectCounts,
 } from "@/lib/prisma";
-import { Card, CardBody } from "@nextui-org/react";
+import { Card, CardBody } from "@heroui/react";
 
 export default function Dashboard() {
     const router = useRouter();

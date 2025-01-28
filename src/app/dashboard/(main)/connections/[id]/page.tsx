@@ -5,8 +5,9 @@ import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
 
-import { Card, CardBody, CardFooter } from "@nextui-org/card";
-import { Button } from "@nextui-org/button";
+import { Card, CardBody, CardFooter } from "@heroui/card";
+import { Button } from "@heroui/button";
+import { Switch } from "@heroui/react";
 
 import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
 import AutoComplete from "@/components/AutoComplete";
@@ -16,7 +17,6 @@ import { CopyToClipboard } from "@/utils/functions";
 import { BiLinkExternal, BiX, BiShow, BiHide, BiCopy } from "react-icons/bi";
 import useUserStore from "@/store/user";
 import { getCustomers, getBrands } from "@/lib/data";
-import { Switch } from "@nextui-org/react";
 
 interface IFormInput {
     ip: string;
@@ -352,6 +352,10 @@ export default function ConnectionDetail({
                     </CardFooter>
                 </form>
             </Card>
+
+            {data.controlled || data.controlHistory.length > 0 ? (
+                <></>
+            ) : null}
         </div>
     );
 }

@@ -2,10 +2,10 @@ import { useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import NextLink from "next/link";
 
-import { useDisclosure } from "@nextui-org/react";
-import { Avatar, AvatarIcon } from "@nextui-org/avatar";
-import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/popover";
-import { Button } from "@nextui-org/button";
+import { useDisclosure } from "@heroui/react";
+import { Avatar, AvatarIcon } from "@heroui/avatar";
+import { Popover, PopoverTrigger, PopoverContent } from "@heroui/popover";
+import { Button } from "@heroui/button";
 
 import { BiLogOut } from "react-icons/bi";
 import useUserStore from "@/store/user";

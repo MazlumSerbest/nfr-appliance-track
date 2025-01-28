@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
 
-import { Card, CardBody, CardFooter } from "@nextui-org/card";
-import { Button } from "@nextui-org/button";
+import { Card, CardBody, CardFooter } from "@heroui/card";
+import { Button } from "@heroui/button";
 
 import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
 import AutoComplete from "@/components/AutoComplete";

@@ -5,16 +5,16 @@ import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
 
-import { Card, CardBody, CardFooter } from "@nextui-org/card";
-import { Accordion, AccordionItem } from "@nextui-org/accordion";
-import { Button } from "@nextui-org/button";
+import { Card, CardBody, CardFooter } from "@heroui/card";
+import { Accordion, AccordionItem } from "@heroui/accordion";
+import { Button } from "@heroui/button";
 import {
     Modal,
     ModalContent,
     ModalHeader,
     ModalBody,
     useDisclosure,
-} from "@nextui-org/modal";
+} from "@heroui/modal";
 
 import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
 import RegInfo from "@/components/buttons/RegInfo";
