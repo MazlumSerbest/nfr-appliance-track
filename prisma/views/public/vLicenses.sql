@@ -78,7 +78,11 @@ SELECT
   sd.name AS "subDealerName",
   s.name AS "supplierName",
   CASE
-    WHEN (l."expiryDate" IS NULL) THEN 'undefined' :: text
+    WHEN (
+      (l."expiryDate" IS NULL)
+      OR (l."isPassive" IS TRUE)
+      OR (l."isLost" IS TRUE)
+    ) THEN 'undefined' :: text
     WHEN (l."expiryDate" < CURRENT_DATE) THEN 'ended' :: text
     WHEN (
       l."expiryDate" <= (CURRENT_DATE + '30 days' :: INTERVAL)

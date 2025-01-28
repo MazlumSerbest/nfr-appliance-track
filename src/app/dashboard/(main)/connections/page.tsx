@@ -22,6 +22,9 @@ import useUserStore from "@/store/user";
 import { DateTimeFormat } from "@/utils/date";
 import AutoComplete from "@/components/AutoComplete";
 import { getCustomers, getBrands } from "@/lib/data";
+import { BiCheckSquare, BiSquare } from "react-icons/bi";
+import { Tooltip } from "@nextui-org/react";
+import ControlButton from "@/components/buttons/ControlButton";
 
 interface IFormInput {
     ip: string;
@@ -40,6 +43,8 @@ export default function Connections() {
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
     const [customers, setCustomers] = useState<ListBoxItem[] | null>(null);
     const [brands, setBrands] = useState<ListBoxItem[] | null>(null);
+
+    const { data, error, mutate } = useSWR("/api/connection");
 
     //#region Form
     const { register, reset, handleSubmit, control } = useForm<IFormInput>();
@@ -72,6 +77,8 @@ export default function Connections() {
         "login",
         "customerName",
         "note",
+        "lastControlledAt",
+        "controlled",
     ];
 
     const sort: SortDescriptor = {
@@ -129,6 +136,17 @@ export default function Connections() {
             name: "Güncellenme Tarihi",
             width: 150,
         },
+        {
+            key: "lastControlledAt",
+            name: "Son Gözetim Tarihi",
+            width: 150,
+        },
+        {
+            key: "controlled",
+            name: "Gözetim Durumu",
+            width: 100,
+            sortable: true,
+        },
     ];
 
     const renderCell = React.useCallback(
@@ -152,8 +170,8 @@ export default function Connections() {
                                     : "-")}
                         </a>
                     );
-                case "active":
-                    return <BoolChip value={cellValue} />;
+                // case "controlled":
+                //     return <BoolChip value={cellValue} />;
                 case "note":
                 case "customerName":
                     return (
@@ -169,11 +187,19 @@ export default function Connections() {
                     return <p>{DateTimeFormat(cellValue)}</p>;
                 case "updatedAt":
                     return <p>{DateTimeFormat(cellValue)}</p>;
+                case "lastControlledAt":
+                    return <p>{DateTimeFormat(cellValue)}</p>;
+                case "controlled":
+                    return (
+                        <div className="px-8">
+                            <ControlButton data={connection} mutate={mutate} />
+                        </div>
+                    );
                 default:
                     return cellValue ? cellValue : "-";
             }
         },
-        [],
+        [mutate],
     );
     //#endregion
 
@@ -189,8 +215,6 @@ export default function Connections() {
         getData();
     }, []);
     //#endregion
-
-    const { data, error, mutate } = useSWR("/api/connection");
 
     if (error) return <div>Yükleme Hatası!</div>;
     if (!data)

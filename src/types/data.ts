@@ -14,6 +14,11 @@ type Connection = Entity & {
     customer: any;
 };
 
+type ControlHistory = Entity & {
+    connectionId: number;
+    userId?: number;
+};
+
 type Appliance = Entity & {
     predecessorId?: number;
     productId: number;

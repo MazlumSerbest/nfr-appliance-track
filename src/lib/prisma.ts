@@ -77,6 +77,28 @@ export async function setActiveStatus(
     else return false;
 }
 
+export async function setControlStatus(
+    id: number,
+    controlStatus: boolean,
+    updatedBy?: string,
+) {
+    if (!updatedBy) return false;
+
+    const connection = await prisma.connections.update({
+        data: {
+            controlled: controlStatus,
+            updatedBy: updatedBy,
+            updatedAt: new Date().toISOString(),
+        },
+        where: {
+            id: id,
+        },
+    });
+
+    if (connection.controlled === controlStatus) return true;
+    else return false;
+}
+
 export async function setLicenseAppliance(
     licenseId: number,
     applianceId: number | null,

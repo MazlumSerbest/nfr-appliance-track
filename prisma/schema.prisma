@@ -60,8 +60,8 @@ model appliances {
   product        products           @relation(fields: [productId], references: [id])
   subDealer      currents?          @relation("SubDealer", fields: [subDealerId], references: [id])
   supplier       currents?          @relation("Supplier", fields: [supplierId], references: [id])
-  licenses       licenses[]
   licenseHistory licenseHistory[]
+  licenses       licenses[]
 }
 
 model applianceHistory {
@@ -125,9 +125,6 @@ model licenseHistory {
   expiryDate    DateTime?    @db.Date
   licenseTypeId Int
   boughtTypeId  Int?
-  boughtAt      DateTime?    @db.Date
-  soldAt        DateTime?    @db.Date
-  orderedAt     DateTime?    @db.Date
   createdBy     String       @db.VarChar
   createdAt     DateTime     @default(now()) @db.Timestamptz(6)
   updatedBy     String?      @db.VarChar
@@ -135,10 +132,13 @@ model licenseHistory {
   dealerId      Int?
   subDealerId   Int?
   supplierId    Int?
-  applianceId   Int?
   appSerialNo   String?      @db.VarChar
-  productId     Int?
+  applianceId   Int?
+  boughtAt      DateTime?    @db.Date
   note          String?      @db.VarChar
+  orderedAt     DateTime?    @db.Date
+  productId     Int?
+  soldAt        DateTime?    @db.Date
   appliance     appliances?  @relation(fields: [applianceId], references: [id])
   boughtType    boughtTypes? @relation(fields: [boughtTypeId], references: [id])
   dealer        currents?    @relation("Dealer", fields: [dealerId], references: [id])
@@ -182,9 +182,9 @@ model connections {
   customerId     Int?
   brandId        Int?
   controlled     Boolean?                   @default(false)
+  controlHistory connectionControlHistory[]
   brand          brands?                    @relation(fields: [brandId], references: [id])
   customer       currents?                  @relation(fields: [customerId], references: [id])
-  controlHistory connectionControlHistory[]
 }
 
 model connectionControlHistory {
@@ -220,11 +220,11 @@ model products {
   brandId        Int?
   productTypeId  Int?
   appliances     appliances[]
+  licenseHistory licenseHistory[]
   licenses       licenses[]
   brand          brands?          @relation(fields: [brandId], references: [id])
   productType    productTypes?    @relation(fields: [productTypeId], references: [id])
   projects       projects[]
-  licenseHistory licenseHistory[]
 }
 
 model productTypes {
@@ -386,17 +386,19 @@ view vLicenses {
 }
 
 view vConnections {
-  id           Int       @unique
-  ip           String?   @db.VarChar
-  login        String?   @db.VarChar
-  password     String?   @db.VarChar
-  note         String?   @db.VarChar
-  createdBy    String?   @db.VarChar
-  createdAt    DateTime? @db.Timestamptz(6)
-  updatedBy    String?   @db.VarChar
-  updatedAt    DateTime? @db.Timestamptz(6)
-  customerName String?   @db.VarChar
-  brandName    String?   @db.VarChar
+  id               Int       @unique
+  ip               String?   @db.VarChar
+  login            String?   @db.VarChar
+  password         String?   @db.VarChar
+  note             String?   @db.VarChar
+  createdBy        String?   @db.VarChar
+  createdAt        DateTime? @db.Timestamptz(6)
+  updatedBy        String?   @db.VarChar
+  updatedAt        DateTime? @db.Timestamptz(6)
+  customerName     String?   @db.VarChar
+  brandName        String?   @db.VarChar
+  controlled       Boolean?
+  lastControlledAt DateTime? @db.Timestamptz(6)
 }
 
 view vProjects {
