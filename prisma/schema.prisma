@@ -121,8 +121,8 @@ model licenseHistory {
   id            Int          @id @default(autoincrement())
   licenseId     Int
   serialNo      String?      @db.VarChar
-  startDate     DateTime?     @db.Date
-  expiryDate    DateTime?     @db.Date
+  startDate     DateTime?    @db.Date
+  expiryDate    DateTime?    @db.Date
   licenseTypeId Int
   boughtTypeId  Int?
   boughtAt      DateTime?    @db.Date
@@ -170,19 +170,30 @@ model projects {
 }
 
 model connections {
-  id         Int       @id @default(autoincrement())
-  login      String?   @db.VarChar
-  password   String?   @db.VarChar
-  note       String?   @db.VarChar
-  createdAt  DateTime  @default(now()) @db.Timestamptz(6)
-  createdBy  String    @db.VarChar
-  updatedBy  String?   @db.VarChar
-  ip         String?   @db.VarChar
-  updatedAt  DateTime? @updatedAt @db.Timestamptz(6)
-  customerId Int?
-  brandId    Int?
-  brand      brands?   @relation(fields: [brandId], references: [id])
-  customer   currents? @relation(fields: [customerId], references: [id])
+  id             Int                        @id @default(autoincrement())
+  login          String?                    @db.VarChar
+  password       String?                    @db.VarChar
+  note           String?                    @db.VarChar
+  createdAt      DateTime                   @default(now()) @db.Timestamptz(6)
+  createdBy      String                     @db.VarChar
+  updatedBy      String?                    @db.VarChar
+  ip             String?                    @db.VarChar
+  updatedAt      DateTime?                  @updatedAt @db.Timestamptz(6)
+  customerId     Int?
+  brandId        Int?
+  controlled     Boolean?                   @default(false)
+  brand          brands?                    @relation(fields: [brandId], references: [id])
+  customer       currents?                  @relation(fields: [customerId], references: [id])
+  controlHistory connectionControlHistory[]
+}
+
+model connectionControlHistory {
+  id           Int         @id @default(autoincrement())
+  connectionId Int
+  userId       Int
+  createdAt    DateTime    @default(now()) @db.Timestamptz(6)
+  createdBy    String      @db.VarChar
+  connection   connections @relation(fields: [connectionId], references: [id])
 }
 
 model brands {
