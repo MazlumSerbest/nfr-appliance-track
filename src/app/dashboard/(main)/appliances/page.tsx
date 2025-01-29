@@ -308,8 +308,8 @@ export default function Appliances() {
                     <Tab key="stock" title="Stok" className="w-full">
                         <DataTable
                             storageKey="stockAppliances"
-                            isCompact
-                            isStriped
+                            compact
+                            striped
                             emptyContent="Herhangi bir cihaz bulunamadı!"
                             defaultRowsPerPage={20}
                             data={stockAppliances || []}
@@ -334,8 +334,8 @@ export default function Appliances() {
                     <Tab key="order" title="Sipariş" className="w-full">
                         <DataTable
                             storageKey="orderAppliances"
-                            isCompact
-                            isStriped
+                            compact
+                            striped
                             emptyContent="Herhangi bir cihaz bulunamadı!"
                             defaultRowsPerPage={20}
                             data={orderAppliances || []}
@@ -360,8 +360,8 @@ export default function Appliances() {
                     <Tab key="active" title="Aktif" className="w-full">
                         <DataTable
                             storageKey="activeAppliances"
-                            isCompact
-                            isStriped
+                            compact
+                            striped
                             emptyContent="Herhangi bir cihaz bulunamadı!"
                             defaultRowsPerPage={20}
                             data={activeAppliances || []}
@@ -389,8 +389,8 @@ export default function Appliances() {
                     <Tab key="demo" title="Demo" className="w-full">
                         <DataTable
                             storageKey="demoAppliances"
-                            isCompact
-                            isStriped
+                            compact
+                            striped
                             emptyContent="Herhangi bir cihaz bulunamadı!"
                             defaultRowsPerPage={20}
                             data={demoAppliances || []}

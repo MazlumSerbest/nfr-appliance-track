@@ -263,8 +263,8 @@ export default function Licenses() {
                     <Tab key="projects" title="Projeler" className="w-full">
                         <DataTable
                             storageKey="projects"
-                            isCompact
-                            isStriped
+                            compact
+                            striped
                             className="mt-4 mb-2"
                             emptyContent="Herhangi bir proje bulunamadı!"
                             data={projects || []}
@@ -289,8 +289,8 @@ export default function Licenses() {
                     <Tab key="won" title="Kazanılan" className="w-full">
                         <DataTable
                             storageKey="wonProjects"
-                            isCompact
-                            isStriped
+                            compact
+                            striped
                             className="mt-4 mb-2"
                             emptyContent="Herhangi bir proje bulunamadı!"
                             data={wonProjects || []}
@@ -315,8 +315,8 @@ export default function Licenses() {
                     <Tab key="lost" title="Kaybedilen" className="w-full">
                         <DataTable
                             storageKey="lostProjects"
-                            isCompact
-                            isStriped
+                            compact
+                            striped
                             className="mt-4 mb-2"
                             emptyContent="Herhangi bir proje bulunamadı!"
                             data={lostProjects || []}

@@ -16,15 +16,13 @@ import { SortDescriptor } from "@heroui/table";
 import { Button } from "@heroui/button";
 
 import DataTable from "@/components/DataTable";
-import BoolChip from "@/components/BoolChip";
 import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
+import AutoComplete from "@/components/AutoComplete";
+import ControlButton from "@/components/buttons/ControlButton";
+
 import useUserStore from "@/store/user";
 import { DateTimeFormat } from "@/utils/date";
-import AutoComplete from "@/components/AutoComplete";
 import { getCustomers, getBrands } from "@/lib/data";
-import { BiCheckSquare, BiSquare } from "react-icons/bi";
-import { Tooltip } from "@heroui/react";
-import ControlButton from "@/components/buttons/ControlButton";
 
 interface IFormInput {
     ip: string;
@@ -229,8 +227,8 @@ export default function Connections() {
         <>
             <DataTable
                 storageKey="connections"
-                isCompact
-                isStriped
+                compact
+                striped
                 className="mt-4 mb-2"
                 emptyContent="Herhangi bir bağlantı bulunamadı!"
                 data={data || []}

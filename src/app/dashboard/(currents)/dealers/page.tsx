@@ -192,8 +192,8 @@ export default function Dealers() {
         <>
             <DataTable
                 storageKey="dealers"
-                isCompact
-                isStriped
+                compact
+                striped
                 className="mt-4 mb-2"
                 emptyContent="Herhangi bir bayi bulunamadı!"
                 data={data || []}

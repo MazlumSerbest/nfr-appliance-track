@@ -192,8 +192,8 @@ export default function Customers() {
         <>
             <DataTable
                 storageKey="customers"
-                isCompact
-                isStriped
+                compact
+                striped
                 className="mt-4 mb-2"
                 emptyContent="Herhangi bir müşteri bulunamadı!"
                 data={data || []}

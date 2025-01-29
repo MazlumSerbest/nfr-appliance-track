@@ -259,8 +259,8 @@ export default function Users() {
         <>
             <DataTable
                 storageKey="users"
-                isCompact
-                isStriped
+                compact
+                striped
                 className="mt-4 mb-2"
                 emptyContent="Herhangi bir kullanıcı bulunamadı!"
                 data={users || []}

@@ -209,8 +209,8 @@ export default function BoughtTypes() {
         <>
             <DataTable
                 storageKey="boughtTypes"
-                isCompact
-                isStriped
+                compact
+                striped
                 className="mt-4 mb-2"
                 emptyContent="Herhangi bir alım tipi bulunamadı!"
                 data={data || []}

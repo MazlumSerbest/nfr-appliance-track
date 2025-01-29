@@ -192,8 +192,8 @@ export default function Suppliers() {
         <>
             <DataTable
                 storageKey="suppliers"
-                isCompact
-                isStriped
+                compact
+                striped
                 className="mt-4 mb-2"
                 emptyContent="Herhangi bir tedarikçi bulunamadı!"
                 data={data || []}

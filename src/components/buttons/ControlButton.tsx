@@ -9,8 +9,7 @@ type Props = {
     mutate?: () => void;
 };
 
-export default function ControlButton(props: Props) {
-    const { data, mutate } = props;
+export default function ControlButton({ data, mutate }: Props) {
     const { user: currUser } = useUserStore();
 
     return (

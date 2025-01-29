@@ -190,8 +190,8 @@ export default function ProductTypes() {
         <>
             <DataTable
                 storageKey="productTypes"
-                isCompact
-                isStriped
+                compact
+                striped
                 className="mt-4 mb-2"
                 emptyContent="Herhangi bir ürün tipi bulunamadı!"
                 data={data || []}

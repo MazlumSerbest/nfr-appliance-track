@@ -191,8 +191,8 @@ export default function BrandsPage() {
         <>
             <DataTable
                 storageKey="brands"
-                isCompact
-                isStriped
+                compact
+                striped
                 className="mt-4 mb-2"
                 emptyContent="Herhangi bir marka bulunamadı!"
                 data={data || []}

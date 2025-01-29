@@ -420,8 +420,8 @@ export default function Licenses() {
                     <Tab key="stock" title="Stok" className="w-full">
                         <DataTable
                             storageKey="stockLicenses"
-                            isCompact
-                            isStriped
+                            compact
+                            striped
                             emptyContent="Herhangi bir lisans bulunamadı!"
                             defaultRowsPerPage={20}
                             data={stockLicenses || []}
@@ -447,8 +447,8 @@ export default function Licenses() {
                     <Tab key="order" title="Sipariş" className="w-full">
                         <DataTable
                             storageKey="orderLicenses"
-                            isCompact
-                            isStriped
+                            compact
+                            striped
                             emptyContent="Herhangi bir lisans bulunamadı!"
                             defaultRowsPerPage={20}
                             data={orderLicenses || []}
@@ -478,8 +478,8 @@ export default function Licenses() {
                     >
                         <DataTable
                             storageKey="waitingOrderLicenses"
-                            isCompact
-                            isStriped
+                            compact
+                            striped
                             emptyContent="Herhangi bir lisans bulunamadı!"
                             defaultRowsPerPage={20}
                             data={waitingOrderLicenses || []}
@@ -505,8 +505,8 @@ export default function Licenses() {
                     <Tab key="active" title="Aktif" className="w-full">
                         <DataTable
                             storageKey="activeLicenses"
-                            isCompact
-                            isStriped
+                            compact
+                            striped
                             emptyContent="Herhangi bir lisans bulunamadı!"
                             defaultRowsPerPage={20}
                             data={activeLicenses || []}
@@ -536,8 +536,8 @@ export default function Licenses() {
                     <Tab key="lost" title="Kayıp" className="w-full">
                         <DataTable
                             storageKey="lostLicenses"
-                            isCompact
-                            isStriped
+                            compact
+                            striped
                             emptyContent="Herhangi bir lisans bulunamadı!"
                             defaultRowsPerPage={20}
                             data={lostLicenses || []}

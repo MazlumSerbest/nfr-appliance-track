@@ -230,8 +230,8 @@ export default function LicenseTypes() {
         <>
             <DataTable
                 storageKey="licenseTypes"
-                isCompact
-                isStriped
+                compact
+                striped
                 className="mt-4 mb-2"
                 emptyContent="Herhangi bir lisans tipi bulunamadı!"
                 data={data || []}

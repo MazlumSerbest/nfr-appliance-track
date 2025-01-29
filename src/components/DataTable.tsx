@@ -25,8 +25,9 @@ type Props = {
     columns: Column[];
     data: any;
     emptyContent?: React.ReactNode;
-    isCompact: boolean;
-    isStriped: boolean;
+    basic?: boolean;
+    compact: boolean;
+    striped: boolean;
     className?: string;
     activeOptions?: ActiveOption[];
     renderCell: (item: any, columnKey: React.Key) => React.ReactNode;
@@ -39,25 +40,24 @@ type Props = {
     onAddNew?: () => void;
 };
 
-export default function DataTable(props: Props) {
-    const {
-        columns,
-        data,
-        emptyContent,
-        isCompact,
-        isStriped,
-        className,
-        activeOptions,
-        renderCell,
-        sortOption,
-        storageKey = "",
-        searchValue = "",
-        defaultRowsPerPage,
-        initialVisibleColumNames,
-        onDoubleClick,
-        onAddNew,
-    } = props;
-
+export default function DataTable({
+    columns,
+    data,
+    emptyContent,
+    basic = false,
+    compact,
+    striped,
+    className,
+    activeOptions,
+    renderCell,
+    sortOption,
+    storageKey = "",
+    searchValue = "",
+    defaultRowsPerPage,
+    initialVisibleColumNames,
+    onDoubleClick,
+    onAddNew,
+}: Props) {
     type DataType = (typeof data)[0];
     const [filterValue, setFilterValue] = useState(() => {
         if (searchValue) return searchValue;
@@ -218,32 +218,66 @@ export default function DataTable(props: Props) {
     const topContent = useMemo(() => {
         return (
             <div className="flex flex-col gap-4">
-                <div className="flex justify-between gap-3 items-end">
-                    <Input
-                        isClearable
-                        autoComplete="off"
-                        autoCorrect="off"
-                        autoCapitalize="off"
-                        spellCheck="false"
-                        classNames={{
-                            base: "w-full sm:max-w-[44%]",
-                            inputWrapper:
-                                "border-0 ring-1 ring-inset ring-zinc-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500",
-                            clearButton: "text-xl text-zinc-500",
-                            input: "placeholder:italic placeholder:text-zinc-400",
-                        }}
-                        placeholder="Arama Yap..."
-                        size="sm"
-                        startContent={
-                            <BiSearch className="text-2xl text-zinc-300" />
-                        }
-                        value={filterValue}
-                        variant="bordered"
-                        onClear={() => setFilterValue("")}
-                        onValueChange={onSearchChange}
-                    />
-                    <div className="flex gap-3">
-                        {activeOptions?.length ? (
+                {!basic ? (
+                    <div className="flex justify-between gap-3 items-end">
+                        <Input
+                            isClearable
+                            autoComplete="off"
+                            autoCorrect="off"
+                            autoCapitalize="off"
+                            spellCheck="false"
+                            classNames={{
+                                base: "w-full sm:max-w-[44%]",
+                                inputWrapper:
+                                    "border-0 ring-1 ring-inset ring-zinc-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500",
+                                clearButton: "text-xl text-zinc-500",
+                                input: "placeholder:italic placeholder:text-zinc-400",
+                            }}
+                            placeholder="Arama Yap..."
+                            size="sm"
+                            startContent={
+                                <BiSearch className="text-2xl text-zinc-300" />
+                            }
+                            value={filterValue}
+                            variant="bordered"
+                            onClear={() => setFilterValue("")}
+                            onValueChange={onSearchChange}
+                        />
+                        <div className="flex gap-3">
+                            {activeOptions?.length ? (
+                                <Dropdown>
+                                    <DropdownTrigger className="hidden sm:flex">
+                                        <Button
+                                            endContent={
+                                                <BiChevronDown className="text-sm" />
+                                            }
+                                            size="sm"
+                                            variant="flat"
+                                        >
+                                            Aktif
+                                        </Button>
+                                    </DropdownTrigger>
+                                    <DropdownMenu
+                                        disallowEmptySelection
+                                        aria-label="Table Columns"
+                                        closeOnSelect={false}
+                                        selectedKeys={activeFilter}
+                                        selectionMode="multiple"
+                                        onSelectionChange={setActiveFilter}
+                                    >
+                                        {(activeOptions || []).map((active) => (
+                                            <DropdownItem
+                                                key={active.key}
+                                                className="capitalize"
+                                            >
+                                                {active.name}
+                                            </DropdownItem>
+                                        ))}
+                                    </DropdownMenu>
+                                </Dropdown>
+                            ) : (
+                                <></>
+                            )}
                             <Dropdown>
                                 <DropdownTrigger className="hidden sm:flex">
                                     <Button
@@ -253,95 +287,65 @@ export default function DataTable(props: Props) {
                                         size="sm"
                                         variant="flat"
                                     >
-                                        Aktif
+                                        Kolonlar
                                     </Button>
                                 </DropdownTrigger>
                                 <DropdownMenu
                                     disallowEmptySelection
                                     aria-label="Table Columns"
                                     closeOnSelect={false}
-                                    selectedKeys={activeFilter}
+                                    selectedKeys={visibleColumns}
                                     selectionMode="multiple"
-                                    onSelectionChange={setActiveFilter}
+                                    onSelectionChange={(keys) => {
+                                        setVisibleColumns(keys);
+
+                                        if (!storageKey) return;
+                                        let tableStateJSON =
+                                            window.localStorage.getItem(
+                                                `${storageKey}TableState`,
+                                            );
+                                        let tableState: TableState =
+                                            tableStateJSON
+                                                ? JSON.parse(tableStateJSON)
+                                                : null;
+                                        window.localStorage.setItem(
+                                            `${storageKey}TableState`,
+                                            JSON.stringify({
+                                                ...tableState,
+                                                visibleColumns: Array.from(
+                                                    keys,
+                                                ).map((key) => key),
+                                            }),
+                                        );
+                                    }}
                                 >
-                                    {(activeOptions || []).map((active) => (
+                                    {columns.map((column) => (
                                         <DropdownItem
-                                            key={active.key}
+                                            key={column.key}
                                             className="capitalize"
                                         >
-                                            {active.name}
+                                            {column.name}
                                         </DropdownItem>
                                     ))}
                                 </DropdownMenu>
                             </Dropdown>
-                        ) : (
-                            <></>
-                        )}
-                        <Dropdown>
-                            <DropdownTrigger className="hidden sm:flex">
+                            {onAddNew ? (
                                 <Button
-                                    endContent={
-                                        <BiChevronDown className="text-sm" />
-                                    }
+                                    color="primary"
+                                    className="bg-sky-500"
+                                    endContent={<BiPlus />}
                                     size="sm"
-                                    variant="flat"
+                                    onPress={onAddNew}
                                 >
-                                    Kolonlar
+                                    Ekle
                                 </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                disallowEmptySelection
-                                aria-label="Table Columns"
-                                closeOnSelect={false}
-                                selectedKeys={visibleColumns}
-                                selectionMode="multiple"
-                                onSelectionChange={(keys) => {
-                                    setVisibleColumns(keys);
-
-                                    if (!storageKey) return;
-                                    let tableStateJSON =
-                                        window.localStorage.getItem(
-                                            `${storageKey}TableState`,
-                                        );
-                                    let tableState: TableState = tableStateJSON
-                                        ? JSON.parse(tableStateJSON)
-                                        : null;
-                                    window.localStorage.setItem(
-                                        `${storageKey}TableState`,
-                                        JSON.stringify({
-                                            ...tableState,
-                                            visibleColumns: Array.from(
-                                                keys,
-                                            ).map((key) => key),
-                                        }),
-                                    );
-                                }}
-                            >
-                                {columns.map((column) => (
-                                    <DropdownItem
-                                        key={column.key}
-                                        className="capitalize"
-                                    >
-                                        {column.name}
-                                    </DropdownItem>
-                                ))}
-                            </DropdownMenu>
-                        </Dropdown>
-                        {onAddNew ? (
-                            <Button
-                                color="primary"
-                                className="bg-sky-500"
-                                endContent={<BiPlus />}
-                                size="sm"
-                                onPress={onAddNew}
-                            >
-                                Ekle
-                            </Button>
-                        ) : (
-                            <></>
-                        )}
+                            ) : (
+                                <></>
+                            )}
+                        </div>
                     </div>
-                </div>
+                ) : null}
+
                 <div className="flex justify-between items-center">
                     <span className="text-zinc-400 text-sm">
                         Toplam satır: {data.length}
@@ -367,6 +371,7 @@ export default function DataTable(props: Props) {
             </div>
         );
     }, [
+        basic,
         filterValue,
         activeOptions,
         activeFilter,
@@ -456,8 +461,8 @@ export default function DataTable(props: Props) {
 
     return (
         <Table
-            isCompact={isCompact}
-            isStriped={isStriped}
+            isCompact={compact}
+            isStriped={striped}
             aria-label="Table component with custom cells, pagination and sorting"
             className={className ?? ""}
             classNames={{
