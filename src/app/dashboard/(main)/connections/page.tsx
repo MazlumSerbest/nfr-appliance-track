@@ -138,6 +138,7 @@ export default function Connections() {
             key: "lastControlledAt",
             name: "Son Gözetim Tarihi",
             width: 150,
+            // sortable: true,
         },
         {
             key: "controlled",

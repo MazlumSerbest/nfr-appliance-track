@@ -21,7 +21,18 @@ export async function GET(
                 id: Number(params.id),
             },
             include: {
-                controlHistory: true,
+                controlHistory: {
+                    include: {
+                        user: {
+                            select: {
+                                name: true,
+                            },
+                        },
+                    },
+                    orderBy: {
+                        createdAt: "desc",
+                    },
+                },
             },
         });
 

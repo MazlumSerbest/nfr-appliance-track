@@ -7,14 +7,27 @@ import toast from "react-hot-toast";
 
 import { Card, CardBody, CardFooter } from "@heroui/card";
 import { Button } from "@heroui/button";
-import { Switch } from "@heroui/react";
+import { Switch } from "@heroui/switch";
+import { Accordion, AccordionItem } from "@heroui/accordion";
+import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
+import { useDisclosure } from "@heroui/react";
 
 import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
 import AutoComplete from "@/components/AutoComplete";
 import RegInfo from "@/components/buttons/RegInfo";
 import DeleteButton from "@/components/buttons/DeleteButton";
+import ControlHistoryTable from "./ControlHistoryTable";
+
 import { CopyToClipboard } from "@/utils/functions";
-import { BiLinkExternal, BiX, BiShow, BiHide, BiCopy } from "react-icons/bi";
+import {
+    BiLinkExternal,
+    BiX,
+    BiShow,
+    BiHide,
+    BiCopy,
+    BiChevronLeft,
+    BiListCheck,
+} from "react-icons/bi";
 import useUserStore from "@/store/user";
 import { getCustomers, getBrands } from "@/lib/data";
 
@@ -42,6 +55,19 @@ export default function ConnectionDetail({
     const [showPassword, setShowPassword] = useState(false);
     const [customers, setCustomers] = useState<ListBoxItem[] | null>(null);
     const [brands, setBrands] = useState<ListBoxItem[] | null>(null);
+
+    const { isOpen, onClose, onOpenChange } = useDisclosure();
+
+    const { data, error, mutate } = useSWR(
+        `/api/connection/${params.id}`,
+        null,
+        {
+            revalidateOnFocus: false,
+            onSuccess: (con) => {
+                reset(con);
+            },
+        },
+    );
 
     //#region Form
     const { register, reset, handleSubmit, control } = useForm<IFormInput>();
@@ -81,17 +107,6 @@ export default function ConnectionDetail({
         getData();
     }, []);
     //#endregion
-
-    const { data, error, mutate } = useSWR(
-        `/api/connection/${params.id}`,
-        null,
-        {
-            revalidateOnFocus: false,
-            onSuccess: (con) => {
-                reset(con);
-            },
-        },
-    );
 
     if (error) return <div>Yükleme Hatası!</div>;
     if (!data || !customers || !brands)
@@ -319,6 +334,89 @@ export default function ConnectionDetail({
                     </CardBody>
                     <CardFooter className="flex gap-2">
                         <div className="flex-1"></div>
+
+                        {data.controlled && (
+                            <Popover
+                                key={data.id}
+                                placement="top"
+                                color="default"
+                                backdrop="opaque"
+                                isOpen={isOpen}
+                                onOpenChange={onOpenChange}
+                            >
+                                <PopoverTrigger>
+                                    <Button
+                                        color="primary"
+                                        className="bg-yellow-500"
+                                    >
+                                        Gözetim Ekle
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="flex flex-col gap-2 p-3">
+                                    <h2 className="text-lg font-semibold text-zinc-600">
+                                        Gözetim Ekleme
+                                    </h2>
+                                    <p className="text-sm text-zinc-500 pb-2">
+                                        Bu bağlantıya kendi kullanıcınız adına
+                                        gözetim eklenecek. Devam etmek
+                                        istediğinizden emin misiniz?
+                                    </p>
+                                    <div className="flex gap-2">
+                                        <Button
+                                            variant="bordered"
+                                            color="default"
+                                            onPress={onClose}
+                                        >
+                                            Kapat
+                                        </Button>
+                                        <Button
+                                            variant="solid"
+                                            color="danger"
+                                            className="bg-yellow-500"
+                                            onPress={async () => {
+                                                const control = {
+                                                    userId: currUser?.id,
+                                                    createdBy:
+                                                        currUser?.username,
+                                                };
+
+                                                await fetch(
+                                                    `/api/connection/${params.id}/control`,
+                                                    {
+                                                        method: "POST",
+                                                        body: JSON.stringify(
+                                                            control,
+                                                        ),
+                                                        headers: {
+                                                            "Content-Type":
+                                                                "application/json",
+                                                        },
+                                                    },
+                                                ).then(async (res) => {
+                                                    const result =
+                                                        await res.json();
+                                                    if (result.ok) {
+                                                        toast.success(
+                                                            result.message,
+                                                        );
+                                                        mutate();
+                                                        onClose();
+                                                    } else {
+                                                        toast.error(
+                                                            result.message,
+                                                        );
+                                                    }
+                                                    return result;
+                                                });
+                                            }}
+                                        >
+                                            Ekle
+                                        </Button>
+                                    </div>
+                                </PopoverContent>
+                            </Popover>
+                        )}
+
                         <RegInfo
                             data={data}
                             isButton
@@ -353,9 +451,38 @@ export default function ConnectionDetail({
                 </form>
             </Card>
 
-            {data.controlled || data.controlHistory.length > 0 ? (
-                <></>
-            ) : null}
+            <Accordion
+                selectionMode="multiple"
+                variant="splitted"
+                defaultExpandedKeys={
+                    data?.controlled || data?.controlHistory?.length
+                        ? ["controlHistory"]
+                        : []
+                }
+                className="!p-0"
+                itemClasses={{
+                    title: "font-medium text-zinc-600",
+                    base: "px-4 py-3",
+                    content: "border-t border-zinc-200 py-0",
+                }}
+            >
+                <AccordionItem
+                    key="controlHistory"
+                    aria-label="controlHistory"
+                    title="Gözetim Listesi"
+                    subtitle="Bu bağlantıya ait gözetim listesi"
+                    indicator={
+                        <BiChevronLeft className="text-3xl text-zinc-500" />
+                    }
+                    startContent={
+                        <BiListCheck className="text-4xl text-yellow-500/60" />
+                    }
+                >
+                    <ControlHistoryTable
+                        controlHistory={data?.controlHistory}
+                    />
+                </AccordionItem>
+            </Accordion>
         </div>
     );
 }

@@ -19,17 +19,18 @@ model logs {
 }
 
 model users {
-  id        Int       @id @default(autoincrement())
-  username  String    @unique @db.VarChar
-  name      String?   @db.VarChar
-  email     String    @unique @db.VarChar
-  password  String    @db.VarChar
-  active    Boolean   @default(true)
-  createdAt DateTime  @default(now()) @db.Timestamptz(6)
-  createdBy String    @db.VarChar
-  updatedBy String?   @db.VarChar
-  updatedAt DateTime? @updatedAt @db.Timestamptz(6)
-  role      String    @default("seller")
+  id                       Int                        @id @default(autoincrement())
+  username                 String                     @unique @db.VarChar
+  name                     String?                    @db.VarChar
+  email                    String                     @unique @db.VarChar
+  password                 String                     @db.VarChar
+  active                   Boolean                    @default(true)
+  createdAt                DateTime                   @default(now()) @db.Timestamptz(6)
+  createdBy                String                     @db.VarChar
+  updatedBy                String?                    @db.VarChar
+  updatedAt                DateTime?                  @updatedAt @db.Timestamptz(6)
+  role                     String                     @default("seller")
+  connectionControlHistory connectionControlHistory[]
 }
 
 model appliances {
@@ -194,6 +195,7 @@ model connectionControlHistory {
   createdAt    DateTime    @default(now()) @db.Timestamptz(6)
   createdBy    String      @db.VarChar
   connection   connections @relation(fields: [connectionId], references: [id])
+  user         users       @relation(fields: [userId], references: [id])
 }
 
 model brands {

@@ -16,7 +16,7 @@ type Connection = Entity & {
 
 type ControlHistory = Entity & {
     connectionId: number;
-    userId?: number;
+    userId: number;
 };
 
 type Appliance = Entity & {
