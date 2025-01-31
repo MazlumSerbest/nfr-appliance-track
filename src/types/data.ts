@@ -12,6 +12,7 @@ type Connection = Entity & {
     password?: string;
     note?: string;
     customer: any;
+    controlled: boolean;
 };
 
 type ControlHistory = Entity & {
