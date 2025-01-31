@@ -1,9 +1,11 @@
-import { ReactNode } from "react";
-import toast from "react-hot-toast";
+import { ReactNode, useState } from "react";
+
 import { useDisclosure } from "@heroui/react";
 import { Popover, PopoverTrigger, PopoverContent } from "@heroui/popover";
 import { Button } from "@heroui/button";
 import { Tooltip } from "@heroui/tooltip";
+
+import toast from "react-hot-toast";
 import { deleteData } from "@/lib/prisma";
 import useUserStore from "@/store/user";
 
@@ -25,18 +27,25 @@ type Props = {
         | "licenseHistory"
         | "applianceHistory";
     data: any;
-    mutate?: () => void;
     trigger: ReactNode;
     isButton?: boolean;
     router?: any;
+    mutate?: () => void;
 };
 
-export default function DeleteButton(props: Props) {
-    const { table, data, mutate, trigger, isButton, router } = props;
+export default function DeleteButton({
+    table,
+    data,
+    trigger,
+    isButton = false,
+    router,
+    mutate,
+}: Props) {
     const { isOpen, onClose, onOpenChange } = useDisclosure();
+    const [submitting, setSubmitting] = useState(false);
     const { user: currUser } = useUserStore();
 
-    if(currUser?.role == "technical" && table != "connections") return null;
+    if (currUser?.role == "technical" && table != "connections") return null;
     return (
         <Popover
             key={data.id}
@@ -71,10 +80,13 @@ export default function DeleteButton(props: Props) {
                         Kapat
                     </Button>
                     <Button
+                        isLoading={submitting}
                         variant="solid"
                         color="danger"
                         className="bg-red-600"
                         onPress={async () => {
+                            setSubmitting(true);
+
                             const res = await deleteData(
                                 table,
                                 data.id,
@@ -89,6 +101,8 @@ export default function DeleteButton(props: Props) {
                                 toast.error(
                                     "Bir hata oluştu! Lütfen tekrar deneyiniz.",
                                 );
+                                
+                            setSubmitting(false);
                         }}
                     >
                         Sil

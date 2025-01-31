@@ -42,7 +42,10 @@ export default function UserCard() {
         <>
             {user ? (
                 <div className="flex gap-2 items-center">
-                    <NextLink className="group flex-1 flex gap-2 items-center" href={"/dashboard/settings"}>
+                    <NextLink
+                        className="group flex-1 flex gap-2 items-center"
+                        href={"/dashboard/settings"}
+                    >
                         <Avatar
                             icon={<AvatarIcon />}
                             classNames={{
@@ -82,11 +85,7 @@ export default function UserCard() {
                                 Çıkış yapmak istediğinizden emin misiniz?
                             </p>
                             <div className="flex gap-2">
-                                <Button
-                                    variant="bordered"
-                                    color="default"
-                                    onPress={onClose}
-                                >
+                                <Button variant="bordered" onPress={onClose}>
                                     Kapat
                                 </Button>
                                 <Button

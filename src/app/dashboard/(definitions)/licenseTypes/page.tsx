@@ -101,7 +101,13 @@ export default function LicenseTypes() {
     //#endregion
 
     //#region Table
-    const visibleColumns = ["brandName", "type", "duration", "active", "actions"];
+    const visibleColumns = [
+        "brandName",
+        "type",
+        "duration",
+        "active",
+        "actions",
+    ];
 
     const sort: SortDescriptor = {
         column: "createdAt",
@@ -373,11 +379,7 @@ export default function LicenseTypes() {
 
                             <div className="flex flex-row gap-2 mt-4">
                                 <div className="flex-1"></div>
-                                <Button
-                                    color="danger"
-                                    onPress={onClose}
-                                    className="bg-red-600"
-                                >
+                                <Button variant="bordered" onPress={onClose}>
                                     Kapat
                                 </Button>
                                 <Button

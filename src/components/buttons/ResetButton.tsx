@@ -1,10 +1,13 @@
-import toast from "react-hot-toast";
+import { useState } from "react";
+
 import { useDisclosure } from "@heroui/react";
 import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
 import { Tooltip } from "@heroui/tooltip";
 import { Button } from "@heroui/button";
+
 import { BiLockOpen } from "react-icons/bi";
 import useUserStore from "@/store/user";
+import toast from "react-hot-toast";
 
 type Props = {
     userId: number;
@@ -12,6 +15,7 @@ type Props = {
 
 export default function ResetButton({ userId }: Props) {
     const { isOpen, onClose, onOpenChange } = useDisclosure();
+    const [submitting, setSubmitting] = useState(false);
     const { user: currUser } = useUserStore();
 
     if (currUser?.role == "technical") return null;
@@ -43,16 +47,18 @@ export default function ResetButton({ userId }: Props) {
                 <div className="flex gap-2">
                     <Button
                         variant="bordered"
-                        color="default"
                         onPress={onClose}
                     >
                         Kapat
                     </Button>
                     <Button
+                        isLoading={submitting}
                         variant="solid"
                         color="danger"
                         className="bg-red-600"
                         onPress={async () => {
+                            setSubmitting(true);
+
                             await fetch(
                                 `/api/user/${userId}/password?reset=true`,
                                 {
@@ -72,6 +78,7 @@ export default function ResetButton({ userId }: Props) {
                                     toast.error(result.message);
                                 }
                                 onClose();
+                                setSubmitting(false);
                                 return result;
                             });
                         }}

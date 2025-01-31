@@ -322,9 +322,9 @@ export default function Appliances() {
                                 currUser?.role == "technical"
                                     ? undefined
                                     : () => {
-                                        reset({});
-                                        onOpen();
-                                    }
+                                          reset({});
+                                          onOpen();
+                                      }
                             }
                             onDoubleClick={(item) => {
                                 router.push(`/dashboard/appliances/${item.id}`);
@@ -348,9 +348,9 @@ export default function Appliances() {
                                 currUser?.role == "technical"
                                     ? undefined
                                     : () => {
-                                        reset({});
-                                        onOpen();
-                                    }
+                                          reset({});
+                                          onOpen();
+                                      }
                             }
                             onDoubleClick={(item) => {
                                 router.push(`/dashboard/appliances/${item.id}`);
@@ -377,9 +377,9 @@ export default function Appliances() {
                                 currUser?.role == "technical"
                                     ? undefined
                                     : () => {
-                                        reset({});
-                                        onOpen();
-                                    }
+                                          reset({});
+                                          onOpen();
+                                      }
                             }
                             onDoubleClick={(item) => {
                                 router.push(`/dashboard/appliances/${item.id}`);
@@ -403,9 +403,9 @@ export default function Appliances() {
                                 currUser?.role == "technical"
                                     ? undefined
                                     : () => {
-                                        reset({ isDemo: true });
-                                        onOpen();
-                                    }
+                                          reset({ isDemo: true });
+                                          onOpen();
+                                      }
                             }
                             onDoubleClick={(item) => {
                                 router.push(`/dashboard/appliances/${item.id}`);
@@ -659,11 +659,7 @@ export default function Appliances() {
 
                             <div className="flex flex-row gap-2 mt-4">
                                 <div className="flex-1"></div>
-                                <Button
-                                    color="danger"
-                                    onPress={onClose}
-                                    className="bg-red-600"
-                                >
+                                <Button variant="bordered" onPress={onClose}>
                                     Kapat
                                 </Button>
                                 <Button

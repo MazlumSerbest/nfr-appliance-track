@@ -1048,7 +1048,6 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                                 <div className="flex gap-2">
                                                     <Button
                                                         variant="bordered"
-                                                        color="default"
                                                         onPress={
                                                             onAppDeleteClose
                                                         }
@@ -1438,9 +1437,8 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                     <div className="flex flex-row gap-2 mt-4">
                                         <div className="flex-1"></div>
                                         <Button
-                                            color="danger"
+                                            variant="bordered"
                                             onPress={onCloseApp}
-                                            className="bg-red-600"
                                         >
                                             Kapat
                                         </Button>
@@ -1859,9 +1857,8 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                             <div className="flex flex-row gap-2 mt-4">
                                 <div className="flex-1"></div>
                                 <Button
-                                    color="danger"
+                                    variant="bordered"
                                     onPress={onCloseHistory}
-                                    className="bg-red-600"
                                 >
                                     Kapat
                                 </Button>

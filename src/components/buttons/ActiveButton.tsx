@@ -5,13 +5,19 @@ import useUserStore from "@/store/user";
 import { setActiveStatus } from "@/lib/prisma";
 
 type Props = {
-    table: "users" | "brands" | "products" | "productTypes" | "licenseTypes" | "boughtTypes" | "currents";
+    table:
+        | "users"
+        | "brands"
+        | "products"
+        | "productTypes"
+        | "licenseTypes"
+        | "boughtTypes"
+        | "currents";
     data: any;
     mutate?: () => void;
 };
 
-export default function ActiveButton(props: Props) {
-    const { table, data, mutate } = props;
+export default function ActiveButton({ table, data, mutate }: Props) {
     const { user: currUser } = useUserStore();
 
     return (

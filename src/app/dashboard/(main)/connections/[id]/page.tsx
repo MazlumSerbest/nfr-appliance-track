@@ -364,7 +364,6 @@ export default function ConnectionDetail({
                                     <div className="flex gap-2">
                                         <Button
                                             variant="bordered"
-                                            color="default"
                                             onPress={onClose}
                                         >
                                             Kapat

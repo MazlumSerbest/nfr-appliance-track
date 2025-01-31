@@ -913,9 +913,8 @@ export default function ApplianceDetail({
                             <div className="flex flex-row gap-2 mt-4">
                                 <div className="flex-1"></div>
                                 <Button
-                                    color="danger"
+                                    variant="bordered"
                                     onPress={onCloseHistory}
-                                    className="bg-red-600"
                                 >
                                     Kapat
                                 </Button>
