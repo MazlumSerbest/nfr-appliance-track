@@ -16,9 +16,13 @@ type ColorSet = {
     text: string;
 };
 
-export default function PanelCard(props: Props) {
-    const { content, header, icon, color, onClick } = props;
-
+export default function PanelCard({
+    content,
+    header,
+    icon,
+    color,
+    onClick,
+}: Props) {
     const colors: ColorSet[] = [
         {
             name: "sky",

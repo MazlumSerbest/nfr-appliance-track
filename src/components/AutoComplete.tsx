@@ -4,14 +4,18 @@ import { BiChevronDown } from "react-icons/bi";
 
 type Props = {
     data: ListBoxItem[];
-    onChange: (value: any) => any;
     value?: any;
     className?: string;
+    onChange: (value: any) => any;
 };
 
-export default function AutoComplete(props: Props) {
+export default function AutoComplete({
+    data,
+    value,
+    className,
+    onChange,
+}: Props) {
     const [query, setQuery] = useState("");
-    const { data, onChange, value, className } = props;
 
     const filteredData =
         query === ""
@@ -20,7 +24,9 @@ export default function AutoComplete(props: Props) {
                   data.name
                       .toLocaleLowerCase("tr")
                       .replace(/\s+/g, "")
-                      .includes(query.toLocaleLowerCase("tr").replace(/\s+/g, "")),
+                      .includes(
+                          query.toLocaleLowerCase("tr").replace(/\s+/g, ""),
+                      ),
               ) || [];
 
     return (

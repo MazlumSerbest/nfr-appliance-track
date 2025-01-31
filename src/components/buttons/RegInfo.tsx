@@ -10,11 +10,10 @@ type Props = {
     isButton?: boolean;
 };
 
-export default function RegInfo(props: Props) {
-    let { data, trigger, isButton } = props;
+export default function RegInfo({ data, trigger, isButton = false }: Props) {
     const { user: currUser } = useUserStore();
 
-    if(currUser?.role != "admin") return null;
+    if (currUser?.role != "admin") return null;
     return (
         <Popover
             key={data.id}

@@ -44,8 +44,12 @@ type Props = {
     mutate: () => void;
 };
 
-export default function Addresses(props: Props) {
-    const { currentId, currentType, addressList, mutate } = props;
+export default function Addresses({
+    currentId,
+    currentType,
+    addressList,
+    mutate,
+}: Props) {
     const [isNew, setIsNew] = useState(false);
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
     const { user: currUser } = useUserStore();

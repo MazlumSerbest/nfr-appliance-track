@@ -48,8 +48,12 @@ type Props = {
     mutate: () => void;
 };
 
-export default function AuthorizedPersons(props: Props) {
-    const { currentId, currentType, personList, mutate } = props;
+export default function AuthorizedPersons({
+    currentId,
+    currentType,
+    personList,
+    mutate,
+}: Props) {
     const [isNew, setIsNew] = useState(false);
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
     const { user: currUser } = useUserStore();
