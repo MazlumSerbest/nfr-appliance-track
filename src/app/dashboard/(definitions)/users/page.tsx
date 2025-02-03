@@ -1,7 +1,7 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import useSWR from "swr";
-import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import { useForm, SubmitHandler, Controller, set } from "react-hook-form";
 import toast from "react-hot-toast";
 
 import {
@@ -21,6 +21,7 @@ import BoolChip from "@/components/BoolChip";
 import DeleteButton from "@/components/buttons/DeleteButton";
 import ResetButton from "@/components/buttons/ResetButton";
 import RegInfo from "@/components/buttons/RegInfo";
+
 import { BiInfoCircle, BiTrash } from "react-icons/bi";
 import { DateTimeFormat } from "@/utils/date";
 import { activeOptions, userTypes } from "@/lib/constants";
@@ -40,9 +41,11 @@ interface IFormInput {
 }
 
 export default function Users() {
+    const { user: currUser } = useUserStore();
+
     const [users, setUsers] = useState();
     const [isNew, setIsNew] = useState(false);
-    const { user: currUser } = useUserStore();
+    const [submitting, setSubmitting] = useState(false);
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
 
     const { data, error, mutate } = useSWR("/api/user", null, {
@@ -62,6 +65,7 @@ export default function Users() {
         control,
     } = useForm<IFormInput>({ defaultValues: { active: true, role: "user" } });
     const onSubmitNew: SubmitHandler<IFormInput> = async (data) => {
+        setSubmitting(true);
         data.createdBy = currUser?.username ?? "";
         delete data["confirmPassword"];
 
@@ -80,11 +84,14 @@ export default function Users() {
             } else {
                 toast.error(result.message);
             }
+
+            setSubmitting(false);
             return result;
         });
     };
 
     const onSubmitUpdate: SubmitHandler<IFormInput> = async (data) => {
+        setSubmitting(true);
         data.updatedBy = currUser?.username ?? "";
         delete data["confirmPassword"];
 
@@ -102,6 +109,8 @@ export default function Users() {
             } else {
                 toast.error(result.message);
             }
+
+            setSubmitting(false);
             return result;
         });
     };
@@ -182,7 +191,7 @@ export default function Users() {
         },
     ];
 
-    const renderCell = React.useCallback(
+    const renderCell = useCallback(
         (user: User, columnKey: React.Key) => {
             const cellValue: any = user[columnKey as keyof typeof user];
 
@@ -501,6 +510,7 @@ export default function Users() {
                                     type="submit"
                                     color="primary"
                                     className="bg-green-600"
+                                    isLoading={submitting}
                                 >
                                     Kaydet
                                 </Button>

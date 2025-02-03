@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import useSWR from "swr";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -20,6 +20,7 @@ import DataTable from "@/components/DataTable";
 import BoolChip from "@/components/BoolChip";
 import RegInfo from "@/components/buttons/RegInfo";
 import DeleteButton from "@/components/buttons/DeleteButton";
+
 import { DateTimeFormat } from "@/utils/date";
 import { activeOptions } from "@/lib/constants";
 import { BiInfoCircle, BiTrash } from "react-icons/bi";
@@ -34,8 +35,10 @@ interface IFormInput {
 }
 
 export default function ProductTypes() {
-    const [isNew, setIsNew] = useState(false);
     const { user: currUser } = useUserStore();
+
+    const [isNew, setIsNew] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
 
     const { data, error, mutate } = useSWR("/api/productType");
@@ -45,6 +48,7 @@ export default function ProductTypes() {
         defaultValues: { active: true },
     });
     const onSubmitNew: SubmitHandler<IFormInput> = async (data) => {
+        setSubmitting(true);
         data.createdBy = currUser?.username ?? "";
 
         await fetch("/api/productType", {
@@ -61,10 +65,14 @@ export default function ProductTypes() {
             } else {
                 toast.error(result.message);
             }
+
+            setSubmitting(false);
             return result;
         });
     };
+
     const onSubmitUpdate: SubmitHandler<IFormInput> = async (data) => {
+        setSubmitting(true);
         data.updatedBy = currUser?.username ?? "";
 
         await fetch(`/api/productType/${data.id}`, {
@@ -81,6 +89,8 @@ export default function ProductTypes() {
             } else {
                 toast.error(result.message);
             }
+
+            setSubmitting(false);
             return result;
         });
     };
@@ -134,7 +144,7 @@ export default function ProductTypes() {
         },
     ];
 
-    const renderCell = React.useCallback(
+    const renderCell = useCallback(
         (productType: ProductType, columnKey: React.Key) => {
             const cellValue: any =
                 productType[columnKey as keyof typeof productType];
@@ -303,6 +313,7 @@ export default function ProductTypes() {
                                     type="submit"
                                     color="success"
                                     className="text-white bg-green-600"
+                                    isLoading={submitting}
                                 >
                                     Kaydet
                                 </Button>

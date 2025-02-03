@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import useSWR from "swr";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -20,6 +20,7 @@ import BoolChip from "@/components/BoolChip";
 import DataTable from "@/components/DataTable";
 import RegInfo from "@/components/buttons/RegInfo";
 import DeleteButton from "@/components/buttons/DeleteButton";
+
 import { activeOptions } from "@/lib/constants";
 import { DateTimeFormat } from "@/utils/date";
 import { BiTrash, BiInfoCircle } from "react-icons/bi";
@@ -34,9 +35,11 @@ type IFormInput = {
 };
 
 export default function BrandsPage() {
-    const [isNew, setIsNew] = useState(false);
     const { user: currUser } = useUserStore();
+
+    const [isNew, setIsNew] = useState(false);
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
+    const [submitting, setSubmitting] = useState(false);
 
     const { data, error, mutate } = useSWR("/api/brand");
 
@@ -45,6 +48,7 @@ export default function BrandsPage() {
         defaultValues: { active: true },
     });
     const onSubmitNew: SubmitHandler<IFormInput> = async (data) => {
+        setSubmitting(true);
         data.createdBy = currUser?.username ?? "";
 
         await fetch("/api/brand", {
@@ -61,10 +65,14 @@ export default function BrandsPage() {
             } else {
                 toast.error(result.message);
             }
+
+            setSubmitting(false);
             return result;
         });
     };
+
     const onSubmitUpdate: SubmitHandler<IFormInput> = async (data) => {
+        setSubmitting(true);
         data.updatedBy = currUser?.username ?? "";
 
         await fetch(`/api/brand/${data.id}`, {
@@ -81,6 +89,8 @@ export default function BrandsPage() {
             } else {
                 toast.error(result.message);
             }
+
+            setSubmitting(false);
             return result;
         });
     };
@@ -136,7 +146,7 @@ export default function BrandsPage() {
         },
     ];
 
-    const renderCell = React.useCallback(
+    const renderCell = useCallback(
         (brand: Brand, columnKey: React.Key) => {
             const cellValue: any = brand[columnKey as keyof typeof brand];
 
@@ -307,6 +317,7 @@ export default function BrandsPage() {
                                     type="submit"
                                     color="success"
                                     className="text-white bg-green-600"
+                                    isLoading={submitting}
                                 >
                                     Kaydet
                                 </Button>

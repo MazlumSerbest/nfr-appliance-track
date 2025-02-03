@@ -1,7 +1,7 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import useSWR from "swr";
-import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import { useForm, SubmitHandler, Controller, set } from "react-hook-form";
 import toast from "react-hot-toast";
 
 import {
@@ -21,6 +21,7 @@ import AutoComplete from "@/components/AutoComplete";
 import BoolChip from "@/components/BoolChip";
 import RegInfo from "@/components/buttons/RegInfo";
 import DeleteButton from "@/components/buttons/DeleteButton";
+
 import { DateTimeFormat } from "@/utils/date";
 import { activeOptions } from "@/lib/constants";
 import { BiInfoCircle, BiTrash } from "react-icons/bi";
@@ -40,10 +41,12 @@ interface IFormInput {
 }
 
 export default function LicenseTypes() {
+    const { user: currUser } = useUserStore();
+
     const [isNew, setIsNew] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
     const [brands, setBrands] = useState<ListBoxItem[] | null>(null);
-    const { user: currUser } = useUserStore();
 
     const { data, error, mutate } = useSWR("/api/licenseType");
 
@@ -53,6 +56,7 @@ export default function LicenseTypes() {
     });
 
     const onSubmitNew: SubmitHandler<IFormInput> = async (data) => {
+        setSubmitting(true);
         data.createdBy = currUser?.username ?? "";
         data.duration = Number(data.duration);
         data.price = 0;
@@ -71,11 +75,14 @@ export default function LicenseTypes() {
             } else {
                 toast.error(result.message);
             }
+
+            setSubmitting(false);
             return result;
         });
     };
 
     const onSubmitUpdate: SubmitHandler<IFormInput> = async (data) => {
+        setSubmitting(true);
         data.updatedBy = currUser?.username ?? "";
         data.duration = Number(data.duration);
         data.price = 0;
@@ -95,6 +102,8 @@ export default function LicenseTypes() {
             } else {
                 toast.error(result.message);
             }
+
+            setSubmitting(false);
             return result;
         });
     };
@@ -168,7 +177,7 @@ export default function LicenseTypes() {
         },
     ];
 
-    const renderCell = React.useCallback(
+    const renderCell = useCallback(
         (licenseType: vLicenseType, columnKey: React.Key) => {
             const cellValue: any =
                 licenseType[columnKey as keyof typeof licenseType];
@@ -386,6 +395,7 @@ export default function LicenseTypes() {
                                     type="submit"
                                     color="success"
                                     className="text-white bg-green-600"
+                                    isLoading={submitting}
                                 >
                                     Kaydet
                                 </Button>

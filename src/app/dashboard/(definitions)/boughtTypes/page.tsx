@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import useSWR from "swr";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -20,6 +20,7 @@ import DataTable from "@/components/DataTable";
 import BoolChip from "@/components/BoolChip";
 import RegInfo from "@/components/buttons/RegInfo";
 import DeleteButton from "@/components/buttons/DeleteButton";
+
 import { DateTimeFormat } from "@/utils/date";
 import { activeOptions } from "@/lib/constants";
 import { BiInfoCircle, BiTrash } from "react-icons/bi";
@@ -34,9 +35,11 @@ interface IFormInput {
 }
 
 export default function BoughtTypes() {
-    const [isNew, setIsNew] = useState(false);
     const { user: currUser } = useUserStore();
+
+    const [isNew, setIsNew] = useState(false);
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
+    const [submitting, setSubmitting] = useState(false);
 
     const { data, error, mutate } = useSWR("/api/boughtType");
 
@@ -45,6 +48,7 @@ export default function BoughtTypes() {
         defaultValues: { active: true },
     });
     const onSubmitNew: SubmitHandler<IFormInput> = async (data) => {
+        setSubmitting(true);
         data.createdBy = currUser?.username ?? "";
 
         await fetch("/api/boughtType", {
@@ -61,10 +65,14 @@ export default function BoughtTypes() {
             } else {
                 toast.error(result.message);
             }
+
+            setSubmitting(false);
             return result;
         });
     };
+
     const onSubmitUpdate: SubmitHandler<IFormInput> = async (data) => {
+        setSubmitting(true);
         data.updatedBy = currUser?.username ?? "";
 
         await fetch(`/api/boughtType/${data.id}`, {
@@ -81,6 +89,8 @@ export default function BoughtTypes() {
             } else {
                 toast.error(result.message);
             }
+
+            setSubmitting(false);
             return result;
         });
     };
@@ -134,7 +144,7 @@ export default function BoughtTypes() {
         },
     ];
 
-    const renderCell = React.useCallback(
+    const renderCell = useCallback(
         (boughtType: BoughtType, columnKey: React.Key) => {
             const cellValue: any =
                 boughtType[columnKey as keyof typeof boughtType];
@@ -239,6 +249,7 @@ export default function BoughtTypes() {
                           }
                 }
             />
+
             <Modal
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}
@@ -322,6 +333,7 @@ export default function BoughtTypes() {
                                     type="submit"
                                     color="success"
                                     className="text-white bg-green-600"
+                                    isLoading={submitting}
                                 >
                                     Kaydet
                                 </Button>

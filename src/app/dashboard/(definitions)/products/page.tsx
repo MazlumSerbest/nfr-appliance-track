@@ -1,7 +1,7 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import useSWR from "swr";
-import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import { useForm, SubmitHandler, Controller, set } from "react-hook-form";
 import toast from "react-hot-toast";
 
 import {
@@ -21,6 +21,7 @@ import DataTable from "@/components/DataTable";
 import AutoComplete from "@/components/AutoComplete";
 import RegInfo from "@/components/buttons/RegInfo";
 import DeleteButton from "@/components/buttons/DeleteButton";
+
 import { activeOptions } from "@/lib/constants";
 import { DateTimeFormat } from "@/utils/date";
 import { BiTrash, BiInfoCircle } from "react-icons/bi";
@@ -40,13 +41,15 @@ type IFormInput = {
 };
 
 export default function Products() {
+    const { user: currUser } = useUserStore();
+
     const [isNew, setIsNew] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
     const [brands, setBrands] = useState<ListBoxItem[] | null>(null);
     const [productTypes, setProductTypes] = useState<ListBoxItem[] | null>(
         null,
     );
-    const { user: currUser } = useUserStore();
 
     const { data, error, mutate } = useSWR("/api/product");
 
@@ -56,6 +59,7 @@ export default function Products() {
     });
 
     const onSubmitNew: SubmitHandler<IFormInput> = async (data) => {
+        setSubmitting(true);
         data.createdBy = currUser?.username ?? "";
 
         await fetch("/api/product", {
@@ -72,11 +76,14 @@ export default function Products() {
             } else {
                 toast.error(result.message);
             }
+
+            setSubmitting(false);
             return result;
         });
     };
 
     const onSubmitUpdate: SubmitHandler<IFormInput> = async (data) => {
+        setSubmitting(true);
         data.updatedBy = currUser?.username ?? "";
 
         delete data["brandName"];
@@ -96,6 +103,8 @@ export default function Products() {
             } else {
                 toast.error(result.message);
             }
+
+            setSubmitting(false);
             return result;
         });
     };
@@ -171,7 +180,7 @@ export default function Products() {
         },
     ];
 
-    const renderCell = React.useCallback(
+    const renderCell = useCallback(
         (product: vProduct, columnKey: React.Key) => {
             const cellValue: any = product[columnKey as keyof typeof product];
 
@@ -398,6 +407,7 @@ export default function Products() {
                                     type="submit"
                                     color="success"
                                     className="text-white bg-green-600"
+                                    isLoading={submitting}
                                 >
                                     Kaydet
                                 </Button>
