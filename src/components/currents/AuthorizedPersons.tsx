@@ -27,7 +27,6 @@ import RegInfo from "../buttons/RegInfo";
 import DeleteButton from "../buttons/DeleteButton";
 import toast from "react-hot-toast";
 import { currentTypes } from "@/lib/constants";
-import { newAuthorizedPerson, updateAuthorizedPerson } from "@/lib/prisma";
 
 interface IFormInput {
     id: number;
