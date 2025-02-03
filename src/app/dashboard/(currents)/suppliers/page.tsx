@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useCallback, useState } from "react";
 import useSWR from "swr";
 import { useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -42,11 +42,14 @@ interface IFormInput {
 export default function Suppliers() {
     const router = useRouter();
     const { user: currUser } = useUserStore();
+
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
+    const [submitting, setSubmitting] = useState(false);
 
     //#region Form
     const { register, reset, handleSubmit } = useForm<IFormInput>({});
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+        setSubmitting(true);
         data.createdBy = currUser?.username ?? "";
         data.type = "supplier";
 
@@ -64,6 +67,8 @@ export default function Suppliers() {
             } else {
                 toast.error(result.message);
             }
+
+            setSubmitting(false);
             return result;
         });
     };
@@ -156,7 +161,7 @@ export default function Suppliers() {
         },
     ];
 
-    const renderCell = React.useCallback(
+    const renderCell = useCallback(
         (supplier: Current, columnKey: React.Key) => {
             const cellValue: any = supplier[columnKey as keyof typeof supplier];
 
@@ -442,6 +447,7 @@ export default function Suppliers() {
                                     type="submit"
                                     color="success"
                                     className="text-white bg-green-600"
+                                    isLoading={submitting}
                                 >
                                     Kaydet
                                 </Button>

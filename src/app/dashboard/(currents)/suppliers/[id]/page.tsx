@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
 import toast from "react-hot-toast";
@@ -42,10 +43,13 @@ export default function SupplierDetail({ params }: { params: { id: string } }) {
     const router = useRouter();
     const { user: currUser } = useUserStore();
 
+    const [submitting, setSubmitting] = useState(false);
+
     //#region Form
     const { register, reset, handleSubmit, control } = useForm<IFormInput>();
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+        setSubmitting(true);
         data.updatedBy = currUser?.username ?? "";
         delete data["authorizedPersons"];
         delete data["addresses"];
@@ -62,6 +66,8 @@ export default function SupplierDetail({ params }: { params: { id: string } }) {
             } else {
                 toast.error(result.message);
             }
+
+            setSubmitting(false);
             return result;
         });
     };
@@ -419,6 +425,7 @@ export default function SupplierDetail({ params }: { params: { id: string } }) {
                             type="submit"
                             color="primary"
                             className="text-white bg-green-600"
+                            isLoading={submitting}
                         >
                             Kaydet
                         </Button>

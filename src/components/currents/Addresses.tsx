@@ -25,7 +25,6 @@ import RegInfo from "../buttons/RegInfo";
 import DeleteButton from "../buttons/DeleteButton";
 import toast from "react-hot-toast";
 import { currentTypes } from "@/lib/constants";
-import { newAddress, updateAddress } from "@/lib/prisma";
 
 interface IFormInput {
     id: number;
@@ -50,37 +49,60 @@ export default function Addresses({
     addressList,
     mutate,
 }: Props) {
-    const [isNew, setIsNew] = useState(false);
-    const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
     const { user: currUser } = useUserStore();
 
+    const [isNew, setIsNew] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+    const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
+
     //#region Form
-    const { register, reset, resetField, handleSubmit, control } =
-        useForm<IFormInput>();
+    const { register, reset, handleSubmit, control } = useForm<IFormInput>();
 
     const onSubmitNew: SubmitHandler<IFormInput> = async (data: any) => {
+        setSubmitting(true);
         data.createdBy = currUser?.username ?? "";
         data.currentId = currentId;
 
-        const res = await newAddress(data, currUser?.username);
-        if (res) {
-            onClose();
-            reset({});
-            mutate();
-            toast.success("Adres eklendi!");
-        } else toast.error("Bir hata oluştu! Lütfen tekrar deneyiniz.");
+        await fetch("/api/current/address", {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: { "Content-Type": "application/json" },
+        }).then(async (res) => {
+            const result = await res.json();
+            if (result.ok) {
+                toast.success(result.message);
+                mutate();
+                onClose();
+            } else {
+                toast.error(result.message);
+            }
+
+            setSubmitting(false);
+            return result;
+        });
     };
     const onSubmitUpdate: SubmitHandler<IFormInput> = async (data: any) => {
+        setSubmitting(true);
         data.updatedBy = currUser?.username ?? "";
         data.currentId = currentId;
 
-        const res = await updateAddress(data, currUser?.username);
-        if (res) {
-            onClose();
-            reset({});
-            mutate();
-            toast.success("Adres güncellendi!");
-        } else toast.error("Bir hata oluştu! Lütfen tekrar deneyiniz.");
+        await fetch(`/api/current/address/${data.id}`, {
+            method: "PUT",
+            body: JSON.stringify(data),
+            headers: { "Content-Type": "application/json" },
+        }).then(async (res) => {
+            const result = await res.json();
+            if (result.ok) {
+                toast.success(result.message);
+                mutate();
+                onClose();
+            } else {
+                toast.error(result.message);
+            }
+
+            setSubmitting(false);
+            return result;
+        });
     };
     //#endregion
 
@@ -310,6 +332,7 @@ export default function Addresses({
                                     type="submit"
                                     color="success"
                                     className="text-white bg-green-600"
+                                    isLoading={submitting}
                                 >
                                     Kaydet
                                 </Button>
