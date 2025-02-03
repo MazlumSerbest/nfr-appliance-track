@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, set } from "react-hook-form";
 
 import { Accordion, AccordionItem } from "@heroui/accordion";
 import {
@@ -54,37 +54,61 @@ export default function AuthorizedPersons({
     personList,
     mutate,
 }: Props) {
-    const [isNew, setIsNew] = useState(false);
-    const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
     const { user: currUser } = useUserStore();
 
+    const [isNew, setIsNew] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+    const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
+
     //#region Form
-    const { register, reset, resetField, handleSubmit, control } =
-        useForm<IFormInput>();
+    const { register, reset, handleSubmit } = useForm<IFormInput>();
 
     const onSubmitNew: SubmitHandler<IFormInput> = async (data: any) => {
+        setSubmitting(true);
         data.createdBy = currUser?.username ?? "";
         data.currentId = currentId;
 
-        const res = await newAuthorizedPerson(data, currUser?.username);
-        if (res) {
-            onClose();
-            reset({});
-            mutate();
-            toast.success("Yetkili eklendi!");
-        } else toast.error("Bir hata oluştu! Lütfen tekrar deneyiniz.");
+        await fetch("/api/current/authorizedPerson", {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: { "Content-Type": "application/json" },
+        }).then(async (res) => {
+            const result = await res.json();
+            if (result.ok) {
+                toast.success(result.message);
+                mutate();
+                onClose();
+            } else {
+                toast.error(result.message);
+            }
+
+            setSubmitting(false);
+            return result;
+        });
     };
+
     const onSubmitUpdate: SubmitHandler<IFormInput> = async (data: any) => {
+        setSubmitting(true);
         data.updatedBy = currUser?.username ?? "";
         data.currentId = currentId;
 
-        const res = await updateAuthorizedPerson(data, currUser?.username);
-        if (res) {
-            onClose();
-            reset({});
-            mutate();
-            toast.success("Yetkili güncellendi!");
-        } else toast.error("Bir hata oluştu! Lütfen tekrar deneyiniz.");
+        await fetch(`/api/current/authorizedPerson/${data.id}`, {
+            method: "PUT",
+            body: JSON.stringify(data),
+            headers: { "Content-Type": "application/json" },
+        }).then(async (res) => {
+            const result = await res.json();
+            if (result.ok) {
+                toast.success(result.message);
+                mutate();
+                onClose();
+            } else {
+                toast.error(result.message);
+            }
+
+            setSubmitting(false);
+            return result;
+        });
     };
     //#endregion
 
@@ -414,6 +438,7 @@ export default function AuthorizedPersons({
                                     type="submit"
                                     color="success"
                                     className="text-white bg-green-600"
+                                    isLoading={submitting}
                                 >
                                     Kaydet
                                 </Button>
