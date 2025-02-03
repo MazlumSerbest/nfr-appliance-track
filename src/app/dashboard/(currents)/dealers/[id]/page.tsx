@@ -14,6 +14,7 @@ import RegInfo from "@/components/buttons/RegInfo";
 import DeleteButton from "@/components/buttons/DeleteButton";
 import AuthorizedPersons from "@/components/currents/AuthorizedPersons";
 import Addresses from "@/components/currents/Addresses";
+
 import { BiMailSend, BiPhoneOutgoing, BiX, BiCopy } from "react-icons/bi";
 import useUserStore from "@/store/user";
 import { CopyToClipboard } from "@/utils/functions";
