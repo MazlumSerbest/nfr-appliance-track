@@ -2,10 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import prisma from "@/utils/db";
 
-export async function GET(
-    request: Request,
-    { params }: { params: { id: string } },
-) {
+export async function GET({ params }: { params: { id: string } }) {
     try {
         const session = await getServerSession();
 
@@ -35,47 +32,45 @@ export async function PUT(
     try {
         const session = await getServerSession();
 
-        if (session) {
-            const boughtType: BoughtType = await request.json();
-            boughtType.updatedAt = new Date().toISOString();
-
-            const updatedBoughtType = await prisma.boughtTypes.update({
-                where: {
-                    id: Number(params.id),
-                },
-                data: boughtType,
+        if (!session)
+            return NextResponse.json({
+                message: "Authorization Needed!",
+                status: 401,
+                ok: false,
             });
 
-            if (updatedBoughtType.id) {
-                await prisma.logs.create({
-                    data: {
-                        action: "update",
-                        table: "boughtTypes",
-                        user: updatedBoughtType.updatedBy || "",
-                        date: new Date().toISOString(),
-                        description: `Bought type updated: ${updatedBoughtType.id}`,
-                        data: JSON.stringify(updatedBoughtType),
-                    },
-                });
+        const boughtType: BoughtType = await request.json();
+        boughtType.updatedAt = new Date().toISOString();
 
-                return NextResponse.json({
-                    message: "Alım tipi başarıyla güncellendi!",
-                    status: 200,
-                    ok: true,
-                });
-            } else {
-                return NextResponse.json({
-                    message: "Alım tipi güncellenemedi!",
-                    status: 400,
-                    ok: false,
-                });
-            }
-        }
+        const updatedBoughtType = await prisma.boughtTypes.update({
+            where: {
+                id: Number(params.id),
+            },
+            data: boughtType,
+        });
+
+        if (!updatedBoughtType.id)
+            return NextResponse.json({
+                message: "Alım tipi güncellenemedi!",
+                status: 400,
+                ok: false,
+            });
+
+        await prisma.logs.create({
+            data: {
+                action: "update",
+                table: "boughtTypes",
+                user: updatedBoughtType.updatedBy || "",
+                date: new Date().toISOString(),
+                description: `Bought type updated: ${updatedBoughtType.id}`,
+                data: JSON.stringify(updatedBoughtType),
+            },
+        });
 
         return NextResponse.json({
-            message: "Authorization Needed!",
-            status: 401,
-            ok: false,
+            message: "Alım tipi başarıyla güncellendi!",
+            status: 200,
+            ok: true,
         });
     } catch (error) {
         return NextResponse.json({ message: error, status: 500, ok: false });

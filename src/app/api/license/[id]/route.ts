@@ -1,15 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import prisma from "@/utils/db";
 
-export async function GET(
-    request: Request,
-    { params }: { params: { id: string } },
-) {
+export async function GET({ params }: { params: { id: string } }) {
     try {
         const session = await getServerSession();
 
-        if (session) {
+        if (!session) {
             const data = await prisma.licenses.findUnique({
                 include: {
                     appliance: {
@@ -135,7 +132,7 @@ export async function GET(
                     },
                     supplier: {
                         select: { name: true },
-                    }
+                    },
                 },
                 where: {
                     id: Number(params.id),
@@ -144,154 +141,145 @@ export async function GET(
 
             return NextResponse.json(data);
         }
-
-        return NextResponse.json({
-            message: "Authorization Needed!",
-            status: 401,
-            ok: false,
-        });
     } catch (error) {
         return NextResponse.json({ message: error, status: 500, ok: false });
     }
 }
 
 export async function PUT(
-    request: Request,
+    request: NextRequest,
     { params }: { params: { id: string } },
 ) {
     try {
         const session = await getServerSession();
 
-        if (session) {
-            const license: License = await request.json();
-            license.updatedAt = new Date().toISOString();
-            license.startDate = license.startDate
-                ? new Date(license.startDate).toISOString()
-                : null;
-            license.expiryDate = license.expiryDate
-                ? new Date(license.expiryDate).toISOString()
-                : null;
-            license.boughtAt = license.boughtAt
-                ? new Date(license.boughtAt).toISOString()
-                : null;
-            license.soldAt = license.soldAt
-                ? new Date(license.soldAt).toISOString()
-                : null;
-            license.orderedAt = license.orderedAt
-                ? new Date(license.orderedAt).toISOString()
-                : null;
+        if (!session)
+            return NextResponse.json({
+                message: "Authorization Needed!",
+                status: 401,
+                ok: false,
+            });
 
-            license.applianceId ? (license.productId = null) : null;
+        const license: License = await request.json();
+        license.updatedAt = new Date().toISOString();
+        license.startDate = license.startDate
+            ? new Date(license.startDate).toISOString()
+            : null;
+        license.expiryDate = license.expiryDate
+            ? new Date(license.expiryDate).toISOString()
+            : null;
+        license.boughtAt = license.boughtAt
+            ? new Date(license.boughtAt).toISOString()
+            : null;
+        license.soldAt = license.soldAt
+            ? new Date(license.soldAt).toISOString()
+            : null;
+        license.orderedAt = license.orderedAt
+            ? new Date(license.orderedAt).toISOString()
+            : null;
 
-            // const checkSerialNo = await prisma.licenses.findUnique({
-            //     where: {
-            //         NOT: { id: Number(params.id) },
-            //         serialNo: license.serialNo,
-            //     },
-            //     select: {
-            //         serialNo: true,
-            //     },
-            // });
-            // if (checkSerialNo)
-            //     return NextResponse.json({
-            //         message: "Bu seri numarası önceden kullanılmıştır!",
-            //         status: 400,
-            //         ok: false,
-            //     });
+        license.applianceId ? (license.productId = null) : null;
 
-            const updatedLicense = await prisma.licenses.update({
-                data: license,
-                where: {
-                    id: Number(params.id),
+        // const checkSerialNo = await prisma.licenses.findUnique({
+        //     where: {
+        //         NOT: { id: Number(params.id) },
+        //         serialNo: license.serialNo,
+        //     },
+        //     select: {
+        //         serialNo: true,
+        //     },
+        // });
+        // if (checkSerialNo)
+        //     return NextResponse.json({
+        //         message: "Bu seri numarası önceden kullanılmıştır!",
+        //         status: 400,
+        //         ok: false,
+        //     });
+
+        const updatedLicense = await prisma.licenses.update({
+            data: license,
+            where: {
+                id: Number(params.id),
+            },
+        });
+
+        if (updatedLicense.id) {
+            await prisma.logs.create({
+                data: {
+                    action: "update",
+                    table: "licenses",
+                    user: updatedLicense.updatedBy || "",
+                    date: new Date().toISOString(),
+                    description: `License updated: ${updatedLicense.id}`,
+                    data: JSON.stringify(updatedLicense),
                 },
             });
 
-            if (updatedLicense.id) {
-                await prisma.logs.create({
-                    data: {
-                        action: "update",
-                        table: "licenses",
-                        user: updatedLicense.updatedBy || "",
-                        date: new Date().toISOString(),
-                        description: `License updated: ${updatedLicense.id}`,
-                        data: JSON.stringify(updatedLicense),
-                    },
-                });
-
-                return NextResponse.json({
-                    message: "Lisans başarıyla güncellendi!",
-                    status: 200,
-                    ok: true,
-                });
-            } else {
-                return NextResponse.json({
-                    message: "Lisans güncellenemedi!",
-                    status: 400,
-                    ok: false,
-                });
-            }
+            return NextResponse.json({
+                message: "Lisans başarıyla güncellendi!",
+                status: 200,
+                ok: true,
+            });
+        } else {
+            return NextResponse.json({
+                message: "Lisans güncellenemedi!",
+                status: 400,
+                ok: false,
+            });
         }
-
-        return NextResponse.json({
-            message: "Authorization Needed!",
-            status: 401,
-            ok: false,
-        });
     } catch (error) {
         return NextResponse.json({ message: error, status: 500, ok: false });
     }
 }
 
 export async function DELETE(
-    request: Request,
+    request: NextRequest,
     { params }: { params: { id: string } },
 ) {
     try {
         const session = await getServerSession();
 
-        if (session) {
-            const license: License = await request.json();
-            license.updatedAt = new Date().toISOString();
-
-            const deletedLicense = await prisma.licenses.update({
-                data: {
-                    deleted: true,
-                },
-                where: {
-                    id: Number(params.id),
-                },
+        if (!session)
+            return NextResponse.json({
+                message: "Authorization Needed!",
+                status: 401,
+                ok: false,
             });
 
-            if (deletedLicense.id) {
-                await prisma.logs.create({
-                    data: {
-                        action: "delete",
-                        table: "licenses",
-                        user: deletedLicense.updatedBy || "",
-                        date: new Date().toISOString(),
-                        description: `License deleted: ${deletedLicense.id}`,
-                        data: JSON.stringify(deletedLicense),
-                    },
-                });
+        const license: License = await request.json();
+        license.updatedAt = new Date().toISOString();
 
-                return NextResponse.json({
-                    message: "Lisans silindi!",
-                    status: 200,
-                    ok: true,
-                });
-            } else {
-                return NextResponse.json({
-                    message: "Lisans silinirken bir hata oluştu!",
-                    status: 400,
-                    ok: false,
-                });
-            }
-        }
+        const deletedLicense = await prisma.licenses.update({
+            data: {
+                deleted: true,
+            },
+            where: {
+                id: Number(params.id),
+            },
+        });
+
+        if (!deletedLicense.id)
+            return NextResponse.json({
+                message: "Lisans silinirken bir hata oluştu!",
+                status: 400,
+                ok: false,
+            });
+
+        await prisma.logs.create({
+            data: {
+                action: "delete",
+                table: "licenses",
+                user: deletedLicense.updatedBy || "",
+                date: new Date().toISOString(),
+                description: `License deleted: ${deletedLicense.id}`,
+                data: JSON.stringify(deletedLicense),
+            },
+        });
 
         return NextResponse.json({
-            message: "Authorization Needed!",
-            status: 401,
-            ok: false,
+            message: "Lisans silindi!",
+            status: 200,
+            ok: true,
         });
     } catch (error) {
         return NextResponse.json({ message: error, status: 500, ok: false });

@@ -1,11 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import prisma from "@/utils/db";
 
-export async function GET(
-    request: Request,
-    { params }: { params: { id: string } },
-) {
+export async function GET({ params }: { params: { id: string } }) {
     try {
         const session = await getServerSession();
 
@@ -43,7 +40,7 @@ export async function GET(
 }
 
 export async function PUT(
-    request: Request,
+    request: NextRequest,
     { params }: { params: { id: string } },
 ) {
     try {
