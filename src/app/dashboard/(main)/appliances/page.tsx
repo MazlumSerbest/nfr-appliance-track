@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import useSWR from "swr";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
@@ -19,6 +19,7 @@ import { Button } from "@heroui/button";
 import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
 import DataTable from "@/components/DataTable";
 import AutoComplete from "@/components/AutoComplete";
+
 import useUserStore from "@/store/user";
 import { DateFormat, DateTimeFormat } from "@/utils/date";
 import {
@@ -47,7 +48,10 @@ export default function Appliances() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { user: currUser } = useUserStore();
+
+    const [submitting, setSubmitting] = useState(false);
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
+
     const [selectedTab, setSelectedTab] = useState(() => {
         let param = searchParams.get("tab");
         if (param) return param;
@@ -86,6 +90,7 @@ export default function Appliances() {
     const { register, reset, handleSubmit, control } = useForm<IFormInput>({});
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+        setSubmitting(true);
         data.createdBy = currUser?.username ?? "";
 
         await fetch("/api/appliance", {
@@ -102,6 +107,8 @@ export default function Appliances() {
             } else {
                 toast.error(result.message);
             }
+
+            setSubmitting(false);
             return result;
         });
     };
@@ -203,7 +210,7 @@ export default function Appliances() {
         },
     ];
 
-    const renderCell = React.useCallback(
+    const renderCell = useCallback(
         (appliance: vAppliance, columnKey: React.Key) => {
             const cellValue: any =
                 appliance[columnKey as keyof typeof appliance];
@@ -331,6 +338,7 @@ export default function Appliances() {
                             }}
                         />
                     </Tab>
+
                     <Tab key="order" title="Sipariş" className="w-full">
                         <DataTable
                             storageKey="orderAppliances"
@@ -357,6 +365,7 @@ export default function Appliances() {
                             }}
                         />
                     </Tab>
+
                     <Tab key="active" title="Aktif" className="w-full">
                         <DataTable
                             storageKey="activeAppliances"
@@ -386,6 +395,7 @@ export default function Appliances() {
                             }}
                         />
                     </Tab>
+
                     <Tab key="demo" title="Demo" className="w-full">
                         <DataTable
                             storageKey="demoAppliances"
@@ -666,6 +676,7 @@ export default function Appliances() {
                                     type="submit"
                                     color="success"
                                     className="text-white bg-green-600"
+                                    isLoading={submitting}
                                 >
                                     Kaydet
                                 </Button>

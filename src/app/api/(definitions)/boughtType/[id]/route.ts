@@ -9,21 +9,20 @@ export async function GET(
     try {
         const session = await getServerSession();
 
-        if (session) {
-            const data = await prisma.boughtTypes.findUnique({
-                where: {
-                    id: Number(params.id),
-                },
+        if (!session)
+            return NextResponse.json({
+                message: "Authorization Needed!",
+                status: 401,
+                ok: false,
             });
 
-            return NextResponse.json(data);
-        }
-
-        return NextResponse.json({
-            message: "Authorization Needed!",
-            status: 401,
-            ok: false,
+        const data = await prisma.boughtTypes.findUnique({
+            where: {
+                id: Number(params.id),
+            },
         });
+
+        return NextResponse.json(data);
     } catch (error) {
         return NextResponse.json({ message: error, status: 500, ok: false });
     }

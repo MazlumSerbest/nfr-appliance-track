@@ -1,7 +1,7 @@
-import { useForm, Controller, SubmitHandler } from "react-hook-form";
+import { useState } from "react";
+import { useForm, Controller, SubmitHandler, set } from "react-hook-form";
 import toast from "react-hot-toast";
 
-import { useDisclosure } from "@heroui/modal";
 import { Button } from "@heroui/button";
 
 import AutoComplete from "@/components/AutoComplete";
@@ -30,7 +30,7 @@ type Props = {
     suppliers: ListBoxItem[];
 };
 
-export default function ApplicationForm({
+export default function ApplianceForm({
     license,
     onClose,
     products,
@@ -39,7 +39,8 @@ export default function ApplicationForm({
     suppliers,
 }: Props) {
     const { user: currUser } = useUserStore();
-    
+    const [submitting, setSubmitting] = useState(false);
+
     //#region Form
     const { register, reset, handleSubmit, control } = useForm<IFormInput>({
         defaultValues: {
@@ -58,6 +59,7 @@ export default function ApplicationForm({
             body: JSON.stringify(data),
             headers: { "Content-Type": "application/json" },
         }).then(async (res) => {
+            setSubmitting(true);
             const result = await res.json();
 
             if (result.ok) {
@@ -85,6 +87,8 @@ export default function ApplicationForm({
             } else {
                 toast.error(result.message);
             }
+
+            setSubmitting(false);
             return result;
         });
     };
@@ -290,6 +294,7 @@ export default function ApplicationForm({
                     type="submit"
                     color="success"
                     className="text-white bg-green-600"
+                    isLoading={submitting}
                 >
                     Kaydet
                 </Button>

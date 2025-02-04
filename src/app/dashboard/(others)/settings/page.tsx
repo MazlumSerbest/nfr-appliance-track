@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { set, SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
 import { Accordion, AccordionItem } from "@heroui/accordion";
@@ -35,14 +35,19 @@ interface IFormInputPassword {
 
 export default function Settings() {
     const { user: currUser } = useUserStore();
+
+    const [submittingUser, setSubmittingUser] = useState(false);
+    const [submittingPassword, setSubmittingPassword] = useState(false);
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
     const [saveSearchValue, setSaveSearchValue] = useState(false);
     const [saveCurrentPage, setSaveCurrentPage] = useState(false);
 
     //#region Form
     const { register, reset, handleSubmit } = useForm<IFormInput>({});
+
     const onSubmitUser: SubmitHandler<IFormInput> = async (data) => {
         if (!currUser) return;
+        setSubmittingUser(true);
         data.updatedBy = currUser.username ?? "";
 
         await fetch(`/api/user/${currUser.id}`, {
@@ -56,6 +61,8 @@ export default function Settings() {
             } else {
                 toast.error(result.message);
             }
+
+            setSubmittingUser(false);
             return result;
         });
     };
@@ -71,6 +78,7 @@ export default function Settings() {
         data,
     ) => {
         if (!currUser) return;
+        setSubmittingPassword(true);
         data.updatedBy = currUser.username ?? "";
 
         await fetch(`/api/user/${currUser.id}/password`, {
@@ -88,6 +96,8 @@ export default function Settings() {
             } else {
                 toast.error(result.message);
             }
+
+            setSubmittingPassword(false);
             return result;
         });
     };
@@ -201,6 +211,7 @@ export default function Settings() {
                                 type="submit"
                                 color="primary"
                                 className="bg-green-600"
+                                isLoading={submittingUser}
                             >
                                 Değişiklikleri Kaydet
                             </Button>
@@ -295,6 +306,7 @@ export default function Settings() {
                                     })}
                                 />
                             </div>
+
                             <div>
                                 <label
                                     htmlFor="newPassword"
@@ -322,6 +334,7 @@ export default function Settings() {
                                     })}
                                 />
                             </div>
+
                             <div>
                                 <label
                                     htmlFor="confirmNewPassword"
@@ -349,6 +362,7 @@ export default function Settings() {
                                     })}
                                 />
                             </div>
+
                             {
                                 <div className="flex flex-col gap-1">
                                     <p className="text-sm text-red-600">
@@ -359,6 +373,7 @@ export default function Settings() {
                                     </p>
                                 </div>
                             }
+
                             <div className="flex flex-row gap-2 mt-4">
                                 <div className="flex-1"></div>
                                 <Button variant="bordered" onPress={onClose}>
@@ -368,6 +383,7 @@ export default function Settings() {
                                     type="submit"
                                     color="success"
                                     className="text-white bg-green-600"
+                                    isLoading={submittingPassword}
                                 >
                                     Kaydet
                                 </Button>

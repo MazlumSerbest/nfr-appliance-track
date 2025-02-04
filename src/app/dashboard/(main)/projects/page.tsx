@@ -1,8 +1,8 @@
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import { useForm, SubmitHandler, Controller, set } from "react-hook-form";
 import toast from "react-hot-toast";
 
 import {
@@ -43,6 +43,8 @@ export default function Licenses() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { user: currUser } = useUserStore();
+
+    const [submitting, setSubmitting] = useState(false);
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
     const [selectedTab, setSelectedTab] = useState(() => {
         let param = searchParams.get("tab");
@@ -72,6 +74,7 @@ export default function Licenses() {
     //#region Form
     const { register, reset, handleSubmit, control } = useForm<IFormInput>();
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+        setSubmitting(true);
         data.createdBy = currUser?.username ?? "";
 
         await fetch("/api/project", {
@@ -88,6 +91,8 @@ export default function Licenses() {
             } else {
                 toast.error(result.message);
             }
+
+            setSubmitting(false);
             return result;
         });
     };
@@ -170,7 +175,7 @@ export default function Licenses() {
         },
     ];
 
-    const renderCell = React.useCallback(
+    const renderCell = useCallback(
         (project: vProject, columnKey: React.Key) => {
             const cellValue: any = project[columnKey as keyof typeof project];
 
@@ -497,6 +502,7 @@ export default function Licenses() {
                                     type="submit"
                                     color="success"
                                     className="text-white bg-green-600"
+                                    isLoading={submitting}
                                 >
                                     Kaydet
                                 </Button>

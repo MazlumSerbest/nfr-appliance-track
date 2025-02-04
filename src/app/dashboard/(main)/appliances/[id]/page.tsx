@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import useSWR from "swr";
 import { useRouter } from "next/navigation";
-import { SubmitHandler, useForm, Controller } from "react-hook-form";
+import { SubmitHandler, useForm, Controller, set } from "react-hook-form";
 import toast from "react-hot-toast";
 
 import { Card, CardBody, CardFooter } from "@heroui/card";
@@ -20,6 +20,7 @@ import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
 import RegInfo from "@/components/buttons/RegInfo";
 import DeleteButton from "@/components/buttons/DeleteButton";
 import AutoComplete from "@/components/AutoComplete";
+
 import {
     BiX,
     BiCheckShield,
@@ -82,6 +83,9 @@ export default function ApplianceDetail({
     const { user: currUser } = useUserStore();
     const [historyIsNew, setHistoryIsNew] = useState(false);
 
+    const [submitting, setSubmitting] = useState(false);
+    const [submittingDemo, setSubmittingDemo] = useState(false);
+    const [submittingHistory, setSubmittingHistory] = useState(false);
     const {
         isOpen: isOpenHistory,
         onClose: onCloseHistory,
@@ -99,8 +103,8 @@ export default function ApplianceDetail({
         useForm<IFormInput>({});
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+        setSubmitting(true);
         data.updatedBy = currUser?.username ?? "";
-        console.log(data);
 
         delete data["product"];
         delete data["licenses"];
@@ -122,6 +126,8 @@ export default function ApplianceDetail({
             } else {
                 toast.error(result.message);
             }
+
+            setSubmitting(false);
             return result;
         });
     };
@@ -135,6 +141,7 @@ export default function ApplianceDetail({
     } = useForm<IHistoryFormInput>();
 
     const onSubmitHistory: SubmitHandler<IHistoryFormInput> = async (d) => {
+        setSubmittingHistory(true);
         if (currUser) {
             const applianceWithNewHistory = {
                 id: data.id,
@@ -165,6 +172,8 @@ export default function ApplianceDetail({
                 } else {
                     toast.error(result.message);
                 }
+
+                setSubmittingHistory(false);
                 return result;
             });
         }
@@ -173,6 +182,7 @@ export default function ApplianceDetail({
     const onSubmitHistoryUpdate: SubmitHandler<IHistoryFormInput> = async (
         data,
     ) => {
+        setSubmittingHistory(true);
         if (currUser) {
             data.updatedBy = currUser?.username ?? "";
 
@@ -192,6 +202,8 @@ export default function ApplianceDetail({
                 } else {
                     toast.error(result.message);
                 }
+
+                setSubmittingHistory(false);
                 return result;
             });
         }
@@ -492,7 +504,9 @@ export default function ApplianceDetail({
                             <Button
                                 color="primary"
                                 className="bg-zinc-500"
-                                onClick={async () => {
+                                isLoading={submittingDemo}
+                                onPress={async () => {
+                                    setSubmittingDemo(true);
                                     const res = await setApplianceDemoStatus(
                                         data.id,
                                         !data.isDemo,
@@ -508,6 +522,8 @@ export default function ApplianceDetail({
                                         toast.error(
                                             "Cihaz durumu güncellenirken bir hata oluştu.",
                                         );
+
+                                    setSubmittingDemo(false);
                                 }}
                             >
                                 {data.isDemo
@@ -552,6 +568,7 @@ export default function ApplianceDetail({
                                 type="submit"
                                 color="primary"
                                 className="text-white bg-green-600"
+                                isLoading={submitting}
                             >
                                 Kaydet
                             </Button>
@@ -922,6 +939,7 @@ export default function ApplianceDetail({
                                     type="submit"
                                     color="success"
                                     className="text-white bg-green-600"
+                                    isLoading={submittingHistory}
                                 >
                                     Kaydet
                                 </Button>

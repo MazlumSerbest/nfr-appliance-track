@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import useSWR from "swr";
 import { useRouter } from "next/navigation";
-import { useForm, Controller, SubmitHandler } from "react-hook-form";
+import { useForm, Controller, SubmitHandler, set } from "react-hook-form";
 import toast from "react-hot-toast";
 
 import { Card, CardBody, CardFooter } from "@heroui/card";
@@ -48,7 +48,7 @@ import {
     getSuppliers,
     getBoughtTypes,
 } from "@/lib/data";
-import ApplicationForm from "@/components/ApplicationForm";
+import ApplianceForm from "@/components/ApplianceForm";
 import SendLicenseMail from "@/components/buttons/SendLicenseMail";
 
 interface IFormInput {
@@ -113,6 +113,10 @@ interface IHistoryFormInput {
 export default function LicenseDetail({ params }: { params: { id: string } }) {
     const router = useRouter();
     const { user: currUser } = useUserStore();
+
+    const [submitting, setSubmitting] = useState(false);
+    const [submittingAppliance, setSubmittingAppliance] = useState(false);
+    const [submittingHistory, setSubmittingHistory] = useState(false);
     const [historyIsNew, setHistoryIsNew] = useState(false);
     const {
         isOpen: isOpenApp,
@@ -160,6 +164,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         if (currUser) {
+            setSubmitting(true);
             data.updatedBy = currUser?.username ?? "";
             data.boughtTypeId = Number(data.boughtTypeId || undefined);
             data.productId = Number(data.productId || undefined);
@@ -186,6 +191,8 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                 } else {
                     toast.error(result.message);
                 }
+
+                setSubmitting(false);
                 return result;
             });
         }
@@ -193,6 +200,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
 
     const onSubmitApp: SubmitHandler<IFormInput> = async (data) => {
         if (currUser) {
+            setSubmittingAppliance(true);
             const updatedBy = currUser?.username ?? "";
 
             const lic = await setLicenseAppliance(
@@ -205,13 +213,14 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                 mutate();
                 toast.success("Lisans cihaza eklendi!");
             } else toast.error("Bir hata oluştu! Lütfen tekrar deneyiniz.");
+
+            setSubmittingAppliance(false);
         }
     };
 
     const {
         register: registerHistory,
         reset: resetHistory,
-        setValue: setHistoryValue,
         resetField: resetHistoryField,
         handleSubmit: handleHistorySubmit,
         control: controlHistory,
@@ -219,6 +228,8 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
 
     const onSubmitHistory: SubmitHandler<IHistoryFormInput> = async (d) => {
         if (currUser) {
+            setSubmittingHistory(true);
+
             const licenseWithNewHistory = {
                 id: data.id,
                 serialNo: d.serialNo || null,
@@ -270,6 +281,8 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                 } else {
                     toast.error(result.message);
                 }
+
+                setSubmittingHistory(false);
                 return result;
             });
         }
@@ -279,6 +292,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
         data,
     ) => {
         if (currUser) {
+            setSubmittingHistory(true);
             data.updatedBy = currUser?.username ?? "";
             data.licenseTypeId = Number(data.licenseTypeId);
             data.boughtTypeId = Number(data.boughtTypeId || undefined);
@@ -306,6 +320,8 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                 } else {
                     toast.error(result.message);
                 }
+
+                setSubmittingHistory(false);
                 return result;
             });
         }
@@ -935,6 +951,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                 type="submit"
                                 color="primary"
                                 className="text-white bg-green-600"
+                                isLoading={submitting}
                             >
                                 Kaydet
                             </Button>
@@ -1446,6 +1463,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                             type="submit"
                                             color="success"
                                             className="text-white bg-green-600"
+                                            isLoading={submittingAppliance}
                                         >
                                             Kaydet
                                         </Button>
@@ -1453,7 +1471,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                 </form>
                             </Tab>
                             <Tab key="new" title="Yeni" className="w-full">
-                                <ApplicationForm
+                                <ApplianceForm
                                     license={data}
                                     onClose={onCloseApp}
                                     products={products || []}
@@ -1552,6 +1570,8 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                         field: { onChange, value },
                                     }) => (
                                         <AutoComplete
+                                            value={value}
+                                            data={appliances || []}
                                             onChange={async (v) => {
                                                 onChange(v);
 
@@ -1579,8 +1599,6 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                                     // );
                                                 });
                                             }}
-                                            value={value}
-                                            data={appliances || []}
                                         />
                                     )}
                                 />
@@ -1866,6 +1884,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                     type="submit"
                                     color="success"
                                     className="text-white bg-green-600"
+                                    isLoading={submittingHistory}
                                 >
                                     Kaydet
                                 </Button>

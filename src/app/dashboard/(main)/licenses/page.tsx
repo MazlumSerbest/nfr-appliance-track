@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import useSWR from "swr";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm, SubmitHandler, Controller, set } from "react-hook-form";
@@ -21,6 +21,7 @@ import DataTable from "@/components/DataTable";
 import BoolChip from "@/components/BoolChip";
 import IconChip from "@/components/IconChip";
 import AutoComplete from "@/components/AutoComplete";
+
 import {
     BiCheckCircle,
     BiErrorCircle,
@@ -64,7 +65,10 @@ export default function Licenses() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { user: currUser } = useUserStore();
+
+    const [submitting, setSubmitting] = useState(false);
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
+
     const [selectedTab, setSelectedTab] = useState(() => {
         let param = searchParams.get("tab");
         if (param) return param;
@@ -104,7 +108,9 @@ export default function Licenses() {
     //#region Form
     const { register, reset, resetField, handleSubmit, control, setValue } =
         useForm<IFormInput>();
+
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+        setSubmitting(true);
         data.createdBy = currUser?.username ?? "";
         data.boughtTypeId = Number(data.boughtTypeId || undefined);
         data.productId = Number(data.productId || undefined);
@@ -123,6 +129,8 @@ export default function Licenses() {
             } else {
                 toast.error(result.message);
             }
+
+            setSubmitting(false);
             return result;
         });
     };
@@ -265,7 +273,7 @@ export default function Licenses() {
         },
     ];
 
-    const renderCell = React.useCallback(
+    const renderCell = useCallback(
         (license: vLicense, columnKey: React.Key) => {
             const cellValue: any = license[columnKey as keyof typeof license];
 
@@ -999,6 +1007,7 @@ export default function Licenses() {
                                     type="submit"
                                     color="success"
                                     className="text-white bg-green-600"
+                                    isLoading={submitting}
                                 >
                                     Kaydet
                                 </Button>

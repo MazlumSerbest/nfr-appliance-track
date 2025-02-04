@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
@@ -38,6 +38,7 @@ export default function Connections() {
     const router = useRouter();
     const { user: currUser } = useUserStore();
 
+    const [submitting, setSubmitting] = useState(false);
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
     const [customers, setCustomers] = useState<ListBoxItem[] | null>(null);
     const [brands, setBrands] = useState<ListBoxItem[] | null>(null);
@@ -47,6 +48,7 @@ export default function Connections() {
     //#region Form
     const { register, reset, handleSubmit, control } = useForm<IFormInput>();
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+        setSubmitting(true);
         data.createdBy = currUser?.username ?? "";
 
         await fetch("/api/connection", {
@@ -63,6 +65,8 @@ export default function Connections() {
             } else {
                 toast.error(result.message);
             }
+
+            setSubmitting(false);
             return result;
         });
     };
@@ -148,7 +152,7 @@ export default function Connections() {
         },
     ];
 
-    const renderCell = React.useCallback(
+    const renderCell = useCallback(
         (connection: Connection, columnKey: React.Key) => {
             const cellValue: any =
                 connection[columnKey as keyof typeof connection];
@@ -404,6 +408,7 @@ export default function Connections() {
                                     type="submit"
                                     color="success"
                                     className="text-white bg-green-600"
+                                    isLoading={submitting}
                                 >
                                     Kaydet
                                 </Button>

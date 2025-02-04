@@ -52,6 +52,9 @@ export default function ConnectionDetail({
 }) {
     const router = useRouter();
     const { user: currUser } = useUserStore();
+
+    const [submitting, setSubmitting] = useState(false);
+    const [submittingControl, setSubmittingControl] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [customers, setCustomers] = useState<ListBoxItem[] | null>(null);
     const [brands, setBrands] = useState<ListBoxItem[] | null>(null);
@@ -372,7 +375,10 @@ export default function ConnectionDetail({
                                             variant="solid"
                                             color="danger"
                                             className="bg-yellow-500"
+                                            isLoading={submittingControl}
                                             onPress={async () => {
+                                                setSubmittingControl(true);
+
                                                 const control = {
                                                     userId: currUser?.id,
                                                     createdBy:
@@ -405,6 +411,8 @@ export default function ConnectionDetail({
                                                             result.message,
                                                         );
                                                     }
+
+                                                    setSubmittingControl(false);
                                                     return result;
                                                 });
                                             }}
@@ -443,6 +451,7 @@ export default function ConnectionDetail({
                             type="submit"
                             color="primary"
                             className="text-white bg-green-600"
+                            isLoading={submitting}
                         >
                             Kaydet
                         </Button>

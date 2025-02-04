@@ -42,6 +42,8 @@ export default function ProjectDetail({ params }: { params: { id: string } }) {
     const router = useRouter();
     const { user: currUser } = useUserStore();
 
+    const [submitting, setSubmitting] = useState(false);
+
     const [customers, setCustomers] = useState<ListBoxItem[] | null>(null);
     const [dealers, setDealers] = useState<ListBoxItem[] | null>(null);
     const [products, setProducts] = useState<ListBoxItem[] | null>(null);
@@ -53,6 +55,7 @@ export default function ProjectDetail({ params }: { params: { id: string } }) {
     const { register, reset, setValue, handleSubmit, control } =
         useForm<IFormInput>();
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+        setSubmitting(true);
         data.updatedBy = currUser?.username ?? "";
         delete data["customer"];
         delete data["dealer"];
@@ -71,6 +74,8 @@ export default function ProjectDetail({ params }: { params: { id: string } }) {
             } else {
                 toast.error(result.message);
             }
+
+            setSubmitting(false);
             return result;
         });
     };
@@ -305,6 +310,7 @@ export default function ProjectDetail({ params }: { params: { id: string } }) {
                                 type="submit"
                                 color="primary"
                                 className="text-white bg-green-600"
+                                isLoading={submitting}
                             >
                                 Kaydet
                             </Button>
