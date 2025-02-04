@@ -278,6 +278,7 @@ export default function DataTable({
                             ) : (
                                 <></>
                             )}
+                            
                             <Dropdown>
                                 <DropdownTrigger className="hidden sm:flex">
                                     <Button
@@ -329,6 +330,7 @@ export default function DataTable({
                                     ))}
                                 </DropdownMenu>
                             </Dropdown>
+
                             {onAddNew ? (
                                 <Button
                                     color="primary"

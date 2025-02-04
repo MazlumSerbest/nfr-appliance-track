@@ -5,7 +5,7 @@ import bcrypt from "bcrypt";
 
 export async function PUT(
     request: NextRequest,
-    { params }: { params: { id: string; reset: boolean } },
+    { params }: { params: { id: string } },
 ) {
     try {
         const session = await getServerSession();

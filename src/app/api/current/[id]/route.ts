@@ -3,7 +3,10 @@ import { getServerSession } from "next-auth";
 import prisma from "@/utils/db";
 import { currentTypes } from "@/lib/constants";
 
-export async function GET({ params }: { params: { id: string } }) {
+export async function GET(
+    request: NextRequest,
+    { params }: { params: { id: string } },
+) {
     try {
         const session = await getServerSession();
 

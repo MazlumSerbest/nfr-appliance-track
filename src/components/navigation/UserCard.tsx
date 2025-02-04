@@ -11,9 +11,9 @@ import { BiLogOut } from "react-icons/bi";
 import useUserStore from "@/store/user";
 
 export default function UserCard() {
-    const { isOpen, onClose, onOpenChange } = useDisclosure();
     const { data: session } = useSession();
     const { user, updateUser } = useUserStore();
+    const { isOpen, onClose, onOpenChange } = useDisclosure();
 
     useEffect(() => {
         if (session?.user) {
@@ -92,7 +92,7 @@ export default function UserCard() {
                                     variant="solid"
                                     color="danger"
                                     className="bg-red-600"
-                                    onClick={() => signOut()}
+                                    onPress={() => signOut()}
                                 >
                                     Çıkış Yap
                                 </Button>
