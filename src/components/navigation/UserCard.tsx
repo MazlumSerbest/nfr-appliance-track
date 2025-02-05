@@ -41,9 +41,9 @@ export default function UserCard() {
     return (
         <>
             {user ? (
-                <div className="flex gap-2 items-center">
+                <div className="flex items-center">
                     <NextLink
-                        className="group flex-1 flex gap-2 items-center"
+                        className="group truncate flex-1 flex gap-2 items-center"
                         href={"/dashboard/settings"}
                     >
                         <Avatar
@@ -53,15 +53,17 @@ export default function UserCard() {
                                 icon: "text-sky-400",
                             }}
                         />
-                        <div className="flex-1 min-w-0 hover:">
-                            <p className="truncate text-sm font-bold text-sky-500 group-hover:underline">
+
+                        <div className="flex-1 min-w-0 *:truncate">
+                            <p className="text-sm font-bold text-sky-500 group-hover:underline">
                                 {user?.name ?? user?.username}
                             </p>
-                            <p className="truncate text-xs text-zinc-500">
+                            <p className="text-xs text-zinc-500">
                                 {user?.email}
                             </p>
                         </div>
                     </NextLink>
+
                     <Popover
                         placement="top"
                         isOpen={isOpen}
