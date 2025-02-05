@@ -9,141 +9,146 @@ export async function GET(
     try {
         const session = await getServerSession();
 
-        if (!session) {
-            const data = await prisma.licenses.findUnique({
-                include: {
-                    appliance: {
-                        select: {
-                            id: true,
-                            serialNo: true,
-                            boughtAt: true,
-                            soldAt: true,
-                            product: {
-                                select: {
-                                    model: true,
-                                    brand: {
-                                        select: {
-                                            name: true,
-                                        },
+        if (!session)
+            return NextResponse.json({
+                message: "Authorization Needed!",
+                status: 401,
+                ok: false,
+            });
+
+        const data = await prisma.licenses.findUnique({
+            include: {
+                appliance: {
+                    select: {
+                        id: true,
+                        serialNo: true,
+                        boughtAt: true,
+                        soldAt: true,
+                        product: {
+                            select: {
+                                model: true,
+                                brand: {
+                                    select: {
+                                        name: true,
                                     },
                                 },
                             },
                         },
                     },
-                    product: {
-                        select: {
-                            model: true,
-                            brand: {
-                                select: {
-                                    name: true,
-                                },
+                },
+                product: {
+                    select: {
+                        model: true,
+                        brand: {
+                            select: {
+                                name: true,
                             },
                         },
                     },
-                    licenseType: {
-                        select: {
-                            type: true,
-                            duration: true,
-                        },
+                },
+                licenseType: {
+                    select: {
+                        type: true,
+                        duration: true,
                     },
-                    history: {
-                        orderBy: {
-                            expiryDate: "desc",
-                        },
-                        select: {
-                            id: true,
-                            createdBy: true,
-                            createdAt: true,
-                            updatedBy: true,
-                            updatedAt: true,
-                            serialNo: true,
-                            startDate: true,
-                            expiryDate: true,
-                            licenseTypeId: true,
-                            boughtTypeId: true,
-                            productId: true,
-                            applianceId: true,
-                            licenseType: {
-                                select: {
-                                    type: true,
-                                    duration: true,
-                                    brand: {
-                                        select: {
-                                            name: true,
-                                        },
+                },
+                history: {
+                    orderBy: {
+                        expiryDate: "desc",
+                    },
+                    select: {
+                        id: true,
+                        createdBy: true,
+                        createdAt: true,
+                        updatedBy: true,
+                        updatedAt: true,
+                        serialNo: true,
+                        startDate: true,
+                        expiryDate: true,
+                        licenseTypeId: true,
+                        boughtTypeId: true,
+                        productId: true,
+                        applianceId: true,
+                        licenseType: {
+                            select: {
+                                type: true,
+                                duration: true,
+                                brand: {
+                                    select: {
+                                        name: true,
                                     },
                                 },
                             },
-                            boughtType: {
-                                select: {
-                                    type: true,
-                                },
+                        },
+                        boughtType: {
+                            select: {
+                                type: true,
                             },
-                            dealer: {
-                                select: { id: true, name: true },
-                            },
-                            subDealer: {
-                                select: { id: true, name: true },
-                            },
-                            supplier: {
-                                select: { id: true, name: true },
-                            },
-                            appliance: {
-                                select: {
-                                    id: true,
-                                    serialNo: true,
-                                    boughtAt: true,
-                                    soldAt: true,
-                                    product: {
-                                        select: {
-                                            model: true,
-                                            brand: {
-                                                select: {
-                                                    name: true,
-                                                },
+                        },
+                        dealer: {
+                            select: { id: true, name: true },
+                        },
+                        subDealer: {
+                            select: { id: true, name: true },
+                        },
+                        supplier: {
+                            select: { id: true, name: true },
+                        },
+                        appliance: {
+                            select: {
+                                id: true,
+                                serialNo: true,
+                                boughtAt: true,
+                                soldAt: true,
+                                product: {
+                                    select: {
+                                        model: true,
+                                        brand: {
+                                            select: {
+                                                name: true,
                                             },
                                         },
                                     },
                                 },
                             },
-                            product: {
-                                select: {
-                                    id: true,
-                                    model: true,
-                                    brand: {
-                                        select: {
-                                            name: true,
-                                        },
+                        },
+                        product: {
+                            select: {
+                                id: true,
+                                model: true,
+                                brand: {
+                                    select: {
+                                        name: true,
                                     },
                                 },
                             },
                         },
                     },
-                    // boughtType: {
-                    //     select: {
-                    //         type: true,
-                    //     },
-                    // },
-                    customer: {
-                        select: { name: true, email: true },
-                    },
-                    dealer: {
-                        select: { name: true, email: true },
-                    },
-                    subDealer: {
-                        select: { name: true, email: true },
-                    },
-                    supplier: {
-                        select: { name: true },
-                    },
                 },
-                where: {
-                    id: Number(params.id),
+                // boughtType: {
+                //     select: {
+                //         type: true,
+                //     },
+                // },
+                customer: {
+                    select: { name: true, email: true },
                 },
-            });
+                dealer: {
+                    select: { name: true, email: true },
+                },
+                subDealer: {
+                    select: { name: true, email: true },
+                },
+                supplier: {
+                    select: { name: true },
+                },
+            },
+            where: {
+                id: Number(params.id),
+            },
+        });
 
-            return NextResponse.json(data);
-        }
+        return NextResponse.json(data);
     } catch (error) {
         return NextResponse.json({ message: error, status: 500, ok: false });
     }
