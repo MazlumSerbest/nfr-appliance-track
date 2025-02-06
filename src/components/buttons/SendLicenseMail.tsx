@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { Tooltip } from "@heroui/tooltip";
 import { Button } from "@heroui/button";
 import {
@@ -8,6 +10,7 @@ import {
     ModalFooter,
     useDisclosure,
 } from "@heroui/modal";
+
 import { BiMailSend } from "react-icons/bi";
 import { DateFormat } from "@/utils/date";
 import { validateEmail } from "@/utils/functions";
@@ -15,7 +18,9 @@ import { sendMail } from "@/lib/sendmail";
 import toast from "react-hot-toast";
 
 type Props = {
-    current: Current;
+    dealer?: Current;
+    customer: Current;
+    email: string;
     licenseType: string;
     appliance: string | null;
     serialNo: string;
@@ -23,41 +28,60 @@ type Props = {
 };
 
 export default function SendLicenseMail({
-    current,
+    dealer,
+    customer,
+    email,
     licenseType,
     appliance,
     serialNo,
     expiryDate,
 }: Props) {
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
-    const emailValid = validateEmail(current?.email ?? "");
+    const [submitting, setSubmitting] = useState(false);
+    const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+    const emailValid = validateEmail(email ?? "");
 
     async function onSend() {
-        const html = `<div style="display: flex; flex-direction: column; color: white; font-family: Arial, sans-serif, 'Open Sans';"><div style="display: flex; justify-content: center; margin-bottom: 3rem; margin-top: 2rem;"><img style="width: 30%"  src="https://nfrbilisim.com/wp-content/uploads/2022/04/nfr-logo.png" /></div><div style="display: flex; justify-content: center;"><div style="background-color: rgba(14, 165, 233, 0.9); padding: 2rem; border-radius: 0.5rem; margin-bottom: 3rem; max-width: 768px;"><p>Merhabalar,</p><p>${
-            current?.name
-        } adına kayıtlı, seri numarası <strong>${serialNo}</strong> olan${
-            appliance ? <strong>{appliance}</strong> : ""
-        } cihazınızın <strong>"${licenseType}"</strong> lisansı <strong>${DateFormat(
-            expiryDate,
-        ).replaceAll(
-            ".",
-            "/",
-        )}</strong> tarihinde sona erecektir.</p><p>Lisansınız yenilenmesi için satış ekibimizle iletişime geçiniz.</p><p>İyi Çalışmalar Dileriz </br><strong>NFR Bilişim ve Güvenlik Teknolojileri A.Ş.</strong></p></div></div></div>`;
+        setSubmitting(true);
 
-        const mail: any = await sendMail({
-            to: current?.email as string,
-            cc: "",
+        const html = dealer
+            ? `<div style="display: flex; flex-direction: column; color: white; font-family: Arial, sans-serif, 'Open Sans'; line-height: 1.5;"><div style="display: flex; justify-content: center; margin-bottom: 3rem; margin-top: 2rem;"><img style="width: 30%"  src="https://nfrbilisim.com/wp-content/uploads/2022/04/nfr-logo.png" /></div><div style="display: flex; justify-content: center;"><div style="background-color: rgba(14, 165, 233, 0.9); padding: 2rem; border-radius: 0.5rem; margin-bottom: 3rem; max-width: 768px;"><p>Merhabalar,</p><p>${
+                  customer?.name
+              } adlı müşteriye ait, seri numarası <strong>${serialNo}</strong> olan<strong>${
+                  appliance ? " " + appliance : ""
+              }</strong> cihazınızın <strong>"${licenseType}"</strong> lisansı <strong>${DateFormat(
+                  expiryDate,
+              ).replaceAll(
+                  ".",
+                  "/",
+              )}</strong> tarihinde sona erecektir.</p><p>Lisansınız yenilenmesi için bizimle iletişime geçebilirsiniz.</p><p>İyi çalışmalar,</br><strong>NFR Bilişim ve Güvenlik Teknolojileri A.Ş.</strong></br><a href="mailto:satis@nfrbilisim.com">satis@nfrbilisim.com </a> / <a href="tel:+90 232 449 06 37">+90 232 449 06 37</a></p></div></div></div>`
+            : `<div style="display: flex; flex-direction: column; color: white; font-family: Arial, sans-serif, 'Open Sans'; line-height: 1.5;"><div style="display: flex; justify-content: center; margin-bottom: 3rem; margin-top: 2rem;"><img style="width: 30%"  src="https://nfrbilisim.com/wp-content/uploads/2022/04/nfr-logo.png" /></div><div style="display: flex; justify-content: center;"><div style="background-color: rgba(14, 165, 233, 0.9); padding: 2rem; border-radius: 0.5rem; margin-bottom: 3rem; max-width: 768px;"><p>Merhabalar,</p><p>${
+                  customer?.name
+              } adına kayıtlı, seri numarası <strong>${serialNo}</strong> olan<strong>${
+                  appliance ? " " + appliance : ""
+              }</strong> cihazınızın <strong>"${licenseType}"</strong> lisansı <strong>${DateFormat(
+                  expiryDate,
+              ).replaceAll(
+                  ".",
+                  "/",
+              )}</strong> tarihinde sona erecektir.</p><p>Lisansınız yenilenmesi için bizimle iletişime geçebilirsiniz.</p><p>İyi çalışmalar,</br><strong>NFR Bilişim ve Güvenlik Teknolojileri A.Ş.</strong></br><a href="mailto:satis@nfrbilisim.com">satis@nfrbilisim.com </a> / <a href="tel:+90 232 449 06 37">+90 232 449 06 37</a></p></div></div></div>`;
+
+        await sendMail({
+            // to: "mazlumserbest@windowslive.com",
+            // cc: "",
+            to: email,
+            cc: "satis@nfrbilisim.com",
             subject: "Lisans Süre Dolumu",
             html: html,
-        });
-        console.log(mail);
+        }).then((res) => {
+            if (res && !res.ok) {
+                toast.error(res?.message);
+            } else {
+                toast.success("Mail başarıyla gönderildi.");
+                onClose();
+            }
 
-        if (!mail.ok) {
-            toast.error(mail.message);
-        } else {
-            toast.success("Mail başarıyla gönderildi.");
-            onOpenChange();
-        }
+            setSubmitting(false);
+        });
     }
 
     return (
@@ -82,22 +106,49 @@ export default function SendLicenseMail({
                                 Lisans Süre Dolum Maili Gönder
                             </ModalHeader>
                             <ModalBody className="text-sm">
-                                <p className="font-medium">
-                                    {current?.name + " "}
-                                    <span className="font-normal text-zinc-500">
-                                        adlı cariye, bitiş tarihi
-                                    </span>
-                                    {" " + DateFormat(expiryDate) + " "}
-                                    <span className="font-normal text-zinc-500">
-                                        olan lisans için mail gönderilecek.
-                                        Devam etmek istediğinizden emin misiniz?
-                                    </span>
-                                </p>
+                                {!dealer && customer && (
+                                    <p className="font-medium">
+                                        {customer?.name + " "}
+                                        <span className="font-normal text-zinc-500">
+                                            adlı müşteriye, bitiş tarihi
+                                        </span>
+                                        {" " + DateFormat(expiryDate) + " "}
+                                        <span className="font-normal text-zinc-500">
+                                            olan lisans için mail gönderilecek.
+                                            Devam etmek istediğinizden emin
+                                            misiniz?
+                                        </span>
+                                    </p>
+                                )}
 
-                                <p className="font-medium mt-4">
-                                    Mail adresi:
+                                {dealer && (
+                                    <p className="font-medium">
+                                        {dealer?.name + " "}
+                                        <span className="font-normal text-zinc-500">
+                                            adlı bayiye, bitiş tarihi
+                                        </span>
+                                        {" " + DateFormat(expiryDate) + " "}
+                                        <span className="font-normal text-zinc-500">
+                                            olan lisans için mail gönderilecek.
+                                            Devam etmek istediğinizden emin
+                                            misiniz?
+                                        </span>
+                                    </p>
+                                )}
+
+                                {dealer && (
+                                    <p className="font-medium mt-4">
+                                        Müşteri:
+                                        <span className="text-zinc-500 font-normal">
+                                            {` ${customer?.name}`}
+                                        </span>
+                                    </p>
+                                )}
+
+                                <p className="font-medium">
+                                    Gönderileceği mail adresi:
                                     <span className="text-zinc-500 font-normal">
-                                        {` ${current?.email}`}
+                                        {` ${email}`}
                                     </span>
                                 </p>
                                 {emailValid ? null : (
@@ -124,9 +175,10 @@ export default function SendLicenseMail({
                                     Kapat
                                 </Button>
                                 <Button
-                                    isDisabled={!emailValid}
                                     color="primary"
                                     className="text-white bg-green-600"
+                                    isDisabled={!emailValid}
+                                    isLoading={submitting}
                                     onPress={emailValid ? onSend : undefined}
                                 >
                                     Gönder

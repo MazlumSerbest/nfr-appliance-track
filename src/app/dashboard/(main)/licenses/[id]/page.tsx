@@ -716,7 +716,8 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                     {currUser?.role != "technical" &&
                                     data.customerId ? (
                                         <SendLicenseMail
-                                            current={data.customer}
+                                            customer={data?.customer}
+                                            email={data?.customer?.email}
                                             licenseType={
                                                 data?.licenseType?.type
                                             }
@@ -770,7 +771,9 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                     {currUser?.role != "technical" &&
                                     data.dealerId ? (
                                         <SendLicenseMail
-                                            current={data?.dealer}
+                                            customer={data?.customer}
+                                            dealer={data?.dealer}
+                                            email={data?.dealer?.email}
                                             licenseType={
                                                 data?.licenseType?.type
                                             }
@@ -824,7 +827,9 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                     {currUser?.role != "technical" &&
                                     data.subDealerId ? (
                                         <SendLicenseMail
-                                            current={data?.subDealer}
+                                            customer={data?.customer}
+                                            dealer={data?.subDealer}
+                                            email={data?.dealer?.email}
                                             licenseType={
                                                 data?.licenseType?.type
                                             }

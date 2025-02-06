@@ -1,5 +1,6 @@
 "use server";
 import nodemailer from "nodemailer";
+import toast from "react-hot-toast";
 
 const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST as string,
@@ -23,17 +24,28 @@ type Mail = {
 
 export async function sendMail({ to, cc, subject, html }: Mail) {
     try {
-        const info = await transporter.sendMail(
-            {
+        await transporter
+            .sendMail({
                 from: process.env.SMTP_FROM, // sender address
-                to: "portal@nfrbilisim.com", // list of receivers
+                to: to, // list of receivers
                 cc: cc, // list of cc
                 subject: subject, // Subject line
                 html: html, // html body
-            },
-        );
-
-        return info;
+            })
+            .then((res) => {
+                return {
+                    message: res,
+                    status: 200,
+                    ok: true,
+                };
+            })
+            .catch((err) => {
+                return {
+                    message: err,
+                    status: 500,
+                    ok: true,
+                };
+            });
     } catch (error: any) {
         return {
             message: error.response,

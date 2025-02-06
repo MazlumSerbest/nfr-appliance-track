@@ -227,7 +227,7 @@ export default function Settings() {
                         <BiChevronLeft className="text-3xl text-zinc-500" />
                     }
                     startContent={
-                        <BiCog className="text-4xl text-sky-500/60" />
+                        <BiCog className="text-4xl text-zinc-500/60" />
                     }
                 >
                     <div className="divide-y divide-zinc-200">
