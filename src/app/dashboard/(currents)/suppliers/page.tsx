@@ -170,7 +170,7 @@ export default function Suppliers() {
                 case "active":
                     return <BoolChip value={cellValue} />;
                 case "phone":
-                    return cellValue ? `+90${cellValue}` : "-";
+                    return cellValue ? `+90 ${cellValue}` : "-";
                 case "createdAt":
                     return <p>{DateTimeFormat(cellValue)}</p>;
                 case "updatedAt":

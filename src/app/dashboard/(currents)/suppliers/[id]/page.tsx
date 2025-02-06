@@ -17,7 +17,7 @@ import Addresses from "@/components/currents/Addresses";
 
 import { BiMailSend, BiPhoneOutgoing, BiX, BiCopy } from "react-icons/bi";
 import useUserStore from "@/store/user";
-import { CopyToClipboard } from "@/utils/functions";
+import { CopyToClipboard, formatPhoneNumber } from "@/utils/functions";
 import { currentTypes } from "@/lib/constants";
 
 interface IFormInput {
@@ -200,23 +200,45 @@ export default function SupplierDetail({ params }: { params: { id: string } }) {
                                     )}
                                 </div>
 
-                                <div>
-                                    <div className="flex md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500">
-                                        <span className="flex select-none items-center pl-3 text-zinc-400 sm:text-sm">
-                                            +90
-                                        </span>
-                                        <input
-                                            type="text"
-                                            id="phone"
-                                            required
-                                            className="flex-1 border-0 bg-transparent pl-1 pr-3.5 py-2 w-full text-zinc-700 placeholder:text-zinc-400 focus:ring-0 sm:text-sm sm:leading-6 outline-none"
-                                            {...register("phone", {
-                                                required: true,
-                                                maxLength: 50,
-                                            })}
-                                        />
-                                    </div>
-                                </div>
+                                <Controller
+                                    control={control}
+                                    name="phone"
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <div className="flex md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500">
+                                            <span className="flex select-none items-center pl-3 text-zinc-400 sm:text-sm">
+                                                +90
+                                            </span>
+                                            <input
+                                                type="text"
+                                                maxLength={13}
+                                                value={value}
+                                                required
+                                                className="flex-1 border-0 bg-transparent pl-1 pr-3.5 py-2 w-full text-zinc-700 placeholder:text-zinc-400 focus:ring-0 sm:text-sm sm:leading-6 outline-none"
+                                                onChange={(event) => {
+                                                    const formatted =
+                                                        formatPhoneNumber(
+                                                            event.target.value,
+                                                        );
+                                                    onChange(formatted);
+                                                }}
+                                                onKeyDown={(event) => {
+                                                    if (
+                                                        event.key ===
+                                                            "Backspace" &&
+                                                        value.endsWith(" ")
+                                                    ) {
+                                                        event.preventDefault(); // Boşluk karakterindeyken silme işlemini düzelt
+                                                        onChange(
+                                                            value.slice(0, -1),
+                                                        ); // Son karakteri kaldır
+                                                    }
+                                                }}
+                                            />
+                                        </div>
+                                    )}
+                                />
                             </div>
 
                             <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
