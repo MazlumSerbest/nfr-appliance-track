@@ -250,6 +250,12 @@ export default function Licenses() {
             width: 80,
         },
         {
+            key: "mailSended",
+            name: "Mail Gönderildi",
+            width: 100,
+            sortable: true,
+        },
+        {
             key: "createdBy",
             name: "Oluşturan Kullanıcı",
             width: 80,
@@ -279,6 +285,7 @@ export default function Licenses() {
 
             switch (columnKey) {
                 case "isStock":
+                case "mailSended":
                     return <BoolChip value={cellValue} />;
                 case "applianceSerialNo":
                     return cellValue || license.appSerialNo || "-";

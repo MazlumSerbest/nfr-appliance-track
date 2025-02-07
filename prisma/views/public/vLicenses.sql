@@ -90,7 +90,8 @@ SELECT
     ELSE 'continues' :: text
   END AS "expiryStatus",
   l."isLost",
-  l."isPassive"
+  l."isPassive",
+  l."mailSended"
 FROM
   (
     (

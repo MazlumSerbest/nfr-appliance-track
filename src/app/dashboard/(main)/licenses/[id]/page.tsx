@@ -17,7 +17,8 @@ import { Accordion, AccordionItem } from "@heroui/accordion";
 import { Button } from "@heroui/button";
 import { Popover, PopoverTrigger, PopoverContent } from "@heroui/popover";
 import { Tab, Tabs } from "@heroui/tabs";
-import { Tooltip } from "@heroui/react";
+import { Tooltip } from "@heroui/tooltip";
+import { Switch } from "@heroui/switch";
 
 import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
 import AutoComplete from "@/components/AutoComplete";
@@ -34,7 +35,6 @@ import {
     BiEdit,
     BiError,
     BiCheck,
-    BiXCircle,
 } from "react-icons/bi";
 import { setLicenseActiveStatus, setLicenseAppliance } from "@/lib/prisma";
 import { DateFormat } from "@/utils/date";
@@ -71,6 +71,7 @@ interface IFormInput {
     updatedBy: string;
     appSerialNo?: string;
     productId?: number;
+    mailSended?: boolean;
     appliance?: Appliance;
     licenseType?: LicenseType;
     boughtType?: BoughtType;
@@ -718,6 +719,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                         <SendLicenseMail
                                             customer={data?.customer}
                                             email={data?.customer?.email}
+                                            licenseId={data?.id}
                                             licenseType={
                                                 data?.licenseType?.type
                                             }
@@ -741,6 +743,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                                     : data?.appSerialNo
                                             }
                                             expiryDate={data?.expiryDate}
+                                            mutate={mutate}
                                         />
                                     ) : null}
                                 </div>
@@ -774,6 +777,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                             customer={data?.customer}
                                             dealer={data?.dealer}
                                             email={data?.dealer?.email}
+                                            licenseId={data?.id}
                                             licenseType={
                                                 data?.licenseType?.type
                                             }
@@ -797,6 +801,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                                     : data?.appSerialNo
                                             }
                                             expiryDate={data?.expiryDate}
+                                            mutate={mutate}
                                         />
                                     ) : null}
                                 </div>
@@ -830,6 +835,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                             customer={data?.customer}
                                             dealer={data?.subDealer}
                                             email={data?.dealer?.email}
+                                            licenseId={data?.id}
                                             licenseType={
                                                 data?.licenseType?.type
                                             }
@@ -853,6 +859,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                                     : data?.appSerialNo
                                             }
                                             expiryDate={data?.expiryDate}
+                                            mutate={mutate}
                                         />
                                     ) : null}
                                 </div>
@@ -876,6 +883,34 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                             value={value}
                                             data={suppliers || []}
                                             className="flex-1"
+                                        />
+                                    )}
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                <div>
+                                    <label
+                                        htmlFor="mailSended"
+                                        className="font-medium"
+                                    >
+                                        Yenileme Maili Gönderildi
+                                    </label>
+                                </div>
+                                <Controller
+                                    control={control}
+                                    name="mailSended"
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <Switch
+                                            color="primary"
+                                            onChange={onChange}
+                                            isSelected={value}
+                                            classNames={{
+                                                wrapper:
+                                                    "group-data-[selected=true]:bg-sky-500",
+                                            }}
                                         />
                                     )}
                                 />

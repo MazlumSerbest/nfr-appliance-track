@@ -107,6 +107,7 @@ model licenses {
   cusName       String?          @db.VarChar
   isLost        Boolean          @default(false)
   isPassive     Boolean          @default(false)
+  mailSended    Boolean          @default(false)
   history       licenseHistory[]
   appliance     appliances?      @relation(fields: [applianceId], references: [id])
   boughtType    boughtTypes?     @relation(fields: [boughtTypeId], references: [id])
@@ -385,6 +386,7 @@ view vLicenses {
   expiryStatus      String?
   isLost            Boolean?
   isPassive         Boolean?
+  mailSended        Boolean?
 }
 
 view vConnections {

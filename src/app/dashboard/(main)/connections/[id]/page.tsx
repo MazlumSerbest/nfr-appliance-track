@@ -148,7 +148,7 @@ export default function ConnectionDetail({
                             <div className="grid grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                 <div>
                                     <label
-                                        htmlFor="active"
+                                        htmlFor="controlled"
                                         className="font-medium"
                                     >
                                         Gözetim Durumu

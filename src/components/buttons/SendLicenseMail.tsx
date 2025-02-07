@@ -16,25 +16,30 @@ import { DateFormat } from "@/utils/date";
 import { validateEmail } from "@/utils/functions";
 import { sendMail } from "@/lib/sendmail";
 import toast from "react-hot-toast";
+import { mutate } from "swr";
 
 type Props = {
     dealer?: Current;
     customer: Current;
     email: string;
+    licenseId: number;
     licenseType: string;
     appliance: string | null;
     serialNo: string;
     expiryDate: string;
+    mutate: () => void;
 };
 
 export default function SendLicenseMail({
     dealer,
     customer,
     email,
+    licenseId,
     licenseType,
     appliance,
     serialNo,
     expiryDate,
+    mutate,
 }: Props) {
     const [submitting, setSubmitting] = useState(false);
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
@@ -66,10 +71,10 @@ export default function SendLicenseMail({
               )}</strong> tarihinde sona erecektir.</p><p>Lisansınız yenilenmesi için bizimle iletişime geçebilirsiniz.</p><p>İyi çalışmalar,</br><strong>NFR Bilişim ve Güvenlik Teknolojileri A.Ş.</strong></br><a href="mailto:satis@nfrbilisim.com">satis@nfrbilisim.com </a> / <a href="tel:+90 232 449 06 37">+90 232 449 06 37</a></p></div></div></div>`;
 
         await sendMail({
-            // to: "mazlumserbest@windowslive.com",
-            // cc: "",
-            to: email,
-            cc: "satis@nfrbilisim.com",
+            to: "mazlumserbest@windowslive.com",
+            cc: "",
+            // to: email,
+            // cc: "satis@nfrbilisim.com",
             subject: "Lisans Süre Dolumu",
             html: html,
         }).then((res) => {
@@ -77,7 +82,12 @@ export default function SendLicenseMail({
                 toast.error(res?.message);
             } else {
                 toast.success("Mail başarıyla gönderildi.");
-                onClose();
+                fetch(`/api/license/${licenseId}/mailSended`, {
+                    method: "PUT",
+                }).then(() => {
+                    mutate();
+                    onClose();
+                });
             }
 
             setSubmitting(false);
