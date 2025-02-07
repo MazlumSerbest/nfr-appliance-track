@@ -71,10 +71,10 @@ export default function SendLicenseMail({
               )}</strong> tarihinde sona erecektir.</p><p>Lisansınız yenilenmesi için bizimle iletişime geçebilirsiniz.</p><p>İyi çalışmalar,</br><strong>NFR Bilişim ve Güvenlik Teknolojileri A.Ş.</strong></br><a href="mailto:satis@nfrbilisim.com">satis@nfrbilisim.com </a> / <a href="tel:+90 232 449 06 37">+90 232 449 06 37</a></p></div></div></div>`;
 
         await sendMail({
-            to: "mazlumserbest@windowslive.com",
-            cc: "",
-            // to: email,
-            // cc: "satis@nfrbilisim.com",
+            // to: "mazlumserbest@windowslive.com",
+            // cc: "",
+            to: email,
+            cc: "satis@nfrbilisim.com",
             subject: "Lisans Süre Dolumu",
             html: html,
         }).then((res) => {

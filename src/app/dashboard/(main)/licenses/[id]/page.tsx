@@ -249,6 +249,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                 appSerialNo: d.appSerialNo || null,
                 productId: d.productId || null,
                 note: d.note || null,
+                mailSended: false,
                 history: {
                     serialNo: data.serialNo || null,
                     startDate: data.startDate || null,
