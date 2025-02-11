@@ -61,6 +61,7 @@ export default function ProjectDetail({ params }: { params: { id: string } }) {
     //#region Form
     const { register, reset, setValue, handleSubmit, control } =
         useForm<IFormInput>();
+
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         setSubmitting(true);
         data.updatedBy = currUser?.username ?? "";
@@ -273,6 +274,7 @@ export default function ProjectDetail({ params }: { params: { id: string } }) {
                             </div>
                         </div>
                     </CardBody>
+                    
                     {currUser?.role === "technical" ? undefined : (
                         <CardFooter className="flex gap-2">
                             <div className="flex-1"></div>

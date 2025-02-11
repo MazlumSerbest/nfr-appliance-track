@@ -46,6 +46,13 @@ export default function CustomerDetail({ params }: { params: { id: string } }) {
 
     const [submitting, setSubmitting] = useState(false);
 
+    const { data, error, mutate } = useSWR(`/api/current/${params.id}`, null, {
+        revalidateOnFocus: false,
+        onSuccess: (cus) => {
+            reset(cus);
+        },
+    });
+
     //#region Form
     const { register, reset, handleSubmit, control } = useForm<IFormInput>();
 
@@ -73,13 +80,6 @@ export default function CustomerDetail({ params }: { params: { id: string } }) {
         });
     };
     //#endregion
-
-    const { data, error, mutate } = useSWR(`/api/current/${params.id}`, null, {
-        revalidateOnFocus: false,
-        onSuccess: (cus) => {
-            reset(cus);
-        },
-    });
 
     if (error) return <div>Yükleme Hatası!</div>;
     if (!data)

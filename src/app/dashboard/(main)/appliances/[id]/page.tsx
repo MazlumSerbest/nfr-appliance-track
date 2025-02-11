@@ -81,8 +81,8 @@ export default function ApplianceDetail({
 }) {
     const router = useRouter();
     const { user: currUser } = useUserStore();
+    
     const [historyIsNew, setHistoryIsNew] = useState(false);
-
     const [submitting, setSubmitting] = useState(false);
     const [submittingDemo, setSubmittingDemo] = useState(false);
     const [submittingHistory, setSubmittingHistory] = useState(false);
@@ -97,6 +97,19 @@ export default function ApplianceDetail({
     const [customers, setCustomers] = useState<ListBoxItem[] | null>(null);
     const [dealers, setDealers] = useState<ListBoxItem[] | null>(null);
     const [suppliers, setSuppliers] = useState<ListBoxItem[] | null>(null);
+
+    const { data, error, mutate } = useSWR(
+        `/api/appliance/${params.id}`,
+        null,
+        {
+            revalidateOnFocus: false,
+            onSuccess: (app) => {
+                reset(app);
+                setValue("boughtAt", app.boughtAt?.split("T")[0]);
+                setValue("soldAt", app.soldAt?.split("T")[0]);
+            },
+        },
+    );
 
     //#region Form
     const { register, reset, handleSubmit, control, setValue } =
@@ -165,10 +178,10 @@ export default function ApplianceDetail({
             }).then(async (res) => {
                 const result = await res.json();
                 if (result.ok) {
+                    toast.success(result.message);
                     mutate();
                     resetHistory();
                     onCloseHistory();
-                    toast.success(result.message);
                 } else {
                     toast.error(result.message);
                 }
@@ -195,10 +208,10 @@ export default function ApplianceDetail({
             }).then(async (res) => {
                 const result = await res.json();
                 if (result.ok) {
+                    toast.success(result.message);
                     mutate();
                     resetHistory();
                     onCloseHistory();
-                    toast.success(result.message);
                 } else {
                     toast.error(result.message);
                 }
@@ -226,19 +239,6 @@ export default function ApplianceDetail({
         getData();
     }, []);
     //#endregion
-
-    const { data, error, mutate } = useSWR(
-        `/api/appliance/${params.id}`,
-        null,
-        {
-            revalidateOnFocus: false,
-            onSuccess: (app) => {
-                reset(app);
-                setValue("boughtAt", app.boughtAt?.split("T")[0]);
-                setValue("soldAt", app.soldAt?.split("T")[0]);
-            },
-        },
-    );
 
     if (error) return <div>Yükleme Hatası!</div>;
     if (!data || !products || !customers || !dealers || !suppliers)

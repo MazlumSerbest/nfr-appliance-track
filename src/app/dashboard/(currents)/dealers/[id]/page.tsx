@@ -46,6 +46,13 @@ export default function DealerDetail({ params }: { params: { id: string } }) {
 
     const [isSubmitting, setSubmitting] = useState(false);
 
+    const { data, error, mutate } = useSWR(`/api/current/${params.id}`, null, {
+        revalidateOnFocus: false,
+        onSuccess: (dea) => {
+            reset(dea);
+        },
+    });
+
     //#region Form
     const { register, reset, handleSubmit, control } = useForm<IFormInput>();
 
@@ -73,13 +80,6 @@ export default function DealerDetail({ params }: { params: { id: string } }) {
         });
     };
     //#endregion
-
-    const { data, error, mutate } = useSWR(`/api/current/${params.id}`, null, {
-        revalidateOnFocus: false,
-        onSuccess: (dea) => {
-            reset(dea);
-        },
-    });
 
     if (error) return <div>Yükleme Hatası!</div>;
     if (!data)

@@ -47,8 +47,11 @@ export default function Dealers() {
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
     const [submitting, setSubmitting] = useState(false);
 
+    const { data, error, mutate } = useSWR("/api/current?currentType=dealer");
+
     //#region Form
     const { register, reset, handleSubmit } = useForm<IFormInput>({});
+
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         setSubmitting(true);
         data.createdBy = currUser?.username ?? "";
@@ -162,28 +165,23 @@ export default function Dealers() {
         },
     ];
 
-    const renderCell = useCallback(
-        (dealer: Current, columnKey: React.Key) => {
-            const cellValue: any = dealer[columnKey as keyof typeof dealer];
+    const renderCell = useCallback((dealer: Current, columnKey: React.Key) => {
+        const cellValue: any = dealer[columnKey as keyof typeof dealer];
 
-            switch (columnKey) {
-                case "active":
-                    return <BoolChip value={cellValue} />;
-                case "phone":
-                    return cellValue ? `+90 ${cellValue}` : "-";
-                case "createdAt":
-                    return <p>{DateTimeFormat(cellValue)}</p>;
-                case "updatedAt":
-                    return <p>{DateTimeFormat(cellValue)}</p>;
-                default:
-                    return cellValue ? cellValue : "-";
-            }
-        },
-        [],
-    );
+        switch (columnKey) {
+            case "active":
+                return <BoolChip value={cellValue} />;
+            case "phone":
+                return cellValue ? `+90 ${cellValue}` : "-";
+            case "createdAt":
+                return <p>{DateTimeFormat(cellValue)}</p>;
+            case "updatedAt":
+                return <p>{DateTimeFormat(cellValue)}</p>;
+            default:
+                return cellValue ? cellValue : "-";
+        }
+    }, []);
     //#endregion
-
-    const { data, error, mutate } = useSWR("/api/current?currentType=dealer");
 
     if (error) return <div>Yükleme Hatası!</div>;
     if (!data)

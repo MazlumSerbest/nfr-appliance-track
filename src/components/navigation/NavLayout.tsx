@@ -38,7 +38,7 @@ export default function NavLayout() {
                 <Button
                     isIconOnly
                     variant="light"
-                    onClick={() => setShowSidebar(true)}
+                    onPress={() => setShowSidebar(true)}
                     onTouchEnd={() => setShowSidebar(true)}
                 >
                     <BiMenu className="text-2xl text-zinc-500" />

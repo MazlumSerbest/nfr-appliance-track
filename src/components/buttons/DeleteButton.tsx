@@ -13,6 +13,7 @@ type Props = {
     table:
         | "appliances"
         | "licenses"
+        | "orders"
         | "projects"
         | "connections"
         | "users"
@@ -101,7 +102,7 @@ export default function DeleteButton({
                                 toast.error(
                                     "Bir hata oluştu! Lütfen tekrar deneyiniz.",
                                 );
-                                
+
                             setSubmitting(false);
                         }}
                     >

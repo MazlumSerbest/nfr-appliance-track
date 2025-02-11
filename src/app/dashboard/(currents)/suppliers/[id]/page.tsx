@@ -46,6 +46,13 @@ export default function SupplierDetail({ params }: { params: { id: string } }) {
 
     const [submitting, setSubmitting] = useState(false);
 
+    const { data, error, mutate } = useSWR(`/api/current/${params.id}`, null, {
+        revalidateOnFocus: false,
+        onSuccess: (sup) => {
+            reset(sup);
+        },
+    });
+
     //#region Form
     const { register, reset, handleSubmit, control } = useForm<IFormInput>();
 
@@ -73,13 +80,6 @@ export default function SupplierDetail({ params }: { params: { id: string } }) {
         });
     };
     //#endregion
-
-    const { data, error, mutate } = useSWR(`/api/current/${params.id}`, null, {
-        revalidateOnFocus: false,
-        onSuccess: (sup) => {
-            reset(sup);
-        },
-    });
 
     if (error) return <div>Yükleme Hatası!</div>;
     if (!data)

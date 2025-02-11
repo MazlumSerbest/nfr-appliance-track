@@ -47,6 +47,7 @@ export default function Connections() {
 
     //#region Form
     const { register, reset, handleSubmit, control } = useForm<IFormInput>();
+
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         setSubmitting(true);
         data.createdBy = currUser?.username ?? "";

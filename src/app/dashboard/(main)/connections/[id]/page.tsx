@@ -74,6 +74,7 @@ export default function ConnectionDetail({
 
     //#region Form
     const { register, reset, handleSubmit, control } = useForm<IFormInput>();
+
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         data.updatedBy = currUser?.username ?? "";
 

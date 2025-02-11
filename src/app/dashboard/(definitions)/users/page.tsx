@@ -64,6 +64,7 @@ export default function Users() {
         formState: { errors },
         control,
     } = useForm<IFormInput>({ defaultValues: { active: true, role: "user" } });
+
     const onSubmitNew: SubmitHandler<IFormInput> = async (data) => {
         setSubmitting(true);
         data.createdBy = currUser?.username ?? "";

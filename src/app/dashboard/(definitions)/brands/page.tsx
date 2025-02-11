@@ -47,6 +47,7 @@ export default function BrandsPage() {
     const { register, reset, handleSubmit, control } = useForm<IFormInput>({
         defaultValues: { active: true },
     });
+    
     const onSubmitNew: SubmitHandler<IFormInput> = async (data) => {
         setSubmitting(true);
         data.createdBy = currUser?.username ?? "";

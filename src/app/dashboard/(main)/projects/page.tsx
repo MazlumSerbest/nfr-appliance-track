@@ -71,8 +71,17 @@ export default function Licenses() {
         null,
     );
 
+    const { data, error, mutate } = useSWR("/api/project", null, {
+        onSuccess: (data) => {
+            setProjects(data.filter((p: vProject) => p.status == "active"));
+            setWonProjects(data.filter((p: vProject) => p.status == "won"));
+            setLostProjects(data.filter((p: vProject) => p.status == "lost"));
+        },
+    });
+
     //#region Form
     const { register, reset, handleSubmit, control } = useForm<IFormInput>();
+
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         setSubmitting(true);
         data.createdBy = currUser?.username ?? "";
@@ -225,14 +234,6 @@ export default function Licenses() {
         getData();
     }, []);
     //#endregion
-
-    const { data, error, mutate } = useSWR("/api/project", null, {
-        onSuccess: (data) => {
-            setProjects(data.filter((p: vProject) => p.status == "active"));
-            setWonProjects(data.filter((p: vProject) => p.status == "won"));
-            setLostProjects(data.filter((p: vProject) => p.status == "lost"));
-        },
-    });
 
     if (error) return <div>Yükleme Hatası!</div>;
     if (!data) {

@@ -47,8 +47,11 @@ export default function Suppliers() {
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
     const [submitting, setSubmitting] = useState(false);
 
+    const { data, error, mutate } = useSWR("/api/current?currentType=supplier");
+
     //#region Form
     const { register, reset, handleSubmit } = useForm<IFormInput>({});
+
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         setSubmitting(true);
         data.createdBy = currUser?.username ?? "";
@@ -182,8 +185,6 @@ export default function Suppliers() {
         [],
     );
     //#endregion
-
-    const { data, error, mutate } = useSWR("/api/current?currentType=supplier");
 
     if (error) return <div>Yükleme Hatası!</div>;
     if (!data)
