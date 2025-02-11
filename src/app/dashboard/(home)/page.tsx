@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import PanelCard from "@/components/PanelCard";
 
+import { Card, CardBody } from "@heroui/card";
 import { Divider } from "@heroui/divider";
 
 import {
@@ -21,7 +22,6 @@ import {
     getApplianceCounts,
     getProjectCounts,
 } from "@/lib/prisma";
-import { Card, CardBody } from "@heroui/react";
 
 export default function Dashboard() {
     const router = useRouter();

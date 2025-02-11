@@ -12,8 +12,7 @@ import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
 import AutoComplete from "@/components/AutoComplete";
 import RegInfo from "@/components/buttons/RegInfo";
 import DeleteButton from "@/components/buttons/DeleteButton";
-import { CopyToClipboard } from "@/utils/functions";
-import { BiLinkExternal, BiX, BiShow, BiHide, BiCopy } from "react-icons/bi";
+import { BiX } from "react-icons/bi";
 import useUserStore from "@/store/user";
 import {
     getCustomers,
@@ -50,6 +49,14 @@ export default function ProjectDetail({ params }: { params: { id: string } }) {
     const [licenseTypes, setLicenseTypes] = useState<ListBoxItem[] | null>(
         null,
     );
+
+    const { data, error, mutate } = useSWR(`/api/project/${params.id}`, null, {
+        revalidateOnFocus: false,
+        onSuccess: (pro) => {
+            reset(pro);
+            setValue("date", pro.date?.split("T")[0]);
+        },
+    });
 
     //#region Form
     const { register, reset, setValue, handleSubmit, control } =
@@ -97,14 +104,6 @@ export default function ProjectDetail({ params }: { params: { id: string } }) {
         getData();
     }, []);
     //#endregion
-
-    const { data, error, mutate } = useSWR(`/api/project/${params.id}`, null, {
-        revalidateOnFocus: false,
-        onSuccess: (pro) => {
-            reset(pro);
-            setValue("date", pro.date?.split("T")[0]);
-        },
-    });
 
     if (error) return <div>Yükleme Hatası!</div>;
     if (!data || !customers || !dealers || !products || !licenseTypes)

@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 
 import { Accordion, AccordionItem } from "@heroui/accordion";
 import { Button } from "@heroui/button";
-import { Checkbox } from "@heroui/react";
+import { Checkbox } from "@heroui/checkbox";
 import {
     Modal,
     ModalBody,

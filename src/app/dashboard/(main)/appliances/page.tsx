@@ -86,6 +86,28 @@ export default function Appliances() {
     const [dealers, setDealers] = useState<ListBoxItem[] | null>(null);
     const [suppliers, setSuppliers] = useState<ListBoxItem[] | null>(null);
 
+    const { data, error, mutate } = useSWR("/api/appliance", null, {
+        revalidateOnFocus: false,
+        onSuccess: (data) => {
+            setStockAppliances(
+                data.filter(
+                    (a: vAppliance) => a.status == "stock" && !a.isDemo,
+                ),
+            );
+            setOrderAppliances(
+                data.filter(
+                    (a: vAppliance) => a.status == "order" && !a.isDemo,
+                ),
+            );
+            setActiveAppliances(
+                data.filter(
+                    (a: vAppliance) => a.status == "active" && !a.isDemo,
+                ),
+            );
+            setDemoAppliances(data.filter((a: vAppliance) => a.isDemo));
+        },
+    });
+
     //#region Form
     const { register, reset, handleSubmit, control } = useForm<IFormInput>({});
 
@@ -259,27 +281,6 @@ export default function Appliances() {
         getData();
     }, []);
     //#endregion
-
-    const { data, error, mutate } = useSWR("/api/appliance", null, {
-        onSuccess: (data) => {
-            setStockAppliances(
-                data.filter(
-                    (a: vAppliance) => a.status == "stock" && !a.isDemo,
-                ),
-            );
-            setOrderAppliances(
-                data.filter(
-                    (a: vAppliance) => a.status == "order" && !a.isDemo,
-                ),
-            );
-            setActiveAppliances(
-                data.filter(
-                    (a: vAppliance) => a.status == "active" && !a.isDemo,
-                ),
-            );
-            setDemoAppliances(data.filter((a: vAppliance) => a.isDemo));
-        },
-    });
 
     if (error) return <div>Yükleme Hatası!</div>;
     if (!data) {

@@ -45,10 +45,7 @@ export default function ResetButton({ userId }: Props) {
                     Devam etmek istediğinizden emin misiniz?
                 </p>
                 <div className="flex gap-2">
-                    <Button
-                        variant="bordered"
-                        onPress={onClose}
-                    >
+                    <Button variant="bordered" onPress={onClose}>
                         Kapat
                     </Button>
                     <Button

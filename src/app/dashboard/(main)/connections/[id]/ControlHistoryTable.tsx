@@ -1,7 +1,7 @@
 "use client";
 import { useCallback } from "react";
 
-import { SortDescriptor } from "@heroui/react";
+import { SortDescriptor } from "@heroui/table";
 
 import DataTable from "@/components/DataTable";
 
