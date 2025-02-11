@@ -95,6 +95,30 @@ type LicenseHistory = Entity & {
     product: any;
 };
 
+type Order = Entity & {
+    status: "order" | "invoice" | "purchase" | "complete";
+    registerNo: string;
+    invoiceNo?: string;
+    expiry?: string | null;
+    address?: string;
+    note?: string;
+    customerId?: number;
+    dealerId?: number;
+    subDealerId?: number;
+    supplierId?: number;
+};
+
+type OrderItem = Entity & {
+    orderId: number;
+    type: "product" | "license";
+    productId: number;
+    licenseTypeId?: number;
+    quantity?: number;
+    price: number;
+    currency: "TRY" | "USD" | "EUR";
+    note?: string;
+};
+
 type Project = Entity & {
     date: string;
     customerId: number;

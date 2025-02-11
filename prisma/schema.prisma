@@ -151,6 +151,48 @@ model licenseHistory {
   supplier      currents?    @relation("Supplier", fields: [supplierId], references: [id])
 }
 
+model orders {
+  id          Int         @id @default(autoincrement())
+  customerId  Int?
+  dealerId    Int?
+  subDealerId Int?
+  supplierId  Int?
+  registerNo  String      @db.VarChar
+  invoiceNo   String?     @db.VarChar
+  expiry      DateTime?   @db.Date
+  address     String?     @db.VarChar
+  createdAt   DateTime    @default(now()) @db.Timestamptz(6)
+  createdBy   String      @db.VarChar
+  updatedBy   String?     @db.VarChar
+  updatedAt   DateTime?   @updatedAt @db.Timestamptz(6)
+  note        String?     @db.VarChar
+  status      String      @default("order") @db.VarChar
+  items       orderItem[]
+  customer    currents?   @relation("Customer", fields: [customerId], references: [id])
+  dealer      currents?   @relation("Dealer", fields: [dealerId], references: [id])
+  subDealer   currents?   @relation("SubDealer", fields: [subDealerId], references: [id])
+  supplier    currents?   @relation("Supplier", fields: [supplierId], references: [id])
+}
+
+model orderItem {
+  id            Int           @id @default(autoincrement())
+  orderId       Int
+  type          String        @default("product") @db.VarChar
+  createdAt     DateTime      @default(now()) @db.Timestamptz(6)
+  createdBy     String        @db.VarChar
+  updatedBy     String?       @db.VarChar
+  updatedAt     DateTime?     @updatedAt @db.Timestamptz(6)
+  note          String?       @db.VarChar
+  currency      String        @db.VarChar
+  licenseTypeId Int?
+  productId     Int?
+  quantity      Int           @default(1)
+  price         Decimal       @db.Money
+  licenseType   licenseTypes? @relation(fields: [licenseTypeId], references: [id])
+  order         orders        @relation(fields: [orderId], references: [id])
+  product       products?     @relation(fields: [productId], references: [id])
+}
+
 model projects {
   id            Int           @id @default(autoincrement())
   active        Boolean       @default(true)
@@ -225,6 +267,7 @@ model products {
   appliances     appliances[]
   licenseHistory licenseHistory[]
   licenses       licenses[]
+  orderItem      orderItem[]
   brand          brands?          @relation(fields: [brandId], references: [id])
   productType    productTypes?    @relation(fields: [productTypeId], references: [id])
   projects       projects[]
@@ -255,6 +298,7 @@ model licenseTypes {
   licenseHistory licenseHistory[]
   brand          brands?          @relation(fields: [brandId], references: [id])
   licenses       licenses[]
+  orderItem      orderItem[]
   projects       projects[]
 }
 
@@ -304,6 +348,10 @@ model currents {
   dealerLicenses          licenses[]          @relation("Dealer")
   subDealerLicenses       licenses[]          @relation("SubDealer")
   supplierLicenses        licenses[]          @relation("Supplier")
+  customerOrders          orders[]            @relation("Customer")
+  dealerOrders            orders[]            @relation("Dealer")
+  subDealerOrders         orders[]            @relation("SubDealer")
+  supplierOrders          orders[]            @relation("Supplier")
   customerProjects        projects[]          @relation("Customer")
   dealerProjects          projects[]          @relation("Dealer")
 }
@@ -475,6 +523,23 @@ view vProducts {
   updatedAt     DateTime? @db.Timestamptz(6)
   brandName     String?   @db.VarChar
   productType   String?   @db.VarChar
+}
+
+view vOrders {
+  id            Int       @unique
+  status        String?   @db.VarChar
+  registerNo    String?   @db.VarChar
+  invoiceNo     String?   @db.VarChar
+  expiry        DateTime? @db.Date
+  note          String?   @db.VarChar
+  createdBy     String?   @db.VarChar
+  createdAt     DateTime? @db.Timestamptz(6)
+  updatedBy     String?   @db.VarChar
+  updatedAt     DateTime? @db.Timestamptz(6)
+  customerName  String?   @db.VarChar
+  dealerName    String?   @db.VarChar
+  subDealerName String?   @db.VarChar
+  supplierName  String?   @db.VarChar
 }
 
 enum CurrentType {
