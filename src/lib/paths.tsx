@@ -54,18 +54,18 @@ export const paths: Path[] = [
             />
         ),
     },
-    // {
-    //     path: "/dashboard/orders",
-    //     key: "orders",
-    //     name: "Siparişler",
-    //     roles: ["admin", "technical", "seller"],
-    //     icon: (
-    //         <BiPackage
-    //             className="text-2xl text-zinc-500"
-    //             aria-label="Siparişler Sayfası"
-    //         />
-    //     ),
-    // },
+    {
+        path: "/dashboard/orders",
+        key: "orders",
+        name: "Siparişler",
+        roles: ["admin", "technical", "seller"],
+        icon: (
+            <BiPackage
+                className="text-2xl text-zinc-500"
+                aria-label="Siparişler Sayfası"
+            />
+        ),
+    },
     {
         path: "/dashboard/projects",
         key: "projects",
