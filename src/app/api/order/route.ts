@@ -39,8 +39,8 @@ export async function POST(request: NextRequest) {
             });
 
         const order: Order = await request.json();
-        order.expiry = order.expiry
-            ? new Date(order.expiry).toISOString()
+        order.soldAt = order.soldAt
+            ? new Date(order.soldAt).toISOString()
             : null;
 
         const newOrder = await prisma.orders.create({

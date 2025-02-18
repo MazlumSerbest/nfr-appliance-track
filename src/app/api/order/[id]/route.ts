@@ -18,27 +18,19 @@ export async function GET(
 
         const data = await prisma.orders.findUnique({
             include: {
-                items: {
-                    include: {
+                appliance: {
+                    select: {
+                        serialNo: true,
                         product: {
-                            select: {
-                                model: true,
-                                brand: {
-                                    select: { name: true },
-                                },
-                                productType: {
-                                    select: { type: true },
-                                },
-                            },
+                            select: { id: true },
                         },
+                    },
+                },
+                license: {
+                    select: {
+                        serialNo: true,
                         licenseType: {
-                            select: {
-                                type: true,
-                                duration: true,
-                                brand: {
-                                    select: { name: true },
-                                },
-                            },
+                            select: { id: true },
                         },
                     },
                 },
@@ -82,8 +74,8 @@ export async function PUT(
 
         const order: Order = await request.json();
         order.updatedAt = new Date().toISOString();
-        order.expiry = order.expiry
-            ? new Date(order.expiry).toISOString()
+        order.soldAt = order.soldAt
+            ? new Date(order.soldAt).toISOString()
             : null;
 
         const updatedOrder = await prisma.orders.update({
