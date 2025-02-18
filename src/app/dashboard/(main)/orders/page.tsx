@@ -149,8 +149,14 @@ export default function Orders() {
         },
         {
             key: "product",
-            name: "Ürün",
+            name: "Cihaz",
             width: 120,
+            searchable: true,
+        },
+        {
+            key: "licenseSerialNo",
+            name: "Lisans Seri No",
+            width: 100,
             searchable: true,
         },
         {

@@ -25,7 +25,8 @@ SELECT
         ((pb.name) :: text || ' ' :: text) || (lt.type) :: text
       ) || ' ' :: text
     ) || lt.duration
-  ) AS "licenseType"
+  ) AS "licenseType",
+  l."serialNo" AS "licenseSerialNo"
 FROM
   (
     (

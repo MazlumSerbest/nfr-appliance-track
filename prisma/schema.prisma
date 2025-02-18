@@ -534,6 +534,7 @@ view vOrders {
   productModel      String?   @db.VarChar
   productBrand      String?   @db.VarChar
   licenseType       String?
+  licenseSerialNo   String?   @db.VarChar
 }
 
 enum CurrentType {
