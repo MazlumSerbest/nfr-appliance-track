@@ -23,6 +23,7 @@ import AutoComplete from "@/components/AutoComplete";
 import useUserStore from "@/store/user";
 import { DateFormat, DateTimeFormat } from "@/utils/date";
 import { getCustomers, getDealers, getSuppliers } from "@/lib/data";
+import { currencyTypes } from "@/lib/constants";
 
 interface IFormInput {
     registerNo: string;
@@ -117,7 +118,8 @@ export default function Orders() {
         "dealerName",
         "subDealerName",
         "supplierName",
-        "expiry",
+        "soldAt",
+        "price",
     ];
 
     const sort: SortDescriptor = {
@@ -137,6 +139,24 @@ export default function Orders() {
             key: "invoiceNo",
             name: "Fatura",
             width: 100,
+            searchable: true,
+        },
+        {
+            key: "applianceSerialNo",
+            name: "Cihaz Seri No",
+            width: 100,
+            searchable: true,
+        },
+        {
+            key: "product",
+            name: "Ürün",
+            width: 120,
+            searchable: true,
+        },
+        {
+            key: "licenseType",
+            name: "Lisans",
+            width: 120,
             searchable: true,
         },
         {
@@ -168,9 +188,19 @@ export default function Orders() {
             sortable: true,
         },
         {
-            key: "expiry",
+            key: "paymentPlan",
             name: "Vade",
-            width: 100,
+            width: 80,
+        },
+        {
+            key: "price",
+            name: "Fiyat",
+            width: 80,
+        },
+        {
+            key: "soldtAt",
+            name: "Satış Tarihi",
+            width: 80,
             sortable: true,
         },
         {
@@ -202,36 +232,51 @@ export default function Orders() {
         },
     ];
 
-    const renderCell = useCallback(
-        (appliance: vAppliance, columnKey: React.Key) => {
-            const cellValue: any =
-                appliance[columnKey as keyof typeof appliance];
+    const renderCell = useCallback((order: vOrder, columnKey: React.Key) => {
+        const cellValue: any = order[columnKey as keyof typeof order];
 
-            switch (columnKey) {
-                case "customerName":
-                case "dealerName":
-                case "subDealerName":
-                case "supplierName":
-                    return (
-                        <p>
-                            {cellValue
-                                ? cellValue.length > 40
-                                    ? cellValue.substring(0, 40) + "..."
-                                    : cellValue
-                                : "-"}
-                        </p>
-                    );
-                case "expiry":
-                    return <p>{DateFormat(cellValue)}</p>;
-                case "createdAt":
-                case "updatedAt":
-                    return <p>{DateTimeFormat(cellValue)}</p>;
-                default:
-                    return cellValue ? cellValue : "-";
-            }
-        },
-        [],
-    );
+        switch (columnKey) {
+            case "customerName":
+            case "dealerName":
+            case "subDealerName":
+            case "supplierName":
+                return (
+                    <p>
+                        {cellValue
+                            ? cellValue.length > 40
+                                ? cellValue.substring(0, 40) + "..."
+                                : cellValue
+                            : "-"}
+                    </p>
+                );
+            case "product":
+                return (
+                    <p>
+                        {order.productModel || order.productBrand
+                            ? order.productBrand + " " + order.productModel
+                            : "-"}
+                    </p>
+                );
+            case "price":
+                return (
+                    <p>
+                        {cellValue
+                            ? cellValue +
+                              (currencyTypes?.find(
+                                  (c) => c.key === order.currency,
+                              )?.symbol || "₺")
+                            : "-"}
+                    </p>
+                );
+            case "soldAt":
+                return <p>{DateFormat(cellValue)}</p>;
+            case "createdAt":
+            case "updatedAt":
+                return <p>{DateTimeFormat(cellValue)}</p>;
+            default:
+                return cellValue ? cellValue : "-";
+        }
+    }, []);
     //#endregion
 
     //#region Data
@@ -422,17 +467,15 @@ export default function Orders() {
                             <div>
                                 <label
                                     htmlFor="registerNo"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
                                 >
                                     Kayıt No
                                 </label>
                                 <input
                                     type="text"
                                     id="registerNo"
-                                    required
                                     className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
                                     {...register("registerNo", {
-                                        required: true,
                                         maxLength: 50,
                                     })}
                                 />
@@ -452,21 +495,6 @@ export default function Orders() {
                                     {...register("invoiceNo", {
                                         maxLength: 50,
                                     })}
-                                />
-                            </div>
-
-                            <div>
-                                <label
-                                    htmlFor="expiry"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
-                                >
-                                    Vade
-                                </label>
-                                <input
-                                    type="date"
-                                    id="expiry"
-                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
-                                    {...register("expiry")}
                                 />
                             </div>
 
