@@ -44,7 +44,12 @@ export async function deleteData(
             user: updatedBy || "",
             date: date,
             description: `Deleted: ${id}`,
-            data: JSON.stringify({ id: id, updatedBy: date }),
+            data: JSON.stringify({
+                id: id,
+                updatedBy: updatedBy,
+                updatedAt: date,
+                res: res,
+            }),
         },
     });
 

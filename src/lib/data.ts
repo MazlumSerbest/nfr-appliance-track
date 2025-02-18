@@ -18,20 +18,22 @@ export async function getAppliances(forListBox?: boolean, productId?: number) {
     return appliances;
 }
 
-export async function getLicenses(forListBox?: boolean) {
-    const res = await fetch("/api/license");
+export async function getLicenses(
+    forListBox?: boolean,
+    licenseTypeId?: number,
+) {
+    const res = await fetch(
+        `/api/license${licenseTypeId ? `?licenseTypeId=${licenseTypeId}` : ""}`,
+    );
     const licenses = await res.json();
 
     if (forListBox)
         return licenses?.map((l: vLicense) => ({
             id: l.id,
             name:
-                l.serialNo +
-                " - " +
+                (l.serialNo ? l.serialNo + " - " : "") +
                 l.licenseType +
-                " " +
-                l.licenseDuration +
-                " Ay" +
+                (l.licenseDuration ? l.licenseDuration + " Ay" : "") +
                 (l.status == "stock" ? " (Stok)" : ""),
         }));
     return licenses;
@@ -94,7 +96,8 @@ export async function getLicenseTypes(
             .filter((lt: vLicenseType) => lt.active)
             .map((lt: vLicenseType) => ({
                 id: lt.id,
-                name: lt.brandName + " " + lt.type + " - " + lt.duration + " ay",
+                name:
+                    lt.brandName + " " + lt.type + " - " + lt.duration + " ay",
             }));
     return licenseTypes.filter((lt: vLicenseType) => lt.active);
 }

@@ -27,10 +27,16 @@ export const orderStatus = [
     { name: "Fatura Kesim", key: "invoice" },
     { name: "Satın Alım", key: "purchase" },
     { name: "Tamamlanmış ", key: "complete" },
-]
+];
 
 export const projectStatus = [
     { name: "Aktif", key: "active" },
     { name: "Kazanılan", key: "won" },
     { name: "Kaybedilen", key: "lost" },
+];
+
+export const currencyTypes = [
+    { name: "TRY", key: "TRY", symbol: "₺" },
+    { name: "USD", key: "USD", symbol: "$" },
+    { name: "EUR", key: "EUR", symbol: "€" },
 ];
