@@ -33,8 +33,8 @@ import {
     BiX,
     BiTrash,
     BiEdit,
-    BiError,
-    BiCheck,
+    BiSolidError,
+    BiSolidCheckCircle,
 } from "react-icons/bi";
 import { setLicenseActiveStatus, setLicenseAppliance } from "@/lib/prisma";
 import { DateFormat } from "@/utils/date";
@@ -442,7 +442,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                                                 mutate();
                                                             }}
                                                         >
-                                                            <BiCheck className="size-4"></BiCheck>
+                                                            <BiSolidCheckCircle className="size-4"/>
                                                         </Button>
                                                     </Tooltip>
                                                 )}
@@ -463,7 +463,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                                                 mutate();
                                                             }}
                                                         >
-                                                            <BiError className="size-4"></BiError>
+                                                            <BiSolidError className="size-4" />
                                                         </Button>
                                                     </Tooltip>
                                                 )}

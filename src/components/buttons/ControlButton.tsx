@@ -2,7 +2,14 @@ import { useState } from "react";
 
 import { Tooltip } from "@heroui/tooltip";
 
-import { BiCheckSquare, BiLoaderAlt, BiSquare } from "react-icons/bi";
+import {
+    BiCheckSquare,
+    BiLoaderAlt,
+    BiSolidBox,
+    BiSolidCheckbox,
+    BiSolidCheckboxChecked,
+    BiSquare,
+} from "react-icons/bi";
 import useUserStore from "@/store/user";
 import toast from "react-hot-toast";
 
@@ -18,11 +25,11 @@ export default function ControlButton({ data, mutate }: Props) {
     return (
         <>
             {submitting ? (
-                <BiLoaderAlt className="animate-spin text-xl text-sky-400" />
+                <BiLoaderAlt className="animate-spin text-3xl text-sky-400" />
             ) : data.controlled ? (
                 <Tooltip key={data.id + "-cont"} content="Gözetimli">
-                    <span className="text-xl text-green-600 active:opacity-50 cursor-pointer">
-                        <BiCheckSquare
+                    <span className="text-3xl text-green-600 active:opacity-50 cursor-pointer">
+                        <BiSolidCheckboxChecked
                             onClick={async () => {
                                 setSubmitting(true);
 
@@ -49,8 +56,8 @@ export default function ControlButton({ data, mutate }: Props) {
                 </Tooltip>
             ) : (
                 <Tooltip key={data.id + "-cont"} content="Gözetimsiz">
-                    <span className="text-xl text-gray-400 active:opacity-50 cursor-pointer">
-                        <BiSquare
+                    <span className="text-3xl text-gray-400 active:opacity-50 cursor-pointer">
+                        <BiSolidCheckbox
                             onClick={async () => {
                                 setSubmitting(true);
 

@@ -11,12 +11,11 @@ import {
     useDisclosure,
 } from "@heroui/modal";
 
-import { BiMailSend } from "react-icons/bi";
+import { BiSolidEnvelope } from "react-icons/bi";
 import { DateFormat } from "@/utils/date";
 import { validateEmail } from "@/utils/functions";
 import { sendMail } from "@/lib/sendmail";
 import toast from "react-hot-toast";
-import { mutate } from "swr";
 
 type Props = {
     dealer?: Current;
@@ -104,7 +103,7 @@ export default function SendLicenseMail({
                     isIconOnly
                     onPress={onOpen}
                 >
-                    <BiMailSend className="size-5" />
+                    <BiSolidEnvelope className="size-5" />
                 </Button>
             </Tooltip>
 
