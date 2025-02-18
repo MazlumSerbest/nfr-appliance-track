@@ -85,6 +85,28 @@ export async function PUT(
             data: order,
         });
 
+        if (updatedOrder.applianceId) {
+            await prisma.appliances.update({
+                where: {
+                    id: updatedOrder.applianceId,
+                },
+                data: {
+                    soldAt: order.soldAt,
+                },
+            });
+        }
+
+        if (updatedOrder.licenseId) {
+            await prisma.licenses.update({
+                where: {
+                    id: updatedOrder.licenseId,
+                },
+                data: {
+                    soldAt: order.soldAt,
+                },
+            });
+        }
+
         if (!updatedOrder.id)
             return NextResponse.json({
                 message: "Sipariş güncellenemedi!",

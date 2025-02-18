@@ -371,14 +371,6 @@ export default function Orders() {
                             sortOption={sort}
                             initialVisibleColumNames={visibleColumns}
                             activeOptions={[]}
-                            // onAddNew={
-                            //     currUser?.role == "technical"
-                            //         ? undefined
-                            //         : () => {
-                            //               reset({});
-                            //               onOpen();
-                            //           }
-                            // }
                             onDoubleClick={(item) => {
                                 router.push(`/dashboard/orders/${item.id}`);
                             }}
@@ -398,14 +390,6 @@ export default function Orders() {
                             sortOption={sort}
                             initialVisibleColumNames={visibleColumns}
                             activeOptions={[]}
-                            // onAddNew={
-                            //     currUser?.role == "technical"
-                            //         ? undefined
-                            //         : () => {
-                            //               reset({});
-                            //               onOpen();
-                            //           }
-                            // }
                             onDoubleClick={(item) => {
                                 router.push(`/dashboard/orders/${item.id}`);
                             }}
@@ -425,14 +409,6 @@ export default function Orders() {
                             sortOption={sort}
                             initialVisibleColumNames={visibleColumns}
                             activeOptions={[]}
-                            // onAddNew={
-                            //     currUser?.role == "technical"
-                            //         ? undefined
-                            //         : () => {
-                            //               reset({});
-                            //               onOpen();
-                            //           }
-                            // }
                             onDoubleClick={(item) => {
                                 router.push(`/dashboard/orders/${item.id}`);
                             }}
@@ -555,6 +531,7 @@ export default function Orders() {
                                     )}
                                 />
                             </div>
+
                             <div>
                                 <label
                                     htmlFor="subDealerId"
@@ -576,6 +553,7 @@ export default function Orders() {
                                     )}
                                 />
                             </div>
+                            
                             <div>
                                 <label
                                     htmlFor="supplierId"

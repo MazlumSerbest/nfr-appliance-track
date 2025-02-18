@@ -22,6 +22,7 @@ type vOrder = Order & {
     productModel?: string;
     productBrand?: string;
     licenseType?: string;
+    licenseSerialNo?: string;
 }
 
 type vProject = Project & {
