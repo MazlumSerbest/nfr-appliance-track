@@ -17,6 +17,13 @@ type vLicense = License & {
     isPassive?: boolean;
 };
 
+type vOrder = Order & {
+    applianceSerialNo?: string;
+    productModel?: string;
+    productBrand?: string;
+    licenseType?: string;
+}
+
 type vProject = Project & {
     customerName: string;
     dealerName?: string;
