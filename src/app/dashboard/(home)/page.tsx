@@ -125,7 +125,7 @@ export default function Dashboard() {
                                     />
                                 ) : (
                                     <p className="w-full text-center text-zinc-500">
-                                        Aktif Sipariş Bulunmuyor
+                                        Aktif sipariş bulunmuyor
                                     </p>
                                 )}
                             </div>

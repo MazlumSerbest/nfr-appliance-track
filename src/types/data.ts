@@ -103,6 +103,10 @@ type Order = Entity & {
     soldAt?: string | null;
     price?: number;
     currency?: "TRY" | "USD" | "EUR";
+    appliancePrice?: number;
+    applianceCurrency?: "TRY" | "USD" | "EUR";
+    licensePrice?: number;
+    licenseCurrency?: "TRY" | "USD" | "EUR";
     address?: string;
     note?: string;
     customerId?: number;

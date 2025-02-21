@@ -58,6 +58,10 @@ interface IFormInput {
     licenseId?: number;
     price?: number;
     currency?: "TRY" | "USD" | "EUR";
+    appliancePrice?: number;
+    applianceCurrency?: "TRY" | "USD" | "EUR";
+    licensePrice?: number;
+    licenseCurrency?: "TRY" | "USD" | "EUR";
     address?: string;
     note?: string;
     customerId: number;
@@ -268,6 +272,18 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                 </div>
 
                                 <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                    <label className="font-medium">
+                                        Cihaz Seri No
+                                    </label>
+                                    <input
+                                        disabled
+                                        type="text"
+                                        className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                        value={data.appliance?.serialNo}
+                                    />
+                                </div>
+
+                                <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                     <label
                                         htmlFor="invoiceNo"
                                         className="font-medium"
@@ -304,14 +320,55 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                 </div>
 
                                 <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                    <label
+                                        htmlFor="appliancePrice"
+                                        className="font-medium"
+                                    >
+                                        Cihaz Fiyatı
+                                    </label>
+                                    <div className="flex flex-row md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full h-10 gap-1">
+                                        <input
+                                            type="number"
+                                            id="appliancePrice"
+                                            min="1"
+                                            step="any"
+                                            className="flex-1 rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                            {...register("appliancePrice")}
+                                        />
+
+                                        <div className="rounded-md border-0 px-3 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:text-sm sm:leading-6 outline-none">
+                                            <select
+                                                id="currency"
+                                                className="w-full border-none text-sm text-zinc-700 outline-none"
+                                                {...register(
+                                                    "applianceCurrency",
+                                                )}
+                                            >
+                                                {currencyTypes?.map((c) => (
+                                                    <option
+                                                        key={c.key}
+                                                        value={c.key}
+                                                    >
+                                                        {c.name +
+                                                            " (" +
+                                                            c.symbol +
+                                                            ")"}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                     <label className="font-medium">
-                                        Cihaz Seri No
+                                        Lisans Seri No
                                     </label>
                                     <input
                                         disabled
                                         type="text"
                                         className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
-                                        value={data.appliance?.serialNo}
+                                        value={data.license?.serialNo}
                                     />
                                 </div>
 
@@ -348,38 +405,27 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                 </div>
 
                                 <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
-                                    <label className="font-medium">
-                                        Lisans Seri No
-                                    </label>
-                                    <input
-                                        disabled
-                                        type="text"
-                                        className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
-                                        value={data.license?.serialNo}
-                                    />
-                                </div>
-
-                                <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                     <label
-                                        htmlFor="price"
+                                        htmlFor="licensePrice"
                                         className="font-medium"
                                     >
-                                        Fiyat
+                                        Lisans Fiyatı
                                     </label>
                                     <div className="flex flex-row md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full h-10 gap-1">
                                         <input
                                             type="number"
-                                            id="price"
-                                            step=".01"
+                                            id="licensePrice"
+                                            min="1"
+                                            step="any"
                                             className="flex-1 rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
-                                            {...register("price")}
+                                            {...register("licensePrice")}
                                         />
 
                                         <div className="rounded-md border-0 px-3 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:text-sm sm:leading-6 outline-none">
                                             <select
                                                 id="currency"
                                                 className="w-full border-none text-sm text-zinc-700 outline-none"
-                                                {...register("currency")}
+                                                {...register("licenseCurrency")}
                                             >
                                                 {currencyTypes?.map((c) => (
                                                     <option
@@ -425,6 +471,45 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                         className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
                                         {...register("paymentPlan")}
                                     />
+                                </div>
+
+                                <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                    <label
+                                        htmlFor="price"
+                                        className="font-medium"
+                                    >
+                                        Toplam Fiyat
+                                    </label>
+                                    <div className="flex flex-row md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full h-10 gap-1">
+                                        <input
+                                            type="number"
+                                            id="price"
+                                            min="1"
+                                            step="any"
+                                            className="flex-1 rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                            {...register("price")}
+                                        />
+
+                                        <div className="rounded-md border-0 px-3 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:text-sm sm:leading-6 outline-none">
+                                            <select
+                                                id="currency"
+                                                className="w-full border-none text-sm text-zinc-700 outline-none"
+                                                {...register("currency")}
+                                            >
+                                                {currencyTypes?.map((c) => (
+                                                    <option
+                                                        key={c.key}
+                                                        value={c.key}
+                                                    >
+                                                        {c.name +
+                                                            " (" +
+                                                            c.symbol +
+                                                            ")"}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
