@@ -23,7 +23,7 @@ type vOrder = Order & {
     productBrand?: string;
     licenseType?: string;
     licenseSerialNo?: string;
-}
+};
 
 type vProject = Project & {
     customerName: string;
@@ -32,7 +32,7 @@ type vProject = Project & {
     productBrand?: string;
     licenseType?: string;
     licenseDuration?: string;
-}
+};
 
 type vProduct = Product & {
     brandName: string;
@@ -62,6 +62,14 @@ type vApplianceCounts = {
     stockCount?: number;
     orderCount?: number;
     activeCount?: number;
+};
+
+type vOrderCounts = {
+    id: number;
+    orderCount?: number;
+    invoiceCount?: number;
+    purchaseCount?: number;
+    completeCount?: number;
 };
 
 type vProjectCounts = {

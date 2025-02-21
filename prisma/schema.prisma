@@ -537,6 +537,14 @@ view vOrders {
   licenseSerialNo   String?   @db.VarChar
 }
 
+view vOrderCounts {
+  id            Int     @unique
+  orderCount    BigInt?
+  invoiceCount  BigInt?
+  purchaseCount BigInt?
+  completeCount BigInt?
+}
+
 enum CurrentType {
   customer
   dealer

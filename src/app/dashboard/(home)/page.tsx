@@ -7,13 +7,14 @@ import { Card, CardBody } from "@heroui/card";
 import { Divider } from "@heroui/divider";
 
 import {
-    BiServer,
-    BiShieldPlus,
     BiShieldQuarter,
-    BiBriefcase,
     BiShield,
-    BiError,
-    BiXCircle,
+    BiSolidPackage,
+    BiSolidBriefcase,
+    BiSolidServer,
+    BiSolidShieldPlus,
+    BiSolidShield,
+    BiSolidError,
 } from "react-icons/bi";
 import { Chart } from "react-google-charts";
 import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
@@ -21,6 +22,7 @@ import {
     getLicenseCounts,
     getApplianceCounts,
     getProjectCounts,
+    getOrderCounts,
 } from "@/lib/prisma";
 
 export default function Dashboard() {
@@ -28,6 +30,7 @@ export default function Dashboard() {
     const [licenseCounts, setLicenseCounts] = useState<vLicenseCounts>();
     const [applianceCounts, setApplianceCounts] = useState<vApplianceCounts>();
     const [projectCounts, setProjectCounts] = useState<vProjectCounts>();
+    const [orderCounts, setOrderCounts] = useState<vOrderCounts>();
 
     useEffect(() => {
         async function getData() {
@@ -37,6 +40,8 @@ export default function Dashboard() {
             setApplianceCounts(app);
             const pro: any = await getProjectCounts();
             setProjectCounts(pro);
+            const ord: any = await getOrderCounts();
+            setOrderCounts(ord);
         }
 
         getData();
@@ -58,11 +63,144 @@ export default function Dashboard() {
             <section className="w-full max-w-[1040px]">
                 <div className="flex flex-col gap-1 mt-3 md:mt-0">
                     <h1 className="text-2xl font-semibold text-zinc-600">
+                        Siparişler
+                    </h1>
+                </div>
+
+                <Divider className="mt-3 mb-4" />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 md:mt-0">
+                    <Card className="w-full min-w-72 border-1 border-b-3">
+                        <CardBody className="flex flex-col gap-2">
+                            <div className="flex flex-1 items-center">
+                                {orderCounts?.orderCount ||
+                                orderCounts?.invoiceCount ||
+                                orderCounts?.purchaseCount ? (
+                                    <Chart
+                                        chartType="PieChart"
+                                        width="100%"
+                                        height={300}
+                                        data={[
+                                            ["Durum", "Sipariş Sayısı"],
+                                            [
+                                                "Sipariş",
+                                                Number(orderCounts?.orderCount),
+                                            ],
+                                            [
+                                                "Fatura Kesim",
+                                                Number(
+                                                    orderCounts?.invoiceCount,
+                                                ),
+                                            ],
+                                            [
+                                                "Satın Alım",
+                                                Number(
+                                                    orderCounts?.purchaseCount,
+                                                ),
+                                            ],
+                                        ]}
+                                        options={{
+                                            is3D: true,
+                                            // title: "Siparişler",
+                                            fontSize: 12,
+                                            colors: [
+                                                "rgb(14, 165, 233)",
+                                                "rgb(251, 146, 60)",
+                                                "rgb(250, 204, 21)",
+                                            ],
+                                            chartArea: {
+                                                top: 12,
+                                                width: "100%",
+                                                height: 250,
+                                            },
+                                            legend: {
+                                                position: "bottom",
+                                                alignment: "center",
+                                                maxLines: 2,
+                                                textStyle: {
+                                                    color: "gray",
+                                                },
+                                            },
+                                        }}
+                                    />
+                                ) : (
+                                    <p className="w-full text-center text-zinc-500">
+                                        Aktif Sipariş Bulunmuyor
+                                    </p>
+                                )}
+                            </div>
+                        </CardBody>
+                    </Card>
+
+                    <div className="flex flex-col gap-4 items-center">
+                        <PanelCard
+                            header="SİPARİŞ"
+                            color="sky"
+                            content={
+                                <span className="flex-wrap break-all text-pretty">
+                                    {orderCounts?.orderCount?.toLocaleString() ||
+                                        "0"}
+                                </span>
+                            }
+                            icon={<BiSolidPackage />}
+                            onClick={() =>
+                                router.push("/dashboard/orders?tab=order")
+                            }
+                        />
+                        <PanelCard
+                            header="FATURA KESİM"
+                            color="orange"
+                            content={
+                                <span className="flex-wrap break-all text-pretty">
+                                    {orderCounts?.invoiceCount?.toLocaleString() ||
+                                        "0"}
+                                </span>
+                            }
+                            icon={<BiSolidPackage />}
+                            onClick={() =>
+                                router.push("/dashboard/orders?tab=invoice")
+                            }
+                        />
+                    </div>
+
+                    <div className="flex flex-col gap-4 items-center">
+                        <PanelCard
+                            header="SATIN ALIM"
+                            color="yellow"
+                            content={
+                                <span className="flex-wrap break-all text-pretty">
+                                    {orderCounts?.purchaseCount?.toLocaleString() ||
+                                        "0"}
+                                </span>
+                            }
+                            icon={<BiSolidPackage />}
+                            onClick={() =>
+                                router.push("/dashboard/orders?tab=purchase")
+                            }
+                        />
+                        <PanelCard
+                            header="TAMAMLANMIŞ"
+                            color="green"
+                            content={
+                                <span className="flex-wrap break-all text-pretty">
+                                    {orderCounts?.completeCount?.toLocaleString() ||
+                                        "0"}
+                                </span>
+                            }
+                            icon={<BiSolidPackage />}
+                            onClick={() =>
+                                router.push("/dashboard/orders?tab=complete")
+                            }
+                        />
+                    </div>
+                </div>
+            </section>
+
+            <section className="w-full max-w-[1040px]">
+                <div className="flex flex-col gap-1 mt-3 md:mt-0">
+                    <h1 className="text-2xl font-semibold text-zinc-600">
                         Projeler
                     </h1>
-                    {/* <p className="text-sm text-zinc-400">
-                        Cihazların durumuyla alakalı bilgiler.
-                    </p> */}
                 </div>
 
                 <Divider className="mt-2 mb-4" />
@@ -77,7 +215,7 @@ export default function Dashboard() {
                                     "0"}
                             </span>
                         }
-                        icon={<BiBriefcase />}
+                        icon={<BiSolidBriefcase />}
                         onClick={() =>
                             router.push("/dashboard/projects?tab=projects")
                         }
@@ -91,7 +229,7 @@ export default function Dashboard() {
                                     "0"}
                             </span>
                         }
-                        icon={<BiBriefcase />}
+                        icon={<BiSolidBriefcase />}
                         onClick={() =>
                             router.push("/dashboard/projects?tab=won")
                         }
@@ -105,7 +243,7 @@ export default function Dashboard() {
                                     "0"}
                             </span>
                         }
-                        icon={<BiBriefcase />}
+                        icon={<BiSolidBriefcase />}
                         onClick={() =>
                             router.push("/dashboard/projects?tab=lost")
                         }
@@ -118,9 +256,6 @@ export default function Dashboard() {
                     <h1 className="text-2xl font-semibold text-zinc-600">
                         Cihazlar
                     </h1>
-                    {/* <p className="text-sm text-zinc-400">
-                        Cihazların durumuyla alakalı bilgiler.
-                    </p> */}
                 </div>
 
                 <Divider className="mt-2 mb-4" />
@@ -135,7 +270,7 @@ export default function Dashboard() {
                                     "0"}
                             </span>
                         }
-                        icon={<BiServer />}
+                        icon={<BiSolidServer />}
                         onClick={() =>
                             router.push("/dashboard/appliances?tab=stock")
                         }
@@ -149,7 +284,7 @@ export default function Dashboard() {
                                     "0"}
                             </span>
                         }
-                        icon={<BiServer />}
+                        icon={<BiSolidServer />}
                         onClick={() =>
                             router.push("/dashboard/appliances?tab=order")
                         }
@@ -163,7 +298,7 @@ export default function Dashboard() {
                                     "0"}
                             </span>
                         }
-                        icon={<BiServer />}
+                        icon={<BiSolidServer />}
                         onClick={() =>
                             router.push("/dashboard/appliances?tab=active")
                         }
@@ -176,9 +311,6 @@ export default function Dashboard() {
                     <h1 className="text-2xl font-semibold text-zinc-600">
                         Lisanslar
                     </h1>
-                    {/* <p className="text-sm text-zinc-400">
-                        Lisansların durumuyla alakalı bilgiler.
-                    </p> */}
                 </div>
 
                 <Divider className="mt-3 mb-4" />
@@ -194,7 +326,7 @@ export default function Dashboard() {
                                         "0"}
                                 </span>
                             }
-                            icon={<BiShieldPlus />}
+                            icon={<BiSolidShieldPlus />}
                             onClick={() =>
                                 router.push("/dashboard/licenses?tab=stock")
                             }
@@ -225,7 +357,7 @@ export default function Dashboard() {
                                         "0"}
                                 </span>
                             }
-                            icon={<BiShield />}
+                            icon={<BiSolidShield />}
                             onClick={() =>
                                 router.push("/dashboard/licenses?tab=order")
                             }
@@ -277,7 +409,7 @@ export default function Dashboard() {
                                         ],
                                     ]}
                                     options={{
-                                        // is3D: true,
+                                        is3D: true,
                                         // title: "Siparişler",
                                         fontSize: 12,
                                         colors: [
@@ -393,7 +525,7 @@ export default function Dashboard() {
                                             "0"}
                                     </span>
                                 }
-                                icon={<BiError />}
+                                icon={<BiSolidError />}
                                 onClick={() =>
                                     router.push("/dashboard/licenses?tab=lost")
                                 }

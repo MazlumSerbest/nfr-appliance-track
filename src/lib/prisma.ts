@@ -167,6 +167,12 @@ export async function getProjectCounts() {
     return projectCounts;
 }
 
+export async function getOrderCounts() {
+    const orderCounts = await prisma.vOrderCounts.findFirst();
+
+    return orderCounts;
+}
+
 // export async function setMainAuthorizedPerson(
 //     currentId: number,
 //     authorizedPersonId: number,
