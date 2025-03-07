@@ -109,6 +109,7 @@ type Order = Entity & {
     licenseCurrency?: "TRY" | "USD" | "EUR";
     address?: string;
     note?: string;
+    cusName?: string;
     customerId?: number;
     dealerId?: number;
     subDealerId?: number;

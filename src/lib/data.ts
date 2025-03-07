@@ -1,10 +1,16 @@
 import toast from "react-hot-toast";
 
-export async function getAppliances(forListBox?: boolean, productId?: number) {
+export async function getAppliances(
+    forListBox?: boolean,
+    productId?: number,
+    status?: string[],
+) {
     const res = await fetch(
         `/api/appliance${productId ? `?productId=${productId}` : ""}`,
     );
-    const appliances = await res.json();
+    let appliances = await res.json();
+
+    if (status) appliances = appliances.filter((l: vLicense) => status.includes(l.status));
 
     if (!appliances.length) {
         toast.error("Cihaz bulunamadı!");
@@ -13,7 +19,7 @@ export async function getAppliances(forListBox?: boolean, productId?: number) {
     if (forListBox)
         return appliances?.map((a: vAppliance) => ({
             id: a.id,
-            name: a.serialNo,
+            name: a.serialNo + (a.status == "stock" ? " (Stok)" : ""),
         }));
     return appliances;
 }
@@ -21,12 +27,19 @@ export async function getAppliances(forListBox?: boolean, productId?: number) {
 export async function getLicenses(
     forListBox?: boolean,
     licenseTypeId?: number,
+    status?: string[],
 ) {
     const res = await fetch(
         `/api/license${licenseTypeId ? `?licenseTypeId=${licenseTypeId}` : ""}`,
     );
-    const licenses = await res.json();
+    let licenses = await res.json();
 
+    if (status) licenses = licenses.filter((l: vLicense) => status.includes(l.status));
+
+    if (!licenses.length) {
+        toast.error("Lisans bulunamadı!");
+        return [];
+    }
     if (forListBox)
         return licenses?.map((l: vLicense) => ({
             id: l.id,
