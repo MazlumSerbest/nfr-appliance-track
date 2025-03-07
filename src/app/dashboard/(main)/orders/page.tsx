@@ -200,7 +200,7 @@ export default function Orders() {
         },
         {
             key: "price",
-            name: "Fiyat",
+            name: "Toplam Fiyat",
             width: 80,
         },
         {
@@ -267,10 +267,13 @@ export default function Orders() {
                 return (
                     <p>
                         {cellValue
-                            ? cellValue +
-                              (currencyTypes?.find(
+                            ? parseFloat(cellValue).toLocaleString("tr-TR", {
+                                  maximumFractionDigits: 2,
+                                  minimumFractionDigits: 2,
+                              }) +
+                              currencyTypes?.find(
                                   (c) => c.key === order.currency,
-                              )?.symbol || "₺")
+                              )?.symbol
                             : "-"}
                     </p>
                 );
@@ -553,7 +556,7 @@ export default function Orders() {
                                     )}
                                 />
                             </div>
-                            
+
                             <div>
                                 <label
                                     htmlFor="supplierId"
