@@ -154,36 +154,34 @@ model licenseHistory {
 }
 
 model orders {
-  id                Int         @id @default(autoincrement())
-  customerId        Int?
-  dealerId          Int?
-  subDealerId       Int?
-  supplierId        Int?
-  registerNo        String?     @db.VarChar
-  invoiceNo         String?     @db.VarChar
-  address           String?     @db.VarChar
-  createdAt         DateTime    @default(now()) @db.Timestamptz(6)
-  createdBy         String      @db.VarChar
-  updatedBy         String?     @db.VarChar
-  updatedAt         DateTime?   @updatedAt @db.Timestamptz(6)
-  note              String?     @db.VarChar
-  status            String      @default("order") @db.VarChar
-  currency          String?     @default("TRY") @db.VarChar
-  paymentPlan       String?     @db.VarChar
-  price             Decimal?    @db.Money
-  soldAt            DateTime?   @db.Date
-  applianceId       Int?
-  licenseId         Int?
-  appliancePrice    Decimal?    @db.Money
-  applianceCurrency String?     @default("TRY") @db.VarChar
-  licensePrice      Decimal?    @db.Money
-  licenseCurrency   String?     @default("TRY") @db.VarChar
-  appliance         appliances? @relation(fields: [applianceId], references: [id])
-  customer          currents?   @relation("Customer", fields: [customerId], references: [id])
-  dealer            currents?   @relation("Dealer", fields: [dealerId], references: [id])
-  license           licenses?   @relation(fields: [licenseId], references: [id])
-  subDealer         currents?   @relation("SubDealer", fields: [subDealerId], references: [id])
-  supplier          currents?   @relation("Supplier", fields: [supplierId], references: [id])
+  id             Int         @id @default(autoincrement())
+  customerId     Int?
+  dealerId       Int?
+  subDealerId    Int?
+  supplierId     Int?
+  registerNo     String?     @db.VarChar
+  invoiceNo      String?     @db.VarChar
+  address        String?     @db.VarChar
+  createdAt      DateTime    @default(now()) @db.Timestamptz(6)
+  createdBy      String      @db.VarChar
+  updatedBy      String?     @db.VarChar
+  updatedAt      DateTime?   @updatedAt @db.Timestamptz(6)
+  note           String?     @db.VarChar
+  status         String      @default("order") @db.VarChar
+  currency       String?     @default("TRY") @db.VarChar
+  paymentPlan    String?     @db.VarChar
+  soldAt         DateTime?   @db.Date
+  applianceId    Int?
+  licenseId      Int?
+  appliancePrice Decimal?    @db.Money
+  licensePrice   Decimal?    @db.Money
+  cusName        String?     @db.VarChar
+  appliance      appliances? @relation(fields: [applianceId], references: [id])
+  customer       currents?   @relation("Customer", fields: [customerId], references: [id])
+  dealer         currents?   @relation("Dealer", fields: [dealerId], references: [id])
+  license        licenses?   @relation(fields: [licenseId], references: [id])
+  subDealer      currents?   @relation("SubDealer", fields: [subDealerId], references: [id])
+  supplier       currents?   @relation("Supplier", fields: [supplierId], references: [id])
 }
 
 model projects {

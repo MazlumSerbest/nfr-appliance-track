@@ -5,7 +5,7 @@ SELECT
   o."invoiceNo",
   o."soldAt",
   o."paymentPlan",
-  o.price,
+  (o."appliancePrice" + o."licensePrice") AS price,
   o.currency,
   o.note,
   o."createdBy",
