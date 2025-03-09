@@ -8,14 +8,6 @@ import toast from "react-hot-toast";
 import { Card, CardBody, CardFooter } from "@heroui/card";
 import { Button } from "@heroui/button";
 import {
-    Table,
-    TableHeader,
-    TableColumn,
-    TableBody,
-    TableRow,
-    TableCell,
-} from "@heroui/table";
-import {
     Modal,
     ModalBody,
     ModalContent,
@@ -56,15 +48,13 @@ interface IFormInput {
     soldAt?: string;
     applianceId?: number;
     licenseId?: number;
-    price?: number;
     currency?: "TRY" | "USD" | "EUR";
     appliancePrice?: number;
-    applianceCurrency?: "TRY" | "USD" | "EUR";
     licensePrice?: number;
-    licenseCurrency?: "TRY" | "USD" | "EUR";
     address?: string;
     note?: string;
     customerId: number;
+    cusName?: string;
     dealerId?: number;
     subDealerId: number;
     supplierId: number;
@@ -96,6 +86,8 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
     const [dealers, setDealers] = useState<ListBoxItem[] | null>(null);
     const [suppliers, setSuppliers] = useState<ListBoxItem[] | null>(null);
 
+    const [totalPrice, setTotalPrice] = useState<number>(0);
+
     const {
         isOpen: isOpenApp,
         onClose: onCloseApp,
@@ -117,13 +109,24 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
             onSuccess: (pro) => {
                 reset(pro);
                 setValue("soldAt", pro.soldAt?.split("T")[0]);
+                setTotalPrice(
+                    parseFloat(pro.appliancePrice || 0) +
+                        parseFloat(pro.licensePrice || 0),
+                );
             },
         },
     );
 
     //#region Form
-    const { register, reset, resetField, setValue, handleSubmit, control } =
-        useForm<IFormInput>();
+    const {
+        register,
+        reset,
+        resetField,
+        setValue,
+        getValues,
+        handleSubmit,
+        control,
+    } = useForm<IFormInput>();
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         setSubmitting(true);
@@ -164,12 +167,8 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
         setSuppliers(sup);
         const pro: ListBoxItem[] = await getProducts(true);
         setProducts(pro);
-        const app: ListBoxItem[] = await getAppliances(true);
-        setAppliances(app);
         const lt: ListBoxItem[] = await getLicenseTypes(true);
         setLicenseTypes(lt);
-        const lic: ListBoxItem[] = await getLicenses(true);
-        setLicenses(lic);
     }
 
     useEffect(() => {
@@ -184,9 +183,7 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
         !dealers ||
         !suppliers ||
         !products ||
-        !appliances ||
-        !licenseTypes ||
-        !licenses
+        !licenseTypes
     )
         return (
             <div className="flex flex-col mt-4">
@@ -336,29 +333,56 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                             {...register("appliancePrice")}
                                         />
 
-                                        <div className="rounded-md border-0 px-3 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:text-sm sm:leading-6 outline-none">
-                                            <select
-                                                id="currency"
-                                                className="w-full border-none text-sm text-zinc-700 outline-none"
-                                                {...register(
-                                                    "applianceCurrency",
-                                                )}
-                                            >
-                                                {currencyTypes?.map((c) => (
-                                                    <option
-                                                        key={c.key}
-                                                        value={c.key}
-                                                    >
-                                                        {c.name +
-                                                            " (" +
-                                                            c.symbol +
-                                                            ")"}
-                                                    </option>
-                                                ))}
-                                            </select>
+                                        <div className="rounded-md border-0 px-4 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 sm:text-sm sm:leading-6 outline-none">
+                                            <p>
+                                                {
+                                                    currencyTypes?.find(
+                                                        (ct) =>
+                                                            ct.key ===
+                                                            getValues(
+                                                                "currency",
+                                                            ),
+                                                    )?.symbol
+                                                }
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
+
+                                {data?.license?.appSerialNo && (
+                                    <>
+                                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                            <label className="font-medium">
+                                                Ürün (Lisans Üzerinden)
+                                            </label>
+                                            <input
+                                                disabled
+                                                type="text"
+                                                className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                                value={
+                                                    data.license?.product?.brand
+                                                        ?.name +
+                                                    " " +
+                                                    data.license?.product?.model
+                                                }
+                                            />
+                                        </div>
+
+                                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                            <label className="font-medium">
+                                                Cihaz Seri No (Lisans Üzerinden)
+                                            </label>
+                                            <input
+                                                disabled
+                                                type="text"
+                                                className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                                value={
+                                                    data.license?.appSerialNo
+                                                }
+                                            />
+                                        </div>
+                                    </>
+                                )}
 
                                 <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                     <label className="font-medium">
@@ -421,24 +445,18 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                             {...register("licensePrice")}
                                         />
 
-                                        <div className="rounded-md border-0 px-3 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:text-sm sm:leading-6 outline-none">
-                                            <select
-                                                id="currency"
-                                                className="w-full border-none text-sm text-zinc-700 outline-none"
-                                                {...register("licenseCurrency")}
-                                            >
-                                                {currencyTypes?.map((c) => (
-                                                    <option
-                                                        key={c.key}
-                                                        value={c.key}
-                                                    >
-                                                        {c.name +
-                                                            " (" +
-                                                            c.symbol +
-                                                            ")"}
-                                                    </option>
-                                                ))}
-                                            </select>
+                                        <div className="rounded-md border-0 px-4 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 sm:text-sm sm:leading-6 outline-none">
+                                            <p>
+                                                {
+                                                    currencyTypes?.find(
+                                                        (ct) =>
+                                                            ct.key ===
+                                                            getValues(
+                                                                "currency",
+                                                            ),
+                                                    )?.symbol
+                                                }
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
@@ -475,19 +493,22 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
 
                                 <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                     <label
-                                        htmlFor="price"
+                                        htmlFor="currency"
                                         className="font-medium"
                                     >
                                         Toplam Fiyat
                                     </label>
                                     <div className="flex flex-row md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full h-10 gap-1">
                                         <input
-                                            type="number"
-                                            id="price"
-                                            min="1"
-                                            step="any"
+                                            disabled
+                                            value={totalPrice.toLocaleString(
+                                                "tr-TR",
+                                                {
+                                                    maximumFractionDigits: 2,
+                                                    minimumFractionDigits: 2,
+                                                },
+                                            )}
                                             className="flex-1 rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
-                                            {...register("price")}
                                         />
 
                                         <div className="rounded-md border-0 px-3 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:text-sm sm:leading-6 outline-none">
@@ -510,6 +531,24 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                             </select>
                                         </div>
                                     </div>
+                                </div>
+
+                                <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2 items-center">
+                                    <label
+                                        htmlFor="cusName"
+                                        className="font-medium after:content-['*'] after:ml-0.5"
+                                    >
+                                        Müşteri Adı
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="cusName"
+                                        placeholder="Müşteri seçimi yapılmayacaksa bu alanı doldurunuz!"
+                                        className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                        {...register("cusName", {
+                                            maxLength: 250,
+                                        })}
+                                    />
                                 </div>
 
                                 <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
@@ -711,12 +750,16 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                             <AutoComplete
                                 onChange={async (e) => {
                                     const appliances: ListBoxItem[] =
-                                        await getAppliances(true, e);
+                                        await getAppliances(true, e, [
+                                            "stock",
+                                            "order",
+                                        ]);
                                     setAppliances(appliances);
                                 }}
                                 data={products || []}
                             />
                         </div>
+
                         <div>
                             <label
                                 htmlFor="applianceId"
@@ -791,11 +834,36 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                     <ModalBody className="flex w-full">
                         <div>
                             <label
+                                htmlFor="licenseType"
+                                className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                            >
+                                Lisans Tipi
+                            </label>
+                            <AutoComplete
+                                onChange={async (e) => {
+                                    const licenses: ListBoxItem[] =
+                                        await getLicenses(true, e, [
+                                            "stock",
+                                            "order",
+                                        ]);
+                                    setLicenses(licenses);
+                                }}
+                                data={licenseTypes || []}
+                            />
+                        </div>
+
+                        <div>
+                            <label
                                 htmlFor="licenseId"
                                 className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
                             >
                                 Lisans
                             </label>
+                            <span className="flex flex-row font-normal text-xs text-zinc-400 items-center gap-1 mb-1">
+                                <BiInfoCircle />
+                                Lisans seçmek için lisans tipi seçimi yapmanız
+                                gereklidir!
+                            </span>
                             <AutoComplete
                                 onChange={(data) => setLicenseId(data)}
                                 data={licenses || []}

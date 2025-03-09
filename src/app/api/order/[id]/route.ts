@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import prisma from "@/utils/db";
+import { select } from "@heroui/react";
 
 export async function GET(
     request: NextRequest,
@@ -21,6 +22,7 @@ export async function GET(
                 appliance: {
                     select: {
                         serialNo: true,
+                        productId: true,
                         product: {
                             select: { id: true },
                         },
@@ -29,6 +31,18 @@ export async function GET(
                 license: {
                     select: {
                         serialNo: true,
+                        applianceId: true,
+                        appSerialNo: true,
+                        product: {
+                            select: {
+                                model: true,
+                                brand: {
+                                    select: {
+                                        name: true,
+                                    },
+                                },
+                            },
+                        },
                         licenseType: {
                             select: { id: true },
                         },
@@ -91,7 +105,12 @@ export async function PUT(
                     id: updatedOrder.applianceId,
                 },
                 data: {
-                    soldAt: order.soldAt,
+                    soldAt: order.soldAt || undefined,
+                    customerId: order.customerId || undefined,
+                    cusName: order.cusName || undefined,
+                    dealerId: order.dealerId || undefined,
+                    subDealerId: order.subDealerId || undefined,
+                    supplierId: order.supplierId || undefined,
                 },
             });
         }
@@ -102,7 +121,13 @@ export async function PUT(
                     id: updatedOrder.licenseId,
                 },
                 data: {
-                    soldAt: order.soldAt,
+                    applianceId: updatedOrder.applianceId || undefined,
+                    soldAt: order.soldAt || undefined,
+                    customerId: order.customerId || undefined,
+                    cusName: order.cusName || undefined,
+                    dealerId: order.dealerId || undefined,
+                    subDealerId: order.subDealerId || undefined,
+                    supplierId: order.supplierId || undefined,
                 },
             });
         }
