@@ -13,7 +13,14 @@ export async function GET(request: NextRequest) {
                 ok: false,
             });
 
+        let licenseTypeId = Number(
+            request.nextUrl.searchParams.get("licenseTypeId"),
+        );
+
         const data = await prisma.vLicenses.findMany({
+            where: {
+                ...(licenseTypeId ? { licenseTypeId: licenseTypeId } : {}),
+            },
             orderBy: [
                 {
                     createdAt: "desc",

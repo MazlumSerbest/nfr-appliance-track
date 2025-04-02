@@ -2,7 +2,6 @@ SELECT
   l.id,
   CASE
     WHEN (l."isLost" IS TRUE) THEN 'lost' :: text
-    WHEN (l."isPassive" IS TRUE) THEN 'passive' :: text
     WHEN (
       (l."customerId" IS NULL)
       AND (((l."cusName") :: text = '' :: text) IS NOT FALSE)
@@ -91,7 +90,8 @@ SELECT
   END AS "expiryStatus",
   l."isLost",
   l."isPassive",
-  l."mailSended"
+  l."mailSended",
+  l."licenseTypeId"
 FROM
   (
     (

@@ -424,6 +424,7 @@ view vLicenses {
   isLost            Boolean?
   isPassive         Boolean?
   mailSended        Boolean?
+  licenseTypeId     Int?
 }
 
 view vConnections {

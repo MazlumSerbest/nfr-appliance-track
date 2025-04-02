@@ -22,7 +22,7 @@ SELECT
   (
     (
       (
-        ((pb.name) :: text || ' ' :: text) || (lt.type) :: text
+        ((lb.name) :: text || ' ' :: text) || (lt.type) :: text
       ) || ' ' :: text
     ) || lt.duration
   ) AS "licenseType",
@@ -37,22 +37,25 @@ FROM
               (
                 (
                   (
-                    orders o
-                    LEFT JOIN currents c ON ((o."customerId" = c.id))
+                    (
+                      orders o
+                      LEFT JOIN currents c ON ((o."customerId" = c.id))
+                    )
+                    LEFT JOIN currents d ON ((o."dealerId" = d.id))
                   )
-                  LEFT JOIN currents d ON ((o."dealerId" = d.id))
+                  LEFT JOIN currents sd ON ((o."subDealerId" = sd.id))
                 )
-                LEFT JOIN currents sd ON ((o."subDealerId" = sd.id))
+                LEFT JOIN currents s ON ((o."supplierId" = s.id))
               )
-              LEFT JOIN currents s ON ((o."supplierId" = s.id))
+              LEFT JOIN licenses l ON ((o."licenseId" = l.id))
             )
-            LEFT JOIN licenses l ON ((o."licenseId" = l.id))
+            LEFT JOIN "licenseTypes" lt ON ((l."licenseTypeId" = lt.id))
           )
-          LEFT JOIN "licenseTypes" lt ON ((l."licenseTypeId" = lt.id))
+          LEFT JOIN "vAppliances" a ON ((o."applianceId" = a.id))
         )
-        LEFT JOIN "vAppliances" a ON ((o."applianceId" = a.id))
+        LEFT JOIN products p ON ((a."productId" = p.id))
       )
-      LEFT JOIN products p ON ((a."productId" = p.id))
+      LEFT JOIN brands pb ON ((p."brandId" = pb.id))
     )
-    LEFT JOIN brands pb ON ((p."brandId" = pb.id))
+    LEFT JOIN brands lb ON ((lt."brandId" = lb.id))
   );
