@@ -845,6 +845,7 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                         await getLicenses(true, e, [
                                             "stock",
                                             "order",
+                                            "waiting",
                                         ]);
                                     setLicenses(licenses);
                                 }}
