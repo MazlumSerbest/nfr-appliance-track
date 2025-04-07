@@ -15,6 +15,7 @@ type vLicense = License & {
     licenseBrand?: string;
     isLost?: boolean;
     isPassive?: boolean;
+    expiryStatus?: string;
 };
 
 type vOrder = Order & {

@@ -93,6 +93,9 @@ export default function Licenses() {
     const [activeLicenses, setActiveLicenses] = useState<vLicense[] | null>(
         null,
     );
+    const [expiredLicenses, setExpiredLicenses] = useState<vLicense[] | null>(
+        null,
+    );
     const [lostLicenses, setLostLicenses] = useState<vLicense[] | null>(null);
 
     const [products, setProducts] = useState<ListBoxItem[] | null>(null);
@@ -386,18 +389,27 @@ export default function Licenses() {
     const { data, error, mutate } = useSWR("/api/license", null, {
         onSuccess: (data) => {
             setStockLicenses(
-                data?.filter((l: vLicense) => l.status == "stock"),
+                data?.filter((l: vLicense) => l.status === "stock"),
             );
             setOrderLicenses(
-                data?.filter((l: vLicense) => l.status == "order"),
+                data?.filter((l: vLicense) => l.status === "order"),
             );
             setWaitingOrderLicenses(
-                data?.filter((l: vLicense) => l.status == "waiting"),
+                data?.filter((l: vLicense) => l.status === "waiting"),
             );
             setActiveLicenses(
-                data?.filter((l: vLicense) => l.status == "active"),
+                data?.filter(
+                    (l: vLicense) =>
+                        l.status == "active" && l.expiryStatus !== "ended",
+                ),
             );
-            setLostLicenses(data?.filter((l: vLicense) => l.status == "lost"));
+            setExpiredLicenses(
+                data?.filter(
+                    (l: vLicense) =>
+                        l.status == "active" && l.expiryStatus === "ended",
+                ),
+            );
+            setLostLicenses(data?.filter((l: vLicense) => l.status === "lost"));
         },
     });
 
@@ -542,6 +554,29 @@ export default function Licenses() {
                                           onOpen();
                                       }
                             }
+                            onDoubleClick={(item) => {
+                                router.push(`/dashboard/licenses/${item.id}`);
+                            }}
+                        />
+                    </Tab>
+
+                    <Tab key="expired" title="Süresi Dolan" className="w-full">
+                        <DataTable
+                            storageKey="expiredLicenses"
+                            compact
+                            striped
+                            emptyContent="Herhangi bir lisans bulunamadı!"
+                            defaultRowsPerPage={20}
+                            data={expiredLicenses || []}
+                            columns={columns}
+                            renderCell={renderCell}
+                            searchValue={""}
+                            sortOption={{
+                                column: "orderedAt",
+                                direction: "descending",
+                            }}
+                            initialVisibleColumNames={visibleColumns}
+                            activeOptions={[]}
                             onDoubleClick={(item) => {
                                 router.push(`/dashboard/licenses/${item.id}`);
                             }}
