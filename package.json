@@ -10,10 +10,10 @@
   },
   "dependencies": {
     "@headlessui/react": "^1.7.19",
-    "@heroui/react": "2.6.14",
+    "@heroui/react": "2.7.6",
     "bcrypt": "^5.1.1",
     "framer-motion": "^10.18.0",
-    "next": "^14.2.24",
+    "next": "^14.2.26",
     "next-auth": "^4.24.11",
     "nextjs-toploader": "^1.6.12",
     "nodemailer": "^6.10.0",
