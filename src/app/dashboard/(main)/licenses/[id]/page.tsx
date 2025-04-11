@@ -35,9 +35,11 @@ import {
     BiEdit,
     BiSolidError,
     BiSolidCheckCircle,
+    BiMailSend,
+    BiShow,
 } from "react-icons/bi";
 import { setLicenseActiveStatus, setLicenseAppliance } from "@/lib/prisma";
-import { DateFormat } from "@/utils/date";
+import { DateFormat, DateTimeFormat } from "@/utils/date";
 import useUserStore from "@/store/user";
 import {
     getAppliances,
@@ -80,6 +82,7 @@ interface IFormInput {
     subDealer?: Current;
     supplier?: Current;
     history?: LicenseHistory[];
+    mailHistory?: LicenseMail[];
     product?: Product;
 }
 
@@ -136,6 +139,13 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
         onClose: onAppDeleteClose,
         onOpenChange: onAppDeleteOpenChange,
     } = useDisclosure();
+    const {
+        isOpen: isOpenMail,
+        onClose: onCloseMail,
+        onOpen: onOpenMail,
+        onOpenChange: onOpenChangeMail,
+    } = useDisclosure();
+
 
     const [products, setProducts] = useState<ListBoxItem[] | null>(null);
     const [appliances, setAppliances] = useState<ListBoxItem[] | null>(null);
@@ -146,6 +156,8 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
     const [customers, setCustomers] = useState<ListBoxItem[] | null>(null);
     const [dealers, setDealers] = useState<ListBoxItem[] | null>(null);
     const [suppliers, setSuppliers] = useState<ListBoxItem[] | null>(null);
+
+    const [mail, setMail] = useState<string>("");
 
     const { data, error, mutate } = useSWR(`/api/license/${params.id}`, null, {
         revalidateOnFocus: false,
@@ -178,6 +190,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
             delete data["subDealer"];
             delete data["supplier"];
             delete data["history"];
+            delete data["mailHistory"];
             delete data["product"];
 
             await fetch(`/api/license/${data.id}`, {
@@ -442,7 +455,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                                                 mutate();
                                                             }}
                                                         >
-                                                            <BiSolidCheckCircle className="size-4"/>
+                                                            <BiSolidCheckCircle className="size-4" />
                                                         </Button>
                                                     </Tooltip>
                                                 )}
@@ -889,34 +902,6 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                 />
                             </div>
 
-                            <div className="grid grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
-                                <div>
-                                    <label
-                                        htmlFor="mailSended"
-                                        className="font-medium"
-                                    >
-                                        Yenileme Maili Gönderildi
-                                    </label>
-                                </div>
-                                <Controller
-                                    control={control}
-                                    name="mailSended"
-                                    render={({
-                                        field: { onChange, value },
-                                    }) => (
-                                        <Switch
-                                            color="primary"
-                                            onChange={onChange}
-                                            isSelected={value}
-                                            classNames={{
-                                                wrapper:
-                                                    "group-data-[selected=true]:bg-sky-500",
-                                            }}
-                                        />
-                                    )}
-                                />
-                            </div>
-
                             <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                 <label htmlFor="note" className="font-medium">
                                     Not
@@ -1180,235 +1165,335 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                 </AccordionItem>
             </Accordion>
 
-            <Accordion
-                selectionMode="multiple"
-                variant="splitted"
-                defaultExpandedKeys={
-                    data.history.length != 0 ? ["history"] : []
-                }
-                className="!p-0"
-                itemClasses={{
-                    title: "font-medium text-zinc-600",
-                    base: "px-4 py-3",
-                }}
-            >
-                <AccordionItem
-                    key="history"
-                    aria-label="applihistoryance"
-                    title="Geçmiş Lisans Bilgileri"
-                    subtitle="Bu lisansın geçmiş satın alım bilgileri"
-                    indicator={
-                        <BiChevronLeft className="text-3xl text-zinc-500" />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
+                <Accordion
+                    selectionMode="multiple"
+                    variant="splitted"
+                    defaultExpandedKeys={
+                        data.history.length != 0 ? ["history"] : []
                     }
-                    startContent={
-                        <BiShieldQuarter className="text-4xl text-yellow-500/60" />
-                    }
+                    className="!p-0"
+                    itemClasses={{
+                        title: "font-medium text-zinc-600",
+                        base: "px-4 py-3",
+                    }}
                 >
-                    {data.history.length > 0 ? (
-                        <>
-                            <ul
-                                role="list"
-                                className="divide-y divide-zinc-200"
-                            >
-                                <li key={0}></li>
-                                {data.history.map((h: LicenseHistory) => (
-                                    <li
-                                        key={h.id}
-                                        className="flex justify-between py-2 items-center"
-                                    >
-                                        <div className="min-w-0 flex-auto">
-                                            <div className="flex flex-row gap-2 items-center">
-                                                <p className="text-sm font-semibold leading-6 text-zinc-600">
-                                                    {h.licenseType?.brand
-                                                        ?.name +
-                                                        " " +
-                                                        h.licenseType?.type}
-                                                </p>
-                                                {currUser?.role ==
-                                                "technical" ? (
-                                                    <></>
-                                                ) : (
-                                                    <>
-                                                        <RegInfo
-                                                            data={h}
-                                                            trigger={
-                                                                <span>
-                                                                    <BiInfoCircle />
-                                                                </span>
-                                                            }
-                                                        />
+                    <AccordionItem
+                        key="history"
+                        aria-label="history"
+                        title="Geçmiş Lisans Bilgileri"
+                        subtitle="Bu lisansın geçmiş satın alım bilgileri"
+                        indicator={
+                            <BiChevronLeft className="text-3xl text-zinc-500" />
+                        }
+                        startContent={
+                            <BiShieldQuarter className="text-4xl text-yellow-500/60" />
+                        }
+                    >
+                        {data.history.length > 0 ? (
+                            <>
+                                <ul
+                                    role="list"
+                                    className="divide-y divide-zinc-200"
+                                >
+                                    <li key={0}></li>
+                                    {data.history.map((h: LicenseHistory) => (
+                                        <li
+                                            key={h.id}
+                                            className="flex justify-between py-2 items-center"
+                                        >
+                                            <div className="min-w-0 flex-auto">
+                                                <div className="flex flex-row gap-2 items-center">
+                                                    <p className="text-sm font-semibold leading-6 text-zinc-600">
+                                                        {h.licenseType?.brand
+                                                            ?.name +
+                                                            " " +
+                                                            h.licenseType?.type}
+                                                    </p>
+                                                    {currUser?.role ==
+                                                    "technical" ? (
+                                                        <></>
+                                                    ) : (
+                                                        <>
+                                                            <RegInfo
+                                                                data={h}
+                                                                trigger={
+                                                                    <span>
+                                                                        <BiInfoCircle />
+                                                                    </span>
+                                                                }
+                                                            />
 
-                                                        <BiEdit
-                                                            className="text-xl text-green-600 cursor-pointer"
+                                                            <BiEdit
+                                                                className="text-xl text-green-600 cursor-pointer"
+                                                                onClick={() => {
+                                                                    setHistoryIsNew(
+                                                                        false,
+                                                                    );
+                                                                    resetHistory(
+                                                                        {
+                                                                            ...h,
+                                                                            startDate:
+                                                                                h.startDate?.split(
+                                                                                    "T",
+                                                                                )[0],
+                                                                            expiryDate:
+                                                                                h.expiryDate?.split(
+                                                                                    "T",
+                                                                                )[0],
+                                                                            boughtAt:
+                                                                                h.boughtAt?.split(
+                                                                                    "T",
+                                                                                )[0],
+                                                                            soldAt: h.soldAt?.split(
+                                                                                "T",
+                                                                            )[0],
+                                                                            orderedAt:
+                                                                                h.orderedAt?.split(
+                                                                                    "T",
+                                                                                )[0],
+                                                                            productId:
+                                                                                h
+                                                                                    .product
+                                                                                    ?.id,
+                                                                            applianceId:
+                                                                                h
+                                                                                    .appliance
+                                                                                    ?.id,
+                                                                            dealerId:
+                                                                                h
+                                                                                    .dealer
+                                                                                    ?.id,
+                                                                            subDealerId:
+                                                                                h
+                                                                                    .subDealer
+                                                                                    ?.id,
+                                                                            supplierId:
+                                                                                h
+                                                                                    .supplier
+                                                                                    ?.id,
+                                                                        },
+                                                                    );
+                                                                    onOpenHistory();
+                                                                }}
+                                                            />
+
+                                                            <DeleteButton
+                                                                table="licenseHistory"
+                                                                data={h}
+                                                                mutate={mutate}
+                                                                trigger={
+                                                                    <span>
+                                                                        <BiTrash />
+                                                                    </span>
+                                                                }
+                                                            />
+                                                        </>
+                                                    )}
+                                                </div>
+                                                {h.licenseType?.duration ? (
+                                                    <span className="inline-flex items-center rounded-md bg-sky-50 px-2 py-1 text-xs font-medium text-sky-600 ring-1 ring-inset ring-sky-600/20">
+                                                        {h.licenseType
+                                                            ?.duration + " ay"}
+                                                    </span>
+                                                ) : (
+                                                    <> </>
+                                                )}
+
+                                                {h.boughtType ? (
+                                                    <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-600 ring-1 ring-inset ring-green-600/20 ml-2 mb-2">
+                                                        {h.boughtType?.type}
+                                                    </span>
+                                                ) : (
+                                                    <></>
+                                                )}
+
+                                                <div className="max-w-96 text-xs leading-5 text-zinc-400">
+                                                    {h.serialNo ? (
+                                                        <div className="grid grid-cols-2 gap-4">
+                                                            <dt className="font-semibold text-zinc-500">
+                                                                Seri No:
+                                                            </dt>
+                                                            <dd className="truncate">
+                                                                {h.serialNo}
+                                                            </dd>
+                                                        </div>
+                                                    ) : (
+                                                        <></>
+                                                    )}
+
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        <dt className="font-semibold text-zinc-500">
+                                                            Başlangıç Tarihi:
+                                                        </dt>
+                                                        <dd>
+                                                            {DateFormat(
+                                                                h.startDate,
+                                                            )}
+                                                        </dd>
+                                                    </div>
+
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        <dt className="font-semibold text-zinc-500">
+                                                            Bitiş Tarihi:
+                                                        </dt>
+                                                        <dd>
+                                                            {DateFormat(
+                                                                h.expiryDate,
+                                                            )}
+                                                        </dd>
+                                                    </div>
+
+                                                    {h.dealer ? (
+                                                        <div className="grid grid-cols-2 gap-4">
+                                                            <dt className="font-semibold text-zinc-500">
+                                                                Bayi:
+                                                            </dt>
+                                                            <dd className="truncate">
+                                                                {h.dealer.name}
+                                                            </dd>
+                                                        </div>
+                                                    ) : (
+                                                        <></>
+                                                    )}
+
+                                                    {h.subDealer ? (
+                                                        <div className="grid grid-cols-2 gap-4">
+                                                            <dt className="font-semibold text-zinc-500">
+                                                                Alt Bayi:
+                                                            </dt>
+                                                            <dd className="truncate">
+                                                                {
+                                                                    h.subDealer
+                                                                        .name
+                                                                }
+                                                            </dd>
+                                                        </div>
+                                                    ) : (
+                                                        <></>
+                                                    )}
+
+                                                    {h.supplier ? (
+                                                        <div className="grid grid-cols-2 gap-4">
+                                                            <dt className="font-semibold text-zinc-500">
+                                                                Tedarikçi:
+                                                            </dt>
+                                                            <dd className="truncate">
+                                                                {
+                                                                    h.supplier
+                                                                        .name
+                                                                }
+                                                            </dd>
+                                                        </div>
+                                                    ) : (
+                                                        <></>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </>
+                        ) : (
+                            <div className="w-full py-6 text-center">
+                                <p className="text-zinc-400">
+                                    Bu lisansın geçmişte herhangi bir satın
+                                    alımı bulunmuyor.
+                                </p>
+                            </div>
+                        )}
+                    </AccordionItem>
+                </Accordion>
+
+                <Accordion
+                    selectionMode="multiple"
+                    variant="splitted"
+                    defaultExpandedKeys={
+                        data?.mailHistory?.length != 0 ? ["mail"] : []
+                    }
+                    className="!p-0"
+                    itemClasses={{
+                        title: "font-medium text-zinc-600",
+                        base: "px-4 py-3",
+                    }}
+                >
+                    <AccordionItem
+                        key="mail"
+                        aria-label="mail"
+                        title="Gönderilen Mailler"
+                        subtitle="Geçmişte bu lisansa ait gönderilen mailler"
+                        indicator={
+                            <BiChevronLeft className="text-3xl text-zinc-500" />
+                        }
+                        startContent={
+                            <BiMailSend className="text-4xl text-sky-500/60" />
+                        }
+                    >
+                        {data.mailHistory.length > 0 ? (
+                            <>
+                                <ul
+                                    role="list"
+                                    className="divide-y divide-zinc-200"
+                                >
+                                    <li key={0}></li>
+                                    {data.mailHistory.map(
+                                        (mail: LicenseMail) => (
+                                            <li
+                                                key={mail.id}
+                                                className="flex justify-between py-2 items-center"
+                                            >
+                                                <div className="min-w-0 flex-auto">
+                                                    <div className="flex flex-row gap-2 items-center">
+                                                        <p className="text-sm font-semibold leading-6 text-zinc-600">
+                                                            {DateTimeFormat(
+                                                                mail.createdAt,
+                                                            )}
+                                                        </p>
+
+                                                        <BiShow
+                                                            className="text-xl text-zinc-500 cursor-pointer"
                                                             onClick={() => {
-                                                                setHistoryIsNew(
-                                                                    false,
-                                                                );
-                                                                resetHistory({
-                                                                    ...h,
-                                                                    startDate:
-                                                                        h.startDate?.split(
-                                                                            "T",
-                                                                        )[0],
-                                                                    expiryDate:
-                                                                        h.expiryDate?.split(
-                                                                            "T",
-                                                                        )[0],
-                                                                    boughtAt:
-                                                                        h.boughtAt?.split(
-                                                                            "T",
-                                                                        )[0],
-                                                                    soldAt: h.soldAt?.split(
-                                                                        "T",
-                                                                    )[0],
-                                                                    orderedAt:
-                                                                        h.orderedAt?.split(
-                                                                            "T",
-                                                                        )[0],
-                                                                    productId:
-                                                                        h
-                                                                            .product
-                                                                            ?.id,
-                                                                    applianceId:
-                                                                        h
-                                                                            .appliance
-                                                                            ?.id,
-                                                                    dealerId:
-                                                                        h.dealer
-                                                                            ?.id,
-                                                                    subDealerId:
-                                                                        h
-                                                                            .subDealer
-                                                                            ?.id,
-                                                                    supplierId:
-                                                                        h
-                                                                            .supplier
-                                                                            ?.id,
-                                                                });
-                                                                onOpenHistory();
+                                                                setMail(mail.content || "");
+                                                                onOpenMail();
                                                             }}
                                                         />
-
-                                                        <DeleteButton
-                                                            table="licenseHistory"
-                                                            data={h}
-                                                            mutate={mutate}
-                                                            trigger={
-                                                                <span>
-                                                                    <BiTrash />
-                                                                </span>
-                                                            }
-                                                        />
-                                                    </>
-                                                )}
-                                            </div>
-                                            {h.licenseType?.duration ? (
-                                                <span className="inline-flex items-center rounded-md bg-sky-50 px-2 py-1 text-xs font-medium text-sky-600 ring-1 ring-inset ring-sky-600/20">
-                                                    {h.licenseType?.duration +
-                                                        " ay"}
-                                                </span>
-                                            ) : (
-                                                <> </>
-                                            )}
-
-                                            {h.boughtType ? (
-                                                <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-600 ring-1 ring-inset ring-green-600/20 ml-2 mb-2">
-                                                    {h.boughtType?.type}
-                                                </span>
-                                            ) : (
-                                                <></>
-                                            )}
-
-                                            <div className="max-w-96 text-xs leading-5 text-zinc-400">
-                                                {h.serialNo ? (
-                                                    <div className="grid grid-cols-2 gap-4">
-                                                        <dt className="font-semibold text-zinc-500">
-                                                            Seri No:
-                                                        </dt>
-                                                        <dd className="truncate">
-                                                            {h.serialNo}
-                                                        </dd>
                                                     </div>
-                                                ) : (
-                                                    <></>
-                                                )}
 
-                                                <div className="grid grid-cols-2 gap-4">
-                                                    <dt className="font-semibold text-zinc-500">
-                                                        Başlangıç Tarihi:
-                                                    </dt>
-                                                    <dd>
-                                                        {DateFormat(
-                                                            h.startDate,
-                                                        )}
-                                                    </dd>
+                                                    <div className="max-w-96 text-xs leading-5 text-zinc-400">
+                                                        <div className="grid grid-cols-2 gap-4">
+                                                            <dt className="font-semibold text-zinc-500">
+                                                                Alıcı:
+                                                            </dt>
+                                                            <dd className="truncate">
+                                                                {mail.to}
+                                                            </dd>
+                                                        </div>
+
+                                                        <div className="grid grid-cols-2 gap-4">
+                                                            <dt className="font-semibold text-zinc-500">
+                                                                Gönderen Kullanıcı:
+                                                            </dt>
+                                                            <dd className="truncate">
+                                                                {mail.createdBy}
+                                                            </dd>
+                                                        </div>
+                                                    </div>
                                                 </div>
-
-                                                <div className="grid grid-cols-2 gap-4">
-                                                    <dt className="font-semibold text-zinc-500">
-                                                        Bitiş Tarihi:
-                                                    </dt>
-                                                    <dd>
-                                                        {DateFormat(
-                                                            h.expiryDate,
-                                                        )}
-                                                    </dd>
-                                                </div>
-
-                                                {h.dealer ? (
-                                                    <div className="grid grid-cols-2 gap-4">
-                                                        <dt className="font-semibold text-zinc-500">
-                                                            Bayi:
-                                                        </dt>
-                                                        <dd className="truncate">
-                                                            {h.dealer.name}
-                                                        </dd>
-                                                    </div>
-                                                ) : (
-                                                    <></>
-                                                )}
-
-                                                {h.subDealer ? (
-                                                    <div className="grid grid-cols-2 gap-4">
-                                                        <dt className="font-semibold text-zinc-500">
-                                                            Alt Bayi:
-                                                        </dt>
-                                                        <dd className="truncate">
-                                                            {h.subDealer.name}
-                                                        </dd>
-                                                    </div>
-                                                ) : (
-                                                    <></>
-                                                )}
-
-                                                {h.supplier ? (
-                                                    <div className="grid grid-cols-2 gap-4">
-                                                        <dt className="font-semibold text-zinc-500">
-                                                            Tedarikçi:
-                                                        </dt>
-                                                        <dd className="truncate">
-                                                            {h.supplier.name}
-                                                        </dd>
-                                                    </div>
-                                                ) : (
-                                                    <></>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </li>
-                                ))}
-                            </ul>
-                        </>
-                    ) : (
-                        <div className="w-full py-6 text-center">
-                            <p className="text-zinc-400">
-                                Bu lisansın geçmişte herhangi bir satın alımı
-                                bulunmuyor.
-                            </p>
-                        </div>
-                    )}
-                </AccordionItem>
-            </Accordion>
+                                            </li>
+                                        ),
+                                    )}
+                                </ul>
+                            </>
+                        ) : (
+                            <div className="w-full py-6 text-center">
+                                <p className="text-zinc-400">
+                                    Herhangi bir mail gönderilmedi.
+                                </p>
+                            </div>
+                        )}
+                    </AccordionItem>
+                </Accordion>
+            </div>
 
             <Modal
                 isOpen={isOpenApp}
@@ -1931,6 +2016,26 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                 </Button>
                             </div>
                         </form>
+                    </ModalBody>
+                </ModalContent>
+            </Modal>
+
+            <Modal
+                isOpen={isOpenMail}
+                onOpenChange={onOpenChangeMail}
+                size="lg"
+                placement="center"
+                backdrop="opaque"
+                shadow="md"
+                isDismissable={false}
+                scrollBehavior="outside"
+            >
+                <ModalContent>
+                    <ModalHeader className="flex flex-col gap-1 text-zinc-500">
+                        Lisans Süre Dolum Maili
+                    </ModalHeader>
+                    <ModalBody className="flex items-center w-full">
+                        <div dangerouslySetInnerHTML={{ __html: mail }} />
                     </ModalBody>
                 </ModalContent>
             </Modal>

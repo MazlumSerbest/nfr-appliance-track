@@ -125,6 +125,19 @@ export async function GET(
                         },
                     },
                 },
+                mailHistory: {
+                    orderBy: {
+                        createdAt: "desc",
+                    },
+                    select: {
+                        id: true,
+                        to: true,
+                        subject: true,
+                        content: true,
+                        createdBy: true,
+                        createdAt: true,
+                    },
+                },
                 // boughtType: {
                 //     select: {
                 //         type: true,

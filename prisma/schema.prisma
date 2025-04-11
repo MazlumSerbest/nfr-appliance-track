@@ -82,43 +82,43 @@ model applianceHistory {
 }
 
 model licenses {
-  id            Int              @id @default(autoincrement())
-  active        Boolean          @default(true)
-  startDate     DateTime?        @db.Date
-  expiryDate    DateTime?        @db.Date
-  createdBy     String           @db.VarChar
-  createdAt     DateTime         @default(now()) @db.Timestamptz(6)
-  updatedBy     String?          @db.VarChar
-  boughtAt      DateTime?        @db.Date
-  soldAt        DateTime?        @db.Date
+  id            Int                  @id @default(autoincrement())
+  active        Boolean              @default(true)
+  startDate     DateTime?            @db.Date
+  expiryDate    DateTime?            @db.Date
+  createdBy     String               @db.VarChar
+  createdAt     DateTime             @default(now()) @db.Timestamptz(6)
+  updatedBy     String?              @db.VarChar
+  boughtAt      DateTime?            @db.Date
+  soldAt        DateTime?            @db.Date
   dealerId      Int?
   licenseTypeId Int
   supplierId    Int?
-  updatedAt     DateTime?        @updatedAt @db.Timestamptz(6)
+  updatedAt     DateTime?            @updatedAt @db.Timestamptz(6)
   customerId    Int?
-  deleted       Boolean          @default(false)
-  serialNo      String?          @db.VarChar
+  deleted       Boolean              @default(false)
+  serialNo      String?              @db.VarChar
   applianceId   Int?
   subDealerId   Int?
   boughtTypeId  Int?
-  note          String?          @db.VarChar
-  orderedAt     DateTime?        @db.Date
-  appSerialNo   String?          @db.VarChar
+  note          String?              @db.VarChar
+  orderedAt     DateTime?            @db.Date
+  appSerialNo   String?              @db.VarChar
   productId     Int?
-  cusName       String?          @db.VarChar
-  isLost        Boolean          @default(false)
-  isPassive     Boolean          @default(false)
-  mailSended    Boolean          @default(false)
+  cusName       String?              @db.VarChar
+  isLost        Boolean              @default(false)
+  isPassive     Boolean              @default(false)
   history       licenseHistory[]
-  appliance     appliances?      @relation(fields: [applianceId], references: [id])
-  boughtType    boughtTypes?     @relation(fields: [boughtTypeId], references: [id])
-  customer      currents?        @relation("Customer", fields: [customerId], references: [id])
-  dealer        currents?        @relation("Dealer", fields: [dealerId], references: [id])
-  licenseType   licenseTypes     @relation(fields: [licenseTypeId], references: [id])
-  product       products?        @relation(fields: [productId], references: [id])
-  subDealer     currents?        @relation("SubDealer", fields: [subDealerId], references: [id])
-  supplier      currents?        @relation("Supplier", fields: [supplierId], references: [id])
+  appliance     appliances?          @relation(fields: [applianceId], references: [id])
+  boughtType    boughtTypes?         @relation(fields: [boughtTypeId], references: [id])
+  customer      currents?            @relation("Customer", fields: [customerId], references: [id])
+  dealer        currents?            @relation("Dealer", fields: [dealerId], references: [id])
+  licenseType   licenseTypes         @relation(fields: [licenseTypeId], references: [id])
+  product       products?            @relation(fields: [productId], references: [id])
+  subDealer     currents?            @relation("SubDealer", fields: [subDealerId], references: [id])
+  supplier      currents?            @relation("Supplier", fields: [supplierId], references: [id])
   orders        orders[]
+  mailHistory   licenseMailHistory[]
 }
 
 model licenseHistory {
@@ -151,6 +151,17 @@ model licenseHistory {
   product       products?    @relation(fields: [productId], references: [id])
   subDealer     currents?    @relation("SubDealer", fields: [subDealerId], references: [id])
   supplier      currents?    @relation("Supplier", fields: [supplierId], references: [id])
+}
+
+model licenseMailHistory {
+  id        Int      @id @default(autoincrement())
+  licenseId Int
+  to        String   @db.VarChar
+  subject   String   @db.VarChar
+  content   String?  @db.VarChar
+  createdBy String   @db.VarChar
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  license   licenses @relation(fields: [licenseId], references: [id])
 }
 
 model orders {

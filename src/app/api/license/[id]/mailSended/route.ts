@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import prisma from "@/utils/db";
 
-export async function PUT(
+export async function POST(
     request: NextRequest,
     { params }: { params: { id: string } },
 ) {
@@ -16,12 +16,15 @@ export async function PUT(
                 ok: false,
             });
 
-        const updatedLicense = await prisma.licenses.update({
+        const req = await request.json();
+
+        const updatedLicense = await prisma.licenseMailHistory.create({
             data: {
-                mailSended: true,
-            },
-            where: {
-                id: Number(params.id),
+                licenseId: Number(params.id),
+                to: req.to || "",
+                subject: req.subject || "",
+                content: req.content || "",
+                createdBy: session.user?.name || "",
             },
         });
 
@@ -30,7 +33,7 @@ export async function PUT(
                 data: {
                     action: "licenseMailSended",
                     table: "licenses",
-                    user: updatedLicense.updatedBy || "",
+                    user: session.user?.email || "",
                     date: new Date().toISOString(),
                     description: `License mail sended: ${updatedLicense.id}`,
                     data: JSON.stringify(updatedLicense),
@@ -38,13 +41,13 @@ export async function PUT(
             });
 
             return NextResponse.json({
-                message: "Lisans başarıyla güncellendi!",
+                message: "Mail başarıyla gönderildi!",
                 status: 200,
                 ok: true,
             });
         } else {
             return NextResponse.json({
-                message: "Lisans güncellenemedi!",
+                message: "Mail gönderilemedi!",
                 status: 400,
                 ok: false,
             });
