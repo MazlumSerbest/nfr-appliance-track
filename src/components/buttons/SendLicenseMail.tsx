@@ -16,6 +16,7 @@ import { DateFormat } from "@/utils/date";
 import { validateEmail } from "@/utils/functions";
 import { sendMail } from "@/lib/sendmail";
 import toast from "react-hot-toast";
+import { logo } from "@/lib/base64";
 
 type Props = {
     dealer?: Current;
@@ -48,7 +49,7 @@ export default function SendLicenseMail({
         setSubmitting(true);
 
         const html = dealer
-            ? `<div style="display: flex; flex-direction: column; color: white; font-family: Arial, sans-serif, 'Open Sans'; line-height: 1.5;"><div style="display: flex; justify-content: center; margin-bottom: 3rem; margin-top: 2rem;"><img style="width: 30%"  src="https://nfrbilisim.com/wp-content/uploads/2022/04/nfr-logo.png" /></div><div style="display: flex; justify-content: center;"><div style="background-color: rgba(14, 165, 233, 0.9); padding: 2rem; border-radius: 0.5rem; margin-bottom: 3rem; max-width: 768px;"><p>Merhabalar,</p><p>${
+            ? `<div style="display: flex; flex-direction: column; background-color: white; color: white; font-family: Arial, sans-serif, 'Open Sans'; line-height: 1.5;"><div style="display: flex; justify-content: center; margin-bottom: 3rem; margin-top: 2rem;"><img style="width: 30%" src="${logo}" /></div><div style="display: flex; justify-content: center;"><div style="background-color: rgba(14, 165, 233, 0.9); padding: 2rem; border-radius: 0.5rem; margin-bottom: 3rem; max-width: 768px;"><p>Merhabalar,</p><p>${
                   customer?.name
               } adlı müşteriye ait, seri numarası <strong>${serialNo}</strong> olan<strong>${
                   appliance ? " " + appliance : ""
@@ -58,7 +59,7 @@ export default function SendLicenseMail({
                   ".",
                   "/",
               )}</strong> tarihinde sona erecektir.</p><p>Lisansınız yenilenmesi için bizimle iletişime geçebilirsiniz.</p><p>İyi çalışmalar,</br><strong>NFR Bilişim ve Güvenlik Teknolojileri A.Ş.</strong></br><a href="mailto:satis@nfrbilisim.com">satis@nfrbilisim.com </a> / <a href="tel:+90 232 449 06 37">+90 232 449 06 37</a></p></div></div></div>`
-            : `<div style="display: flex; flex-direction: column; color: white; font-family: Arial, sans-serif, 'Open Sans'; line-height: 1.5;"><div style="display: flex; justify-content: center; margin-bottom: 3rem; margin-top: 2rem;"><img style="width: 30%"  src="https://nfrbilisim.com/wp-content/uploads/2022/04/nfr-logo.png" /></div><div style="display: flex; justify-content: center;"><div style="background-color: rgba(14, 165, 233, 0.9); padding: 2rem; border-radius: 0.5rem; margin-bottom: 3rem; max-width: 768px;"><p>Merhabalar,</p><p>${
+            : `<div style="display: flex; flex-direction: column; background-color: white; color: white; font-family: Arial, sans-serif, 'Open Sans'; line-height: 1.5;"><div style="display: flex; justify-content: center; margin-bottom: 3rem; margin-top: 2rem;"><img style="width: 30%" src="${logo}" /></div><div style="display: flex; justify-content: center;"><div style="background-color: rgba(14, 165, 233, 0.9); padding: 2rem; border-radius: 0.5rem; margin-bottom: 3rem; max-width: 768px;"><p>Merhabalar,</p><p>${
                   customer?.name
               } adına kayıtlı, seri numarası <strong>${serialNo}</strong> olan<strong>${
                   appliance ? " " + appliance : ""
@@ -70,8 +71,6 @@ export default function SendLicenseMail({
               )}</strong> tarihinde sona erecektir.</p><p>Lisansınız yenilenmesi için bizimle iletişime geçebilirsiniz.</p><p>İyi çalışmalar,</br><strong>NFR Bilişim ve Güvenlik Teknolojileri A.Ş.</strong></br><a href="mailto:satis@nfrbilisim.com">satis@nfrbilisim.com </a> / <a href="tel:+90 232 449 06 37">+90 232 449 06 37</a></p></div></div></div>`;
 
         await sendMail({
-            // to: "mazlumserbest@windowslive.com",
-            // cc: "",
             to: email,
             cc: "satis@nfrbilisim.com",
             subject: "Lisans Süre Dolumu",
@@ -82,7 +81,13 @@ export default function SendLicenseMail({
             } else {
                 toast.success("Mail başarıyla gönderildi.");
                 fetch(`/api/license/${licenseId}/mailSended`, {
-                    method: "PUT",
+                    method: "POST",
+                    body: JSON.stringify({
+                        licenseId,
+                        to: email,
+                        subject: "Lisans Süre Dolumu",
+                        content: html,
+                    }),
                 }).then(() => {
                     mutate();
                     onClose();
