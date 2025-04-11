@@ -95,6 +95,13 @@ type LicenseHistory = Entity & {
     product: any;
 };
 
+type LicenseMail = Entity & {
+    licenseId: number;
+    to: string;
+    subject?: string;
+    content?: string;
+};
+
 type Order = Entity & {
     status: "order" | "invoice" | "purchase" | "complete";
     registerNo?: string;
