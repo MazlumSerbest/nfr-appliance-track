@@ -5,7 +5,9 @@ SELECT
   o."invoiceNo",
   o."soldAt",
   o."paymentPlan",
-  (o."appliancePrice" + o."licensePrice") AS price,
+  (
+    COALESCE(o."appliancePrice", (0) :: money) + COALESCE(o."licensePrice", (0) :: money)
+  ) AS price,
   o.currency,
   o.note,
   o."createdBy",

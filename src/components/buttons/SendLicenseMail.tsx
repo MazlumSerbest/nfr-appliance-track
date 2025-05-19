@@ -49,7 +49,8 @@ export default function SendLicenseMail({
         setSubmitting(true);
 
         const html = dealer
-            ? `<div style="display: flex; flex-direction: column; background-color: white; color: white; font-family: Arial, sans-serif, 'Open Sans'; line-height: 1.5;"><div style="display: flex; justify-content: center; margin-bottom: 3rem; margin-top: 2rem;"><img style="width: 30%" src="${logo}" /></div><div style="display: flex; justify-content: center;"><div style="background-color: rgba(14, 165, 233, 0.9); padding: 2rem; border-radius: 0.5rem; margin-bottom: 3rem; max-width: 768px;"><p>Merhabalar,</p><p>${
+            ? `<div style="display: flex; flex-direction: column; background-color: white; color: white; font-family: Arial, sans-serif, 'Open Sans'; line-height: 1.5;">
+            <div style="display: flex; justify-content: center; margin-bottom: 3rem; margin-top: 2rem;"><img style="width: 30%" src="${logo}" /></div><div style="display: flex; justify-content: center;"><div style="background-color: rgba(14, 165, 233, 0.9); padding: 2rem; border-radius: 0.5rem; margin-bottom: 3rem; max-width: 768px;"><p>Merhabalar,</p><p>${
                   customer?.name
               } adlı müşteriye ait, seri numarası <strong>${serialNo}</strong> olan<strong>${
                   appliance ? " " + appliance : ""

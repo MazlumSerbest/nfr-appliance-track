@@ -108,7 +108,9 @@ model licenses {
   cusName       String?              @db.VarChar
   isLost        Boolean              @default(false)
   isPassive     Boolean              @default(false)
+  mailSended    Boolean              @default(false)
   history       licenseHistory[]
+  mailHistory   licenseMailHistory[]
   appliance     appliances?          @relation(fields: [applianceId], references: [id])
   boughtType    boughtTypes?         @relation(fields: [boughtTypeId], references: [id])
   customer      currents?            @relation("Customer", fields: [customerId], references: [id])
@@ -118,7 +120,6 @@ model licenses {
   subDealer     currents?            @relation("SubDealer", fields: [subDealerId], references: [id])
   supplier      currents?            @relation("Supplier", fields: [supplierId], references: [id])
   orders        orders[]
-  mailHistory   licenseMailHistory[]
 }
 
 model licenseHistory {
@@ -156,11 +157,11 @@ model licenseHistory {
 model licenseMailHistory {
   id        Int      @id @default(autoincrement())
   licenseId Int
-  to        String   @db.VarChar
-  subject   String   @db.VarChar
   content   String?  @db.VarChar
   createdBy String   @db.VarChar
   createdAt DateTime @default(now()) @db.Timestamptz(6)
+  subject   String   @db.VarChar
+  to        String   @db.VarChar
   license   licenses @relation(fields: [licenseId], references: [id])
 }
 
