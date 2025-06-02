@@ -302,7 +302,7 @@ export default function Settings() {
                                     {...registerPassword("password", {
                                         required: true,
                                         maxLength: 30,
-                                        minLength: 8,
+                                        minLength: 6,
                                     })}
                                 />
                             </div>
