@@ -49,7 +49,7 @@ export default function SendLicenseMail({
         setSubmitting(true);
 
         const html = dealer
-            ? `<div style="display: flex; flex-direction: column; background-color: white; color: white; font-family: Arial, sans-serif, 'Open Sans'; line-height: 1.5;">
+            ? `<div style="display: flex; flex-direction: column; background-color: white; color: white !important; font-family: Arial, sans-serif, 'Open Sans'; line-height: 1.5;">
             <div style="display: flex; justify-content: center; margin-bottom: 3rem; margin-top: 2rem;"><img style="width: 30%" src="${logo}" /></div><div style="display: flex; justify-content: center;"><div style="background-color: rgba(14, 165, 233, 0.9); padding: 2rem; border-radius: 0.5rem; margin-bottom: 3rem; max-width: 768px;"><p>Merhabalar,</p><p>${
                   customer?.name
               } adlı müşteriye ait, seri numarası <strong>${serialNo}</strong> olan<strong>${
@@ -59,8 +59,8 @@ export default function SendLicenseMail({
               ).replaceAll(
                   ".",
                   "/",
-              )}</strong> tarihinde sona erecektir.</p><p>Lisansınız yenilenmesi için bizimle iletişime geçebilirsiniz.</p><p>İyi çalışmalar,</br><strong>NFR Bilişim ve Güvenlik Teknolojileri A.Ş.</strong></br><a href="mailto:satis@nfrbilisim.com">satis@nfrbilisim.com </a> / <a href="tel:+90 232 449 06 37">+90 232 449 06 37</a></p></div></div></div>`
-            : `<div style="display: flex; flex-direction: column; background-color: white; color: white; font-family: Arial, sans-serif, 'Open Sans'; line-height: 1.5;"><div style="display: flex; justify-content: center; margin-bottom: 3rem; margin-top: 2rem;"><img style="width: 30%" src="${logo}" /></div><div style="display: flex; justify-content: center;"><div style="background-color: rgba(14, 165, 233, 0.9); padding: 2rem; border-radius: 0.5rem; margin-bottom: 3rem; max-width: 768px;"><p>Merhabalar,</p><p>${
+              )}</strong> tarihinde sona erecektir.</p><p>Lisansınız yenilenmesi için bizimle iletişime geçebilirsiniz.</p><p>İyi çalışmalar,</p><p><strong>NFR Bilişim ve Güvenlik Teknolojileri A.Ş.</strong></br><a style="color: white !important;" href="mailto:satis@nfrbilisim.com">satis@nfrbilisim.com </a> / <a style="color: white !important;" href="tel:+90 232 449 06 37">+90 232 449 06 37</a></p></div></div></div>`
+            : `<div style="display: flex; flex-direction: column; background-color: white; color: white !important; font-family: Arial, sans-serif, 'Open Sans'; line-height: 1.5;"><div style="display: flex; justify-content: center; margin-bottom: 3rem; margin-top: 2rem;"><img style="width: 30%" src="${logo}" /></div><div style="display: flex; justify-content: center;"><div style="background-color: rgba(14, 165, 233, 0.9); padding: 2rem; border-radius: 0.5rem; margin-bottom: 3rem; max-width: 768px;"><p>Merhabalar,</p><p>${
                   customer?.name
               } adına kayıtlı, seri numarası <strong>${serialNo}</strong> olan<strong>${
                   appliance ? " " + appliance : ""
@@ -69,7 +69,7 @@ export default function SendLicenseMail({
               ).replaceAll(
                   ".",
                   "/",
-              )}</strong> tarihinde sona erecektir.</p><p>Lisansınız yenilenmesi için bizimle iletişime geçebilirsiniz.</p><p>İyi çalışmalar,</br><strong>NFR Bilişim ve Güvenlik Teknolojileri A.Ş.</strong></br><a href="mailto:satis@nfrbilisim.com">satis@nfrbilisim.com </a> / <a href="tel:+90 232 449 06 37">+90 232 449 06 37</a></p></div></div></div>`;
+              )}</strong> tarihinde sona erecektir.</p><p>Lisansınız yenilenmesi için bizimle iletişime geçebilirsiniz.</p><p>İyi çalışmalar,</p><p><strong>NFR Bilişim ve Güvenlik Teknolojileri A.Ş.</strong></br><a style="color: white !important;" href="mailto:satis@nfrbilisim.com">satis@nfrbilisim.com </a> / <a style="color: white !important;" href="tel:+90 232 449 06 37">+90 232 449 06 37</a></p></div></div></div>`;
 
         await sendMail({
             to: email,
