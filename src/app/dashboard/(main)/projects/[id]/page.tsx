@@ -24,7 +24,7 @@ import { projectStatus } from "@/lib/constants";
 import { DateToForm } from "@/utils/date";
 
 interface IFormInput {
-    date: string;
+    date?: string;
     customerId: number;
     dealerId?: number;
     productId?: number;

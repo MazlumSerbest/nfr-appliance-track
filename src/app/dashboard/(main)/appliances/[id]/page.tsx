@@ -45,8 +45,8 @@ interface IFormInput {
     id: number;
     productId: number;
     serialNo: string;
-    boughtAt: string;
-    soldAt: string;
+    boughtAt?: string;
+    soldAt?: string;
     note?: string;
     customerId: number;
     cusName?: string;
@@ -81,7 +81,7 @@ export default function ApplianceDetail({
 }) {
     const router = useRouter();
     const { user: currUser } = useUserStore();
-    
+
     const [historyIsNew, setHistoryIsNew] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [submittingDemo, setSubmittingDemo] = useState(false);
