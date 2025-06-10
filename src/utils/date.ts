@@ -22,3 +22,8 @@ export function DateTimeFormat(date?: string | null) {
 
     return formattedDate;
 }
+
+export function DateToForm(date: string) {
+    if (!date) return undefined;
+    return date.split("T")[0];
+}

@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import useSWR from "swr";
 import { useRouter } from "next/navigation";
-import { SubmitHandler, useForm, Controller, set } from "react-hook-form";
+import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
 
 import { Card, CardBody, CardFooter } from "@heroui/card";
@@ -32,7 +32,7 @@ import {
     BiInfoCircle,
 } from "react-icons/bi";
 import useUserStore from "@/store/user";
-import { DateFormat } from "@/utils/date";
+import { DateFormat, DateToForm } from "@/utils/date";
 import {
     getProducts,
     getCustomers,
@@ -105,8 +105,8 @@ export default function ApplianceDetail({
             revalidateOnFocus: false,
             onSuccess: (app) => {
                 reset(app);
-                setValue("boughtAt", app.boughtAt?.split("T")[0]);
-                setValue("soldAt", app.soldAt?.split("T")[0]);
+                setValue("boughtAt", DateToForm(app.boughtAt));
+                setValue("soldAt", DateToForm(app.soldAt));
             },
         },
     );

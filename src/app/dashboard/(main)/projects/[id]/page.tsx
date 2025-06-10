@@ -21,6 +21,7 @@ import {
     getLicenseTypes,
 } from "@/lib/data";
 import { projectStatus } from "@/lib/constants";
+import { DateToForm } from "@/utils/date";
 
 interface IFormInput {
     date: string;
@@ -54,7 +55,7 @@ export default function ProjectDetail({ params }: { params: { id: string } }) {
         revalidateOnFocus: false,
         onSuccess: (pro) => {
             reset(pro);
-            setValue("date", pro.date?.split("T")[0]);
+            setValue("date", DateToForm(pro.date));
         },
     });
 

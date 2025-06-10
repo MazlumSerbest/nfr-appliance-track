@@ -38,7 +38,7 @@ import {
 } from "@/lib/data";
 import { currencyTypes, orderStatus } from "@/lib/constants";
 import { Tooltip } from "@heroui/react";
-import ApplianceForm from "@/components/ApplianceForm";
+import { DateToForm } from "@/utils/date";
 
 interface IFormInput {
     status: "order" | "invoice" | "purchase" | "complete";
@@ -108,7 +108,7 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
             revalidateOnFocus: false,
             onSuccess: (pro) => {
                 reset(pro);
-                setValue("soldAt", pro.soldAt?.split("T")[0]);
+                setValue("soldAt", DateToForm(pro.soldAt));
                 setTotalPrice(
                     parseFloat(pro.appliancePrice || 0) +
                         parseFloat(pro.licensePrice || 0),
