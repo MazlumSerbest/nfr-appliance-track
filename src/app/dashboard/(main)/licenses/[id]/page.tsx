@@ -39,7 +39,7 @@ import {
     BiShow,
 } from "react-icons/bi";
 import { setLicenseActiveStatus, setLicenseAppliance } from "@/lib/prisma";
-import { DateFormat, DateTimeFormat } from "@/utils/date";
+import { DateFormat, DateTimeFormat, DateToForm } from "@/utils/date";
 import useUserStore from "@/store/user";
 import {
     getAppliances,
@@ -146,7 +146,6 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
         onOpenChange: onOpenChangeMail,
     } = useDisclosure();
 
-
     const [products, setProducts] = useState<ListBoxItem[] | null>(null);
     const [appliances, setAppliances] = useState<ListBoxItem[] | null>(null);
     const [licenseTypes, setLicenseTypes] = useState<ListBoxItem[] | null>(
@@ -163,11 +162,11 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
         revalidateOnFocus: false,
         onSuccess: (lic) => {
             reset(lic);
-            setValue("startDate", lic.startDate?.split("T")[0]);
-            setValue("expiryDate", lic.expiryDate?.split("T")[0]);
-            setValue("boughtAt", lic.boughtAt?.split("T")[0]);
-            setValue("soldAt", lic.soldAt?.split("T")[0]);
-            setValue("orderedAt", lic.orderedAt?.split("T")[0]);
+            setValue("startDate", DateToForm(lic.startDate));
+            setValue("expiryDate", DateToForm(lic.expiryDate));
+            setValue("boughtAt", DateToForm(lic.boughtAt));
+            setValue("soldAt", DateToForm(lic.soldAt));
+            setValue("orderedAt", DateToForm(lic.orderedAt));
         },
     });
 
@@ -238,6 +237,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
         resetField: resetHistoryField,
         handleSubmit: handleHistorySubmit,
         control: controlHistory,
+        setValue: setHistoryValue,
     } = useForm<IHistoryFormInput>();
 
     const onSubmitHistory: SubmitHandler<IHistoryFormInput> = async (d) => {
@@ -348,6 +348,8 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
         async function getData() {
             const pro: ListBoxItem[] = await getProducts(true);
             setProducts(pro);
+            const app: ListBoxItem[] = await getAppliances(true);
+            setAppliances(app);
 
             const lit: ListBoxItem[] = await getLicenseTypes(true);
             setLicenseTypes(lit);
@@ -941,12 +943,11 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                 onPress={() => {
                                     setHistoryIsNew(true);
                                     resetHistory({
-                                        productId: data.productId,
-                                        applianceId: data.applianceId,
-                                        startDate:
-                                            data.startDate?.split("T")[0],
-                                        expiryDate:
-                                            data.expiryDate?.split("T")[0],
+                                        productId:
+                                            data.appliance?.product?.id ||
+                                            data.productId,
+                                        applianceId: data.appliance?.id,
+                                        appSerialNo: data.appSerialNo || null,
                                         dealerId: data.dealerId,
                                         subDealerId: data.subDealerId,
                                         supplierId: data.supplierId,
@@ -1453,7 +1454,10 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                                         <BiShow
                                                             className="text-xl text-zinc-500 cursor-pointer"
                                                             onClick={() => {
-                                                                setMail(mail.content || "");
+                                                                setMail(
+                                                                    mail.content ||
+                                                                        "",
+                                                                );
                                                                 onOpenMail();
                                                             }}
                                                         />
@@ -1471,7 +1475,8 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
 
                                                         <div className="grid grid-cols-2 gap-4">
                                                             <dt className="font-semibold text-zinc-500">
-                                                                Gönderen Kullanıcı:
+                                                                Gönderen
+                                                                Kullanıcı:
                                                             </dt>
                                                             <dd className="truncate">
                                                                 {mail.createdBy}
@@ -1698,33 +1703,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                         <AutoComplete
                                             value={value}
                                             data={appliances || []}
-                                            onChange={async (v) => {
-                                                onChange(v);
-
-                                                await fetch(
-                                                    `/api/appliance/${v}`,
-                                                ).then(async (res) => {
-                                                    const app =
-                                                        await res.json();
-
-                                                    // setHistoryValue(
-                                                    //     "customerId",
-                                                    //     app.customerId,
-                                                    // );
-                                                    // setHistoryValue(
-                                                    //     "dealerId",
-                                                    //     app.dealerId,
-                                                    // );
-                                                    // setHistoryValue(
-                                                    //     "subDealerId",
-                                                    //     app.subDealerId,
-                                                    // );
-                                                    // setHistoryValue(
-                                                    //     "supplierId",
-                                                    //     app.supplierId,
-                                                    // );
-                                                });
-                                            }}
+                                            onChange={onChange}
                                         />
                                     )}
                                 />

@@ -26,6 +26,7 @@ export async function GET(
                         soldAt: true,
                         product: {
                             select: {
+                                id: true,
                                 model: true,
                                 brand: {
                                     select: {
