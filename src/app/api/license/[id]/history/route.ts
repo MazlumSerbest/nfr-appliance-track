@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import prisma from "@/utils/db";
 
-export async function PUT(
+export async function POST(
     request: NextRequest,
     { params }: { params: { id: string } },
 ) {
@@ -94,6 +94,31 @@ export async function PUT(
                 ok: false,
             });
 
+        const newOrder = await prisma.orders.create({
+            data: {
+                licenseId: license.id,
+                soldAt: license.soldAt,
+                boughtAt: license.boughtAt,
+                cusName: license.cusName,
+                customerId: license.customerId,
+                dealerId: license.dealerId,
+                subDealerId: license.subDealerId,
+                supplierId: license.supplierId,
+                invoiceCurrentId: license.invoiceCurrentId,
+                status: "order",
+                currency: "TRY",
+                type: "license",
+                createdBy: license.updatedBy,
+            },
+        });
+
+        if (!newOrder.id)
+            return NextResponse.json({
+                message: "Yeni satın alıma ait sipariş oluşturulamadı!",
+                status: 400,
+                ok: false,
+            });
+
         await prisma.logs.create({
             data: {
                 action: "create",
@@ -106,7 +131,7 @@ export async function PUT(
         });
 
         return NextResponse.json({
-            message: "Lisans geçmişi başarıyla güncellendi!",
+            message: "Lisans geçmişi başarıyla kaydedildi ve sipariş oluşturuldu!",
             status: 200,
             ok: true,
         });

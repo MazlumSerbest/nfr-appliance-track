@@ -68,6 +68,7 @@ interface IFormInput {
     supplier?: Current;
     appliance?: Appliance;
     license?: License;
+    invoiceCurrent?: Current;
 }
 
 export default function OrderDetail({ params }: { params: { id: string } }) {
@@ -111,6 +112,7 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
             revalidateOnFocus: false,
             onSuccess: (pro) => {
                 reset(pro);
+                setValue("boughtAt", DateToForm(pro.boughtAt));
                 setValue("soldAt", DateToForm(pro.soldAt));
                 setTotalPrice(
                     parseFloat(pro.appliancePrice || 0) +
@@ -140,6 +142,7 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
         delete data["dealer"];
         delete data["subDealer"];
         delete data["supplier"];
+        delete data["invoiceCurrent"];
 
         await fetch(`/api/order/${params.id}`, {
             method: "PUT",

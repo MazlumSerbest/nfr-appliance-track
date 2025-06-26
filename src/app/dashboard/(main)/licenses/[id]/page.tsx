@@ -287,7 +287,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
             };
 
             await fetch(`/api/license/${data.id}/history`, {
-                method: "PUT",
+                method: "POST",
                 body: JSON.stringify(licenseWithNewHistory),
                 headers: { "Content-Type": "application/json" },
             }).then(async (res) => {

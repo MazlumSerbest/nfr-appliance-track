@@ -179,28 +179,31 @@ export default function Dealers() {
         },
     ];
 
-    const renderCell = useCallback((dealer: Current, columnKey: React.Key) => {
-        const cellValue: any = dealer[columnKey as keyof typeof dealer];
+    const renderCell = useCallback(
+        (dealer: Current, columnKey: React.Key) => {
+            const cellValue: any = dealer[columnKey as keyof typeof dealer];
 
-        switch (columnKey) {
-            case "active":
-                return <BoolChip value={cellValue} />;
-            case "phone":
-                return cellValue ? `+90 ${cellValue}` : "-";
-            case "createdAt":
-                return <p>{DateTimeFormat(cellValue)}</p>;
-            case "updatedAt":
-                return <p>{DateTimeFormat(cellValue)}</p>;
-            case "blacklisted":
-                return (
-                    <div className="px-8">
-                        <BlacklistButton data={dealer} mutate={mutate} />
-                    </div>
-                );
-            default:
-                return cellValue ? cellValue : "-";
-        }
-    }, [mutate]);
+            switch (columnKey) {
+                case "active":
+                    return <BoolChip value={cellValue} />;
+                case "phone":
+                    return cellValue ? `+90 ${cellValue}` : "-";
+                case "createdAt":
+                    return <p>{DateTimeFormat(cellValue)}</p>;
+                case "updatedAt":
+                    return <p>{DateTimeFormat(cellValue)}</p>;
+                case "blacklisted":
+                    return (
+                        <div className="px-8">
+                            <BlacklistButton data={dealer} mutate={mutate} />
+                        </div>
+                    );
+                default:
+                    return cellValue ? cellValue : "-";
+            }
+        },
+        [mutate],
+    );
     //#endregion
 
     if (error) return <div>Yükleme Hatası!</div>;

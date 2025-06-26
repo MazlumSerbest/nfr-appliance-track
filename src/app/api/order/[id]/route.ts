@@ -115,6 +115,9 @@ export async function PUT(
         order.soldAt = order.soldAt
             ? new Date(order.soldAt).toISOString()
             : null;
+        order.boughtAt = order.boughtAt
+            ? new Date(order.boughtAt).toISOString()
+            : null;
 
         const updatedOrder = await prisma.orders.update({
             where: {
@@ -123,37 +126,70 @@ export async function PUT(
             data: order,
         });
 
-        if (updatedOrder.applianceId) {
-            await prisma.appliances.update({
+        if (order.type === "standard" && order.applianceId) {
+            const updatedAppliance = await prisma.appliances.update({
                 where: {
-                    id: updatedOrder.applianceId,
+                    id: order.applianceId,
                 },
                 data: {
-                    soldAt: order.soldAt || undefined,
-                    customerId: order.customerId || undefined,
-                    cusName: order.cusName || undefined,
-                    dealerId: order.dealerId || undefined,
-                    subDealerId: order.subDealerId || undefined,
-                    supplierId: order.supplierId || undefined,
+                    soldAt: order.soldAt,
+                    boughtAt: order.boughtAt,
+                    cusName: order.cusName,
+                    customerId: order.customerId,
+                    dealerId: order.dealerId,
+                    subDealerId: order.subDealerId,
+                    supplierId: order.supplierId,
+                    invoiceCurrentId: order.invoiceCurrentId,
+                    licenses: {
+                        updateMany: {
+                            where: {
+                                applianceId: order.applianceId,
+                            },
+                            data: {
+                                soldAt: order.soldAt,
+                                boughtAt: order.boughtAt,
+                                cusName: order.cusName,
+                                customerId: order.customerId,
+                                dealerId: order.dealerId,
+                                subDealerId: order.subDealerId,
+                                supplierId: order.supplierId,
+                                invoiceCurrentId: order.invoiceCurrentId,
+                            },
+                        },
+                    },
                 },
             });
-        }
 
-        if (updatedOrder.licenseId) {
-            await prisma.licenses.update({
+            if (!updatedAppliance.id)
+                return NextResponse.json({
+                    message: "Siparişe bağlı cihaz güncellenirken hata oluştu!",
+                    status: 400,
+                    ok: false,
+                });
+        } else if (order.type === "license" && order.licenseId) {
+            const updatedLicense = await prisma.licenses.update({
                 where: {
-                    id: updatedOrder.licenseId,
+                    id: order.licenseId,
                 },
                 data: {
-                    applianceId: updatedOrder.applianceId || undefined,
-                    soldAt: order.soldAt || undefined,
-                    customerId: order.customerId || undefined,
-                    cusName: order.cusName || undefined,
-                    dealerId: order.dealerId || undefined,
-                    subDealerId: order.subDealerId || undefined,
-                    supplierId: order.supplierId || undefined,
+                    soldAt: order.soldAt,
+                    boughtAt: order.boughtAt,
+                    cusName: order.cusName,
+                    customerId: order.customerId,
+                    dealerId: order.dealerId,
+                    subDealerId: order.subDealerId,
+                    supplierId: order.supplierId,
+                    invoiceCurrentId: order.invoiceCurrentId,
                 },
             });
+
+            if (!updatedLicense.id)
+                return NextResponse.json({
+                    message:
+                        "Siparişe bağlı lisans güncellenirken hata oluştu!",
+                    status: 400,
+                    ok: false,
+                });
         }
 
         if (!updatedOrder.id)

@@ -57,6 +57,71 @@ export async function POST(request: NextRequest) {
                 ok: false,
             });
 
+        if (order.type === "standard" && order.applianceId) {
+            const updatedAppliance = await prisma.appliances.update({
+                where: {
+                    id: order.applianceId,
+                },
+                data: {
+                    soldAt: order.soldAt,
+                    boughtAt: order.boughtAt,
+                    cusName: order.cusName,
+                    customerId: order.customerId,
+                    dealerId: order.dealerId,
+                    subDealerId: order.subDealerId,
+                    supplierId: order.supplierId,
+                    invoiceCurrentId: order.invoiceCurrentId,
+                    licenses: {
+                        updateMany: {
+                            where: {
+                                applianceId: order.applianceId,
+                            },
+                            data: {
+                                soldAt: order.soldAt,
+                                boughtAt: order.boughtAt,
+                                cusName: order.cusName,
+                                customerId: order.customerId,
+                                dealerId: order.dealerId,
+                                subDealerId: order.subDealerId,
+                                supplierId: order.supplierId,
+                                invoiceCurrentId: order.invoiceCurrentId,
+                            },
+                        },
+                    },
+                },
+            });
+
+            if (!updatedAppliance.id)
+                return NextResponse.json({
+                    message: "Siparişe bağlı cihaz güncellenirken hata oluştu!",
+                    status: 400,
+                    ok: false,
+                });
+        } else if (order.type === "license" && order.licenseId) {
+            const updatedLicense = await prisma.licenses.update({
+                where: {
+                    id: order.licenseId,
+                },
+                data: {
+                    soldAt: order.soldAt,
+                    boughtAt: order.boughtAt,
+                    cusName: order.cusName,
+                    customerId: order.customerId,
+                    dealerId: order.dealerId,
+                    subDealerId: order.subDealerId,
+                    supplierId: order.supplierId,
+                    invoiceCurrentId: order.invoiceCurrentId,
+                },
+            });
+
+            if (!updatedLicense.id)
+                return NextResponse.json({
+                    message: "Siparişe bağlı lisans güncellenirken hata oluştu!",
+                    status: 400,
+                    ok: false,
+                });
+        }
+
         await prisma.logs.create({
             data: {
                 action: "create",
