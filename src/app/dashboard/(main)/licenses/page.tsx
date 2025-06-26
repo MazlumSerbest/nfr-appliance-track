@@ -58,6 +58,7 @@ interface IFormInput {
     dealerId: number;
     subDealerId: number;
     supplierId: number;
+    invoiceCurrentId: number;
     createdBy: string;
 }
 
@@ -974,6 +975,7 @@ export default function Licenses() {
                                     )}
                                 />
                             </div>
+
                             <div>
                                 <label
                                     htmlFor="subDealerId"
@@ -995,6 +997,7 @@ export default function Licenses() {
                                     )}
                                 />
                             </div>
+
                             <div>
                                 <label
                                     htmlFor="supplierId"
@@ -1012,6 +1015,28 @@ export default function Licenses() {
                                             onChange={onChange}
                                             value={value}
                                             data={suppliers || []}
+                                        />
+                                    )}
+                                />
+                            </div>
+
+                            <div>
+                                <label
+                                    htmlFor="invoiceCurrentId"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                >
+                                    Fatura Adresi
+                                </label>
+                                <Controller
+                                    control={control}
+                                    name="invoiceCurrentId"
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <AutoComplete
+                                            onChange={onChange}
+                                            value={value}
+                                            data={customers || []}
                                         />
                                     )}
                                 />

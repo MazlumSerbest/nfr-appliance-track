@@ -53,6 +53,7 @@ interface IFormInput {
     dealerId: number;
     subDealerId: number;
     supplierId: number;
+    invoiceCurrentId: number;
     updatedBy: string;
     product?: Product;
     licenses?: License[];
@@ -67,6 +68,7 @@ interface IHistoryFormInput {
     id: number;
     applianceId: number;
     customerId?: number;
+    invoiceCurrentId?: number;
     cusName: string;
     boughtAt?: string | null;
     soldAt?: string | null;
@@ -97,6 +99,7 @@ export default function ApplianceDetail({
     const [customers, setCustomers] = useState<ListBoxItem[] | null>(null);
     const [dealers, setDealers] = useState<ListBoxItem[] | null>(null);
     const [suppliers, setSuppliers] = useState<ListBoxItem[] | null>(null);
+    const [currents, setCurrents] = useState<ListBoxItem[] | null>(null);
 
     const { data, error, mutate } = useSWR(
         `/api/appliance/${params.id}`,
@@ -233,6 +236,9 @@ export default function ApplianceDetail({
         setDealers(deal);
         const sup: ListBoxItem[] = await getSuppliers(true);
         setSuppliers(sup);
+
+        const currents: ListBoxItem[] = await [...cus, ...deal, ...sup];
+        setCurrents(currents);
     }
 
     useEffect(() => {
@@ -463,6 +469,29 @@ export default function ApplianceDetail({
                                             onChange={onChange}
                                             value={value}
                                             data={suppliers || []}
+                                            className="md:col-span-2 xl:col-span-1 my-1 sm:my-0"
+                                        />
+                                    )}
+                                />
+                            </div>
+
+                            <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                <label
+                                    htmlFor="invoiceCurrentId"
+                                    className="font-medium"
+                                >
+                                    Fatura Adresi
+                                </label>
+                                <Controller
+                                    control={control}
+                                    name="invoiceCurrentId"
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <AutoComplete
+                                            onChange={onChange}
+                                            value={value}
+                                            data={customers || []}
                                             className="md:col-span-2 xl:col-span-1 my-1 sm:my-0"
                                         />
                                     )}
@@ -882,6 +911,28 @@ export default function ApplianceDetail({
                                 <Controller
                                     control={controlHistory}
                                     name="customerId"
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <AutoComplete
+                                            onChange={onChange}
+                                            value={value}
+                                            data={customers || []}
+                                        />
+                                    )}
+                                />
+                            </div>
+
+                            <div>
+                                <label
+                                    htmlFor="invoiceCurrentId"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                >
+                                    Fatura Adresi
+                                </label>
+                                <Controller
+                                    control={controlHistory}
+                                    name="invoiceCurrentId"
                                     render={({
                                         field: { onChange, value },
                                     }) => (

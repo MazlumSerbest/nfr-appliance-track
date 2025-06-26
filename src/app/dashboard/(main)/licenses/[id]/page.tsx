@@ -69,6 +69,7 @@ interface IFormInput {
     dealerId?: number;
     subDealerId?: number;
     supplierId?: number;
+    invoiceCurrentId?: number;
     applianceId: number;
     updatedBy: string;
     appSerialNo?: string;
@@ -81,6 +82,7 @@ interface IFormInput {
     dealer?: Current;
     subDealer?: Current;
     supplier?: Current;
+    invoiceCurrent?: Current;
     history?: LicenseHistory[];
     mailHistory?: LicenseMail[];
     product?: Product;
@@ -97,6 +99,7 @@ interface IHistoryFormInput {
     dealerId: number;
     subDealerId: number;
     supplierId: number;
+    invoiceCurrentId: number;
     updatedBy: string;
     boughtAt?: string;
     soldAt?: string;
@@ -110,6 +113,7 @@ interface IHistoryFormInput {
     dealer?: Current;
     subDealer?: Current;
     supplier?: Current;
+    invoiceCurrent?: Current;
     appliance?: Appliance;
     product?: Product;
 }
@@ -389,7 +393,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
         <div className="flex flex-col gap-2">
             <Card className="mt-4 px-1 py-2">
                 <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-                    <CardBody className="gap-3">
+                    <CardBody className="gap-3 overflow-hidden">
                         <div className="flex items-center pb-2 pl-1">
                             <p className="text-3xl font-bold text-sky-500">
                                 {data.serialNo || "Seri Numarasız Lisans"}
@@ -841,7 +845,6 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                                 onChange={onChange}
                                                 value={value}
                                                 data={dealers || []}
-                                                className="flex-1"
                                             />
                                         )}
                                     />
@@ -898,7 +901,29 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                             onChange={onChange}
                                             value={value}
                                             data={suppliers || []}
-                                            className="flex-1"
+                                        />
+                                    )}
+                                />
+                            </div>
+
+                            <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                <label
+                                    htmlFor="invoiceCurrentId"
+                                    className="font-medium"
+                                >
+                                    Fatura Adresi
+                                </label>
+                                <Controller
+                                    control={control}
+                                    name="invoiceCurrentId"
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <AutoComplete
+                                            onChange={onChange}
+                                            value={value}
+                                            data={customers || []}
+                                            className="md:col-span-2 xl:col-span-1 my-1 sm:my-0"
                                         />
                                     )}
                                 />
@@ -951,6 +976,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                         dealerId: data.dealerId,
                                         subDealerId: data.subDealerId,
                                         supplierId: data.supplierId,
+                                        invoiceCurrentId: data.invoiceCurrentId,
                                     });
                                     onOpenHistory();
                                 }}
@@ -1272,6 +1298,10 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                                                             supplierId:
                                                                                 h
                                                                                     .supplier
+                                                                                    ?.id,
+                                                                            invoiceCurrentId:
+                                                                                h
+                                                                                    .invoiceCurrent
                                                                                     ?.id,
                                                                         },
                                                                     );
@@ -1955,6 +1985,27 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                             onChange={onChange}
                                             value={value}
                                             data={suppliers || []}
+                                        />
+                                    )}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="invoiceCurrentId"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                >
+                                    Fatura Adresi
+                                </label>
+                                <Controller
+                                    control={controlHistory}
+                                    name="invoiceCurrentId"
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <AutoComplete
+                                            onChange={onChange}
+                                            value={value}
+                                            data={customers || []}
                                         />
                                     )}
                                 />

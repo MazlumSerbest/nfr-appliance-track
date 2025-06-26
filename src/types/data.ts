@@ -33,6 +33,7 @@ type Appliance = Entity & {
     note?: string;
     isDemo: boolean;
     history: any;
+    invoiceCurrentId: number;
 };
 
 type ApplianceHistory = Entity & {
@@ -42,6 +43,7 @@ type ApplianceHistory = Entity & {
     boughtAt?: string | null;
     soldAt?: string | null;
     customer: any;
+    invoiceCurrent: any;
 };
 
 type License = Entity & {
@@ -66,6 +68,7 @@ type License = Entity & {
     licenseType: any;
     history: any;
     mailSended: boolean;
+    invoiceCurrentId: number;
     // boughtType: any;
 };
 
@@ -92,6 +95,7 @@ type LicenseHistory = Entity & {
     subDealer: any;
     supplier: any;
     appliance: any;
+    invoiceCurrent: any;
     product: any;
 };
 
@@ -103,10 +107,12 @@ type LicenseMail = Entity & {
 };
 
 type Order = Entity & {
+    type: "standard" | "license";
     status: "order" | "invoice" | "purchase" | "complete";
     registerNo?: string;
     invoiceNo?: string;
     paymentPlan?: string | null;
+    boughtAt?: string | null;
     soldAt?: string | null;
     price?: number;
     currency?: "TRY" | "USD" | "EUR";
@@ -123,6 +129,7 @@ type Order = Entity & {
     supplierId?: number;
     licenseId?: number;
     applianceId?: number;
+    invoiceCurrentId: number;
 };
 
 type Project = Entity & {
