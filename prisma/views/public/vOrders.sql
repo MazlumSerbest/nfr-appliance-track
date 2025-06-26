@@ -1,8 +1,10 @@
 SELECT
   o.id,
+  o.type,
   o.status,
   o."registerNo",
   o."invoiceNo",
+  o."boughtAt",
   o."soldAt",
   o."paymentPlan",
   (
