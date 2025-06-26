@@ -1,5 +1,11 @@
 import { Fragment, useState } from "react";
-import { Combobox, Transition } from "@headlessui/react";
+import {
+    Combobox,
+    ComboboxInput,
+    ComboboxButton,
+    ComboboxOptions,
+    ComboboxOption,
+} from "@headlessui/react";
 import { BiChevronDown } from "react-icons/bi";
 
 type Props = {
@@ -30,10 +36,10 @@ export default function AutoComplete({
               ) || [];
 
     return (
-        <Combobox onChange={onChange} value={value}>
-            <div className={`relative ${className}`}>
-                <div className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400  focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:text-sm sm:leading-6 outline-none">
-                    <Combobox.Input
+        <Combobox immediate={false} onChange={onChange} value={value}>
+            <div className={"relative inline-block w-full"}>
+                <div className="w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:text-sm sm:leading-6 outline-none">
+                    <ComboboxInput
                         className="w-full border-none text-sm text-zinc-700 outline-none pr-5"
                         displayValue={(item: ListBoxItem) =>
                             data.find(
@@ -42,75 +48,43 @@ export default function AutoComplete({
                         }
                         onChange={(event) => setQuery(event.target.value)}
                     />
-                    <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-3">
+                    <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-3">
                         <BiChevronDown
-                            className="h-5 w-5 text-zinc-700"
+                            className="w-5 h-5 text-zinc-700"
                             aria-hidden="true"
                         />
-                    </Combobox.Button>
+                    </ComboboxButton>
                 </div>
-                <Transition
-                    as={Fragment}
-                    leave="transition ease-in duration-100"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                    afterLeave={() => setQuery("")}
+                <ComboboxOptions
+                    transition
+                    className="absolute z-50 empty:invisible transition duration-200 ease-out mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-zinc/5 focus:outline-none sm:text-sm"
                 >
-                    <Combobox.Options className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-zinc/5 focus:outline-none sm:text-sm">
-                        {!data.length ||
-                        (filteredData?.length === 0 && query !== "") ? (
-                            <div className="relative cursor-default select-none px-4 py-2 text-zinc-700">
-                                Herhangi bir kayıt bulunamadı.
-                            </div>
-                        ) : (
-                            <>
-                                <Combobox.Option
-                                    key="null"
-                                    value={null}
-                                    className="relative italic text-zinc-400 cursor-pointer select-none px-3.5 py-1"
+                    {!data.length ||
+                    (filteredData?.length === 0 && query !== "") ? (
+                        <div className="block cursor-default select-none px-4 py-2 text-zinc-700">
+                            Herhangi bir kayıt bulunamadı.
+                        </div>
+                    ) : (
+                        <>
+                            <ComboboxOption
+                                key="null"
+                                value={null}
+                                className="block italic text-zinc-400 cursor-pointer select-none px-3.5 py-1"
+                            >
+                                Seçimi Temizle
+                            </ComboboxOption>
+                            {filteredData?.map((item: ListBoxItem) => (
+                                <ComboboxOption
+                                    key={item.id}
+                                    value={item.id}
+                                    className="block truncate cursor-pointer select-none px-3.5 py-1 data-[focus]:bg-sky-600 data-[focus]:text-white data-[selected]:bg-sky-600 data-[selected]:text-white data-[selected]:font-bold text-zinc-700"
                                 >
-                                    Seçimi Temizle
-                                </Combobox.Option>
-                                {filteredData?.map((item: ListBoxItem) => (
-                                    <Combobox.Option
-                                        key={item.id}
-                                        value={item.id}
-                                        className={({ active }) =>
-                                            `relative cursor-pointer select-none px-3.5 py-1 ${
-                                                active
-                                                    ? "bg-sky-600 text-white"
-                                                    : "text-zinc-700"
-                                            }`
-                                        }
-                                    >
-                                        {({ selected }) => (
-                                            <>
-                                                <span
-                                                    className={`block truncate ${
-                                                        selected
-                                                            ? "font-bold"
-                                                            : "font-normal"
-                                                    }`}
-                                                >
-                                                    {item.name}
-                                                </span>
-                                                {/* {selected ? (
-                          <span
-                            className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
-                              active ? 'text-white' : 'text-sky-600'
-                            }`}
-                          >
-                            <BiCheck className="h-5 w-5" aria-hidden="true" />
-                          </span>
-                        ) : null} */}
-                                            </>
-                                        )}
-                                    </Combobox.Option>
-                                ))}
-                            </>
-                        )}
-                    </Combobox.Options>
-                </Transition>
+                                    {item.name}
+                                </ComboboxOption>
+                            ))}
+                        </>
+                    )}
+                </ComboboxOptions>
             </div>
         </Combobox>
     );
