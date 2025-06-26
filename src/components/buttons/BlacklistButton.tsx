@@ -22,7 +22,7 @@ export default function BlacklistButton({ data, mutate }: Props) {
                 <BiLoaderAlt className="animate-spin text-2xl text-sky-400" />
             ) : data.blacklisted ? (
                 <Tooltip key={data.id + "-black"} content="Kara Listede">
-                    <span className="text-2xl text-red-600 active:opacity-50 cursor-pointer">
+                    <span className="text-2xl text-red-500 active:opacity-50 cursor-pointer">
                         <BiSolidXSquare
                             onClick={async () => {
                                 setSubmitting(true);

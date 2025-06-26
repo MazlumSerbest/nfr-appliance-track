@@ -156,7 +156,7 @@ export default function DealerDetail({ params }: { params: { id: string } }) {
                                             isSelected={value}
                                             classNames={{
                                                 wrapper:
-                                                    "group-data-[selected=true]:bg-red-600 group-data-[selected=false]:bg-green-600",
+                                                    "group-data-[selected=true]:bg-red-600 bg-green-600",
                                             }}
                                         />
                                     )}

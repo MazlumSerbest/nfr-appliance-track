@@ -74,12 +74,12 @@ export async function PUT(
             updatedBy: session.user?.email || "",
         };
 
-        const newConnection = await prisma.connections.update({
+        const updatedConnection = await prisma.connections.update({
             where: { id: Number(params.id) },
             data: connection,
         });
 
-        if (!newConnection.id)
+        if (!updatedConnection.id)
             return NextResponse.json({
                 message: "Bağlantı güncellenemedi!",
                 status: 400,

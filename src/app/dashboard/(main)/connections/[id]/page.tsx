@@ -152,7 +152,7 @@ export default function ConnectionDetail({
                                         htmlFor="controlled"
                                         className="font-medium"
                                     >
-                                        Gözetim Durumu
+                                        Gözetimli
                                     </label>
                                 </div>
                                 <Controller
@@ -167,7 +167,7 @@ export default function ConnectionDetail({
                                             isSelected={value}
                                             classNames={{
                                                 wrapper:
-                                                    "group-data-[selected=true]:bg-sky-500",
+                                                    "group-data-[selected=true]:bg-green-600",
                                             }}
                                         />
                                     )}
