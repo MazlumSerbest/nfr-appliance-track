@@ -14,4 +14,5 @@ type ActiveOption = {
 type ListBoxItem = {
     id: number;
     name: string;
+    blacklisted?: boolean;
 };

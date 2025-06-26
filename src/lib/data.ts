@@ -10,7 +10,10 @@ export async function getAppliances(
     );
     let appliances = await res.json();
 
-    if (status) appliances = appliances.filter((l: vLicense) => status.includes(l.status));
+    if (status)
+        appliances = appliances.filter((l: vLicense) =>
+            status.includes(l.status),
+        );
 
     if (!appliances.length) {
         toast.error("Cihaz bulunamadı!");
@@ -34,7 +37,8 @@ export async function getLicenses(
     );
     let licenses = await res.json();
 
-    if (status) licenses = licenses.filter((l: vLicense) => status.includes(l.status));
+    if (status)
+        licenses = licenses.filter((l: vLicense) => status.includes(l.status));
 
     if (!licenses.length) {
         toast.error("Lisans bulunamadı!");
@@ -130,43 +134,41 @@ export async function getBoughtTypes(forListBox?: boolean) {
 }
 
 export async function getCustomers(forListBox?: boolean) {
-    const res = await fetch("/api/current?currentType=customer");
+    let query = `/api/current?currentType=customer&active=true`;
+    if (forListBox)
+        query += `&select=${JSON.stringify({
+            id: true,
+            name: true,
+        })}`;
+    const res = await fetch(query);
     const customers = await res.json();
 
-    if (forListBox)
-        return customers
-            .filter((c: Current) => c.active)
-            .map((c: Current) => ({
-                id: c.id,
-                name: c.name,
-            }));
-    return customers.filter((c: Current) => c.active);
+    return customers;
 }
 
 export async function getDealers(forListBox?: boolean) {
-    const res = await fetch("/api/current?currentType=dealer");
+    let query = `/api/current?currentType=dealer&active=true`;
+    if (forListBox)
+        query += `&select=${JSON.stringify({
+            id: true,
+            name: true,
+            blacklisted: true,
+        })}`;
+    const res = await fetch(query);
     const dealers = await res.json();
 
-    if (forListBox)
-        return dealers
-            .filter((d: Current) => d.active)
-            .map((d: Current) => ({
-                id: d.id,
-                name: d.name,
-            }));
-    return dealers.filter((d: Current) => d.active);
+    return dealers;
 }
 
 export async function getSuppliers(forListBox?: boolean) {
-    const res = await fetch("/api/current?currentType=supplier");
+    let query = `/api/current?currentType=supplier&active=true`;
+    if (forListBox)
+        query += `&select=${JSON.stringify({
+            id: true,
+            name: true,
+        })}`;
+    const res = await fetch(query);
     const suppliers = await res.json();
 
-    if (forListBox)
-        return suppliers
-            .filter((s: Current) => s.active)
-            .map((s: Current) => ({
-                id: s.id,
-                name: s.name,
-            }));
-    return suppliers.filter((s: Current) => s.active);
+    return suppliers;
 }

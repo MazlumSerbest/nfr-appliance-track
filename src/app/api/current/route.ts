@@ -16,10 +16,17 @@ export async function GET(request: NextRequest) {
 
         const currentType: any =
             request.nextUrl.searchParams.get("currentType");
+        const select: any = request.nextUrl.searchParams.get("select");
+        const active: any =
+            request.nextUrl.searchParams.get("active") === "true"
+                ? true
+                : false;
 
         const data = await prisma.currents.findMany({
+            select: select ? JSON.parse(select) : undefined,
             where: {
                 type: currentType,
+                ...(active ? { active: active } : {}),
             },
             orderBy: [
                 {
