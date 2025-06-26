@@ -146,7 +146,7 @@ export default function ConnectionDetail({
                             />
                         </div>
                         <div className="divide-y divide-zinc-200">
-                            <div className="grid grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                            <div className="grid grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2 items-center">
                                 <div>
                                     <label
                                         htmlFor="controlled"
