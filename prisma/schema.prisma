@@ -361,6 +361,7 @@ model currents {
   paymentNumber                  String?             @db.VarChar
   authorizedName                 String?             @db.VarChar
   authorizedTitle                String?             @db.VarChar
+  blacklisted                    Boolean             @default(false)
   addresses                      addresses[]
   customerApplianceHistory       applianceHistory[]  @relation("Customer")
   invoiceCurrentApplianceHistory applianceHistory[]  @relation("InvoiceCurrent")

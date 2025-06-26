@@ -181,6 +181,7 @@ type Current = Entity & {
     paymentNumber?: string;
     authorizedName?: string;
     authorizedTitle?: string;
+    blacklisted: boolean;
 };
 
 type AuthorizedPerson = Entity & {

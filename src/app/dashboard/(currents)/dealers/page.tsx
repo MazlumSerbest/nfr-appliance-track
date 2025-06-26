@@ -19,6 +19,7 @@ import { Divider } from "@heroui/divider";
 import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
 import DataTable from "@/components/DataTable";
 import BoolChip from "@/components/BoolChip";
+import BlacklistButton from "@/components/buttons/BlacklistButton";
 
 import { DateTimeFormat } from "@/utils/date";
 import useUserStore from "@/store/user";
@@ -79,7 +80,14 @@ export default function Dealers() {
     //#endregion
 
     //#region Table
-    const visibleColumns = ["name", "phone", "email", "city", "active"];
+    const visibleColumns = [
+        "name",
+        "phone",
+        "email",
+        "city",
+        "active",
+        "blacklisted",
+    ];
 
     const sort: SortDescriptor = {
         column: "createdAt",
@@ -163,6 +171,12 @@ export default function Dealers() {
             name: "Güncellenme Tarihi",
             width: 150,
         },
+        {
+            key: "blacklisted",
+            name: "Kara Liste",
+            width: 100,
+            sortable: true,
+        },
     ];
 
     const renderCell = useCallback((dealer: Current, columnKey: React.Key) => {
@@ -177,10 +191,16 @@ export default function Dealers() {
                 return <p>{DateTimeFormat(cellValue)}</p>;
             case "updatedAt":
                 return <p>{DateTimeFormat(cellValue)}</p>;
+            case "blacklisted":
+                return (
+                    <div className="px-8">
+                        <BlacklistButton data={dealer} mutate={mutate} />
+                    </div>
+                );
             default:
                 return cellValue ? cellValue : "-";
         }
-    }, []);
+    }, [mutate]);
     //#endregion
 
     if (error) return <div>Yükleme Hatası!</div>;

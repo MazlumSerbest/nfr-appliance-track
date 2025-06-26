@@ -33,6 +33,7 @@ interface IFormInput {
     paymentNumber: string;
     authorizedName: string;
     authorizedTitle: string;
+    blacklisted: boolean;
     city: string;
     address: string;
     updatedBy: string;
@@ -106,7 +107,7 @@ export default function DealerDetail({ params }: { params: { id: string } }) {
                             />
                         </div>
                         <div className="divide-y divide-zinc-200">
-                            <div className="grid grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                            <div className="grid grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2 items-center">
                                 <div>
                                     <label
                                         htmlFor="active"
@@ -128,6 +129,34 @@ export default function DealerDetail({ params }: { params: { id: string } }) {
                                             classNames={{
                                                 wrapper:
                                                     "group-data-[selected=true]:bg-sky-500",
+                                            }}
+                                        />
+                                    )}
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2 items-center">
+                                <div>
+                                    <label
+                                        htmlFor="blacklisted"
+                                        className="font-medium"
+                                    >
+                                        Kara Liste
+                                    </label>
+                                </div>
+                                <Controller
+                                    control={control}
+                                    name="blacklisted"
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <Switch
+                                            color="primary"
+                                            onChange={onChange}
+                                            isSelected={value}
+                                            classNames={{
+                                                wrapper:
+                                                    "group-data-[selected=true]:bg-red-600 group-data-[selected=false]:bg-green-600",
                                             }}
                                         />
                                     )}
