@@ -22,19 +22,29 @@ import AutoComplete from "@/components/AutoComplete";
 
 import useUserStore from "@/store/user";
 import { DateFormat, DateTimeFormat } from "@/utils/date";
-import { getCustomers, getDealers, getSuppliers } from "@/lib/data";
+import {
+    getProducts,
+    getAppliances,
+    getLicenses,
+    getCustomers,
+    getDealers,
+    getSuppliers,
+} from "@/lib/data";
 import { currencyTypes } from "@/lib/constants";
+import { BiInfoCircle } from "react-icons/bi";
 
 interface IFormInput {
-    registerNo: string;
-    invoiceNo?: string;
     expiry?: string;
+    type: "standard" | "license";
+    licenseId?: number;
+    applianceId?: number;
     address?: string;
     note?: string;
     customerId: number;
     dealerId: number;
     subDealerId: number;
     supplierId: number;
+    invoiceCurrentId: number;
     createdBy: string;
 }
 
@@ -45,6 +55,7 @@ export default function Orders() {
 
     const [submitting, setSubmitting] = useState(false);
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
+    const [orderType, setOrderType] = useState("standard");
 
     const [selectedTab, setSelectedTab] = useState(() => {
         let param = searchParams.get("tab");
@@ -67,6 +78,9 @@ export default function Orders() {
     const [purchase, setPurchase] = useState<vAppliance[] | null>(null);
     const [complete, setComplete] = useState<vAppliance[] | null>(null);
 
+    const [products, setProducts] = useState<ListBoxItem[] | null>(null);
+    const [licenses, setLicenses] = useState<ListBoxItem[] | null>(null);
+    const [appliances, setAppliances] = useState<ListBoxItem[] | null>(null);
     const [customers, setCustomers] = useState<ListBoxItem[] | null>(null);
     const [dealers, setDealers] = useState<ListBoxItem[] | null>(null);
     const [suppliers, setSuppliers] = useState<ListBoxItem[] | null>(null);
@@ -82,7 +96,8 @@ export default function Orders() {
     });
 
     //#region Form
-    const { register, reset, handleSubmit, control } = useForm<IFormInput>({});
+    const { register, reset, handleSubmit, control, setValue } =
+        useForm<IFormInput>({});
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         setSubmitting(true);
@@ -112,6 +127,7 @@ export default function Orders() {
 
     //#region Table
     const visibleColumns = [
+        "type",
         "registerNo",
         "invoiceNo",
         "customerName",
@@ -128,6 +144,12 @@ export default function Orders() {
     };
 
     const columns: Column[] = [
+        {
+            key: "type",
+            name: "Sipariş Tipi",
+            width: 100,
+            searchable: true,
+        },
         {
             key: "registerNo",
             name: "Kayıt No",
@@ -242,6 +264,16 @@ export default function Orders() {
         const cellValue: any = order[columnKey as keyof typeof order];
 
         switch (columnKey) {
+            case "type":
+                return (
+                    <p>
+                        {cellValue === "standard"
+                            ? "Standart"
+                            : cellValue === "license"
+                            ? "Lisans"
+                            : "-"}
+                    </p>
+                );
             case "customerName":
             case "dealerName":
             case "subDealerName":
@@ -290,6 +322,14 @@ export default function Orders() {
 
     //#region Data
     async function getData() {
+        const pro: ListBoxItem[] = await getProducts(true);
+        setProducts(pro);
+        const lic: ListBoxItem[] = await getLicenses(true, undefined, [
+            "stock",
+            "order",
+            "waiting",
+        ]);
+        setLicenses(lic);
         const cus: ListBoxItem[] = await getCustomers(true);
         setCustomers(cus);
         const deal: ListBoxItem[] = await getDealers(true);
@@ -451,37 +491,110 @@ export default function Orders() {
 
                             <div>
                                 <label
-                                    htmlFor="registerNo"
+                                    htmlFor="type"
                                     className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
                                 >
-                                    Kayıt No
+                                    Sipariş Tipi
                                 </label>
-                                <input
-                                    type="text"
-                                    id="registerNo"
-                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
-                                    {...register("registerNo", {
-                                        maxLength: 50,
-                                    })}
-                                />
+                                <div className="block w-full h-10 rounded-md border-0 px-3 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:text-sm sm:leading-6 outline-none">
+                                    <select
+                                        id="type"
+                                        className="w-full border-none text-sm text-zinc-700 outline-none"
+                                        {...register("type")}
+                                        onChange={(e) => {
+                                            setOrderType(e.target.value);
+                                            setValue(
+                                                "type",
+                                                e.target.value as
+                                                    | "standard"
+                                                    | "license",
+                                            );
+                                            setValue("applianceId", undefined);
+                                            setValue("licenseId", undefined);
+                                            setAppliances([]);
+                                        }}
+                                    >
+                                        <option value="standard">
+                                            Standart
+                                        </option>
+                                        <option value="license">Lisans</option>
+                                    </select>
+                                </div>
                             </div>
 
-                            <div>
-                                <label
-                                    htmlFor="invoiceNo"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
-                                >
-                                    Fatura
-                                </label>
-                                <input
-                                    type="text"
-                                    id="invoiceNo"
-                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
-                                    {...register("invoiceNo", {
-                                        maxLength: 50,
-                                    })}
-                                />
-                            </div>
+                            {orderType === "standard" ? (
+                                <>
+                                    <div>
+                                        <label
+                                            htmlFor="product"
+                                            className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                        >
+                                            Ürün
+                                        </label>
+                                        <AutoComplete
+                                            onChange={async (e) => {
+                                                const appliances: ListBoxItem[] =
+                                                    await getAppliances(
+                                                        true,
+                                                        e,
+                                                        ["stock", "order"],
+                                                    );
+                                                setAppliances(appliances);
+                                            }}
+                                            data={products || []}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label
+                                            htmlFor="applianceId"
+                                            className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                        >
+                                            Cihaz
+                                        </label>
+                                        <span className="flex flex-row font-normal text-xs text-zinc-400 items-center gap-1 mb-1">
+                                            <BiInfoCircle />
+                                            Cihaz seçmek için ürün seçimi
+                                            yapmanız gereklidir!
+                                        </span>
+                                        <Controller
+                                            control={control}
+                                            name="applianceId"
+                                            render={({
+                                                field: { onChange, value },
+                                            }) => (
+                                                <AutoComplete
+                                                    onChange={onChange}
+                                                    value={value}
+                                                    data={appliances || []}
+                                                />
+                                            )}
+                                        />
+                                    </div>
+                                </>
+                            ) : (
+                                <div>
+                                    <label
+                                        htmlFor="licenseId"
+                                        className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                    >
+                                        Lisans
+                                    </label>
+                                    <Controller
+                                        control={control}
+                                        name="licenseId"
+                                        render={({
+                                            field: { onChange, value },
+                                        }) => (
+                                            <AutoComplete
+                                                onChange={onChange}
+                                                value={value}
+                                                data={licenses || []}
+                                            />
+                                        )}
+                                    />
+                                </div>
+                            )}
 
                             <div className="relative flex items-center mt-6">
                                 <div className="flex-grow border-t border-zinc-200"></div>
@@ -574,6 +687,28 @@ export default function Orders() {
                                             onChange={onChange}
                                             value={value}
                                             data={suppliers || []}
+                                        />
+                                    )}
+                                />
+                            </div>
+
+                            <div>
+                                <label
+                                    htmlFor="invoiceCurrentId"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                >
+                                    Fatura Adresi
+                                </label>
+                                <Controller
+                                    control={control}
+                                    name="invoiceCurrentId"
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <AutoComplete
+                                            onChange={onChange}
+                                            value={value}
+                                            data={customers || []}
                                         />
                                     )}
                                 />

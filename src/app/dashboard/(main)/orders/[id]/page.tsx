@@ -42,9 +42,11 @@ import { DateToForm } from "@/utils/date";
 
 interface IFormInput {
     status: "order" | "invoice" | "purchase" | "complete";
+    type: "standard" | "license";
     registerNo?: string;
     invoiceNo?: string;
     paymentPlan?: string;
+    boughtAt?: string;
     soldAt?: string;
     applianceId?: number;
     licenseId?: number;
@@ -58,6 +60,7 @@ interface IFormInput {
     dealerId?: number;
     subDealerId: number;
     supplierId: number;
+    invoiceCurrentId?: number;
     updatedBy: string;
     customer?: Current;
     dealer?: Current;
@@ -159,16 +162,16 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
 
     //#region Data
     async function getData() {
+        const pro: ListBoxItem[] = await getProducts(true);
+        setProducts(pro);
+        const lt: ListBoxItem[] = await getLicenseTypes(true);
+        setLicenseTypes(lt);
         const cus: ListBoxItem[] = await getCustomers(true);
         setCustomers(cus);
         const dea: ListBoxItem[] = await getDealers(true);
         setDealers(dea);
         const sup: ListBoxItem[] = await getSuppliers(true);
         setSuppliers(sup);
-        const pro: ListBoxItem[] = await getProducts(true);
-        setProducts(pro);
-        const lt: ListBoxItem[] = await getLicenseTypes(true);
-        setLicenseTypes(lt);
     }
 
     useEffect(() => {
@@ -209,6 +212,17 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                 />
                             </div>
                             <div className="divide-y divide-zinc-200">
+                                <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                    <label className="font-medium">
+                                        Sipariş Tipi
+                                    </label>
+                                    <p>
+                                        {data.type === "license"
+                                            ? "Lisans"
+                                            : "Standart (Cihazlı)"}
+                                    </p>
+                                </div>
+
                                 <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                     <label
                                         htmlFor="status"
@@ -268,165 +282,224 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                     />
                                 </div>
 
-                                <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
-                                    <label className="font-medium">
-                                        Cihaz Seri No
-                                    </label>
-                                    <input
-                                        disabled
-                                        type="text"
-                                        className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
-                                        value={data.appliance?.serialNo}
-                                    />
-                                </div>
-
-                                <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
-                                    <label
-                                        htmlFor="invoiceNo"
-                                        className="font-medium"
-                                    >
-                                        Cihaz
-                                    </label>
-                                    <div className="flex flex-row gap-1 md:col-span-2 xl:col-span-1 my-1 sm:my-0">
-                                        <input
-                                            disabled
-                                            type="text"
-                                            id="invoiceNo"
-                                            className="my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
-                                            value={
-                                                products.find(
-                                                    (p) =>
-                                                        p.id ===
-                                                        data.appliance?.product
-                                                            .id,
-                                                )?.name
-                                            }
-                                        />
-                                        <Tooltip content="Cihaz Seç">
-                                            <Button
-                                                color="primary"
-                                                className="bg-sky-500 rounded-md"
-                                                radius="sm"
-                                                isIconOnly
-                                                onPress={onOpenApp}
-                                            >
-                                                <BiSolidServer className="size-5" />
-                                            </Button>
-                                        </Tooltip>
-                                    </div>
-                                </div>
-
-                                <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
-                                    <label
-                                        htmlFor="appliancePrice"
-                                        className="font-medium"
-                                    >
-                                        Cihaz Fiyatı
-                                    </label>
-                                    <div className="flex flex-row md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full h-10 gap-1">
-                                        <input
-                                            type="number"
-                                            id="appliancePrice"
-                                            min="1"
-                                            step="any"
-                                            className="flex-1 rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
-                                            {...register("appliancePrice")}
-                                        />
-
-                                        <div className="rounded-md border-0 px-4 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 sm:text-sm sm:leading-6 outline-none">
-                                            <p>
-                                                {
-                                                    currencyTypes?.find(
-                                                        (ct) =>
-                                                            ct.key ===
-                                                            getValues(
-                                                                "currency",
-                                                            ),
-                                                    )?.symbol
-                                                }
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {data?.license?.appSerialNo && (
+                                {data.type === "standard" && (
                                     <>
                                         <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                             <label className="font-medium">
-                                                Ürün (Lisans Üzerinden)
+                                                Cihaz Seri No
+                                            </label>
+                                            <input
+                                                disabled
+                                                type="text"
+                                                className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                                value={data.appliance?.serialNo}
+                                            />
+                                        </div>
+
+                                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                            <label
+                                                htmlFor="invoiceNo"
+                                                className="font-medium"
+                                            >
+                                                Cihaz
+                                            </label>
+                                            <div className="flex flex-row gap-1 md:col-span-2 xl:col-span-1 my-1 sm:my-0">
+                                                <input
+                                                    disabled
+                                                    type="text"
+                                                    id="invoiceNo"
+                                                    className="my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                                    value={
+                                                        products.find(
+                                                            (p) =>
+                                                                p.id ===
+                                                                data.appliance
+                                                                    ?.product
+                                                                    .id,
+                                                        )?.name
+                                                    }
+                                                />
+                                                <Tooltip content="Cihaz Seç">
+                                                    <Button
+                                                        color="primary"
+                                                        className="bg-sky-500 rounded-md"
+                                                        radius="sm"
+                                                        isIconOnly
+                                                        onPress={onOpenApp}
+                                                    >
+                                                        <BiSolidServer className="size-5" />
+                                                    </Button>
+                                                </Tooltip>
+                                            </div>
+                                        </div>
+
+                                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                            <label
+                                                htmlFor="appliancePrice"
+                                                className="font-medium"
+                                            >
+                                                Cihaz Fiyatı
+                                            </label>
+                                            <div className="flex flex-row md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full h-10 gap-1">
+                                                <input
+                                                    type="number"
+                                                    id="appliancePrice"
+                                                    min="1"
+                                                    step="any"
+                                                    className="flex-1 rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                                    {...register(
+                                                        "appliancePrice",
+                                                    )}
+                                                />
+
+                                                <div className="rounded-md border-0 px-4 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 sm:text-sm sm:leading-6 outline-none">
+                                                    <p>
+                                                        {
+                                                            currencyTypes?.find(
+                                                                (ct) =>
+                                                                    ct.key ===
+                                                                    getValues(
+                                                                        "currency",
+                                                                    ),
+                                                            )?.symbol
+                                                        }
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                            <label className="font-medium">
+                                                Lisans Seri No
                                             </label>
                                             <input
                                                 disabled
                                                 type="text"
                                                 className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
                                                 value={
-                                                    data.license?.product?.brand
-                                                        ?.name +
-                                                    " " +
-                                                    data.license?.product?.model
+                                                    data.appliance
+                                                        ?.licenses?.[0].serialNo
                                                 }
                                             />
                                         </div>
 
                                         <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                             <label className="font-medium">
-                                                Cihaz Seri No (Lisans Üzerinden)
+                                                Lisans
                                             </label>
-                                            <input
-                                                disabled
-                                                type="text"
-                                                className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
-                                                value={
-                                                    data.license?.appSerialNo
-                                                }
-                                            />
+                                            <div className="flex flex-row gap-1 md:col-span-2 xl:col-span-1 my-1 sm:my-0">
+                                                <input
+                                                    disabled
+                                                    type="text"
+                                                    className="my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                                    value={
+                                                        licenseTypes.find(
+                                                            (lt) =>
+                                                                lt.id ===
+                                                                data.appliance
+                                                                    ?.licenses?.[0]
+                                                                    .licenseType
+                                                                    .id,
+                                                        )?.name
+                                                    }
+                                                />
+                                            </div>
                                         </div>
                                     </>
                                 )}
 
-                                <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
-                                    <label className="font-medium">
-                                        Lisans Seri No
-                                    </label>
-                                    <input
-                                        disabled
-                                        type="text"
-                                        className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
-                                        value={data.license?.serialNo}
-                                    />
-                                </div>
+                                {data.type === "license" && (
+                                    <>
+                                        {data?.license?.appSerialNo && (
+                                            <>
+                                                <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                                    <label className="font-medium">
+                                                        Ürün (Lisans Üzerinden)
+                                                    </label>
+                                                    <input
+                                                        disabled
+                                                        type="text"
+                                                        className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                                        value={
+                                                            (data.license
+                                                                ?.product?.brand
+                                                                ?.name || "") +
+                                                            " " +
+                                                            (data.license
+                                                                ?.product
+                                                                ?.model || "")
+                                                        }
+                                                    />
+                                                </div>
 
-                                <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
-                                    <label className="font-medium">
-                                        Lisans
-                                    </label>
-                                    <div className="flex flex-row gap-1 md:col-span-2 xl:col-span-1 my-1 sm:my-0">
-                                        <input
-                                            disabled
-                                            type="text"
-                                            className="my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
-                                            value={
-                                                licenseTypes.find(
-                                                    (lt) =>
-                                                        lt.id ===
-                                                        data.license
-                                                            ?.licenseType.id,
-                                                )?.name
-                                            }
-                                        />
-                                        <Tooltip content="Lisans Seç">
-                                            <Button
-                                                color="primary"
-                                                className="bg-green-600 rounded-md"
-                                                radius="sm"
-                                                isIconOnly
-                                                onPress={onOpenLicense}
-                                            >
-                                                <BiSolidCheckShield className="size-5" />
-                                            </Button>
-                                        </Tooltip>
-                                    </div>
-                                </div>
+                                                <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                                    <label className="font-medium">
+                                                        Cihaz Seri No (Lisans
+                                                        Üzerinden)
+                                                    </label>
+                                                    <input
+                                                        disabled
+                                                        type="text"
+                                                        className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                                        value={
+                                                            data.license
+                                                                ?.appSerialNo
+                                                        }
+                                                    />
+                                                </div>
+                                            </>
+                                        )}
+
+                                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                            <label className="font-medium">
+                                                Lisans Seri No
+                                            </label>
+                                            <input
+                                                disabled
+                                                type="text"
+                                                className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                                value={data.license?.serialNo}
+                                            />
+                                        </div>
+
+                                        <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                            <label className="font-medium">
+                                                Lisans
+                                            </label>
+                                            <div className="flex flex-row gap-1 md:col-span-2 xl:col-span-1 my-1 sm:my-0">
+                                                <input
+                                                    disabled
+                                                    type="text"
+                                                    className="my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                                    value={
+                                                        licenseTypes.find(
+                                                            (lt) =>
+                                                                lt.id ===
+                                                                data.license
+                                                                    ?.licenseType
+                                                                    .id,
+                                                        )?.name
+                                                    }
+                                                />
+                                                {data.type === "license" && (
+                                                    <Tooltip content="Lisans Seç">
+                                                        <Button
+                                                            color="primary"
+                                                            className="bg-green-600 rounded-md"
+                                                            radius="sm"
+                                                            isIconOnly
+                                                            onPress={
+                                                                onOpenLicense
+                                                            }
+                                                        >
+                                                            <BiSolidCheckShield className="size-5" />
+                                                        </Button>
+                                                    </Tooltip>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
 
                                 <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                     <label
@@ -459,6 +532,21 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                             </p>
                                         </div>
                                     </div>
+                                </div>
+
+                                <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                    <label
+                                        htmlFor="boughtAt"
+                                        className="font-medium"
+                                    >
+                                        Alım Tarihi
+                                    </label>
+                                    <input
+                                        type="date"
+                                        id="boughtAt"
+                                        className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                        {...register("boughtAt")}
+                                    />
                                 </div>
 
                                 <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
@@ -637,6 +725,29 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                                 onChange={onChange}
                                                 value={value}
                                                 data={suppliers || []}
+                                                className="md:col-span-2 xl:col-span-1 my-1 sm:my-0"
+                                            />
+                                        )}
+                                    />
+                                </div>
+
+                                <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                    <label
+                                        htmlFor="invoiceCurrentId"
+                                        className="font-medium"
+                                    >
+                                        Fatura Adresi
+                                    </label>
+                                    <Controller
+                                        control={control}
+                                        name="invoiceCurrentId"
+                                        render={({
+                                            field: { onChange, value },
+                                        }) => (
+                                            <AutoComplete
+                                                onChange={onChange}
+                                                value={value}
+                                                data={customers || []}
                                                 className="md:col-span-2 xl:col-span-1 my-1 sm:my-0"
                                             />
                                         )}

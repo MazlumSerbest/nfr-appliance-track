@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import prisma from "@/utils/db";
-import { select } from "@heroui/react";
 
 export async function GET(
     request: NextRequest,
@@ -25,6 +24,28 @@ export async function GET(
                         productId: true,
                         product: {
                             select: { id: true },
+                        },
+                        licenses: {
+                            select: {
+                                id: true,
+                                serialNo: true,
+                                licenseType: {
+                                    select: {
+                                        id: true,
+                                        type: true,
+                                        duration: true,
+                                        brand: {
+                                            select: {
+                                                name: true,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                            take: 1,
+                            orderBy: {
+                                createdAt: "desc",
+                            },
                         },
                     },
                 },
@@ -58,6 +79,9 @@ export async function GET(
                     select: { name: true },
                 },
                 supplier: {
+                    select: { name: true },
+                },
+                invoiceCurrent: {
                     select: { name: true },
                 },
             },

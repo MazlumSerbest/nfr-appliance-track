@@ -42,6 +42,9 @@ export async function POST(request: NextRequest) {
         order.soldAt = order.soldAt
             ? new Date(order.soldAt).toISOString()
             : null;
+        order.boughtAt = order.boughtAt
+            ? new Date(order.boughtAt).toISOString()
+            : null;
 
         const newOrder = await prisma.orders.create({
             data: order,
