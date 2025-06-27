@@ -527,10 +527,17 @@ export default function Orders() {
                                     <div>
                                         <label
                                             htmlFor="product"
-                                            className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                            className="block text-sm font-semibold leading-6 text-zinc-500"
                                         >
-                                            Ürün
+                                            Ürün (Model)
                                         </label>
+                                        <span className="flex flex-row font-normal text-xs text-zinc-400 items-center gap-1 mb-1">
+                                            <BiInfoCircle className="text-lg" />
+                                            Cihazların filtrelenmesi için ürün
+                                            (model) seçimi yapmalısınız. Ürün
+                                            seçimi yapmadan cihaz seri
+                                            numaraları listelenmez!
+                                        </span>
                                         <AutoComplete
                                             onChange={async (e) => {
                                                 const appliances: ListBoxItem[] =
@@ -548,7 +555,7 @@ export default function Orders() {
                                     <div>
                                         <label
                                             htmlFor="applianceId"
-                                            className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                            className="block text-sm font-semibold leading-6 text-zinc-500"
                                         >
                                             Cihaz
                                         </label>
@@ -576,7 +583,7 @@ export default function Orders() {
                                 <div>
                                     <label
                                         htmlFor="licenseId"
-                                        className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                        className="block text-sm font-semibold leading-6 text-zinc-500"
                                     >
                                         Lisans
                                     </label>

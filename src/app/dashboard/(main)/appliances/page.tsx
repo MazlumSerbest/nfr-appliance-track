@@ -28,6 +28,7 @@ import {
     getDealers,
     getSuppliers,
 } from "@/lib/data";
+import { BiInfoCircle } from "react-icons/bi";
 
 interface IFormInput {
     productId: number;
@@ -479,7 +480,7 @@ export default function Appliances() {
                                     htmlFor="productId"
                                     className="block text-sm font-semibold leading-6 text-zinc-500 mb-2 after:content-['*'] after:ml-0.5 after:text-red-500"
                                 >
-                                    Ürün
+                                    Ürün (Model)
                                 </label>
                                 <Controller
                                     control={control}

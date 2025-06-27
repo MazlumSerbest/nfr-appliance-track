@@ -319,7 +319,7 @@ export default function ApplianceDetail({
                                     htmlFor="productId"
                                     className="font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
                                 >
-                                    Ürün
+                                    Ürün (Model)
                                 </label>
                                 <Controller
                                     control={control}
