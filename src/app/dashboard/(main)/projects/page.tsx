@@ -139,7 +139,7 @@ export default function Licenses() {
         },
         {
             key: "productModel",
-            name: "Ürün",
+            name: "Ürün (Model)",
             width: 150,
             searchable: true,
             sortable: true,

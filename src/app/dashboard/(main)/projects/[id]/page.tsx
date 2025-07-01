@@ -219,7 +219,7 @@ export default function ProjectDetail({ params }: { params: { id: string } }) {
                                     htmlFor="productId"
                                     className="font-medium"
                                 >
-                                    Ürün
+                                    Ürün (Model)
                                 </label>
                                 <Controller
                                     control={control}

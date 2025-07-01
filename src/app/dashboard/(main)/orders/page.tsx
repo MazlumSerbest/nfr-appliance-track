@@ -171,7 +171,7 @@ export default function Orders() {
         },
         {
             key: "product",
-            name: "Cihaz",
+            name: "Ürün (Model)",
             width: 120,
             searchable: true,
         },
@@ -226,7 +226,7 @@ export default function Orders() {
             width: 80,
         },
         {
-            key: "soldtAt",
+            key: "soldAt",
             name: "Satış Tarihi",
             width: 80,
             sortable: true,

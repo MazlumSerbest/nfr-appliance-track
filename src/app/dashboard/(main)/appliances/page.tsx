@@ -165,7 +165,7 @@ export default function Appliances() {
         },
         {
             key: "product",
-            name: "Ürün",
+            name: "Ürün (Model)",
             width: 150,
             searchable: true,
             sortable: true,
