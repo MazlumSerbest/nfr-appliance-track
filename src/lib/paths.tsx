@@ -15,6 +15,7 @@ import {
     BiHdd,
     BiChalkboard,
     BiPackage,
+    BiTask,
 } from "react-icons/bi";
 
 export const paths: Path[] = [
@@ -87,6 +88,18 @@ export const paths: Path[] = [
             <BiLink
                 className="text-2xl text-zinc-500"
                 aria-label="Bağlantılar Sayfası"
+            />
+        ),
+    },
+    {
+        path: "/dashboard/setups",
+        key: "setups",
+        name: "Kurulumlar",
+        roles: ["admin", "technical", "seller"],
+        icon: (
+            <BiTask
+                className="text-2xl text-zinc-500"
+                aria-label="Kurulumlar Sayfası"
             />
         ),
     },

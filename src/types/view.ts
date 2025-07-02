@@ -35,6 +35,16 @@ type vProject = Project & {
     licenseDuration?: string;
 };
 
+type vSetup = Setup & {
+    applianceSerialNo?: string;
+    licenseSerialNo?: string;
+    productModel?: string;
+    productBrand?: string;
+    licenseType?: string;
+    userId?: string;
+    assignedUser?: string;
+}
+
 type vProduct = Product & {
     brandName: string;
     productTypeName: string;

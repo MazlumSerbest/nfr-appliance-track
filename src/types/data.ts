@@ -142,6 +142,16 @@ type Project = Entity & {
     status: "active" | "won" | "lost";
 };
 
+type Setup = Entity & {
+    status: "waiting" | "complete";
+    type: "appliance" | "license";
+    userId: number;
+    applianceId?: number;
+    licenseId?: number;
+    note?: string;
+    completedAt?: string | null;
+};
+
 type Brand = Entity & {
     name: string;
 };

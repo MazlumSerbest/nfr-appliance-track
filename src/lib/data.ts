@@ -1,5 +1,20 @@
 import toast from "react-hot-toast";
 
+export async function getUsers(forListBox?: boolean, currUser?: User) {
+    const res = await fetch("/api/user");
+    const users = await res.json();
+
+    if (!users) return toast.error("Kullanıcı bulunamadı!");
+    if (forListBox)
+        return users
+            .filter((u: User) => u.active)
+            .map((u: User) => ({
+                id: u.id,
+                name: `${u.name} ${u.id == currUser?.id ? "(Siz)" : ""}`,
+            }));
+    return users.filter((u: User) => u.active);
+}
+
 export async function getAppliances(
     forListBox?: boolean,
     productId?: number,

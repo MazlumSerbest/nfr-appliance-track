@@ -9,6 +9,7 @@ export async function deleteData(
         | "orders"
         | "projects"
         | "connections"
+        | "setups"
         | "users"
         | "brands"
         | "products"

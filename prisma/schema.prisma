@@ -31,6 +31,7 @@ model users {
   updatedAt                DateTime?                  @updatedAt @db.Timestamptz(6)
   role                     String                     @default("seller")
   connectionControlHistory connectionControlHistory[]
+  setups                   setups[]
 }
 
 model appliances {
@@ -257,8 +258,13 @@ model setups {
   createdBy   String      @db.VarChar
   updatedBy   String?     @db.VarChar
   updatedAt   DateTime?   @updatedAt @db.Timestamptz(6)
+  note        String?     @db.VarChar
+  status      String      @db.VarChar
+  userId      Int
+  completedAt DateTime?   @db.Timestamptz(6)
   appliance   appliances? @relation(fields: [applianceId], references: [id])
   license     licenses?   @relation(fields: [licenseId], references: [id])
+  user        users       @relation(fields: [userId], references: [id])
 }
 
 model connectionControlHistory {
@@ -593,6 +599,29 @@ view vOrderCounts {
   invoiceCount  BigInt?
   purchaseCount BigInt?
   completeCount BigInt?
+}
+
+view vSetups {
+  id                Int       @unique
+  type              String?   @db.VarChar
+  status            String?   @db.VarChar
+  note              String?   @db.VarChar
+  createdBy         String?   @db.VarChar
+  createdAt         DateTime? @db.Timestamptz(6)
+  updatedBy         String?   @db.VarChar
+  updatedAt         DateTime? @db.Timestamptz(6)
+  userId            Int?
+  completedAt       DateTime? @db.Timestamptz(6)
+  soldAt            DateTime? @db.Date
+  product           String?
+  applianceSerialNo String?   @db.VarChar
+  licenseType       String?
+  licenseSerialNo   String?   @db.VarChar
+  assignedUser      String?   @db.VarChar
+  customerName      String?   @db.VarChar
+  dealerName        String?   @db.VarChar
+  subDealerName     String?   @db.VarChar
+  supplierName      String?   @db.VarChar
 }
 
 enum CurrentType {
