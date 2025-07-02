@@ -104,7 +104,7 @@ export default function SendLicenseMail({
             <Tooltip content="Lisans Süre Dolum Maili Gönder">
                 <Button
                     color="primary"
-                    className="bg-indigo-500 rounded-md"
+                    className="bg-indigo-500"
                     radius="sm"
                     isIconOnly
                     onPress={onOpen}

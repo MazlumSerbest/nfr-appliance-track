@@ -16,6 +16,7 @@ type Props = {
         | "orders"
         | "projects"
         | "connections"
+        | "setups"
         | "users"
         | "brands"
         | "products"
