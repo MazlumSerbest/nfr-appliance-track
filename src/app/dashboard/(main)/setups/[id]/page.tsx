@@ -97,7 +97,7 @@ export default function SetupDetail({ params }: { params: { id: string } }) {
 
     useEffect(() => {
         getData();
-    }, []);
+    });
     //#endregion
 
     if (error) return <div>Yükleme Hatası!</div>;

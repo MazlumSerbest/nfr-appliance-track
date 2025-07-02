@@ -83,16 +83,12 @@ export default function SetupButton({ type, entityId }: Props) {
 
     useEffect(() => {
         getData();
-    }, []);
+    });
     //#endregion
 
     return (
         <>
-            <Button
-                color="primary"
-                className="bg-indigo-500"
-                onPress={onOpen}
-            >
+            <Button color="primary" className="bg-indigo-500" onPress={onOpen}>
                 Kurulum Ekle
             </Button>
 
