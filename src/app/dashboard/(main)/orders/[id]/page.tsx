@@ -39,6 +39,7 @@ import {
 import { currencyTypes, orderStatus } from "@/lib/constants";
 import { Tooltip } from "@heroui/react";
 import { DateToForm } from "@/utils/date";
+import SetupButton from "@/components/buttons/SetupButton";
 
 interface IFormInput {
     status: "order" | "invoice" | "purchase" | "complete";
@@ -807,6 +808,19 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                         >
                                             Kayıt Bilgisi
                                         </Button>
+                                    }
+                                />
+
+                                <SetupButton
+                                    type={
+                                        data.type === "standard"
+                                            ? "appliance"
+                                            : "license"
+                                    }
+                                    entityId={
+                                        data.type === "standard"
+                                            ? data.applianceId
+                                            : data.licenseId
                                     }
                                 />
 

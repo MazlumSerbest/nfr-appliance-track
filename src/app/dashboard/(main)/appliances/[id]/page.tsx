@@ -40,6 +40,7 @@ import {
     getSuppliers,
 } from "@/lib/data";
 import { setApplianceDemoStatus } from "@/lib/prisma";
+import SetupButton from "@/components/buttons/SetupButton";
 
 interface IFormInput {
     id: number;
@@ -529,6 +530,8 @@ export default function ApplianceDetail({
                                     </Button>
                                 }
                             />
+
+                            <SetupButton type="appliance" entityId={data.id} />
 
                             <Button
                                 color="primary"

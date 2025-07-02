@@ -52,6 +52,7 @@ import {
 } from "@/lib/data";
 import ApplianceForm from "@/components/ApplianceForm";
 import SendLicenseMail from "@/components/buttons/SendLicenseMail";
+import SetupButton from "@/components/buttons/SetupButton";
 
 interface IFormInput {
     id: number;
@@ -961,6 +962,8 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                     </Button>
                                 }
                             />
+
+                            <SetupButton type="license" entityId={data.id} />
 
                             <Button
                                 color="primary"
