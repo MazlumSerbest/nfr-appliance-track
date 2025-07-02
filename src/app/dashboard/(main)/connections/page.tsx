@@ -181,8 +181,8 @@ export default function Connections() {
                     return (
                         <p>
                             {cellValue
-                                ? cellValue.length > 40
-                                    ? cellValue.substring(0, 40) + "..."
+                                ? cellValue.length > 25
+                                    ? cellValue.substring(0, 25) + "..."
                                     : cellValue
                                 : "-"}
                         </p>

@@ -281,8 +281,8 @@ export default function Orders() {
                 return (
                     <p>
                         {cellValue
-                            ? cellValue.length > 40
-                                ? cellValue.substring(0, 40) + "..."
+                            ? cellValue.length > 25
+                                ? cellValue.substring(0, 25) + "..."
                                 : cellValue
                             : "-"}
                     </p>
@@ -539,6 +539,7 @@ export default function Orders() {
                                             numaraları listelenmez!
                                         </span>
                                         <AutoComplete
+                                            data={products || []}
                                             onChange={async (e) => {
                                                 const appliances: ListBoxItem[] =
                                                     await getAppliances(
@@ -548,7 +549,6 @@ export default function Orders() {
                                                     );
                                                 setAppliances(appliances);
                                             }}
-                                            data={products || []}
                                         />
                                     </div>
 

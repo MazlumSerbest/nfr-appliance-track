@@ -205,7 +205,7 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                     <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
                         <CardBody className="gap-3">
                             <div className="flex items-center pb-2 pl-1">
-                                <p className="text-3xl font-bold text-sky-500">
+                                <p className="text-2xl font-bold text-sky-500">
                                     {data.registerNo}
                                 </p>
                                 <div className="flex-1"></div>

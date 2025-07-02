@@ -129,7 +129,7 @@ export default function ConnectionDetail({
                 <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
                     <CardBody className="gap-3">
                         <div className="flex items-center gap-2 pb-2 pl-1">
-                            <p className="text-3xl font-bold text-sky-500">
+                            <p className="text-2xl font-bold text-sky-500">
                                 {`https://${data.ip}`}
                             </p>
                             <a
@@ -137,7 +137,7 @@ export default function ConnectionDetail({
                                 target="_blank"
                                 className="cursor-pointer"
                             >
-                                <BiLinkExternal className="text-2xl text-sky-500" />
+                                <BiLinkExternal className="text-xl text-sky-500" />
                             </a>
                             <div className="flex-1"></div>
                             <BiX
