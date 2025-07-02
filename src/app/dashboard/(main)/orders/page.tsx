@@ -715,7 +715,10 @@ export default function Orders() {
                                         <AutoComplete
                                             onChange={onChange}
                                             value={value}
-                                            data={customers || []}
+                                            data={[
+                                                ...(customers || []),
+                                                ...(dealers || []),
+                                            ]}
                                         />
                                     )}
                                 />

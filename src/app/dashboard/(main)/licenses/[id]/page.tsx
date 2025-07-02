@@ -923,7 +923,10 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                         <AutoComplete
                                             onChange={onChange}
                                             value={value}
-                                            data={customers || []}
+                                            data={[
+                                                ...(customers || []),
+                                                ...(dealers || []),
+                                            ]}
                                             className="md:col-span-2 xl:col-span-1 my-1 sm:my-0"
                                         />
                                     )}
@@ -2008,7 +2011,10 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                         <AutoComplete
                                             onChange={onChange}
                                             value={value}
-                                            data={customers || []}
+                                            data={[
+                                                ...(customers || []),
+                                                ...(dealers || []),
+                                            ]}
                                         />
                                     )}
                                 />

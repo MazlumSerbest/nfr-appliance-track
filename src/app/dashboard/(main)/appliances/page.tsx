@@ -665,7 +665,10 @@ export default function Appliances() {
                                         <AutoComplete
                                             onChange={onChange}
                                             value={value}
-                                            data={customers || []}
+                                            data={[
+                                                ...(customers || []),
+                                                ...(dealers || []),
+                                            ]}
                                         />
                                     )}
                                 />

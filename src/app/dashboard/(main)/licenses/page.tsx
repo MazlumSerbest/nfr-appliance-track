@@ -1036,7 +1036,10 @@ export default function Licenses() {
                                         <AutoComplete
                                             onChange={onChange}
                                             value={value}
-                                            data={customers || []}
+                                            data={[
+                                                ...(customers || []),
+                                                ...(dealers || []),
+                                            ]}
                                         />
                                     )}
                                 />
