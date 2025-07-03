@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@headlessui/react": "^2.2.4",
     "@heroui/react": "2.7.6",
     "bcrypt": "^5.1.1",
     "framer-motion": "^10.18.0",
