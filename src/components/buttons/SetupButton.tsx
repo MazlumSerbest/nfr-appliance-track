@@ -83,7 +83,7 @@ export default function SetupButton({ type, entityId }: Props) {
 
     useEffect(() => {
         getData();
-    });
+    }, []);
     //#endregion
 
     return (
