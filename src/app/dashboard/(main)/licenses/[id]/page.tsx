@@ -26,6 +26,7 @@ import DeleteButton from "@/components/buttons/DeleteButton";
 import ApplianceForm from "@/components/ApplianceForm";
 import SendLicenseMail from "@/components/buttons/SendLicenseMail";
 import SetupButton from "@/components/buttons/SetupButton";
+import OrderButton from "@/components/buttons/OrderButton";
 
 import {
     BiChevronLeft,
@@ -476,18 +477,12 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                     type="license"
                                     entityId={data.id}
                                 />
-
-                                <Tooltip content="Sipariş Oluştur">
-                                    <Button
-                                        type="button"
-                                        color="primary"
-                                        className="bg-indigo-500"
-                                        radius="sm"
-                                        isIconOnly
-                                    >
-                                        <BiFile className="text-xl" />
-                                    </Button>
-                                </Tooltip>
+                                
+                                <OrderButton
+                                    type="license"
+                                    entityId={data.id}
+                                    data={data}
+                                />
 
                                 <Tooltip content="Yeni Satın Alım Ekle">
                                     <Button

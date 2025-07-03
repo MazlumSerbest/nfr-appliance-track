@@ -22,6 +22,7 @@ import RegInfo from "@/components/buttons/RegInfo";
 import DeleteButton from "@/components/buttons/DeleteButton";
 import AutoComplete from "@/components/AutoComplete";
 import SetupButton from "@/components/buttons/SetupButton";
+import OrderButton from "@/components/buttons/OrderButton";
 
 import {
     BiCheckShield,
@@ -292,6 +293,12 @@ export default function ApplianceDetail({
                                 <SetupButton
                                     type="appliance"
                                     entityId={data.id}
+                                />
+
+                                <OrderButton
+                                    type="appliance"
+                                    entityId={data.id}
+                                    data={data}
                                 />
 
                                 <Tooltip
