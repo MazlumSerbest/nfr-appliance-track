@@ -2,10 +2,10 @@
 import { useCallback, useEffect, useState } from "react";
 import useSWR from "swr";
 import { useRouter } from "next/navigation";
-import { SubmitHandler, useForm, Controller, set } from "react-hook-form";
+import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
 
-import { Card, CardBody, CardFooter } from "@heroui/card";
+import { Card, CardBody, CardFooter, CardHeader } from "@heroui/card";
 import { Button } from "@heroui/button";
 import {
     Modal,
@@ -19,12 +19,14 @@ import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
 import AutoComplete from "@/components/AutoComplete";
 import RegInfo from "@/components/buttons/RegInfo";
 import DeleteButton from "@/components/buttons/DeleteButton";
+import SetupButton from "@/components/buttons/SetupButton";
+
 import {
     BiInfoCircle,
-    BiPlus,
+    BiSave,
     BiSolidCheckShield,
     BiSolidServer,
-    BiX,
+    BiTrash,
 } from "react-icons/bi";
 import useUserStore from "@/store/user";
 import {
@@ -37,9 +39,8 @@ import {
     getAppliances,
 } from "@/lib/data";
 import { currencyTypes, orderStatus } from "@/lib/constants";
-import { Tooltip } from "@heroui/react";
+import { Tooltip } from "@heroui/tooltip";
 import { DateToForm } from "@/utils/date";
-import SetupButton from "@/components/buttons/SetupButton";
 
 interface IFormInput {
     status: "order" | "invoice" | "purchase" | "complete";
@@ -204,19 +205,82 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
             <div className="flex flex-col gap-2">
                 <Card className="mt-4 px-1 py-2">
                     <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
+                        <CardHeader className="flex gap-2">
+                            <p className="text-2xl font-bold text-sky-500">
+                                {data.registerNo || "Kayıt Numarasız Sipariş"}
+                            </p>
+
+                            <div className="flex-1"></div>
+                            
+                            {currUser?.role === "technical" ? (
+                                <></>
+                            ) : (
+                                <>
+                                    <RegInfo
+                                        data={data}
+                                        trigger={
+                                            <Button
+                                                type="button"
+                                                color="primary"
+                                                className="bg-sky-500"
+                                                radius="sm"
+                                                isIconOnly
+                                            >
+                                                <BiInfoCircle className="text-xl" />
+                                            </Button>
+                                        }
+                                    />
+
+                                    <SetupButton
+                                        type={
+                                            data.type === "standard"
+                                                ? "appliance"
+                                                : "license"
+                                        }
+                                        entityId={
+                                            data.type === "standard"
+                                                ? data.applianceId
+                                                : data.licenseId
+                                        }
+                                    />
+
+                                    <DeleteButton
+                                        table="orders"
+                                        data={data}
+                                        mutate={mutate}
+                                        router={router}
+                                        trigger={
+                                            <Button
+                                                type="button"
+                                                color="primary"
+                                                className="bg-red-500"
+                                                radius="sm"
+                                                isIconOnly
+                                            >
+                                                <BiTrash className="text-xl" />
+                                            </Button>
+                                        }
+                                    />
+
+                                    <Tooltip content="Kaydet">
+                                        <Button
+                                            type="submit"
+                                            color="primary"
+                                            className="text-white bg-green-600"
+                                            radius="sm"
+                                            isLoading={submitting}
+                                            isIconOnly
+                                        >
+                                            <BiSave className="text-xl" />
+                                        </Button>
+                                    </Tooltip>
+                                </>
+                            )}
+                        </CardHeader>
+
                         <CardBody className="gap-3">
-                            <div className="flex items-center pb-2 pl-1">
-                                <p className="text-2xl font-bold text-sky-500">
-                                    {data.registerNo}
-                                </p>
-                                <div className="flex-1"></div>
-                                <BiX
-                                    className="text-3xl text-zinc-500 cursor-pointer active:opacity-50"
-                                    onClick={() => router.back()}
-                                />
-                            </div>
                             <div className="divide-y divide-zinc-200">
-                                <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2 items-center">
                                     <label className="font-medium">
                                         Sipariş Tipi
                                     </label>
@@ -797,62 +861,6 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                 </div>
                             </div>
                         </CardBody>
-
-                        {currUser?.role === "technical" ? undefined : (
-                            <CardFooter className="flex gap-2">
-                                <div className="flex-1"></div>
-                                <RegInfo
-                                    data={data}
-                                    isButton
-                                    trigger={
-                                        <Button
-                                            color="primary"
-                                            className="bg-sky-500"
-                                        >
-                                            Kayıt Bilgisi
-                                        </Button>
-                                    }
-                                />
-
-                                <SetupButton
-                                    type={
-                                        data.type === "standard"
-                                            ? "appliance"
-                                            : "license"
-                                    }
-                                    entityId={
-                                        data.type === "standard"
-                                            ? data.applianceId
-                                            : data.licenseId
-                                    }
-                                />
-
-                                <DeleteButton
-                                    table="orders"
-                                    data={data}
-                                    mutate={mutate}
-                                    isButton={true}
-                                    router={router}
-                                    trigger={
-                                        <Button
-                                            color="primary"
-                                            className="bg-red-500"
-                                        >
-                                            Sil
-                                        </Button>
-                                    }
-                                />
-
-                                <Button
-                                    type="submit"
-                                    color="primary"
-                                    className="text-white bg-green-600"
-                                    isLoading={submitting}
-                                >
-                                    Kaydet
-                                </Button>
-                            </CardFooter>
-                        )}
                     </form>
                 </Card>
             </div>

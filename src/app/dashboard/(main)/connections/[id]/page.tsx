@@ -5,12 +5,13 @@ import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
 
-import { Card, CardBody, CardFooter } from "@heroui/card";
+import { useDisclosure } from "@heroui/modal";
+import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { Switch } from "@heroui/switch";
 import { Accordion, AccordionItem } from "@heroui/accordion";
 import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
-import { useDisclosure } from "@heroui/react";
+import { Tooltip } from "@heroui/tooltip";
 
 import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
 import AutoComplete from "@/components/AutoComplete";
@@ -21,12 +22,14 @@ import ControlHistoryTable from "./ControlHistoryTable";
 import { CopyToClipboard } from "@/utils/functions";
 import {
     BiLinkExternal,
-    BiX,
     BiShow,
     BiHide,
     BiCopy,
     BiChevronLeft,
     BiListCheck,
+    BiSave,
+    BiTrash,
+    BiInfoCircle,
 } from "react-icons/bi";
 import useUserStore from "@/store/user";
 import { getCustomers, getBrands } from "@/lib/data";
@@ -76,6 +79,7 @@ export default function ConnectionDetail({
     const { register, reset, handleSubmit, control } = useForm<IFormInput>();
 
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+        setSubmitting(true);
         data.updatedBy = currUser?.username ?? "";
 
         delete data["customer"];
@@ -94,6 +98,8 @@ export default function ConnectionDetail({
             } else {
                 toast.error(result.message);
             }
+
+            setSubmitting(false);
             return result;
         });
     };
@@ -127,24 +133,158 @@ export default function ConnectionDetail({
         <div className="flex flex-col gap-4">
             <Card className="mt-4 px-1 py-2">
                 <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-                    <CardBody className="gap-3">
-                        <div className="flex items-center gap-2 pb-2 pl-1">
-                            <p className="text-2xl font-bold text-sky-500">
-                                {`https://${data.ip}`}
-                            </p>
-                            <a
-                                href={`https://${data.ip}`}
-                                target="_blank"
-                                className="cursor-pointer"
+                    <CardHeader className="flex gap-2">
+                        <p className="text-2xl font-bold text-sky-500">
+                            {`https://${data.ip}`}
+                        </p>
+                        <a
+                            href={`https://${data.ip}`}
+                            target="_blank"
+                            className="cursor-pointer"
+                        >
+                            <BiLinkExternal className="text-xl text-sky-500" />
+                        </a>
+                        <div className="flex-1"></div>
+
+                        <RegInfo
+                            data={data}
+                            trigger={
+                                <Button
+                                    color="primary"
+                                    className="bg-sky-500"
+                                    radius="sm"
+                                    isIconOnly
+                                >
+                                    <BiInfoCircle className="text-xl" />
+                                </Button>
+                            }
+                        />
+
+                        {data.controlled && (
+                            <Popover
+                                key={data.id}
+                                placement="top"
+                                color="default"
+                                backdrop="opaque"
+                                isOpen={isOpen}
+                                onOpenChange={onOpenChange}
                             >
-                                <BiLinkExternal className="text-xl text-sky-500" />
-                            </a>
-                            <div className="flex-1"></div>
-                            <BiX
-                                className="text-3xl text-zinc-500 cursor-pointer active:opacity-50"
-                                onClick={() => router.back()}
-                            />
-                        </div>
+                                <PopoverTrigger asChild>
+                                    <>
+                                        <Tooltip content="Gözetim Ekle">
+                                            <Button
+                                                type="button"
+                                                color="primary"
+                                                className="bg-yellow-500"
+                                                isIconOnly
+                                            >
+                                                <BiListCheck className="text-2xl" />
+                                            </Button>
+                                        </Tooltip>
+                                    </>
+                                </PopoverTrigger>
+                                <PopoverContent className="flex flex-col gap-2 p-3">
+                                    <h2 className="text-lg font-semibold text-zinc-600">
+                                        Gözetim Ekleme
+                                    </h2>
+                                    <p className="text-sm text-zinc-500 pb-2">
+                                        Bu bağlantıya kendi kullanıcınız adına
+                                        gözetim eklenecek. Devam etmek
+                                        istediğinizden emin misiniz?
+                                    </p>
+                                    <div className="flex gap-2">
+                                        <Button
+                                            variant="bordered"
+                                            onPress={onClose}
+                                        >
+                                            Kapat
+                                        </Button>
+                                        <Button
+                                            variant="solid"
+                                            color="danger"
+                                            className="bg-yellow-500"
+                                            isLoading={submittingControl}
+                                            onPress={async () => {
+                                                setSubmittingControl(true);
+
+                                                const control = {
+                                                    userId: currUser?.id,
+                                                    createdBy:
+                                                        currUser?.username,
+                                                };
+
+                                                await fetch(
+                                                    `/api/connection/${params.id}/control`,
+                                                    {
+                                                        method: "POST",
+                                                        body: JSON.stringify(
+                                                            control,
+                                                        ),
+                                                        headers: {
+                                                            "Content-Type":
+                                                                "application/json",
+                                                        },
+                                                    },
+                                                ).then(async (res) => {
+                                                    const result =
+                                                        await res.json();
+                                                    if (result.ok) {
+                                                        toast.success(
+                                                            result.message,
+                                                        );
+                                                        mutate();
+                                                        onClose();
+                                                    } else {
+                                                        toast.error(
+                                                            result.message,
+                                                        );
+                                                    }
+
+                                                    setSubmittingControl(false);
+                                                    return result;
+                                                });
+                                            }}
+                                        >
+                                            Ekle
+                                        </Button>
+                                    </div>
+                                </PopoverContent>
+                            </Popover>
+                        )}
+
+                        <DeleteButton
+                            table="connections"
+                            data={data}
+                            mutate={mutate}
+                            router={router}
+                            trigger={
+                                <Button
+                                    type="button"
+                                    color="primary"
+                                    className="bg-red-500"
+                                    radius="sm"
+                                    isIconOnly
+                                >
+                                    <BiTrash className="text-xl" />
+                                </Button>
+                            }
+                        />
+
+                        <Tooltip content="Kaydet">
+                            <Button
+                                type="submit"
+                                color="primary"
+                                className="text-white bg-green-600"
+                                radius="sm"
+                                isLoading={submitting}
+                                isIconOnly
+                            >
+                                <BiSave className="text-xl" />
+                            </Button>
+                        </Tooltip>
+                    </CardHeader>
+
+                    <CardBody className="gap-3">
                         <div className="divide-y divide-zinc-200">
                             <div className="grid grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2 items-center">
                                 <div>
@@ -336,127 +476,6 @@ export default function ConnectionDetail({
                             </div>
                         </div>
                     </CardBody>
-                    <CardFooter className="flex gap-2">
-                        <div className="flex-1"></div>
-
-                        {data.controlled && (
-                            <Popover
-                                key={data.id}
-                                placement="top"
-                                color="default"
-                                backdrop="opaque"
-                                isOpen={isOpen}
-                                onOpenChange={onOpenChange}
-                            >
-                                <PopoverTrigger>
-                                    <Button
-                                        color="primary"
-                                        className="bg-yellow-500"
-                                    >
-                                        Gözetim Ekle
-                                    </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="flex flex-col gap-2 p-3">
-                                    <h2 className="text-lg font-semibold text-zinc-600">
-                                        Gözetim Ekleme
-                                    </h2>
-                                    <p className="text-sm text-zinc-500 pb-2">
-                                        Bu bağlantıya kendi kullanıcınız adına
-                                        gözetim eklenecek. Devam etmek
-                                        istediğinizden emin misiniz?
-                                    </p>
-                                    <div className="flex gap-2">
-                                        <Button
-                                            variant="bordered"
-                                            onPress={onClose}
-                                        >
-                                            Kapat
-                                        </Button>
-                                        <Button
-                                            variant="solid"
-                                            color="danger"
-                                            className="bg-yellow-500"
-                                            isLoading={submittingControl}
-                                            onPress={async () => {
-                                                setSubmittingControl(true);
-
-                                                const control = {
-                                                    userId: currUser?.id,
-                                                    createdBy:
-                                                        currUser?.username,
-                                                };
-
-                                                await fetch(
-                                                    `/api/connection/${params.id}/control`,
-                                                    {
-                                                        method: "POST",
-                                                        body: JSON.stringify(
-                                                            control,
-                                                        ),
-                                                        headers: {
-                                                            "Content-Type":
-                                                                "application/json",
-                                                        },
-                                                    },
-                                                ).then(async (res) => {
-                                                    const result =
-                                                        await res.json();
-                                                    if (result.ok) {
-                                                        toast.success(
-                                                            result.message,
-                                                        );
-                                                        mutate();
-                                                        onClose();
-                                                    } else {
-                                                        toast.error(
-                                                            result.message,
-                                                        );
-                                                    }
-
-                                                    setSubmittingControl(false);
-                                                    return result;
-                                                });
-                                            }}
-                                        >
-                                            Ekle
-                                        </Button>
-                                    </div>
-                                </PopoverContent>
-                            </Popover>
-                        )}
-
-                        <RegInfo
-                            data={data}
-                            isButton
-                            trigger={
-                                <Button color="primary" className="bg-sky-500">
-                                    Kayıt Bilgisi
-                                </Button>
-                            }
-                        />
-
-                        <DeleteButton
-                            table="connections"
-                            data={data}
-                            mutate={mutate}
-                            isButton={true}
-                            router={router}
-                            trigger={
-                                <Button color="primary" className="bg-red-500">
-                                    Sil
-                                </Button>
-                            }
-                        />
-
-                        <Button
-                            type="submit"
-                            color="primary"
-                            className="text-white bg-green-600"
-                            isLoading={submitting}
-                        >
-                            Kaydet
-                        </Button>
-                    </CardFooter>
                 </form>
             </Card>
 

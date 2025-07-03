@@ -15,7 +15,7 @@ import {
 
 import AutoComplete from "@/components/AutoComplete";
 
-import { BiSolidEnvelope } from "react-icons/bi";
+import { BiCog, BiSolidEnvelope } from "react-icons/bi";
 import { getUsers } from "@/lib/data";
 import useUserStore from "@/store/user";
 
@@ -88,9 +88,17 @@ export default function SetupButton({ type, entityId }: Props) {
 
     return (
         <>
-            <Button color="primary" className="bg-indigo-500" onPress={onOpen}>
-                Kurulum Ekle
-            </Button>
+            <Tooltip content="Kurulum Ekle">
+                <Button
+                    color="primary"
+                    className="text-white bg-zinc-400"
+                    onPress={onOpen}
+                    radius="sm"
+                    isIconOnly
+                >
+                    <BiCog className="size-5" />
+                </Button>
+            </Tooltip>
 
             <Modal
                 isOpen={isOpen}

@@ -2,10 +2,10 @@
 import { useEffect, useState } from "react";
 import useSWR from "swr";
 import { useRouter } from "next/navigation";
-import { useForm, Controller, SubmitHandler, set } from "react-hook-form";
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
 
-import { Card, CardBody, CardFooter } from "@heroui/card";
+import { Card, CardBody, CardHeader } from "@heroui/card";
 import {
     Modal,
     ModalContent,
@@ -18,25 +18,30 @@ import { Button } from "@heroui/button";
 import { Popover, PopoverTrigger, PopoverContent } from "@heroui/popover";
 import { Tab, Tabs } from "@heroui/tabs";
 import { Tooltip } from "@heroui/tooltip";
-import { Switch } from "@heroui/switch";
 
 import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
 import AutoComplete from "@/components/AutoComplete";
 import RegInfo from "@/components/buttons/RegInfo";
 import DeleteButton from "@/components/buttons/DeleteButton";
+import ApplianceForm from "@/components/ApplianceForm";
+import SendLicenseMail from "@/components/buttons/SendLicenseMail";
+import SetupButton from "@/components/buttons/SetupButton";
+
 import {
     BiChevronLeft,
     BiInfoCircle,
     BiPlus,
     BiServer,
     BiShieldQuarter,
-    BiX,
     BiTrash,
     BiEdit,
     BiSolidError,
     BiSolidCheckCircle,
     BiMailSend,
     BiShow,
+    BiSave,
+    BiShoppingBag,
+    BiFile,
 } from "react-icons/bi";
 import { setLicenseActiveStatus, setLicenseAppliance } from "@/lib/prisma";
 import { DateFormat, DateTimeFormat, DateToForm } from "@/utils/date";
@@ -50,9 +55,6 @@ import {
     getSuppliers,
     getBoughtTypes,
 } from "@/lib/data";
-import ApplianceForm from "@/components/ApplianceForm";
-import SendLicenseMail from "@/components/buttons/SendLicenseMail";
-import SetupButton from "@/components/buttons/SetupButton";
 
 interface IFormInput {
     id: number;
@@ -394,17 +396,162 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
         <div className="flex flex-col gap-2">
             <Card className="mt-4 px-1 py-2">
                 <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-                    <CardBody className="gap-3 overflow-hidden">
+                    <CardHeader className="flex gap-2">
                         <div className="flex items-center pb-2 pl-1">
                             <p className="text-2xl font-bold text-sky-500">
                                 {data.serialNo || "Seri Numarasız Lisans"}
                             </p>
                             <div className="flex-1"></div>
-                            <BiX
-                                className="text-3xl text-zinc-500 cursor-pointer active:opacity-50"
-                                onClick={() => router.back()}
-                            />
                         </div>
+
+                        <div className="flex-1"></div>
+
+                        <RegInfo
+                            data={data}
+                            trigger={
+                                <Button
+                                    type="button"
+                                    color="primary"
+                                    className="bg-sky-500"
+                                    radius="sm"
+                                    isIconOnly
+                                >
+                                    <BiInfoCircle className="text-xl" />
+                                </Button>
+                            }
+                        />
+
+                        {currUser?.role !== "technical" &&
+                            (data.customerId || data.cusName) && (
+                                <>
+                                    {data.isLost ? (
+                                        <Tooltip content="Aktif Olarak İşaretle">
+                                            <Button
+                                                type="button"
+                                                color="primary"
+                                                className="bg-green-600"
+                                                radius="sm"
+                                                isIconOnly
+                                                onPress={async () => {
+                                                    await setLicenseActiveStatus(
+                                                        data.id,
+                                                        "active",
+                                                        currUser?.username,
+                                                    );
+                                                    mutate();
+                                                }}
+                                            >
+                                                <BiSolidCheckCircle className="text-xl" />
+                                            </Button>
+                                        </Tooltip>
+                                    ) : (
+                                        <Tooltip content="Kayıp Olarak İşaretle">
+                                            <Button
+                                                type="button"
+                                                color="primary"
+                                                className="bg-red-500"
+                                                radius="sm"
+                                                isIconOnly
+                                                onPress={async () => {
+                                                    await setLicenseActiveStatus(
+                                                        data.id,
+                                                        "lost",
+                                                        currUser?.username,
+                                                    );
+                                                    mutate();
+                                                }}
+                                            >
+                                                <BiSolidError className="text-xl" />
+                                            </Button>
+                                        </Tooltip>
+                                    )}
+                                </>
+                            )}
+
+                        {currUser?.role === "technical" ? (
+                            <></>
+                        ) : (
+                            <>
+                                <SetupButton
+                                    type="license"
+                                    entityId={data.id}
+                                />
+
+                                <Tooltip content="Sipariş Oluştur">
+                                    <Button
+                                        type="button"
+                                        color="primary"
+                                        className="bg-indigo-500"
+                                        radius="sm"
+                                        isIconOnly
+                                    >
+                                        <BiFile className="text-xl" />
+                                    </Button>
+                                </Tooltip>
+
+                                <Tooltip content="Yeni Satın Alım Ekle">
+                                    <Button
+                                        type="button"
+                                        color="primary"
+                                        className="bg-yellow-500"
+                                        onPress={() => {
+                                            setHistoryIsNew(true);
+                                            resetHistory({
+                                                productId:
+                                                    data.appliance?.product
+                                                        ?.id || data.productId,
+                                                applianceId: data.appliance?.id,
+                                                appSerialNo:
+                                                    data.appSerialNo || null,
+                                                dealerId: data.dealerId,
+                                                subDealerId: data.subDealerId,
+                                                supplierId: data.supplierId,
+                                                invoiceCurrentId:
+                                                    data.invoiceCurrentId,
+                                            });
+                                            onOpenHistory();
+                                        }}
+                                        radius="sm"
+                                        isIconOnly
+                                    >
+                                        <BiShoppingBag className="text-xl" />
+                                    </Button>
+                                </Tooltip>
+
+                                <DeleteButton
+                                    table="licenses"
+                                    data={data}
+                                    mutate={mutate}
+                                    router={router}
+                                    trigger={
+                                        <Button
+                                            type="button"
+                                            color="primary"
+                                            className="bg-red-500"
+                                            radius="sm"
+                                            isIconOnly
+                                        >
+                                            <BiTrash className="text-xl" />
+                                        </Button>
+                                    }
+                                />
+
+                                <Tooltip content="Kaydet">
+                                    <Button
+                                        type="submit"
+                                        color="primary"
+                                        className="text-white bg-green-600"
+                                        radius="sm"
+                                        isLoading={submitting}
+                                        isIconOnly
+                                    >
+                                        <BiSave className="text-xl" />
+                                    </Button>
+                                </Tooltip>
+                            </>
+                        )}
+                    </CardHeader>
+                    <CardBody className="gap-3 overflow-hidden">
                         <div className="divide-y divide-zinc-200">
                             <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
                                 <dt className="font-medium">Durum</dt>
@@ -442,53 +589,6 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                             Belirsiz
                                         </span>
                                     )}
-
-                                    {currUser?.role != "technical" &&
-                                        (data.customerId || data.cusName) && (
-                                            <>
-                                                {data.isLost && (
-                                                    <Tooltip content="Aktif Olarak İşaretle">
-                                                        <Button
-                                                            isIconOnly
-                                                            color="primary"
-                                                            className="bg-green-600"
-                                                            size="sm"
-                                                            onPress={async () => {
-                                                                await setLicenseActiveStatus(
-                                                                    data.id,
-                                                                    "active",
-                                                                    currUser?.username,
-                                                                );
-                                                                mutate();
-                                                            }}
-                                                        >
-                                                            <BiSolidCheckCircle className="size-4" />
-                                                        </Button>
-                                                    </Tooltip>
-                                                )}
-
-                                                {!data.isLost && (
-                                                    <Tooltip content="Kayıp Olarak İşaretle">
-                                                        <Button
-                                                            isIconOnly
-                                                            color="primary"
-                                                            className="bg-red-500"
-                                                            size="sm"
-                                                            onPress={async () => {
-                                                                await setLicenseActiveStatus(
-                                                                    data.id,
-                                                                    "lost",
-                                                                    currUser?.username,
-                                                                );
-                                                                mutate();
-                                                            }}
-                                                        >
-                                                            <BiSolidError className="size-4" />
-                                                        </Button>
-                                                    </Tooltip>
-                                                )}
-                                            </>
-                                        )}
                                 </dd>
                             </div>
 
@@ -948,74 +1048,6 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                             </div>
                         </div>
                     </CardBody>
-                    {currUser?.role == "technical" ? (
-                        <></>
-                    ) : (
-                        <CardFooter className="flex gap-2">
-                            <div className="flex-1"></div>
-                            <RegInfo
-                                data={data}
-                                isButton
-                                trigger={
-                                    <Button
-                                        color="primary"
-                                        className="bg-sky-500"
-                                    >
-                                        Kayıt Bilgisi
-                                    </Button>
-                                }
-                            />
-
-                            <SetupButton type="license" entityId={data.id} />
-
-                            <Button
-                                color="primary"
-                                className="bg-yellow-500"
-                                onPress={() => {
-                                    setHistoryIsNew(true);
-                                    resetHistory({
-                                        productId:
-                                            data.appliance?.product?.id ||
-                                            data.productId,
-                                        applianceId: data.appliance?.id,
-                                        appSerialNo: data.appSerialNo || null,
-                                        dealerId: data.dealerId,
-                                        subDealerId: data.subDealerId,
-                                        supplierId: data.supplierId,
-                                        invoiceCurrentId: data.invoiceCurrentId,
-                                    });
-                                    onOpenHistory();
-                                }}
-                            >
-                                Yeni Satın Alım Ekle
-                            </Button>
-
-                            <DeleteButton
-                                table="licenses"
-                                data={data}
-                                mutate={mutate}
-                                isButton
-                                router={router}
-                                trigger={
-                                    <Button
-                                        color="primary"
-                                        className="bg-red-500"
-                                    >
-                                        Sil
-                                    </Button>
-                                }
-                            />
-
-                            <Button
-                                type="submit"
-                                color="primary"
-                                className="text-white bg-green-600"
-                                isLoading={submitting}
-                            >
-                                Kaydet
-                            </Button>
-                        </CardFooter>
-                    )}
                 </form>
             </Card>
 

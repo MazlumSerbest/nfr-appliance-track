@@ -1,22 +1,29 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import useSWR from "swr";
 import { useRouter } from "next/navigation";
-import { SubmitHandler, useForm, Controller, set } from "react-hook-form";
+import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
 
-import { Card, CardBody, CardFooter } from "@heroui/card";
+import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Button } from "@heroui/button";
+import { Tooltip } from "@heroui/tooltip";
 
 import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
 import AutoComplete from "@/components/AutoComplete";
 import RegInfo from "@/components/buttons/RegInfo";
 import DeleteButton from "@/components/buttons/DeleteButton";
-import { BiShield, BiSolidCheckShield, BiX } from "react-icons/bi";
+
+import {
+    BiInfoCircle,
+    BiSave,
+    BiShield,
+    BiSolidCheckShield,
+    BiTrash,
+} from "react-icons/bi";
 import useUserStore from "@/store/user";
 import { getUsers } from "@/lib/data";
 import { DateTimeFormat, DateToForm } from "@/utils/date";
-import { Tooltip } from "@heroui/react";
 
 interface IFormInput {
     status: "waiting" | "complete";
@@ -113,80 +120,118 @@ export default function SetupDetail({ params }: { params: { id: string } }) {
         <div className="flex flex-col gap-2">
             <Card className="mt-4 px-1 py-2">
                 <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
+                    <CardHeader className="flex gap-2">
+                        <p className="text-2xl font-bold text-sky-500">
+                            {data.product || data.licenseType}
+                        </p>
+
+                        <div className="flex-1"></div>
+
+                        {currUser?.role === "seller" ? (
+                            <></>
+                        ) : (
+                            <>
+                                <RegInfo
+                                    data={data}
+                                    trigger={
+                                        <Button
+                                            type="button"
+                                            color="primary"
+                                            className="bg-sky-500"
+                                            radius="sm"
+                                            isIconOnly
+                                        >
+                                            <BiInfoCircle className="text-xl" />
+                                        </Button>
+                                    }
+                                />
+
+                                {data.status === "waiting" &&
+                                (currUser?.id === data.userId ||
+                                    currUser?.role === "admin") ? (
+                                    <Tooltip content="Tamamlandı Olarak İşaretle">
+                                        <Button
+                                            type="button"
+                                            variant="solid"
+                                            className="bg-indigo-500"
+                                            radius="sm"
+                                            isIconOnly
+                                            onPress={async () => {
+                                                const res = await fetch(
+                                                    `/api/setup/${params.id}/complete`,
+                                                    {
+                                                        method: "PUT",
+                                                        headers: {
+                                                            "Content-Type":
+                                                                "application/json",
+                                                        },
+                                                    },
+                                                );
+                                                const result = await res.json();
+                                                if (result.ok) {
+                                                    toast.success(
+                                                        result.message,
+                                                    );
+                                                    mutate();
+                                                } else {
+                                                    toast.error(result.message);
+                                                }
+                                            }}
+                                        >
+                                            <BiSolidCheckShield className="size-5 text-white" />
+                                        </Button>
+                                    </Tooltip>
+                                ) : (
+                                    <></>
+                                )}
+
+                                <DeleteButton
+                                    table="setups"
+                                    data={data}
+                                    mutate={mutate}
+                                    router={router}
+                                    trigger={
+                                        <Button
+                                            type="button"
+                                            color="primary"
+                                            className="bg-red-500"
+                                            radius="sm"
+                                            isIconOnly
+                                        >
+                                            <BiTrash className="text-xl" />
+                                        </Button>
+                                    }
+                                />
+
+                                <Tooltip content="Kaydet">
+                                    <Button
+                                        type="submit"
+                                        color="primary"
+                                        className="text-white bg-green-600"
+                                        radius="sm"
+                                        isLoading={submitting}
+                                        isIconOnly
+                                    >
+                                        <BiSave className="text-xl" />
+                                    </Button>
+                                </Tooltip>
+                            </>
+                        )}
+                    </CardHeader>
+
                     <CardBody className="gap-3">
-                        <div className="flex items-center gap-2 pb-2 pl-1">
-                            <p className="text-2xl font-bold text-sky-500">
-                                {data.product || data.licenseType}
-                            </p>
-                            {data.status === "complete" ? (
-                                <BiSolidCheckShield
-                                    className="text-3xl text-green-600 cursor-pointer active:opacity-50"
-                                    onClick={() => router.back()}
-                                />
-                            ) : (
-                                <BiShield
-                                    className="text-3xl text-yellow-500 cursor-pointer active:opacity-50"
-                                    onClick={() => router.back()}
-                                />
-                            )}
-                            <div className="flex-1"></div>
-                            <BiX
-                                className="text-3xl text-zinc-500 cursor-pointer active:opacity-50"
-                                onClick={() => router.back()}
-                            />
-                        </div>
                         <div className="divide-y divide-zinc-200">
-                            <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                            <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
                                 <dt className="font-medium">Durum</dt>
                                 <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0 gap-2">
-                                    {data.status === "complete"
-                                        ? "Tamamlandı"
-                                        : "Bekleyen"}
                                     {data.status === "complete" ? (
-                                        <></>
+                                        <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-sm font-medium text-green-600 ring-1 ring-inset ring-green-600/20">
+                                            Tamamlandı
+                                        </span>
                                     ) : (
-                                        // <Button
-                                        //     variant="solid"
-                                        //     className="bg-indigo-500"
-                                        //     radius="sm"
-                                        //     isIconOnly
-                                        // >
-                                        //     <BiSolidCheckShield className="size-5 text-white" />
-                                        // </Button>
-                                        <Tooltip content="Tamamlandı Olarak İşaretle">
-                                            <Button
-                                                variant="solid"
-                                                className="bg-indigo-500"
-                                                radius="sm"
-                                                isIconOnly
-                                                onPress={async () => {
-                                                    const res = await fetch(
-                                                        `/api/setup/${params.id}/complete`,
-                                                        {
-                                                            method: "PUT",
-                                                            headers: {
-                                                                "Content-Type":
-                                                                    "application/json",
-                                                            },
-                                                        },
-                                                    );
-                                                    const result =
-                                                        await res.json();
-                                                    if (result.ok) {
-                                                        toast.success(
-                                                            result.message,
-                                                        );
-                                                        mutate();
-                                                    } else {
-                                                        toast.error(
-                                                            result.message,
-                                                        );
-                                                    }
-                                                }}
-                                            >
-                                                <BiSolidCheckShield className="size-5 text-white" />
-                                            </Button>
-                                        </Tooltip>
+                                        <span className="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-sm font-medium text-yellow-500 ring-1 ring-inset ring-yellow-500/20">
+                                            Bekleyen
+                                        </span>
                                     )}
                                 </dd>
                             </div>
@@ -234,27 +279,19 @@ export default function SetupDetail({ params }: { params: { id: string } }) {
                                 />
                             </div>
 
-                            {data.type === "appliance" && (
-                                <>
-                                    <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2 items-center">
-                                        <dt className="font-medium">
-                                            Ürün (Model)
-                                        </dt>
-                                        <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                            {data.product || "-"}
-                                        </dd>
-                                    </div>
+                            <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2 items-center">
+                                <dt className="font-medium">Ürün (Model)</dt>
+                                <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
+                                    {data.product || "-"}
+                                </dd>
+                            </div>
 
-                                    <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2 items-center">
-                                        <dt className="font-medium">
-                                            Cihaz Seri No
-                                        </dt>
-                                        <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
-                                            {data.applianceSerialNo || "-"}
-                                        </dd>
-                                    </div>
-                                </>
-                            )}
+                            <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2 items-center">
+                                <dt className="font-medium">Cihaz Seri No</dt>
+                                <dd className="flex flex-row col-span-1 md:col-span-2 font-light items-center mt-1 sm:mt-0">
+                                    {data.applianceSerialNo || "-"}
+                                </dd>
+                            </div>
 
                             <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2 items-center">
                                 <dt className="font-medium">Lisans Tipi</dt>
@@ -313,50 +350,6 @@ export default function SetupDetail({ params }: { params: { id: string } }) {
                             </div>
                         </div>
                     </CardBody>
-
-                    {currUser?.role === "technical" ? undefined : (
-                        <CardFooter className="flex gap-2">
-                            <div className="flex-1"></div>
-                            <RegInfo
-                                data={data}
-                                isButton
-                                trigger={
-                                    <Button
-                                        type="button"
-                                        color="primary"
-                                        className="bg-sky-500"
-                                    >
-                                        Kayıt Bilgisi
-                                    </Button>
-                                }
-                            />
-
-                            <DeleteButton
-                                table="setups"
-                                data={data}
-                                mutate={mutate}
-                                isButton={true}
-                                router={router}
-                                trigger={
-                                    <Button
-                                        color="primary"
-                                        className="bg-red-500"
-                                    >
-                                        Sil
-                                    </Button>
-                                }
-                            />
-
-                            <Button
-                                type="submit"
-                                color="primary"
-                                className="text-white bg-green-600"
-                                isLoading={submitting}
-                            >
-                                Kaydet
-                            </Button>
-                        </CardFooter>
-                    )}
                 </form>
             </Card>
         </div>

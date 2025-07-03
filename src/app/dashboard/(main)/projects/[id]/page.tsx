@@ -5,14 +5,14 @@ import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
 
-import { Card, CardBody, CardFooter } from "@heroui/card";
+import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Button } from "@heroui/button";
+import { Tooltip } from "@heroui/tooltip";
 
 import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
 import AutoComplete from "@/components/AutoComplete";
 import RegInfo from "@/components/buttons/RegInfo";
 import DeleteButton from "@/components/buttons/DeleteButton";
-import { BiX } from "react-icons/bi";
 import useUserStore from "@/store/user";
 import {
     getCustomers,
@@ -22,6 +22,7 @@ import {
 } from "@/lib/data";
 import { projectStatus } from "@/lib/constants";
 import { DateToForm } from "@/utils/date";
+import { BiInfoCircle, BiSave, BiTrash } from "react-icons/bi";
 
 interface IFormInput {
     date?: string;
@@ -120,17 +121,66 @@ export default function ProjectDetail({ params }: { params: { id: string } }) {
         <div className="flex flex-col gap-4">
             <Card className="mt-4 px-1 py-2">
                 <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
+                    <CardHeader className="flex gap-2">
+                        <p className="text-2xl font-bold text-sky-500">
+                            {data.customer?.name}
+                        </p>
+
+                        <div className="flex-1"></div>
+
+                        {currUser?.role === "technical" ? (
+                            <></>
+                        ) : (
+                            <>
+                                <RegInfo
+                                    data={data}
+                                    trigger={
+                                        <Button
+                                            type="button"
+                                            color="primary"
+                                            className="bg-sky-500"
+                                            radius="sm"
+                                            isIconOnly
+                                        >
+                                            <BiInfoCircle className="text-xl" />
+                                        </Button>
+                                    }
+                                />
+
+                                <DeleteButton
+                                    table="projects"
+                                    data={data}
+                                    mutate={mutate}
+                                    router={router}
+                                    trigger={
+                                        <Button
+                                            type="button"
+                                            color="primary"
+                                            className="bg-red-500"
+                                            isIconOnly
+                                        >
+                                            <BiTrash className="text-xl" />
+                                        </Button>
+                                    }
+                                />
+
+                                <Tooltip content="Kaydet">
+                                    <Button
+                                        type="submit"
+                                        color="primary"
+                                        className="text-white bg-green-600"
+                                        radius="sm"
+                                        isLoading={submitting}
+                                        isIconOnly
+                                    >
+                                        <BiSave className="text-xl" />
+                                    </Button>
+                                </Tooltip>
+                            </>
+                        )}
+                    </CardHeader>
+
                     <CardBody className="gap-3">
-                        <div className="flex items-center pb-2 pl-1">
-                            <p className="text-2xl font-bold text-sky-500">
-                                {data.customer?.name}
-                            </p>
-                            <div className="flex-1"></div>
-                            <BiX
-                                className="text-3xl text-zinc-500 cursor-pointer active:opacity-50"
-                                onClick={() => router.back()}
-                            />
-                        </div>
                         <div className="divide-y divide-zinc-200">
                             <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                 <label htmlFor="status" className="font-medium">
@@ -275,49 +325,6 @@ export default function ProjectDetail({ params }: { params: { id: string } }) {
                             </div>
                         </div>
                     </CardBody>
-                    
-                    {currUser?.role === "technical" ? undefined : (
-                        <CardFooter className="flex gap-2">
-                            <div className="flex-1"></div>
-                            <RegInfo
-                                data={data}
-                                isButton
-                                trigger={
-                                    <Button
-                                        color="primary"
-                                        className="bg-sky-500"
-                                    >
-                                        Kayıt Bilgisi
-                                    </Button>
-                                }
-                            />
-
-                            <DeleteButton
-                                table="projects"
-                                data={data}
-                                mutate={mutate}
-                                isButton={true}
-                                router={router}
-                                trigger={
-                                    <Button
-                                        color="primary"
-                                        className="bg-red-500"
-                                    >
-                                        Sil
-                                    </Button>
-                                }
-                            />
-
-                            <Button
-                                type="submit"
-                                color="primary"
-                                className="text-white bg-green-600"
-                                isLoading={submitting}
-                            >
-                                Kaydet
-                            </Button>
-                        </CardFooter>
-                    )}
                 </form>
             </Card>
         </div>

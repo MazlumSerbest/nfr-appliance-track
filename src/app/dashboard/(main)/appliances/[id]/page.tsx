@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
 
-import { Card, CardBody, CardFooter } from "@heroui/card";
+import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Accordion, AccordionItem } from "@heroui/accordion";
 import { Button } from "@heroui/button";
 import {
@@ -15,14 +15,15 @@ import {
     ModalBody,
     useDisclosure,
 } from "@heroui/modal";
+import { Tooltip } from "@heroui/tooltip";
 
 import Skeleton, { DefaultSkeleton } from "@/components/loaders/Skeleton";
 import RegInfo from "@/components/buttons/RegInfo";
 import DeleteButton from "@/components/buttons/DeleteButton";
 import AutoComplete from "@/components/AutoComplete";
+import SetupButton from "@/components/buttons/SetupButton";
 
 import {
-    BiX,
     BiCheckShield,
     BiChevronLeft,
     BiChevronRight,
@@ -30,6 +31,9 @@ import {
     BiEdit,
     BiTrash,
     BiInfoCircle,
+    BiSave,
+    BiShoppingBag,
+    BiServer,
 } from "react-icons/bi";
 import useUserStore from "@/store/user";
 import { DateFormat, DateToForm } from "@/utils/date";
@@ -40,7 +44,6 @@ import {
     getSuppliers,
 } from "@/lib/data";
 import { setApplianceDemoStatus } from "@/lib/prisma";
-import SetupButton from "@/components/buttons/SetupButton";
 
 interface IFormInput {
     id: number;
@@ -260,18 +263,133 @@ export default function ApplianceDetail({
         <div className="flex flex-col gap-2">
             <Card className="mt-4 px-1 py-2">
                 <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
+                    <CardHeader className="flex gap-2">
+                        <p className="text-2xl font-bold text-sky-500">
+                            {data.serialNo +
+                                (data.isDemo ? " (Demo Cihaz)" : "")}
+                        </p>
+                        <div className="flex-1"></div>
+
+                        {currUser?.role === "technical" ? (
+                            <></>
+                        ) : (
+                            <>
+                                <RegInfo
+                                    data={data}
+                                    trigger={
+                                        <Button
+                                            type="button"
+                                            color="primary"
+                                            className="bg-sky-500"
+                                            radius="sm"
+                                            isIconOnly
+                                        >
+                                            <BiInfoCircle className="text-xl" />
+                                        </Button>
+                                    }
+                                />
+
+                                <SetupButton
+                                    type="appliance"
+                                    entityId={data.id}
+                                />
+
+                                <Tooltip
+                                    content={
+                                        data.isDemo
+                                            ? "Demolardan Çıkart"
+                                            : "Demo Cihaz Yap"
+                                    }
+                                >
+                                    <Button
+                                        type="button"
+                                        color="primary"
+                                        className="bg-zinc-500"
+                                        radius="sm"
+                                        isLoading={submittingDemo}
+                                        isIconOnly
+                                        onPress={async () => {
+                                            setSubmittingDemo(true);
+                                            const res =
+                                                await setApplianceDemoStatus(
+                                                    data.id,
+                                                    !data.isDemo,
+                                                    currUser?.username,
+                                                );
+                                            mutate();
+
+                                            if (res)
+                                                toast.success(
+                                                    "Cihaz durumu başarıyla güncellendi.",
+                                                );
+                                            else
+                                                toast.error(
+                                                    "Cihaz durumu güncellenirken bir hata oluştu.",
+                                                );
+
+                                            setSubmittingDemo(false);
+                                        }}
+                                    >
+                                        <BiServer className="text-xl" />
+                                    </Button>
+                                </Tooltip>
+
+                                <Tooltip content="Yeni Satın Alım Ekle">
+                                    <Button
+                                        type="button"
+                                        color="primary"
+                                        className="bg-yellow-500"
+                                        radius="sm"
+                                        isIconOnly
+                                        onPress={() => {
+                                            setHistoryIsNew(true);
+                                            resetHistory({});
+                                            resetHistory({});
+                                            setHistoryValue(
+                                                "customerId",
+                                                data.customerId,
+                                            );
+                                            onOpenHistory();
+                                        }}
+                                    >
+                                        <BiShoppingBag className="text-xl" />
+                                    </Button>
+                                </Tooltip>
+
+                                <DeleteButton
+                                    table="appliances"
+                                    data={data}
+                                    mutate={mutate}
+                                    router={router}
+                                    trigger={
+                                        <Button
+                                            type="button"
+                                            color="primary"
+                                            className="bg-red-500"
+                                            radius="sm"
+                                            isIconOnly
+                                        >
+                                            <BiTrash className="text-xl" />
+                                        </Button>
+                                    }
+                                />
+
+                                <Tooltip content="Kaydet">
+                                    <Button
+                                        type="submit"
+                                        color="primary"
+                                        className="text-white bg-green-600"
+                                        radius="sm"
+                                        isLoading={submitting}
+                                        isIconOnly
+                                    >
+                                        <BiSave className="text-xl" />
+                                    </Button>
+                                </Tooltip>
+                            </>
+                        )}
+                    </CardHeader>
                     <CardBody className="gap-3">
-                        <div className="flex items-center pb-2 pl-1">
-                            <p className="text-2xl font-bold text-sky-500">
-                                {data.serialNo +
-                                    (data.isDemo ? " (Demo Cihaz)" : "")}
-                            </p>
-                            <div className="flex-1"></div>
-                            <BiX
-                                className="text-3xl text-zinc-500 cursor-pointer active:opacity-50"
-                                onClick={() => router.back()}
-                            />
-                        </div>
                         <div className="divide-y divide-zinc-200">
                             <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">
                                 <dt className="font-medium">Durum</dt>
@@ -517,98 +635,6 @@ export default function ApplianceDetail({
                             </div>
                         </div>
                     </CardBody>
-                    {currUser?.role === "technical" ? undefined : (
-                        <CardFooter className="flex gap-2">
-                            <div className="flex-1"></div>
-
-                            <RegInfo
-                                data={data}
-                                isButton
-                                trigger={
-                                    <Button
-                                        color="primary"
-                                        className="bg-sky-500"
-                                    >
-                                        Kayıt Bilgisi
-                                    </Button>
-                                }
-                            />
-
-                            <SetupButton type="appliance" entityId={data.id} />
-
-                            <Button
-                                color="primary"
-                                className="bg-zinc-500"
-                                isLoading={submittingDemo}
-                                onPress={async () => {
-                                    setSubmittingDemo(true);
-                                    const res = await setApplianceDemoStatus(
-                                        data.id,
-                                        !data.isDemo,
-                                        currUser?.username,
-                                    );
-                                    mutate();
-
-                                    if (res)
-                                        toast.success(
-                                            "Cihaz durumu başarıyla güncellendi.",
-                                        );
-                                    else
-                                        toast.error(
-                                            "Cihaz durumu güncellenirken bir hata oluştu.",
-                                        );
-
-                                    setSubmittingDemo(false);
-                                }}
-                            >
-                                {data.isDemo
-                                    ? "Demolardan Çıkart"
-                                    : "Demo Cihaz Yap"}
-                            </Button>
-
-                            <Button
-                                color="primary"
-                                className="bg-yellow-500"
-                                onPress={() => {
-                                    setHistoryIsNew(true);
-                                    resetHistory({});
-                                    resetHistory({});
-                                    setHistoryValue(
-                                        "customerId",
-                                        data.customerId,
-                                    );
-                                    onOpenHistory();
-                                }}
-                            >
-                                Yeni Müşteri Ekle
-                            </Button>
-
-                            <DeleteButton
-                                table="appliances"
-                                data={data}
-                                mutate={mutate}
-                                isButton={true}
-                                router={router}
-                                trigger={
-                                    <Button
-                                        color="primary"
-                                        className="bg-red-500"
-                                    >
-                                        Sil
-                                    </Button>
-                                }
-                            />
-
-                            <Button
-                                type="submit"
-                                color="primary"
-                                className="text-white bg-green-600"
-                                isLoading={submitting}
-                            >
-                                Kaydet
-                            </Button>
-                        </CardFooter>
-                    )}
                 </form>
             </Card>
 
