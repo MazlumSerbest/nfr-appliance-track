@@ -9,13 +9,12 @@ import {
     ModalContent,
     ModalHeader,
     ModalBody,
-    ModalFooter,
     useDisclosure,
 } from "@heroui/modal";
 
 import AutoComplete from "@/components/AutoComplete";
 
-import { BiCog, BiSolidEnvelope } from "react-icons/bi";
+import { BiCog } from "react-icons/bi";
 import { getUsers } from "@/lib/data";
 import useUserStore from "@/store/user";
 

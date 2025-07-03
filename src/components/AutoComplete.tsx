@@ -43,7 +43,11 @@ export default function AutoComplete({
                 <AutocompleteItem
                     key={item.id}
                     classNames={{
-                        base: cn(item.blacklisted ? "text-red-500" : ""),
+                        base: cn(
+                            item.blacklisted
+                                ? "text-red-500 hover:text-red-500"
+                                : "",
+                        ),
                     }}
                 >
                     {item.name + (item.blacklisted ? " (Kara Listede)" : "")}
