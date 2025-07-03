@@ -7,7 +7,7 @@ export default function DealersLayout({
 }) {
     return (
         <div className="flex flex-col">
-            <PageHeader title="Bayiler" />
+            <PageHeader title="Bayiler" close />
             {children}
         </div>
     );

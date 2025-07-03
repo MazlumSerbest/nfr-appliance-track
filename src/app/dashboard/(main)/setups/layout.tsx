@@ -7,7 +7,7 @@ export default function SetupsLayout({
 }) {
     return (
         <div className="flex flex-col">
-            <PageHeader title="Kurulumlar" />
+            <PageHeader title="Kurulumlar" close />
             {children}
         </div>
     );

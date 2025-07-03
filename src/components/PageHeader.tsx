@@ -1,5 +1,5 @@
 "use client";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { Divider } from "@heroui/divider";
 import { BiX } from "react-icons/bi";
 
@@ -10,6 +10,7 @@ type Props = {
 
 export default function PageHeader({ title, close = false }: Props) {
     const router = useRouter();
+    const pathName = usePathname();
     return (
         <div>
             <div className="flex mt-3 md:mt-0 mb-2">
@@ -18,7 +19,7 @@ export default function PageHeader({ title, close = false }: Props) {
                     {title}
                 </h1>
                 <div className="flex-1"></div>
-                {close ? (
+                {close && /\d/.test(pathName) ? (
                     <BiX
                         className="text-3xl text-zinc-500 cursor-pointer m-auto mr-4"
                         onClick={() => router.back()}

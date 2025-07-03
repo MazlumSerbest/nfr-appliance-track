@@ -7,7 +7,7 @@ export default function CustomersLayout({
 }) {
     return (
         <div className="flex flex-col">
-            <PageHeader title="Müşteriler" />
+            <PageHeader title="Müşteriler" close />
             {children}
         </div>
     );

@@ -7,7 +7,7 @@ export default function AppliancesLayout({
 }) {
     return (
         <div className="flex flex-col">
-            <PageHeader title="Cihazlar" />
+            <PageHeader title="Cihazlar" close/>
             {children}
         </div>
     );

@@ -7,7 +7,7 @@ export default function ProjectsLayout({
 }) {
     return (
         <div className="flex flex-col">
-            <PageHeader title="Projeler" />
+            <PageHeader title="Projeler" close />
             {children}
         </div>
     );

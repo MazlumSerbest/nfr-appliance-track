@@ -7,7 +7,7 @@ export default function OrdersLayout({
 }) {
     return (
         <div className="flex flex-col">
-            <PageHeader title="Siparişler" />
+            <PageHeader title="Siparişler" close />
             {children}
         </div>
     );

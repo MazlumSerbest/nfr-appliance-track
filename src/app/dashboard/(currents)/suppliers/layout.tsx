@@ -7,7 +7,7 @@ export default function SuppliersLayout({
 }) {
     return (
         <div className="flex flex-col">
-            <PageHeader title="Tedarikçiler" />
+            <PageHeader title="Tedarikçiler" close />
             {children}
         </div>
     );

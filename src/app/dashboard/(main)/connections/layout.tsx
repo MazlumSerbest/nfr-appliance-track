@@ -7,7 +7,7 @@ export default function ConnectionsLayout({
 }) {
     return (
         <div className="flex flex-col">
-            <PageHeader title="Bağlantılar" />
+            <PageHeader title="Bağlantılar" close/>
             {children}
         </div>
     );
