@@ -14,7 +14,7 @@ import {
 
 import AutoComplete from "@/components/AutoComplete";
 
-import { BiCog } from "react-icons/bi";
+import { BiTask } from "react-icons/bi";
 import { getUsers } from "@/lib/data";
 import useUserStore from "@/store/user";
 
@@ -95,7 +95,7 @@ export default function SetupButton({ type, entityId }: Props) {
                     radius="sm"
                     isIconOnly
                 >
-                    <BiCog className="size-5" />
+                    <BiTask className="text-xl" />
                 </Button>
             </Tooltip>
 

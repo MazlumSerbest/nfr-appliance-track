@@ -290,17 +290,6 @@ export default function ApplianceDetail({
                                     }
                                 />
 
-                                <SetupButton
-                                    type="appliance"
-                                    entityId={data.id}
-                                />
-
-                                <OrderButton
-                                    type="appliance"
-                                    entityId={data.id}
-                                    data={data}
-                                />
-
                                 <Tooltip
                                     content={
                                         data.isDemo
@@ -340,6 +329,17 @@ export default function ApplianceDetail({
                                         <BiServer className="text-xl" />
                                     </Button>
                                 </Tooltip>
+
+                                <SetupButton
+                                    type="appliance"
+                                    entityId={data.id}
+                                />
+
+                                <OrderButton
+                                    type="appliance"
+                                    entityId={data.id}
+                                    data={data}
+                                />
 
                                 <Tooltip content="Yeni Satın Alım Ekle">
                                     <Button
