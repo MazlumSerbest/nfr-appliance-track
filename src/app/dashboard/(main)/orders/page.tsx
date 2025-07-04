@@ -29,6 +29,7 @@ import {
     getCustomers,
     getDealers,
     getSuppliers,
+    getLicenseTypes,
 } from "@/lib/data";
 import { currencyTypes } from "@/lib/constants";
 import { BiInfoCircle } from "react-icons/bi";
@@ -79,6 +80,7 @@ export default function Orders() {
     const [complete, setComplete] = useState<vAppliance[] | null>(null);
 
     const [products, setProducts] = useState<ListBoxItem[] | null>(null);
+    const [licenseTypes, setLicenseTypes] = useState<ListBoxItem[] | null>(null);
     const [licenses, setLicenses] = useState<ListBoxItem[] | null>(null);
     const [appliances, setAppliances] = useState<ListBoxItem[] | null>(null);
     const [customers, setCustomers] = useState<ListBoxItem[] | null>(null);
@@ -324,12 +326,8 @@ export default function Orders() {
     async function getData() {
         const pro: ListBoxItem[] = await getProducts(true);
         setProducts(pro);
-        const lic: ListBoxItem[] = await getLicenses(true, undefined, [
-            "stock",
-            "order",
-            "waiting",
-        ]);
-        setLicenses(lic);
+        const lt: ListBoxItem[] = await getLicenseTypes(true);
+        setLicenseTypes(lt);
         const cus: ListBoxItem[] = await getCustomers(true);
         setCustomers(cus);
         const deal: ListBoxItem[] = await getDealers(true);
@@ -534,9 +532,9 @@ export default function Orders() {
                                         <span className="flex flex-row font-normal text-xs text-zinc-400 items-center gap-1 mb-1">
                                             <BiInfoCircle className="text-lg" />
                                             Cihazların filtrelenmesi için ürün
-                                            (model) seçimi yapmalısınız. Ürün
-                                            seçimi yapmadan cihaz seri
-                                            numaraları listelenmez!
+                                            (model) seçimi yapmanız gerekmektedir.
+                                            Ürün seçmeden cihaz seri numaraları
+                                            listelenmez!
                                         </span>
                                         <AutoComplete
                                             data={products || []}
@@ -562,7 +560,7 @@ export default function Orders() {
                                         <span className="flex flex-row font-normal text-xs text-zinc-400 items-center gap-1 mb-1">
                                             <BiInfoCircle />
                                             Cihaz seçmek için ürün seçimi
-                                            yapmanız gereklidir!
+                                            yapmanız gerekmektedir!
                                         </span>
                                         <Controller
                                             control={control}
@@ -580,27 +578,57 @@ export default function Orders() {
                                     </div>
                                 </>
                             ) : (
-                                <div>
-                                    <label
-                                        htmlFor="licenseId"
-                                        className="block text-sm font-semibold leading-6 text-zinc-500"
-                                    >
-                                        Lisans
-                                    </label>
-                                    <Controller
-                                        control={control}
-                                        name="licenseId"
-                                        render={({
-                                            field: { onChange, value },
-                                        }) => (
-                                            <AutoComplete
-                                                onChange={onChange}
-                                                value={value}
-                                                data={licenses || []}
-                                            />
-                                        )}
-                                    />
-                                </div>
+                                <>
+                                    <div>
+                                        <label
+                                            htmlFor="licenseType"
+                                            className="block text-sm font-semibold leading-6 text-zinc-500"
+                                        >
+                                            Lisans Tipi
+                                        </label>
+                                        <span className="flex flex-row font-normal text-xs text-zinc-400 items-center gap-1 mb-1">
+                                            <BiInfoCircle className="text-lg" />
+                                            Lisansların filtrelenmesi için lisans tipi
+                                            seçimi yapmanız gerekmektedir. Lisans
+                                            tipi seçmeden lisanslar listelenmez!
+                                        </span>
+                                        <AutoComplete
+                                            onChange={async (e) => {
+                                                const licenses: ListBoxItem[] =
+                                                    await getLicenses(true, e);
+                                                setLicenses(licenses);
+                                            }}
+                                            data={licenseTypes || []}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label
+                                            htmlFor="licenseId"
+                                            className="block text-sm font-semibold leading-6 text-zinc-500"
+                                        >
+                                            Lisans
+                                        </label>
+                                        <span className="flex flex-row font-normal text-xs text-zinc-400 items-center gap-1 mb-1">
+                                            <BiInfoCircle />
+                                            Lisans seçmek için lisans tipi
+                                            seçimi yapmanız gerekmektedir!
+                                        </span>
+                                        <Controller
+                                            control={control}
+                                            name="licenseId"
+                                            render={({
+                                                field: { onChange, value },
+                                            }) => (
+                                                <AutoComplete
+                                                    onChange={onChange}
+                                                    value={value}
+                                                    data={licenses || []}
+                                                />
+                                            )}
+                                        />
+                                    </div>
+                                </>
                             )}
 
                             <div className="relative flex items-center mt-6">

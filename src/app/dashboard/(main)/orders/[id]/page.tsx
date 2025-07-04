@@ -211,7 +211,7 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                             </p>
 
                             <div className="flex-1"></div>
-                            
+
                             {currUser?.role === "technical" ? (
                                 <></>
                             ) : (
@@ -890,8 +890,8 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                             <span className="flex flex-row font-normal text-xs text-zinc-400 items-center gap-1 mb-1">
                                 <BiInfoCircle className="text-lg" />
                                 Cihazların filtrelenmesi için ürün (model)
-                                seçimi yapmalısınız. Ürün seçimi yapmadan cihaz
-                                seri numaraları listelenmez!
+                                seçimi yapmanız gerekmektedir. Ürün seçmeden
+                                cihaz seri numaraları listelenmez!
                             </span>
                             <AutoComplete
                                 onChange={async (e) => {
@@ -916,7 +916,7 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                             <span className="flex flex-row font-normal text-xs text-zinc-400 items-center gap-1 mb-1">
                                 <BiInfoCircle />
                                 Cihaz seçmek için ürün seçimi yapmanız
-                                gereklidir!
+                                gerekmektedir!
                             </span>
                             <AutoComplete
                                 onChange={(data) => setApplianceId(data)}
@@ -981,10 +981,16 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                         <div>
                             <label
                                 htmlFor="licenseType"
-                                className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                className="block text-sm font-semibold leading-6 text-zinc-500"
                             >
                                 Lisans Tipi
                             </label>
+                            <span className="flex flex-row font-normal text-xs text-zinc-400 items-center gap-1 mb-1">
+                                <BiInfoCircle className="text-lg" />
+                                Lisansların filtrelenmesi için lisans tipi
+                                seçimi yapmanız gerekmektedir. Lisans tipi
+                                seçmeden lisanslar listelenmez!
+                            </span>
                             <AutoComplete
                                 onChange={async (e) => {
                                     const licenses: ListBoxItem[] =
@@ -1009,7 +1015,7 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                             <span className="flex flex-row font-normal text-xs text-zinc-400 items-center gap-1 mb-1">
                                 <BiInfoCircle />
                                 Lisans seçmek için lisans tipi seçimi yapmanız
-                                gereklidir!
+                                gerekmektedir!
                             </span>
                             <AutoComplete
                                 onChange={(data) => setLicenseId(data)}

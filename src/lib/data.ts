@@ -63,7 +63,10 @@ export async function getLicenses(
         return licenses?.map((l: vLicense) => ({
             id: l.id,
             name:
-                (l.serialNo ? l.serialNo + " - " : "") +
+                (l.applianceSerialNo
+                    ? l.applianceSerialNo
+                    : "Cihaz Seri No Yok") +
+                " - " +
                 l.licenseType +
                 (l.licenseDuration ? l.licenseDuration + " Ay" : "") +
                 (l.status == "stock" ? " (Stok)" : ""),
