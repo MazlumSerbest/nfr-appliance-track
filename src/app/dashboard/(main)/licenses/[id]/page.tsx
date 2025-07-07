@@ -78,7 +78,6 @@ interface IFormInput {
     updatedBy: string;
     appSerialNo?: string;
     productId?: number;
-    mailSended?: boolean;
     appliance?: Appliance;
     licenseType?: LicenseType;
     boughtType?: BoughtType;
@@ -270,7 +269,6 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                 appSerialNo: d.appSerialNo || null,
                 productId: d.productId || null,
                 note: d.note || null,
-                mailSended: false,
                 history: {
                     serialNo: data.serialNo || null,
                     startDate: data.startDate || null,
