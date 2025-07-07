@@ -90,8 +90,11 @@ SELECT
   END AS "expiryStatus",
   l."isLost",
   l."isPassive",
-  l."mailSended",
-  l."licenseTypeId"
+  l."licenseTypeId",
+  CASE
+    WHEN (lm."createdAt" > (NOW() - '250 days' :: INTERVAL)) THEN TRUE
+    ELSE false
+  END AS "mailSended"
 FROM
   (
     (
@@ -103,10 +106,25 @@ FROM
                 (
                   (
                     (
-                      licenses l
-                      LEFT JOIN "vAppliances" a ON ((l."applianceId" = a.id))
+                      (
+                        licenses l
+                        LEFT JOIN "vAppliances" a ON ((l."applianceId" = a.id))
+                      )
+                      LEFT JOIN "licenseTypes" lt ON ((l."licenseTypeId" = lt.id))
                     )
-                    LEFT JOIN "licenseTypes" lt ON ((l."licenseTypeId" = lt.id))
+                    LEFT JOIN LATERAL (
+                      SELECT
+                        lm_1.id,
+                        lm_1."createdAt"
+                      FROM
+                        "licenseMailHistory" lm_1
+                      WHERE
+                        (lm_1."licenseId" = l.id)
+                      ORDER BY
+                        lm_1."createdAt" DESC
+                      LIMIT
+                        1
+                    ) lm ON (TRUE)
                   )
                   LEFT JOIN "boughtTypes" bt ON ((l."boughtTypeId" = bt.id))
                 )

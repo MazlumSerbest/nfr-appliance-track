@@ -16,6 +16,7 @@ type vLicense = License & {
     isLost?: boolean;
     isPassive?: boolean;
     expiryStatus?: string;
+    mailSended?: boolean;
 };
 
 type vOrder = Order & {

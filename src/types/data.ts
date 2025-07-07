@@ -67,7 +67,6 @@ type License = Entity & {
     isPassive: boolean;
     licenseType: any;
     history: any;
-    mailSended: boolean;
     invoiceCurrentId: number;
     // boughtType: any;
 };

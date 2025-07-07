@@ -114,7 +114,6 @@ model licenses {
   cusName          String?              @db.VarChar
   isLost           Boolean              @default(false)
   isPassive        Boolean              @default(false)
-  mailSended       Boolean              @default(false)
   invoiceCurrentId Int?
   history          licenseHistory[]
   mailHistory      licenseMailHistory[]
@@ -474,8 +473,8 @@ view vLicenses {
   expiryStatus      String?
   isLost            Boolean?
   isPassive         Boolean?
-  mailSended        Boolean?
   licenseTypeId     Int?
+  mailSended        Boolean?
 }
 
 view vConnections {

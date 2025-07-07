@@ -20,10 +20,22 @@ SET
 SET
 ."completedAt",
   COALESCE(a."soldAt", l."soldAt") AS "soldAt",
-  (
-    ((pb.name) :: text || ' ' :: text) || (p.model) :: text
-  ) AS product,
-  a."serialNo" AS "applianceSerialNo",
+  CASE
+    WHEN (
+      SET
+."applianceId" IS NOT NULL
+    ) THEN (
+      ((pb.name) :: text || ' ' :: text) || (p.model) :: text
+    )
+    WHEN (
+      SET
+."licenseId" IS NOT NULL
+    ) THEN (
+      ((lpb.name) :: text || ' ' :: text) || (lp.model) :: text
+    )
+    ELSE NULL :: text
+  END AS product,
+  COALESCE(a."serialNo", l."appSerialNo") AS "applianceSerialNo",
   (
     (
       (
@@ -66,80 +78,61 @@ FROM
                     (
                       (
                         (
-                          setups
-                          SET
-                            LEFT JOIN users u ON (
+                          (
+                            (
+                              setups
+                              SET
+                                LEFT JOIN users u ON (
+                                  (
+                                    SET
+."userId" = u.id
+                                  )
+                                )
+                            )
+                            LEFT JOIN appliances a ON (
                               (
                                 SET
-."userId" = u.id
+."applianceId" = a.id
                               )
                             )
-                        )
-                        LEFT JOIN appliances a ON (
-                          (
-                            SET
-."applianceId" = a.id
                           )
+                          LEFT JOIN products p ON ((a."productId" = p.id))
                         )
+                        LEFT JOIN brands pb ON ((p."brandId" = pb.id))
                       )
-                      LEFT JOIN products p ON ((a."productId" = p.id))
+                      LEFT JOIN LATERAL (
+                        SELECT
+                          al_1.id,
+                          al_1."licenseTypeId",
+                          al_1."serialNo"
+                        FROM
+                          licenses al_1
+                        WHERE
+                          (al_1."applianceId" = a.id)
+                        ORDER BY
+                          al_1."createdAt" DESC
+                        LIMIT
+                          1
+                      ) al ON (TRUE)
                     )
-                    LEFT JOIN brands pb ON ((p."brandId" = pb.id))
-                  )
-                  LEFT JOIN LATERAL (
-                    SELECT
-                      al_1.id,
-                      al_1.active,
-                      al_1."startDate",
-                      al_1."expiryDate",
-                      al_1."createdBy",
-                      al_1."createdAt",
-                      al_1."updatedBy",
-                      al_1."boughtAt",
-                      al_1."soldAt",
-                      al_1."dealerId",
-                      al_1."licenseTypeId",
-                      al_1."supplierId",
-                      al_1."updatedAt",
-                      al_1."customerId",
-                      al_1.deleted,
-                      al_1."serialNo",
-                      al_1."applianceId",
-                      al_1."subDealerId",
-                      al_1."boughtTypeId",
-                      al_1.note,
-                      al_1."orderedAt",
-                      al_1."appSerialNo",
-                      al_1."productId",
-                      al_1."cusName",
-                      al_1."isLost",
-                      al_1."isPassive",
-                      al_1."mailSended",
-                      al_1."invoiceCurrentId"
-                    FROM
-                      licenses al_1
-                    WHERE
-                      (al_1."applianceId" = a.id)
-                    ORDER BY
-                      al_1."createdAt" DESC
-                    LIMIT
-                      1
-                  ) al ON (TRUE)
-                )
-                LEFT JOIN licenses l ON (
-                  (
-                    SET
+                    LEFT JOIN licenses l ON (
+                      (
+                        SET
 ."licenseId" = l.id
+                      )
+                    )
+                  )
+                  LEFT JOIN "licenseTypes" lt ON (
+                    (
+                      COALESCE(al."licenseTypeId", l."licenseTypeId") = lt.id
+                    )
                   )
                 )
+                LEFT JOIN brands lb ON ((lt."brandId" = lb.id))
               )
-              LEFT JOIN "licenseTypes" lt ON (
-                (
-                  COALESCE(al."licenseTypeId", l."licenseTypeId") = lt.id
-                )
-              )
+              LEFT JOIN products lp ON ((l."productId" = lp.id))
             )
-            LEFT JOIN brands lb ON ((lt."brandId" = lb.id))
+            LEFT JOIN brands lpb ON ((lp."brandId" = lpb.id))
           )
           LEFT JOIN currents c ON (
             (COALESCE(a."customerId", l."customerId") = c.id)
