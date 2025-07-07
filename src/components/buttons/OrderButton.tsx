@@ -29,9 +29,9 @@ export default function OrderButton({ type, entityId, data }: Props) {
             isOpen={isOpen}
             onOpenChange={onOpenChange}
         >
-            <PopoverTrigger>
-                <>
-                    <Tooltip content="Sipariş Oluştur">
+            <Tooltip content="Sipariş Oluştur">
+                <span>
+                    <PopoverTrigger>
                         <Button
                             type="button"
                             color="primary"
@@ -41,9 +41,9 @@ export default function OrderButton({ type, entityId, data }: Props) {
                         >
                             <BiPackage className="size-5" />
                         </Button>
-                    </Tooltip>
-                </>
-            </PopoverTrigger>
+                    </PopoverTrigger>
+                </span>
+            </Tooltip>
             <PopoverContent className="flex flex-col gap-2 p-3">
                 <h2 className="text-lg font-semibold text-zinc-600">
                     Seçili kayıdın siparişi oluşturulacaktır!
