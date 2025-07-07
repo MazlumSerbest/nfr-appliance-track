@@ -68,7 +68,7 @@ export default function Setups() {
     const [licenses, setLicenses] = useState<ListBoxItem[] | null>(null);
     const [appliances, setAppliances] = useState<ListBoxItem[] | null>(null);
 
-    const { data, error, mutate } = useSWR("/api/setup", null, {
+    const { data, error, mutate, isLoading } = useSWR("/api/setup", null, {
         revalidateOnFocus: false,
         onSuccess: (data) => {
             setWaiting(data.filter((a: Setup) => a.status === "waiting"));
@@ -311,6 +311,7 @@ export default function Setups() {
                             storageKey="waiting"
                             compact
                             striped
+                            isLoading={isLoading}
                             emptyContent="Herhangi bir kurulum bulunamadı!"
                             defaultRowsPerPage={20}
                             data={waiting || []}
@@ -339,6 +340,7 @@ export default function Setups() {
                             storageKey="complete"
                             compact
                             striped
+                            isLoading={isLoading}
                             emptyContent="Herhangi bir kurulum bulunamadı!"
                             defaultRowsPerPage={20}
                             data={complete || []}

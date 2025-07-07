@@ -47,7 +47,7 @@ export default function Customers() {
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
     const [submitting, setSubmitting] = useState(false);
 
-    const { data, error, mutate } = useSWR("/api/current?currentType=customer");
+    const { data, error, mutate, isLoading } = useSWR("/api/current?currentType=customer");
 
     //#region Form
     const { register, reset, handleSubmit } = useForm<IFormInput>({});
@@ -201,6 +201,7 @@ export default function Customers() {
                 storageKey="customers"
                 compact
                 striped
+                isLoading={isLoading}
                 className="mt-4 mb-2"
                 emptyContent="Herhangi bir müşteri bulunamadı!"
                 data={data || []}

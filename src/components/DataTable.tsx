@@ -38,6 +38,7 @@ type Props = {
     initialVisibleColumNames: string[];
     onDoubleClick?: (item: any) => any;
     onAddNew?: () => void;
+    isLoading?: boolean;
 };
 
 export default function DataTable({
@@ -57,6 +58,7 @@ export default function DataTable({
     initialVisibleColumNames,
     onDoubleClick,
     onAddNew,
+    isLoading,
 }: Props) {
     type DataType = (typeof data)[0];
     const [filterValue, setFilterValue] = useState(() => {
@@ -278,7 +280,7 @@ export default function DataTable({
                             ) : (
                                 <></>
                             )}
-                            
+
                             <Dropdown>
                                 <DropdownTrigger className="hidden sm:flex">
                                     <Button
@@ -515,6 +517,7 @@ export default function DataTable({
                 emptyContent={emptyContent}
                 items={sortedItems}
                 loadingContent={<Loader />}
+                isLoading={isLoading}
             >
                 {(item) => (
                     <TableRow

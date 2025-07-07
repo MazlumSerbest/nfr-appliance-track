@@ -41,7 +41,7 @@ export default function BrandsPage() {
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
     const [submitting, setSubmitting] = useState(false);
 
-    const { data, error, mutate } = useSWR("/api/brand");
+    const { data, error, mutate, isLoading } = useSWR("/api/brand");
 
     //#region Form
     const { register, reset, handleSubmit, control } = useForm<IFormInput>({
@@ -204,6 +204,7 @@ export default function BrandsPage() {
                 storageKey="brands"
                 compact
                 striped
+                isLoading={isLoading}
                 className="mt-4 mb-2"
                 emptyContent="Herhangi bir marka bulunamadı!"
                 data={data || []}

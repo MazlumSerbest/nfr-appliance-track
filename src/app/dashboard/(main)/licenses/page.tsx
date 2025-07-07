@@ -387,7 +387,7 @@ export default function Licenses() {
     }, []);
     //#endregion
 
-    const { data, error, mutate } = useSWR("/api/license", null, {
+    const { data, error, mutate, isLoading } = useSWR("/api/license", null, {
         onSuccess: (data) => {
             setStockLicenses(
                 data?.filter((l: vLicense) => l.status === "stock"),
@@ -450,6 +450,7 @@ export default function Licenses() {
                             storageKey="stockLicenses"
                             compact
                             striped
+                            isLoading={isLoading}
                             emptyContent="Herhangi bir lisans bulunamadı!"
                             defaultRowsPerPage={20}
                             data={stockLicenses || []}
@@ -477,6 +478,7 @@ export default function Licenses() {
                             storageKey="orderLicenses"
                             compact
                             striped
+                            isLoading={isLoading}
                             emptyContent="Herhangi bir lisans bulunamadı!"
                             defaultRowsPerPage={20}
                             data={orderLicenses || []}
@@ -508,6 +510,7 @@ export default function Licenses() {
                             storageKey="waitingOrderLicenses"
                             compact
                             striped
+                            isLoading={isLoading}
                             emptyContent="Herhangi bir lisans bulunamadı!"
                             defaultRowsPerPage={20}
                             data={waitingOrderLicenses || []}
@@ -535,6 +538,7 @@ export default function Licenses() {
                             storageKey="activeLicenses"
                             compact
                             striped
+                            isLoading={isLoading}
                             emptyContent="Herhangi bir lisans bulunamadı!"
                             defaultRowsPerPage={20}
                             data={activeLicenses || []}
@@ -566,6 +570,7 @@ export default function Licenses() {
                             storageKey="expiredLicenses"
                             compact
                             striped
+                            isLoading={isLoading}
                             emptyContent="Herhangi bir lisans bulunamadı!"
                             defaultRowsPerPage={20}
                             data={expiredLicenses || []}
@@ -589,6 +594,7 @@ export default function Licenses() {
                             storageKey="lostLicenses"
                             compact
                             striped
+                            isLoading={isLoading}
                             emptyContent="Herhangi bir lisans bulunamadı!"
                             defaultRowsPerPage={20}
                             data={lostLicenses || []}

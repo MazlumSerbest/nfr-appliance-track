@@ -71,7 +71,7 @@ export default function Licenses() {
         null,
     );
 
-    const { data, error, mutate } = useSWR("/api/project", null, {
+    const { data, error, mutate, isLoading } = useSWR("/api/project", null, {
         onSuccess: (data) => {
             setProjects(data.filter((p: vProject) => p.status == "active"));
             setWonProjects(data.filter((p: vProject) => p.status == "won"));
@@ -271,6 +271,7 @@ export default function Licenses() {
                             storageKey="projects"
                             compact
                             striped
+                            isLoading={isLoading}
                             className="mt-4 mb-2"
                             emptyContent="Herhangi bir proje bulunamadı!"
                             data={projects || []}
@@ -297,6 +298,7 @@ export default function Licenses() {
                             storageKey="wonProjects"
                             compact
                             striped
+                            isLoading={isLoading}
                             className="mt-4 mb-2"
                             emptyContent="Herhangi bir proje bulunamadı!"
                             data={wonProjects || []}
@@ -323,6 +325,7 @@ export default function Licenses() {
                             storageKey="lostProjects"
                             compact
                             striped
+                            isLoading={isLoading}
                             className="mt-4 mb-2"
                             emptyContent="Herhangi bir proje bulunamadı!"
                             data={lostProjects || []}

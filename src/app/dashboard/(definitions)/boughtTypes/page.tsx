@@ -41,7 +41,7 @@ export default function BoughtTypes() {
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
     const [submitting, setSubmitting] = useState(false);
 
-    const { data, error, mutate } = useSWR("/api/boughtType");
+    const { data, error, mutate, isLoading } = useSWR("/api/boughtType");
 
     //#region Form
     const { register, reset, handleSubmit, control } = useForm<IFormInput>({
@@ -222,6 +222,7 @@ export default function BoughtTypes() {
                 storageKey="boughtTypes"
                 compact
                 striped
+                isLoading={isLoading}
                 className="mt-4 mb-2"
                 emptyContent="Herhangi bir alım tipi bulunamadı!"
                 data={data || []}

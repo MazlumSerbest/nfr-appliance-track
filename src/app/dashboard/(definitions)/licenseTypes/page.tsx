@@ -48,7 +48,7 @@ export default function LicenseTypes() {
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
     const [brands, setBrands] = useState<ListBoxItem[] | null>(null);
 
-    const { data, error, mutate } = useSWR("/api/licenseType");
+    const { data, error, mutate, isLoading } = useSWR("/api/licenseType");
 
     //#region Form
     const { register, reset, handleSubmit, control } = useForm<IFormInput>({
@@ -247,6 +247,7 @@ export default function LicenseTypes() {
                 storageKey="licenseTypes"
                 compact
                 striped
+                isLoading={isLoading}
                 className="mt-4 mb-2"
                 emptyContent="Herhangi bir lisans tipi bulunamadı!"
                 data={data || []}

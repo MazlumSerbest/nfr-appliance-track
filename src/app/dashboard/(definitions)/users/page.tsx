@@ -48,7 +48,7 @@ export default function Users() {
     const [submitting, setSubmitting] = useState(false);
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
 
-    const { data, error, mutate } = useSWR("/api/user", null, {
+    const { data, error, mutate, isLoading } = useSWR("/api/user", null, {
         onSuccess: (data) => {
             const users = data.filter((e: User) => e.username != "admin");
             setUsers(users);
@@ -271,6 +271,7 @@ export default function Users() {
                 storageKey="users"
                 compact
                 striped
+                isLoading={isLoading}
                 className="mt-4 mb-2"
                 emptyContent="Herhangi bir kullanıcı bulunamadı!"
                 data={users || []}

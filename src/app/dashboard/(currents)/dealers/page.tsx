@@ -48,7 +48,7 @@ export default function Dealers() {
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
     const [submitting, setSubmitting] = useState(false);
 
-    const { data, error, mutate } = useSWR("/api/current?currentType=dealer");
+    const { data, error, mutate, isLoading } = useSWR("/api/current?currentType=dealer");
 
     //#region Form
     const { register, reset, handleSubmit } = useForm<IFormInput>({});
@@ -221,6 +221,7 @@ export default function Dealers() {
                 storageKey="dealers"
                 compact
                 striped
+                isLoading={isLoading}
                 className="mt-4 mb-2"
                 emptyContent="Herhangi bir bayi bulunamadı!"
                 data={data || []}

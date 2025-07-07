@@ -87,7 +87,7 @@ export default function Orders() {
     const [dealers, setDealers] = useState<ListBoxItem[] | null>(null);
     const [suppliers, setSuppliers] = useState<ListBoxItem[] | null>(null);
 
-    const { data, error, mutate } = useSWR("/api/order", null, {
+    const { data, error, mutate, isLoading } = useSWR("/api/order", null, {
         revalidateOnFocus: false,
         onSuccess: (data) => {
             setOrder(data.filter((a: Order) => a.status === "order"));
@@ -377,6 +377,7 @@ export default function Orders() {
                             storageKey="order"
                             compact
                             striped
+                            isLoading={isLoading}
                             emptyContent="Herhangi bir sipariş bulunamadı!"
                             defaultRowsPerPage={20}
                             data={order || []}
@@ -404,6 +405,7 @@ export default function Orders() {
                             storageKey="invoice"
                             compact
                             striped
+                            isLoading={isLoading}
                             emptyContent="Herhangi bir sipariş bulunamadı!"
                             defaultRowsPerPage={20}
                             data={invoice || []}
@@ -423,6 +425,7 @@ export default function Orders() {
                             storageKey="purchase"
                             compact
                             striped
+                            isLoading={isLoading}
                             emptyContent="Herhangi bir sipariş bulunamadı!"
                             defaultRowsPerPage={20}
                             data={purchase || []}
@@ -442,6 +445,7 @@ export default function Orders() {
                             storageKey="complete"
                             compact
                             striped
+                            isLoading={isLoading}
                             emptyContent="Herhangi bir sipariş bulunamadı!"
                             defaultRowsPerPage={20}
                             data={complete || []}

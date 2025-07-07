@@ -88,7 +88,7 @@ export default function Appliances() {
     const [dealers, setDealers] = useState<ListBoxItem[] | null>(null);
     const [suppliers, setSuppliers] = useState<ListBoxItem[] | null>(null);
 
-    const { data, error, mutate } = useSWR("/api/appliance", null, {
+    const { data, error, mutate, isLoading } = useSWR("/api/appliance", null, {
         revalidateOnFocus: false,
         onSuccess: (data) => {
             setStockAppliances(
@@ -320,6 +320,7 @@ export default function Appliances() {
                             storageKey="stockAppliances"
                             compact
                             striped
+                            isLoading={isLoading}
                             emptyContent="Herhangi bir cihaz bulunamadı!"
                             defaultRowsPerPage={20}
                             data={stockAppliances || []}
@@ -347,6 +348,7 @@ export default function Appliances() {
                             storageKey="orderAppliances"
                             compact
                             striped
+                            isLoading={isLoading}
                             emptyContent="Herhangi bir cihaz bulunamadı!"
                             defaultRowsPerPage={20}
                             data={orderAppliances || []}
@@ -374,6 +376,7 @@ export default function Appliances() {
                             storageKey="activeAppliances"
                             compact
                             striped
+                            isLoading={isLoading}
                             emptyContent="Herhangi bir cihaz bulunamadı!"
                             defaultRowsPerPage={20}
                             data={activeAppliances || []}
@@ -404,6 +407,7 @@ export default function Appliances() {
                             storageKey="demoAppliances"
                             compact
                             striped
+                            isLoading={isLoading}
                             emptyContent="Herhangi bir cihaz bulunamadı!"
                             defaultRowsPerPage={20}
                             data={demoAppliances || []}

@@ -51,7 +51,7 @@ export default function Products() {
         null,
     );
 
-    const { data, error, mutate } = useSWR("/api/product");
+    const { data, error, mutate, isLoading } = useSWR("/api/product");
 
     //#region Form
     const { register, reset, handleSubmit, control } = useForm<IFormInput>({
@@ -250,6 +250,7 @@ export default function Products() {
                 storageKey="products"
                 compact
                 striped
+                isLoading={isLoading}
                 className="mt-4 mb-2"
                 emptyContent="Herhangi bir ürün bulunamadı!"
                 data={data || []}
@@ -278,6 +279,7 @@ export default function Products() {
                           }
                 }
             />
+            
             <Modal
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}

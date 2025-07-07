@@ -43,7 +43,7 @@ export default function Connections() {
     const [customers, setCustomers] = useState<ListBoxItem[] | null>(null);
     const [brands, setBrands] = useState<ListBoxItem[] | null>(null);
 
-    const { data, error, mutate } = useSWR("/api/connection");
+    const { data, error, mutate, isLoading } = useSWR("/api/connection");
 
     //#region Form
     const { register, reset, handleSubmit, control } = useForm<IFormInput>();
@@ -235,6 +235,7 @@ export default function Connections() {
                 storageKey="connections"
                 compact
                 striped
+                isLoading={isLoading}
                 className="mt-4 mb-2"
                 emptyContent="Herhangi bir bağlantı bulunamadı!"
                 data={data || []}
