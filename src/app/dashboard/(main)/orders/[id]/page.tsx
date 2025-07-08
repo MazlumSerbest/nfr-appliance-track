@@ -41,6 +41,7 @@ import {
 import { currencyTypes, orderStatus } from "@/lib/constants";
 import { Tooltip } from "@heroui/tooltip";
 import { DateToForm } from "@/utils/date";
+import PriceInput from "@/components/PriceInput";
 
 interface IFormInput {
     status: "order" | "invoice" | "purchase" | "complete";
@@ -409,14 +410,20 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                                 Cihaz Fiyatı
                                             </label>
                                             <div className="flex flex-row md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full h-10 gap-1">
-                                                <input
-                                                    type="number"
-                                                    id="appliancePrice"
-                                                    min="1"
-                                                    step="any"
-                                                    className="flex-1 rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
-                                                    {...register(
-                                                        "appliancePrice",
+                                                <Controller
+                                                    control={control}
+                                                    name="appliancePrice"
+                                                    render={({
+                                                        field: {
+                                                            onChange,
+                                                            value,
+                                                        },
+                                                    }) => (
+                                                        <PriceInput
+                                                            value={value}
+                                                            onChange={onChange}
+                                                            className="flex-1 rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                                        />
                                                     )}
                                                 />
 
@@ -578,13 +585,18 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                         Lisans Fiyatı
                                     </label>
                                     <div className="flex flex-row md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full h-10 gap-1">
-                                        <input
-                                            type="number"
-                                            id="licensePrice"
-                                            min="1"
-                                            step="any"
-                                            className="flex-1 rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
-                                            {...register("licensePrice")}
+                                        <Controller
+                                            control={control}
+                                            name="licensePrice"
+                                            render={({
+                                                field: { onChange, value },
+                                            }) => (
+                                                <PriceInput
+                                                    value={value}
+                                                    onChange={onChange}
+                                                    className="flex-1 rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                                />
+                                            )}
                                         />
 
                                         <div className="rounded-md border-0 px-4 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 sm:text-sm sm:leading-6 outline-none">
