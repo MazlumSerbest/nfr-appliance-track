@@ -597,7 +597,11 @@ export default function Users() {
                 <ModalContent>
                     <ModalHeader>Şifre Değiştir</ModalHeader>
                     <ModalBody>
-                        <form onSubmit={handleSubmitPassword(onSubmitPassword)}>
+                        <form
+                            autoComplete="off"
+                            className="flex flex-col gap-2"
+                            onSubmit={handleSubmitPassword(onSubmitPassword)}
+                        >
                             <div>
                                 <label
                                     htmlFor="newPassword"
@@ -644,11 +648,21 @@ export default function Users() {
                                     })}
                                 />
                             </div>
+
                             {
-                                <p className="text-sm text-red-600">
-                                    {errorsPassword.confirmNewPassword?.message}
-                                </p>
+                                <div className="flex flex-col gap-1">
+                                    <p className="text-sm text-red-600">
+                                        {errorsPassword.newPassword?.message}
+                                    </p>
+                                    <p className="text-sm text-red-600">
+                                        {
+                                            errorsPassword.confirmNewPassword
+                                                ?.message
+                                        }
+                                    </p>
+                                </div>
                             }
+
                             <div className="flex flex-row gap-2 mt-4">
                                 <div className="flex-1"></div>
                                 <Button
