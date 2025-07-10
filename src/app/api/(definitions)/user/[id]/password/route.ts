@@ -20,6 +20,8 @@ export async function PUT(
         const data: any = await request.json();
         const reset: boolean =
             request.nextUrl.searchParams.get("reset") === "true";
+        const admin: boolean =
+            request.nextUrl.searchParams.get("admin") === "true";
 
         const user = await prisma.users.findFirst({
             where: {
@@ -63,17 +65,19 @@ export async function PUT(
             }
         }
 
-        const passwordsMatch = await bcrypt.compare(
-            data.password,
-            user.password,
-        );
+        if (!admin) {
+            const passwordsMatch = await bcrypt.compare(
+                data.password,
+                user.password,
+            );
 
-        if (!passwordsMatch)
-            return NextResponse.json({
-                message: "Mevcut şifrenizi yanlış girdiniz!",
-                status: 400,
-                ok: false,
-            });
+            if (!passwordsMatch)
+                return NextResponse.json({
+                    message: "Mevcut şifrenizi yanlış girdiniz!",
+                    status: 400,
+                    ok: false,
+                });
+        }
 
         const hashedNewPassword = await bcrypt.hash(data.newPassword, 10);
 

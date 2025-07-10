@@ -1,7 +1,7 @@
 "use client";
 import React, { useCallback, useState } from "react";
 import useSWR from "swr";
-import { useForm, SubmitHandler, Controller, set } from "react-hook-form";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
 
 import {
@@ -14,6 +14,7 @@ import {
 import { SortDescriptor } from "@heroui/table";
 import { Switch } from "@heroui/switch";
 import { Button } from "@heroui/button";
+import { Tooltip } from "@heroui/react";
 
 import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
 import DataTable from "@/components/DataTable";
@@ -22,7 +23,7 @@ import DeleteButton from "@/components/buttons/DeleteButton";
 import ResetButton from "@/components/buttons/ResetButton";
 import RegInfo from "@/components/buttons/RegInfo";
 
-import { BiInfoCircle, BiTrash } from "react-icons/bi";
+import { BiInfoCircle, BiSolidEdit, BiTrash } from "react-icons/bi";
 import { DateTimeFormat } from "@/utils/date";
 import { activeOptions, userTypes } from "@/lib/constants";
 import useUserStore from "@/store/user";
@@ -40,6 +41,13 @@ interface IFormInput {
     updatedBy?: string;
 }
 
+interface IPasswordForm {
+    id?: number;
+    newPassword: string;
+    confirmNewPassword: string;
+    updatedBy?: string;
+}
+
 export default function Users() {
     const { user: currUser } = useUserStore();
 
@@ -47,6 +55,12 @@ export default function Users() {
     const [isNew, setIsNew] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
+    const {
+        isOpen: isOpenPassword,
+        onClose: onClosePassword,
+        onOpen: onOpenPassword,
+        onOpenChange: onOpenChangePassword,
+    } = useDisclosure();
 
     const { data, error, mutate, isLoading } = useSWR("/api/user", null, {
         onSuccess: (data) => {
@@ -107,6 +121,39 @@ export default function Users() {
                 onClose();
                 reset();
                 mutate();
+            } else {
+                toast.error(result.message);
+            }
+
+            setSubmitting(false);
+            return result;
+        });
+    };
+
+    const {
+        register: registerPassword,
+        reset: resetPassword,
+        handleSubmit: handleSubmitPassword,
+        getValues: getValuesPassword,
+        formState: { errors: errorsPassword },
+    } = useForm<IPasswordForm>();
+
+    const onSubmitPassword: SubmitHandler<IPasswordForm> = async (data) => {
+        setSubmitting(true);
+        data.updatedBy = currUser?.username ?? "";
+        const userId = data.id;
+        delete data["id"];
+
+        await fetch(`/api/user/${userId}/password?admin=true`, {
+            method: "PUT",
+            body: JSON.stringify(data),
+            headers: { "Content-Type": "application/json" },
+        }).then(async (res) => {
+            const result = await res.json();
+            if (result.ok) {
+                toast.success(result.message);
+                onClosePassword();
+                resetPassword();
             } else {
                 toast.error(result.message);
             }
@@ -228,6 +275,22 @@ export default function Users() {
 
                                             <ResetButton userId={user.id} />
 
+                                            <Tooltip
+                                                key={user.id + "-edit"}
+                                                content="Şifre Değiştir"
+                                            >
+                                                <span
+                                                    onClick={() => {
+                                                        resetPassword({
+                                                            id: user.id,
+                                                        });
+                                                        onOpenPassword();
+                                                    }}
+                                                >
+                                                    <BiSolidEdit className="text-xl text-yellow-500 cursor-pointer" />
+                                                </span>
+                                            </Tooltip>
+
                                             <DeleteButton
                                                 table="users"
                                                 data={user}
@@ -250,7 +313,7 @@ export default function Users() {
                     return cellValue ? cellValue : "-";
             }
         },
-        [currUser?.role, mutate],
+        [currUser?.role, mutate, onOpenPassword, resetPassword],
     );
     //#endregion
 
@@ -506,6 +569,92 @@ export default function Users() {
                             <div className="flex flex-row gap-2 mt-4">
                                 <div className="flex-1"></div>
                                 <Button variant="bordered" onPress={onClose}>
+                                    Kapat
+                                </Button>
+                                <Button
+                                    type="submit"
+                                    color="primary"
+                                    className="bg-green-600"
+                                    isLoading={submitting}
+                                >
+                                    Kaydet
+                                </Button>
+                            </div>
+                        </form>
+                    </ModalBody>
+                </ModalContent>
+            </Modal>
+
+            <Modal
+                isOpen={isOpenPassword}
+                onOpenChange={onOpenChangePassword}
+                placement="center"
+                backdrop="opaque"
+                shadow="lg"
+                isDismissable={false}
+                scrollBehavior="outside"
+            >
+                <ModalContent>
+                    <ModalHeader>Şifre Değiştir</ModalHeader>
+                    <ModalBody>
+                        <form onSubmit={handleSubmitPassword(onSubmitPassword)}>
+                            <div>
+                                <label
+                                    htmlFor="newPassword"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                >
+                                    Yeni Şifre
+                                </label>
+                                <input
+                                    type="password"
+                                    id="newPassword"
+                                    required
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    {...registerPassword("newPassword", {
+                                        required: true,
+                                        maxLength: 30,
+                                        minLength: 8,
+                                    })}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="confirmPassword"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                >
+                                    Yeni Şifre Tekrar
+                                </label>
+                                <input
+                                    type="password"
+                                    id="confirmNewPassword"
+                                    required
+                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2"
+                                    {...registerPassword("confirmNewPassword", {
+                                        required: true,
+                                        maxLength: 30,
+                                        minLength: 8,
+                                        validate: (value) => {
+                                            const { newPassword } =
+                                                getValuesPassword();
+                                            return (
+                                                newPassword === value ||
+                                                "Girilen şifreler uyuşmuyor!"
+                                            );
+                                        },
+                                    })}
+                                />
+                            </div>
+                            {
+                                <p className="text-sm text-red-600">
+                                    {errorsPassword.confirmNewPassword?.message}
+                                </p>
+                            }
+                            <div className="flex flex-row gap-2 mt-4">
+                                <div className="flex-1"></div>
+                                <Button
+                                    variant="bordered"
+                                    onPress={onClosePassword}
+                                >
                                     Kapat
                                 </Button>
                                 <Button
