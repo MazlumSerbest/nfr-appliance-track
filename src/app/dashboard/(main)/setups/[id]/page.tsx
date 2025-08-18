@@ -261,7 +261,7 @@ export default function SetupDetail({ params }: { params: { id: string } }) {
                                     htmlFor="invoiceNo"
                                     className="font-medium"
                                 >
-                                    Atanmış Kullanıcı
+                                    Atanan Kullanıcı
                                 </label>
                                 <Controller
                                     control={control}

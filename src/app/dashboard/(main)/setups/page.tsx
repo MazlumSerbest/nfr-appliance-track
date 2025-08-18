@@ -414,7 +414,7 @@ export default function Setups() {
                                     htmlFor="userId"
                                     className="block text-sm font-semibold leading-6 text-zinc-500"
                                 >
-                                    Kullanıcı
+                                    Atanacak Kullanıcı
                                 </label>
                                 <Controller
                                     control={control}

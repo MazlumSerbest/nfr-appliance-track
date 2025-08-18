@@ -2,7 +2,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import useSWR from "swr";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useForm, SubmitHandler, Controller, set } from "react-hook-form";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
 
 import {
@@ -433,7 +433,7 @@ export default function Licenses() {
                     size="md"
                     classNames={{
                         cursor: "w-full bg-sky-500",
-                        // tab: "px-10",
+                        tab: "px-2.5 md:px-5 lg:px-8 xl:px-10",
                     }}
                     selectedKey={selectedTab}
                     onSelectionChange={(key: any) => {

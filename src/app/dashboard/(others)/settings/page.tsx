@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { set, SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
 import { Accordion, AccordionItem } from "@heroui/accordion";

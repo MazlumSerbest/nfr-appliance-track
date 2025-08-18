@@ -7,7 +7,7 @@ export default function LicensesLayout({
 }) {
     return (
         <div className="flex flex-col">
-            <PageHeader title="Lisanslar" close/>
+            <PageHeader title="Lisanslar" close />
             {children}
         </div>
     );
