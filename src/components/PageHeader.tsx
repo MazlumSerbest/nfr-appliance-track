@@ -13,7 +13,7 @@ export default function PageHeader({ title, close = false }: Props) {
     const pathName = usePathname();
     return (
         <div>
-            <div className="flex mt-3 md:mt-0 mb-2">
+            <div className="flex mt-3 lg:mt-0 mb-2">
                 {/* <FiArrowLeft className="text-3xl text-zinc-500 cursor-pointer m-auto mr-4" onClick={() => router.back()}/> */}
                 <h1 className="truncate text-3xl font-semibold text-zinc-500">
                     {title}

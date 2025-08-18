@@ -21,6 +21,7 @@ export default function AutoComplete({
             selectedKey={value?.toString()}
             radius="sm"
             classNames={{
+                base: className,
                 popoverContent: "rounded",
             }}
             inputProps={{

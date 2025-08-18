@@ -34,7 +34,7 @@ export default function NavLayout() {
     return (
         <>
             {/* Navbar */}
-            <nav className="flex md:hidden bg-white shadow z-[47] items-center fixed top-0 w-screen h-min py-2 px-4 gap-2">
+            <nav className="flex lg:hidden bg-white shadow z-[47] items-center fixed top-0 w-screen h-min py-2 px-4 gap-2">
                 <Button
                     isIconOnly
                     variant="light"
@@ -43,14 +43,16 @@ export default function NavLayout() {
                 >
                     <BiMenu className="text-2xl text-zinc-500" />
                 </Button>
+
                 <span className="flex-1" />
+
                 <Logo width={109} height={30} />
             </nav>
             {/* Sidebar */}
             <div
                 ref={ref}
                 className={
-                    "fixed md:sticky flex flex-col z-[48] shrink-0 bg-white shadow-lg md:w-50 lg:w-64 h-screen t-0 p-3 py-5 gap-3 border-r border-slate-200 transition-transform .3s ease-in-out md:translate-x-0" +
+                    "fixed lg:sticky flex flex-col z-[48] shrink-0 bg-white shadow-lg md:w-50 lg:w-64 h-screen t-0 p-3 py-5 gap-3 border-r border-slate-200 transition-transform .3s ease-in-out lg:translate-x-0" +
                     (!showSidebar ? " -translate-x-full" : "")
                 }
             >
