@@ -6,6 +6,7 @@ type Props = {
     value?: any;
     className?: string;
     onChange: (value: any) => any;
+    disabled?: boolean;
 };
 
 export default function AutoComplete({
@@ -13,9 +14,11 @@ export default function AutoComplete({
     value,
     className,
     onChange,
+    disabled,
 }: Props) {
     return (
         <Autocomplete
+            isDisabled={disabled}
             variant="bordered"
             onSelectionChange={(e) => onChange(Number(e) || null)}
             selectedKey={value?.toString()}
