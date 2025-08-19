@@ -44,9 +44,6 @@ export async function GET(
                             },
                         },
                         licenseTypeId: true,
-                        licenseType: {
-                            select: { id: true },
-                        },
                         appliance: {
                             select: {
                                 id: true,

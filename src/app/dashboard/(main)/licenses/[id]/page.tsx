@@ -148,7 +148,6 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
     } = useDisclosure();
     const {
         isOpen: isOpenMail,
-        onClose: onCloseMail,
         onOpen: onOpenMail,
         onOpenChange: onOpenChangeMail,
     } = useDisclosure();
@@ -475,7 +474,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                     type="license"
                                     entityId={data.id}
                                 />
-                                
+
                                 <OrderButton
                                     type="license"
                                     entityId={data.id}
@@ -730,20 +729,21 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                 >
                                     Alım Tipi
                                 </label>
-                                <div className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full h-10 rounded-md border-0 px-3 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2">
-                                    <select
-                                        id="boughtTypeId"
-                                        className="w-full border-none text-sm text-zinc-700 outline-none"
-                                        {...register("boughtTypeId")}
-                                    >
-                                        <option value={undefined}></option>
-                                        {boughtTypes?.map((bt) => (
-                                            <option key={bt.id} value={bt.id}>
-                                                {bt.name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
+                                <Controller
+                                    control={control}
+                                    name="boughtTypeId"
+                                    rules={{ required: true }}
+                                    render={({
+                                        field: { onChange, value },
+                                    }) => (
+                                        <AutoComplete
+                                            onChange={onChange}
+                                            value={value}
+                                            data={boughtTypes || []}
+                                            className="md:col-span-2 xl:col-span-1 my-1 sm:my-0"
+                                        />
+                                    )}
+                                />
                             </div>
 
                             <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
