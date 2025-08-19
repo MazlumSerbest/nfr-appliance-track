@@ -105,6 +105,7 @@ export async function POST(request: NextRequest) {
             message: "Lisans başarıyla kaydedildi!",
             status: 200,
             ok: true,
+            data: newLicense,
         });
     } catch (error) {
         return NextResponse.json({ message: error, status: 500, ok: false });

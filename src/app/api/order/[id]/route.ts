@@ -22,31 +22,6 @@ export async function GET(
                     select: {
                         serialNo: true,
                         productId: true,
-                        product: {
-                            select: { id: true },
-                        },
-                        licenses: {
-                            select: {
-                                id: true,
-                                serialNo: true,
-                                licenseType: {
-                                    select: {
-                                        id: true,
-                                        type: true,
-                                        duration: true,
-                                        brand: {
-                                            select: {
-                                                name: true,
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                            take: 1,
-                            orderBy: {
-                                createdAt: "desc",
-                            },
-                        },
                     },
                 },
                 license: {
@@ -54,6 +29,10 @@ export async function GET(
                         serialNo: true,
                         applianceId: true,
                         appSerialNo: true,
+                        startDate: true,
+                        expiryDate: true,
+                        boughtTypeId: true,
+                        productId: true,
                         product: {
                             select: {
                                 model: true,
@@ -64,8 +43,16 @@ export async function GET(
                                 },
                             },
                         },
+                        licenseTypeId: true,
                         licenseType: {
                             select: { id: true },
+                        },
+                        appliance: {
+                            select: {
+                                id: true,
+                                serialNo: true,
+                                productId: true,
+                            },
                         },
                     },
                 },
@@ -119,6 +106,52 @@ export async function PUT(
             ? new Date(order.boughtAt).toISOString()
             : null;
 
+        const appliance = {
+            updatedAt: new Date().toISOString(),
+            updatedBy: order.updatedBy,
+            soldAt: order.soldAt,
+            boughtAt: order.boughtAt,
+            cusName: order.cusName,
+            customerId: order.customerId,
+            dealerId: order.dealerId,
+            subDealerId: order.subDealerId,
+            supplierId: order.supplierId,
+            invoiceCurrentId: order.invoiceCurrentId,
+        };
+
+        const license = {
+            updatedAt: new Date().toISOString(),
+            updatedBy: order.updatedBy,
+            startDate: order.licenseStartDate
+                ? new Date(order.licenseStartDate).toISOString()
+                : null,
+            expiryDate: order.licenseExpiryDate
+                ? new Date(order.licenseExpiryDate).toISOString()
+                : null,
+            appSerialNo: order.licenseAppSerialNo,
+            productId: order.licenseProductId,
+            boughtTypeId: order.licenseBoughtTypeId,
+            serialNo: order.licenseSerialNo,
+            licenseTypeId: order.licenseTypeId,
+            soldAt: order.soldAt,
+            boughtAt: order.boughtAt,
+            cusName: order.cusName,
+            customerId: order.customerId,
+            dealerId: order.dealerId,
+            subDealerId: order.subDealerId,
+            supplierId: order.supplierId,
+            invoiceCurrentId: order.invoiceCurrentId,
+            applianceId: order.applianceId,
+        };
+
+        delete order["licenseStartDate"];
+        delete order["licenseExpiryDate"];
+        delete order["licenseAppSerialNo"];
+        delete order["licenseProductId"];
+        delete order["licenseBoughtTypeId"];
+        delete order["licenseSerialNo"];
+        delete order["licenseTypeId"];
+
         const updatedOrder = await prisma.orders.update({
             where: {
                 id: Number(params.id),
@@ -126,38 +159,12 @@ export async function PUT(
             data: order,
         });
 
-        if (order.type === "standard" && order.applianceId) {
+        if (order.applianceId) {
             const updatedAppliance = await prisma.appliances.update({
                 where: {
                     id: order.applianceId,
                 },
-                data: {
-                    soldAt: order.soldAt,
-                    boughtAt: order.boughtAt,
-                    cusName: order.cusName,
-                    customerId: order.customerId,
-                    dealerId: order.dealerId,
-                    subDealerId: order.subDealerId,
-                    supplierId: order.supplierId,
-                    invoiceCurrentId: order.invoiceCurrentId,
-                    licenses: {
-                        updateMany: {
-                            where: {
-                                applianceId: order.applianceId,
-                            },
-                            data: {
-                                soldAt: order.soldAt,
-                                boughtAt: order.boughtAt,
-                                cusName: order.cusName,
-                                customerId: order.customerId,
-                                dealerId: order.dealerId,
-                                subDealerId: order.subDealerId,
-                                supplierId: order.supplierId,
-                                invoiceCurrentId: order.invoiceCurrentId,
-                            },
-                        },
-                    },
-                },
+                data: appliance,
             });
 
             if (!updatedAppliance.id)
@@ -166,21 +173,14 @@ export async function PUT(
                     status: 400,
                     ok: false,
                 });
-        } else if (order.type === "license" && order.licenseId) {
+        }
+
+        if (order.licenseId) {
             const updatedLicense = await prisma.licenses.update({
                 where: {
                     id: order.licenseId,
                 },
-                data: {
-                    soldAt: order.soldAt,
-                    boughtAt: order.boughtAt,
-                    cusName: order.cusName,
-                    customerId: order.customerId,
-                    dealerId: order.dealerId,
-                    subDealerId: order.subDealerId,
-                    supplierId: order.supplierId,
-                    invoiceCurrentId: order.invoiceCurrentId,
-                },
+                data: license,
             });
 
             if (!updatedLicense.id)

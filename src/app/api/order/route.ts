@@ -46,6 +46,19 @@ export async function POST(request: NextRequest) {
             ? new Date(order.boughtAt).toISOString()
             : null;
 
+        if (order.dealerId) {
+            const dealer = await prisma.currents.findUnique({
+                where: {
+                    id: order.dealerId,
+                },
+                select: {
+                    paymentPlan: true,
+                },
+            });
+
+            order.paymentPlan = dealer?.paymentPlan;
+        }
+
         const newOrder = await prisma.orders.create({
             data: order,
         });
@@ -116,7 +129,8 @@ export async function POST(request: NextRequest) {
 
             if (!updatedLicense.id)
                 return NextResponse.json({
-                    message: "Siparişe bağlı lisans güncellenirken hata oluştu!",
+                    message:
+                        "Siparişe bağlı lisans güncellenirken hata oluştu!",
                     status: 400,
                     ok: false,
                 });
