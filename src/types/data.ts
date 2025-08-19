@@ -129,6 +129,16 @@ type Order = Entity & {
     licenseId?: number;
     applianceId?: number;
     invoiceCurrentId: number;
+    licenseStartDate?: string;
+    licenseExpiryDate?: string;
+    licenseAppSerialNo?: string;
+    licenseProductId?: number;
+    licenseBoughtTypeId?: number;
+    licenseSerialNo?: string;
+    licenseTypeId?: number;
+    salesUserId?: number;
+    licenseUserId?: number;
+    invoiceUserId?: number;
 };
 
 type Project = Entity & {

@@ -92,7 +92,7 @@ SELECT
   l."isPassive",
   l."licenseTypeId",
   CASE
-    WHEN (lm."createdAt" > (NOW() - '250 days' :: INTERVAL)) THEN TRUE
+    WHEN (lm."createdAt" > (NOW() - '6 mons' :: INTERVAL)) THEN TRUE
     ELSE false
   END AS "mailSended"
 FROM
