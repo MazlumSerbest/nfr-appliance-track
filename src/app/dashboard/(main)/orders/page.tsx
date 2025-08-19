@@ -22,23 +22,11 @@ import AutoComplete from "@/components/AutoComplete";
 
 import useUserStore from "@/store/user";
 import { DateFormat, DateTimeFormat } from "@/utils/date";
-import {
-    getProducts,
-    getAppliances,
-    getLicenses,
-    getCustomers,
-    getDealers,
-    getSuppliers,
-    getLicenseTypes,
-} from "@/lib/data";
+import { getCustomers, getDealers, getSuppliers } from "@/lib/data";
 import { currencyTypes } from "@/lib/constants";
-import { BiInfoCircle } from "react-icons/bi";
 
 interface IFormInput {
-    expiry?: string;
     type: "standard" | "license";
-    licenseId?: number;
-    applianceId?: number;
     address?: string;
     note?: string;
     customerId: number;
@@ -79,10 +67,6 @@ export default function Orders() {
     const [purchase, setPurchase] = useState<vAppliance[] | null>(null);
     const [complete, setComplete] = useState<vAppliance[] | null>(null);
 
-    const [products, setProducts] = useState<ListBoxItem[] | null>(null);
-    const [licenseTypes, setLicenseTypes] = useState<ListBoxItem[] | null>(null);
-    const [licenses, setLicenses] = useState<ListBoxItem[] | null>(null);
-    const [appliances, setAppliances] = useState<ListBoxItem[] | null>(null);
     const [customers, setCustomers] = useState<ListBoxItem[] | null>(null);
     const [dealers, setDealers] = useState<ListBoxItem[] | null>(null);
     const [suppliers, setSuppliers] = useState<ListBoxItem[] | null>(null);
@@ -324,10 +308,6 @@ export default function Orders() {
 
     //#region Data
     async function getData() {
-        const pro: ListBoxItem[] = await getProducts(true);
-        setProducts(pro);
-        const lt: ListBoxItem[] = await getLicenseTypes(true);
-        setLicenseTypes(lt);
         const cus: ListBoxItem[] = await getCustomers(true);
         setCustomers(cus);
         const deal: ListBoxItem[] = await getDealers(true);
@@ -360,7 +340,7 @@ export default function Orders() {
                     size="md"
                     classNames={{
                         cursor: "w-full bg-sky-500",
-                        tab: "px-10",
+                        tab: "px-5 lg:px-10",
                     }}
                     selectedKey={selectedTab}
                     onSelectionChange={(key: any) => {
@@ -483,13 +463,13 @@ export default function Orders() {
                             className="flex flex-col gap-2"
                             onSubmit={handleSubmit(onSubmit)}
                         >
-                            <div className="relative flex items-center">
+                            {/* <div className="relative flex items-center">
                                 <div className="flex-grow border-t border-zinc-200"></div>
                                 <span className="flex-shrink mx-4 text-base text-zinc-500">
                                     Sipariş Bilgileri
                                 </span>
                                 <div className="flex-grow border-t border-zinc-200"></div>
-                            </div>
+                            </div> */}
 
                             <div>
                                 <label
@@ -511,9 +491,6 @@ export default function Orders() {
                                                     | "standard"
                                                     | "license",
                                             );
-                                            setValue("applianceId", undefined);
-                                            setValue("licenseId", undefined);
-                                            setAppliances([]);
                                         }}
                                     >
                                         <option value="standard">
@@ -524,116 +501,24 @@ export default function Orders() {
                                 </div>
                             </div>
 
-                            {orderType === "standard" ? (
-                                <>
-                                    <div>
-                                        <label
-                                            htmlFor="product"
-                                            className="block text-sm font-semibold leading-6 text-zinc-500"
-                                        >
-                                            Ürün (Model)
-                                        </label>
-                                        <span className="flex flex-row font-normal text-xs text-zinc-400 items-center gap-1 mb-1">
-                                            <BiInfoCircle className="text-lg" />
-                                            Cihazların filtrelenmesi için ürün
-                                            (model) seçimi yapmanız gerekmektedir.
-                                            Ürün seçmeden cihaz seri numaraları
-                                            listelenmez!
-                                        </span>
-                                        <AutoComplete
-                                            data={products || []}
-                                            onChange={async (e) => {
-                                                const appliances: ListBoxItem[] =
-                                                    await getAppliances(
-                                                        true,
-                                                        e,
-                                                        ["stock", "order"],
-                                                    );
-                                                setAppliances(appliances);
-                                            }}
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label
-                                            htmlFor="applianceId"
-                                            className="block text-sm font-semibold leading-6 text-zinc-500"
-                                        >
-                                            Cihaz
-                                        </label>
-                                        <span className="flex flex-row font-normal text-xs text-zinc-400 items-center gap-1 mb-1">
-                                            <BiInfoCircle />
-                                            Cihaz seçmek için ürün seçimi
-                                            yapmanız gerekmektedir!
-                                        </span>
-                                        <Controller
-                                            control={control}
-                                            name="applianceId"
-                                            render={({
-                                                field: { onChange, value },
-                                            }) => (
-                                                <AutoComplete
-                                                    onChange={onChange}
-                                                    value={value}
-                                                    data={appliances || []}
-                                                />
-                                            )}
-                                        />
-                                    </div>
-                                </>
-                            ) : (
-                                <>
-                                    <div>
-                                        <label
-                                            htmlFor="licenseType"
-                                            className="block text-sm font-semibold leading-6 text-zinc-500"
-                                        >
-                                            Lisans Tipi
-                                        </label>
-                                        <span className="flex flex-row font-normal text-xs text-zinc-400 items-center gap-1 mb-1">
-                                            <BiInfoCircle className="text-lg" />
-                                            Lisansların filtrelenmesi için lisans tipi
-                                            seçimi yapmanız gerekmektedir. Lisans
-                                            tipi seçmeden lisanslar listelenmez!
-                                        </span>
-                                        <AutoComplete
-                                            onChange={async (e) => {
-                                                const licenses: ListBoxItem[] =
-                                                    await getLicenses(true, e);
-                                                setLicenses(licenses);
-                                            }}
-                                            data={licenseTypes || []}
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label
-                                            htmlFor="licenseId"
-                                            className="block text-sm font-semibold leading-6 text-zinc-500"
-                                        >
-                                            Lisans
-                                        </label>
-                                        <span className="flex flex-row font-normal text-xs text-zinc-400 items-center gap-1 mb-1">
-                                            <BiInfoCircle />
-                                            Lisans seçmek için lisans tipi
-                                            seçimi yapmanız gerekmektedir!
-                                        </span>
-                                        <Controller
-                                            control={control}
-                                            name="licenseId"
-                                            render={({
-                                                field: { onChange, value },
-                                            }) => (
-                                                <AutoComplete
-                                                    onChange={onChange}
-                                                    value={value}
-                                                    data={licenses || []}
-                                                />
-                                            )}
-                                        />
-                                    </div>
-                                </>
-                            )}
+                            <div>
+                                <label
+                                    htmlFor="note"
+                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
+                                >
+                                    Not
+                                </label>
+                                <div className="mt-2">
+                                    <textarea
+                                        id="note"
+                                        rows={3}
+                                        className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                        {...register("note", {
+                                            maxLength: 500,
+                                        })}
+                                    />
+                                </div>
+                            </div>
 
                             <div className="relative flex items-center mt-6">
                                 <div className="flex-grow border-t border-zinc-200"></div>
@@ -769,29 +654,6 @@ export default function Orders() {
                                         rows={3}
                                         className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
                                         {...register("address", {
-                                            maxLength: 500,
-                                        })}
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="relative flex items-center mt-6">
-                                <div className="flex-grow border-t border-zinc-200"></div>
-                            </div>
-
-                            <div>
-                                <label
-                                    htmlFor="note"
-                                    className="block text-sm font-semibold leading-6 text-zinc-500 mb-2"
-                                >
-                                    Not
-                                </label>
-                                <div className="mt-2">
-                                    <textarea
-                                        id="note"
-                                        rows={3}
-                                        className="block w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
-                                        {...register("note", {
                                             maxLength: 500,
                                         })}
                                     />
