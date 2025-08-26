@@ -96,6 +96,7 @@ export async function POST(
 
         const newOrder = await prisma.orders.create({
             data: {
+                applianceId: license.applianceId,
                 licenseId: license.id,
                 soldAt: license.soldAt,
                 boughtAt: license.boughtAt,

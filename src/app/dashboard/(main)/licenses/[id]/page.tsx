@@ -257,6 +257,8 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                 expiryDate: d.expiryDate || null,
                 licenseTypeId: Number(d.licenseTypeId),
                 boughtTypeId: Number(data.boughtTypeId || undefined),
+                cusName: data.cusName,
+                customerId: data.customerId && Number(data.customerId),
                 dealerId: d.dealerId && Number(d.dealerId),
                 subDealerId: d.subDealerId && Number(d.subDealerId),
                 supplierId: d.supplierId && Number(d.supplierId),
