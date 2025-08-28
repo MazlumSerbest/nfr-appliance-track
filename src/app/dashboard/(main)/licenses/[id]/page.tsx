@@ -257,7 +257,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                 expiryDate: d.expiryDate || null,
                 licenseTypeId: Number(d.licenseTypeId),
                 boughtTypeId: Number(data.boughtTypeId || undefined),
-                cusName: data.cusName,
+                cusName: data.cusName || null,
                 customerId: data.customerId && Number(data.customerId),
                 dealerId: d.dealerId && Number(d.dealerId),
                 subDealerId: d.subDealerId && Number(d.subDealerId),
@@ -545,6 +545,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                             </>
                         )}
                     </CardHeader>
+
                     <CardBody className="gap-3 overflow-hidden">
                         <div className="divide-y divide-zinc-200">
                             <div className="sm:grid sm:grid-cols-2 md:grid-cols-3 w-full text-base text-zinc-500 p-2">

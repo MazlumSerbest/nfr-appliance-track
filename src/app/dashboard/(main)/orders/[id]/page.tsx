@@ -838,28 +838,25 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                             </div>
 
                                             <div className="md:grid md:grid-cols-2 w-full text-base text-zinc-500 py-1 px-2 items-center">
-                                                <label
-                                                    htmlFor="invoiceNo"
-                                                    className="font-medium"
-                                                >
+                                                <label className="font-medium">
                                                     Cihaz
                                                 </label>
                                                 <div className="flex flex-row gap-1 md:col-span-2 xl:col-span-1 my-1 sm:my-0">
                                                     <input
                                                         disabled
                                                         type="text"
-                                                        id="invoiceNo"
                                                         className="my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
                                                         value={
                                                             products.find(
                                                                 (p) =>
                                                                     p.id ===
+                                                                    (data
+                                                                        .appliance
+                                                                        ?.productId ||
                                                                         data
-                                                                            .appliance
-                                                                            ?.productId ||
-                                                                    data.license
-                                                                        ?.appliance
-                                                                        ?.productId,
+                                                                            .license
+                                                                            ?.appliance
+                                                                            ?.productId),
                                                             )?.name || ""
                                                         }
                                                     />
@@ -1131,7 +1128,10 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                                         <AutoComplete
                                                             onChange={onChange}
                                                             value={value}
-                                                            data={boughtTypes || []}
+                                                            data={
+                                                                boughtTypes ||
+                                                                []
+                                                            }
                                                             className="md:col-span-2 xl:col-span-1 my-1 sm:my-0"
                                                         />
                                                     )}
