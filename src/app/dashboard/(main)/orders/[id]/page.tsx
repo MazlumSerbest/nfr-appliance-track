@@ -624,18 +624,25 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                                 <AutoComplete
                                                     onChange={async (e) => {
                                                         onChange(e);
-                                                        await fetch(
-                                                            `/api/current/${e}/paymentPlan`,
-                                                        )
-                                                            .then((res) =>
-                                                                res.json(),
+                                                        if (!e) {
+                                                            setValue(
+                                                                "paymentPlan",
+                                                                undefined,
+                                                            );
+                                                        } else {
+                                                            await fetch(
+                                                                `/api/current/${e}/paymentPlan`,
                                                             )
-                                                            .then((res) => {
-                                                                setValue(
-                                                                    "paymentPlan",
-                                                                    res,
-                                                                );
-                                                            });
+                                                                .then((res) =>
+                                                                    res.json(),
+                                                                )
+                                                                .then((res) => {
+                                                                    setValue(
+                                                                        "paymentPlan",
+                                                                        res,
+                                                                    );
+                                                                });
+                                                        }
                                                     }}
                                                     value={value}
                                                     data={dealers || []}
