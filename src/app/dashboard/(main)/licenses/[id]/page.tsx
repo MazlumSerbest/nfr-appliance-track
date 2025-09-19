@@ -950,7 +950,7 @@ export default function LicenseDetail({ params }: { params: { id: string } }) {
                                         <SendLicenseMail
                                             customer={data?.customer}
                                             dealer={data?.subDealer}
-                                            email={data?.dealer?.email}
+                                            email={data?.subDealer?.email}
                                             licenseId={data?.id}
                                             licenseType={
                                                 data?.licenseType?.type

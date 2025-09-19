@@ -31,10 +31,10 @@ model users {
   updatedAt                DateTime?                  @updatedAt @db.Timestamptz(6)
   role                     String                     @default("seller")
   connectionControlHistory connectionControlHistory[]
+  invoiceOrders            orders[]                   @relation("InvoiceUser")
+  licenseOrders            orders[]                   @relation("LicenseUser")
+  salesOrders              orders[]                   @relation("SalesUser")
   setups                   setups[]
-  salesOrders              orders[] @relation("SalesUser")
-  licenseOrders            orders[] @relation("LicenseUser")
-  invoiceOrders            orders[] @relation("InvoiceUser")
 }
 
 model appliances {
@@ -204,19 +204,19 @@ model orders {
   boughtAt         DateTime?   @db.Date
   invoiceCurrentId Int?
   type             String      @default("standard") @db.VarChar
-  salesUserId      Int?
-  licenseUserId    Int?
   invoiceUserId    Int?
+  licenseUserId    Int?
+  salesUserId      Int?
   appliance        appliances? @relation(fields: [applianceId], references: [id])
   customer         currents?   @relation("Customer", fields: [customerId], references: [id])
   dealer           currents?   @relation("Dealer", fields: [dealerId], references: [id])
   invoiceCurrent   currents?   @relation("InvoiceCurrent", fields: [invoiceCurrentId], references: [id])
+  invoiceUser      users?      @relation("InvoiceUser", fields: [invoiceUserId], references: [id])
   license          licenses?   @relation(fields: [licenseId], references: [id])
+  licenseUser      users?      @relation("LicenseUser", fields: [licenseUserId], references: [id])
+  salesUser        users?      @relation("SalesUser", fields: [salesUserId], references: [id])
   subDealer        currents?   @relation("SubDealer", fields: [subDealerId], references: [id])
   supplier         currents?   @relation("Supplier", fields: [supplierId], references: [id])
-  salesUser        users?      @relation("SalesUser", fields: [salesUserId], references: [id])
-  licenseUser      users?      @relation("LicenseUser", fields: [licenseUserId], references: [id])
-  invoiceUser      users?      @relation("InvoiceUser", fields: [invoiceUserId], references: [id])
 }
 
 model projects {
