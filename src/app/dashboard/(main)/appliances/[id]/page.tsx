@@ -274,62 +274,65 @@ export default function ApplianceDetail({
                         {currUser?.role === "technical" ? (
                             <></>
                         ) : (
-                            <>
-                                <RegInfo
-                                    data={data}
-                                    trigger={
-                                        <Button
-                                            type="button"
-                                            color="primary"
-                                            className="bg-sky-500"
-                                            radius="sm"
-                                            isIconOnly
-                                        >
-                                            <BiInfoCircle className="text-xl" />
-                                        </Button>
-                                    }
-                                />
-
-                                <Tooltip
-                                    content={
-                                        data.isDemo
-                                            ? "Demolardan Çıkart"
-                                            : "Demo Cihaz Yap"
-                                    }
-                                >
+                            <RegInfo
+                                data={data}
+                                trigger={
                                     <Button
                                         type="button"
                                         color="primary"
-                                        className="bg-zinc-500"
+                                        className="bg-sky-500"
                                         radius="sm"
-                                        isLoading={submittingDemo}
                                         isIconOnly
-                                        onPress={async () => {
-                                            setSubmittingDemo(true);
-                                            const res =
-                                                await setApplianceDemoStatus(
-                                                    data.id,
-                                                    !data.isDemo,
-                                                    currUser?.username,
-                                                );
-                                            mutate();
-
-                                            if (res)
-                                                toast.success(
-                                                    "Cihaz durumu başarıyla güncellendi.",
-                                                );
-                                            else
-                                                toast.error(
-                                                    "Cihaz durumu güncellenirken bir hata oluştu.",
-                                                );
-
-                                            setSubmittingDemo(false);
-                                        }}
                                     >
-                                        <BiServer className="text-xl" />
+                                        <BiInfoCircle className="text-xl" />
                                     </Button>
-                                </Tooltip>
+                                }
+                            />
+                        )}
 
+                        <Tooltip
+                            content={
+                                data.isDemo
+                                    ? "Demolardan Çıkart"
+                                    : "Demo Cihaz Yap"
+                            }
+                        >
+                            <Button
+                                type="button"
+                                color="primary"
+                                className="bg-zinc-500"
+                                radius="sm"
+                                isLoading={submittingDemo}
+                                isIconOnly
+                                onPress={async () => {
+                                    setSubmittingDemo(true);
+                                    const res = await setApplianceDemoStatus(
+                                        data.id,
+                                        !data.isDemo,
+                                        currUser?.username,
+                                    );
+                                    mutate();
+
+                                    if (res)
+                                        toast.success(
+                                            "Cihaz durumu başarıyla güncellendi.",
+                                        );
+                                    else
+                                        toast.error(
+                                            "Cihaz durumu güncellenirken bir hata oluştu.",
+                                        );
+
+                                    setSubmittingDemo(false);
+                                }}
+                            >
+                                <BiServer className="text-xl" />
+                            </Button>
+                        </Tooltip>
+
+                        {currUser?.role === "technical" ? (
+                            <></>
+                        ) : (
+                            <>
                                 <SetupButton
                                     type="appliance"
                                     entityId={data.id}
