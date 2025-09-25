@@ -15,6 +15,7 @@ import {
 import { Tabs, Tab } from "@heroui/tabs";
 import { SortDescriptor } from "@heroui/table";
 import { Button } from "@heroui/button";
+import { Switch } from "@heroui/switch";
 
 import Skeleton, { TableSkeleton } from "@/components/loaders/Skeleton";
 import DataTable from "@/components/DataTable";
@@ -333,7 +334,8 @@ export default function Appliances() {
                                 currUser?.role == "technical"
                                     ? undefined
                                     : () => {
-                                          reset({});
+                                          reset();
+                                          reset({ isDemo: false });
                                           onOpen();
                                       }
                             }
@@ -361,7 +363,8 @@ export default function Appliances() {
                                 currUser?.role == "technical"
                                     ? undefined
                                     : () => {
-                                          reset({});
+                                          reset();
+                                          reset({ isDemo: false });
                                           onOpen();
                                       }
                             }
@@ -392,7 +395,8 @@ export default function Appliances() {
                                 currUser?.role == "technical"
                                     ? undefined
                                     : () => {
-                                          reset({});
+                                          reset();
+                                          reset({ isDemo: false });
                                           onOpen();
                                       }
                             }
@@ -416,14 +420,11 @@ export default function Appliances() {
                             sortOption={sort}
                             initialVisibleColumNames={visibleColumns}
                             activeOptions={[]}
-                            onAddNew={
-                                currUser?.role == "technical"
-                                    ? undefined
-                                    : () => {
-                                          reset({ isDemo: true });
-                                          onOpen();
-                                      }
-                            }
+                            onAddNew={() => {
+                                reset();
+                                reset({ isDemo: true });
+                                onOpen();
+                            }}
                             onDoubleClick={(item) => {
                                 router.push(`/dashboard/appliances/${item.id}`);
                             }}
@@ -530,6 +531,37 @@ export default function Appliances() {
                                     {...register("soldAt")}
                                 />
                             </div>
+
+                            {/* <div>
+                                <div className="relative flex flex-col gap-x-3 mt-2">
+                                    <div className="flex flex-row items-center gap-4">
+                                        <label
+                                            htmlFor="isDemo"
+                                            className="block text-sm font-semibold leading-6 text-zinc-500"
+                                        >
+                                            Demo
+                                        </label>
+                                        <Controller
+                                            control={control}
+                                            name="isDemo"
+                                            render={({
+                                                field: { onChange, value },
+                                            }) => (
+                                                <Switch
+                                                    size="sm"
+                                                    color="primary"
+                                                    onChange={onChange}
+                                                    isSelected={value}
+                                                    classNames={{
+                                                        wrapper:
+                                                            "group-data-[selected=true]:bg-sky-500",
+                                                    }}
+                                                />
+                                            )}
+                                        />
+                                    </div>
+                                </div>
+                            </div> */}
 
                             <div className="relative flex items-center mt-6">
                                 <div className="flex-grow border-t border-zinc-200"></div>
