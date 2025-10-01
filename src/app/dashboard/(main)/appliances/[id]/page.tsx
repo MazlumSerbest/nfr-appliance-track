@@ -329,15 +329,12 @@ export default function ApplianceDetail({
                             </Button>
                         </Tooltip>
 
+                        <SetupButton type="appliance" entityId={data.id} />
+
                         {currUser?.role === "technical" ? (
                             <></>
                         ) : (
                             <>
-                                <SetupButton
-                                    type="appliance"
-                                    entityId={data.id}
-                                />
-
                                 <OrderButton
                                     type="appliance"
                                     entityId={data.id}
@@ -383,20 +380,24 @@ export default function ApplianceDetail({
                                         </Button>
                                     }
                                 />
-
-                                <Tooltip content="Kaydet">
-                                    <Button
-                                        type="submit"
-                                        color="primary"
-                                        className="text-white bg-green-600"
-                                        radius="sm"
-                                        isLoading={submitting}
-                                        isIconOnly
-                                    >
-                                        <BiSave className="text-xl" />
-                                    </Button>
-                                </Tooltip>
                             </>
+                        )}
+
+                        {currUser?.role !== "technical" || data.isDemo ? (
+                            <Tooltip content="Kaydet">
+                                <Button
+                                    type="submit"
+                                    color="primary"
+                                    className="text-white bg-green-600"
+                                    radius="sm"
+                                    isLoading={submitting}
+                                    isIconOnly
+                                >
+                                    <BiSave className="text-xl" />
+                                </Button>
+                            </Tooltip>
+                        ) : (
+                            <></>
                         )}
                     </CardHeader>
                     <CardBody className="gap-3">
