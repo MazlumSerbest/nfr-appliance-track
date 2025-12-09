@@ -142,6 +142,7 @@ export default function Customers() {
             key: "active",
             name: "Aktif",
             width: 80,
+            sortable: true,
         },
         {
             key: "createdBy",

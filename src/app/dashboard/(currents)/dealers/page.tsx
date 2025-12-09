@@ -150,6 +150,7 @@ export default function Dealers() {
             key: "active",
             name: "Aktif",
             width: 80,
+            sortable: true,
         },
         {
             key: "createdBy",

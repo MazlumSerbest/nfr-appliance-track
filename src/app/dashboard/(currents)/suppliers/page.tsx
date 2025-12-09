@@ -47,7 +47,9 @@ export default function Suppliers() {
     const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure();
     const [submitting, setSubmitting] = useState(false);
 
-    const { data, error, mutate, isLoading } = useSWR("/api/current?currentType=supplier");
+    const { data, error, mutate, isLoading } = useSWR(
+        "/api/current?currentType=supplier",
+    );
 
     //#region Form
     const { register, reset, handleSubmit } = useForm<IFormInput>({});
@@ -142,6 +144,7 @@ export default function Suppliers() {
             key: "active",
             name: "Aktif",
             width: 80,
+            sortable: true,
         },
         {
             key: "createdBy",
