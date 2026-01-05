@@ -5,7 +5,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model logs {
@@ -258,21 +257,22 @@ model connections {
 }
 
 model setups {
-  id          Int         @id @default(autoincrement())
-  type        String      @db.VarChar
-  applianceId Int?
-  licenseId   Int?
-  createdAt   DateTime    @default(now()) @db.Timestamptz(6)
-  createdBy   String      @db.VarChar
-  updatedBy   String?     @db.VarChar
-  updatedAt   DateTime?   @updatedAt @db.Timestamptz(6)
-  note        String?     @db.VarChar
-  status      String      @db.VarChar
-  userId      Int
-  completedAt DateTime?   @db.Timestamptz(6)
-  appliance   appliances? @relation(fields: [applianceId], references: [id])
-  license     licenses?   @relation(fields: [licenseId], references: [id])
-  user        users       @relation(fields: [userId], references: [id])
+  id                 Int         @id @default(autoincrement())
+  type               String      @db.VarChar
+  applianceId        Int?
+  licenseId          Int?
+  createdAt          DateTime    @default(now()) @db.Timestamptz(6)
+  createdBy          String      @db.VarChar
+  updatedBy          String?     @db.VarChar
+  updatedAt          DateTime?   @updatedAt @db.Timestamptz(6)
+  note               String?     @db.VarChar
+  status             String      @db.VarChar
+  userId             Int
+  completedAt        DateTime?   @db.Timestamptz(6)
+  notificationSentAt DateTime?   @db.Timestamptz(6)
+  appliance          appliances? @relation(fields: [applianceId], references: [id])
+  license            licenses?   @relation(fields: [licenseId], references: [id])
+  user               users       @relation(fields: [userId], references: [id])
 }
 
 model connectionControlHistory {
