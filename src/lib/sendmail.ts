@@ -17,7 +17,7 @@ const transporter = nodemailer.createTransport({
 
 type Mail = {
     to: string;
-    cc: string;
+    cc?: string;
     subject: string;
     html: string;
 };

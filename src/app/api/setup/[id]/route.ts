@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import prisma from "@/utils/db";
+import { sendMail } from "@/lib/sendmail";
 
 export async function GET(
     request: NextRequest,
@@ -48,12 +49,48 @@ export async function PUT(
             ? new Date(setup.completedAt).toISOString()
             : null;
 
+        const currentSetup = await prisma.setups.findUnique({
+            where: {
+                id: Number(params.id),
+            },
+            select: {
+                userId: true,
+            },
+        });
+
         const updatedSetup = await prisma.setups.update({
             where: {
                 id: Number(params.id),
             },
             data: setup,
         });
+
+        if (
+            updatedSetup.userId &&
+            (!currentSetup || currentSetup.userId !== updatedSetup.userId)
+        ) {
+            const user = await prisma.users.findUnique({
+                where: {
+                    id: updatedSetup.userId,
+                },
+                select: {
+                    email: true,
+                },
+            });
+
+            if (user?.email) {
+                const setupUrl = `${process.env.NEXTAUTH_URL}/dashboard/setups/${updatedSetup.id}`;
+                await sendMail({
+                    to: user.email,
+                    subject: "Kurulum Bildirimi",
+                    html: `
+                        <p>Size yeni bir kurulum görevi atandı (#${updatedSetup.id}).</p>
+                        <p>Detayları görüntülemek için aşağıdaki bağlantıya tıklayınız:</p>
+                        <a href="${setupUrl}">${setupUrl}</a>
+                    `,
+                });
+            }
+        }
 
         if (!updatedSetup.id)
             return NextResponse.json({

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import prisma from "@/utils/db";
+import { sendMail } from "@/lib/sendmail";
 
 export async function GET(
     request: NextRequest,
@@ -149,12 +150,100 @@ export async function PUT(
         delete order["licenseSerialNo"];
         delete order["licenseTypeId"];
 
+        const currentOrder = await prisma.orders.findUnique({
+            where: {
+                id: Number(params.id),
+            },
+            select: {
+                invoiceUserId: true,
+                licenseUserId: true,
+                salesUserId: true,
+                status: true,
+            },
+        });
+
         const updatedOrder = await prisma.orders.update({
             where: {
                 id: Number(params.id),
             },
             data: order,
         });
+
+        // Check & Send Mail for Invoice User
+        if (
+            updatedOrder.invoiceUserId &&
+            updatedOrder.status === "invoice" &&
+            (!currentOrder ||
+                currentOrder.invoiceUserId !== updatedOrder.invoiceUserId ||
+                currentOrder.status !== "invoice")
+        ) {
+            const user = await prisma.users.findUnique({
+                where: { id: updatedOrder.invoiceUserId },
+                select: { email: true },
+            });
+            if (user?.email) {
+                const orderUrl = `${process.env.NEXTAUTH_URL}/dashboard/orders/${updatedOrder.id}`;
+                await sendMail({
+                    to: user.email,
+                    subject: "Fatura Sorumlusu Ataması",
+                    html: `
+                        <p>Sipariş (#${updatedOrder.id}) için fatura sorumlusu olarak atandınız.</p>
+                        <p>Detayları görüntülemek için aşağıdaki bağlantıya tıklayınız:</p>
+                        <a href="${orderUrl}">${orderUrl}</a>
+                    `,
+                });
+            }
+        }
+
+        // Check & Send Mail for License User
+        if (
+            updatedOrder.licenseUserId &&
+            (!currentOrder ||
+                currentOrder.licenseUserId !== updatedOrder.licenseUserId)
+        ) {
+            const user = await prisma.users.findUnique({
+                where: { id: updatedOrder.licenseUserId },
+                select: { email: true },
+            });
+            if (user?.email) {
+                const orderUrl = `${process.env.NEXTAUTH_URL}/dashboard/orders/${updatedOrder.id}`;
+                await sendMail({
+                    to: user.email,
+                    subject: "Lisans Sorumlusu Ataması",
+                    html: `
+                        <p>Sipariş (#${updatedOrder.id}) için lisans sorumlusu olarak atandınız.</p>
+                        <p>Detayları görüntülemek için aşağıdaki bağlantıya tıklayınız:</p>
+                        <a href="${orderUrl}">${orderUrl}</a>
+                    `,
+                });
+            }
+        }
+
+        // Check & Send Mail for Sales User
+        if (
+            updatedOrder.salesUserId &&
+            updatedOrder.status === "purchase" &&
+            (!currentOrder ||
+                currentOrder.salesUserId !== updatedOrder.salesUserId ||
+                currentOrder.status !== "purchase")
+        ) {
+            const user = await prisma.users.findUnique({
+                where: { id: updatedOrder.salesUserId },
+                select: { email: true },
+            });
+            if (user?.email) {
+                const orderUrl = `${process.env.NEXTAUTH_URL}/dashboard/orders/${updatedOrder.id}`;
+                await sendMail({
+                    to: user.email,
+                    subject: "Satın Alım Sorumlusu Ataması",
+                    html: `
+                        <p>Sipariş (#${updatedOrder.id}) için satın alım sorumlusu olarak atandınız.</p>
+                        <p>Detayları görüntülemek için aşağıdaki bağlantıya tıklayınız:</p>
+                        <a href="${orderUrl}">${orderUrl}</a>
+                    `,
+                });
+            }
+        }
 
         if (order.applianceId) {
             const updatedAppliance = await prisma.appliances.update({
