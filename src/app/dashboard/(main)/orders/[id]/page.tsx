@@ -398,7 +398,7 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
 
                             <CardBody className="gap-3">
                                 <div className="divide-y divide-zinc-200">
-                                    <div className="md:grid md:grid-cols-2 w-full text-base text-zinc-500 p-2 items-center">
+                                    <div className="md:grid md:grid-cols-3 w-full text-base text-zinc-500 p-2 items-center">
                                         <label className="font-medium">
                                             Sipariş Tipi
                                         </label>
@@ -409,14 +409,14 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                         </p>
                                     </div>
 
-                                    <div className="md:grid md:grid-cols-2 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                    <div className="md:grid md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                         <label
                                             htmlFor="status"
                                             className="font-medium"
                                         >
                                             Durum
                                         </label>
-                                        <div className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full h-10 rounded-md border-0 px-3 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2">
+                                        <div className="md:col-span-3 xl:col-span-2 my-1 sm:my-0 w-full h-10 rounded-md border-0 px-3 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus-within:ring-2 focus-within:ring-inset focus-within:ring-sky-500 sm:text-sm sm:leading-6 outline-none mt-2">
                                             <select
                                                 id="status"
                                                 className="w-full border-none text-sm text-zinc-700 outline-none"
@@ -434,7 +434,7 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                         </div>
                                     </div>
 
-                                    <div className="md:grid md:grid-cols-2 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                    <div className="md:grid md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                         <label
                                             htmlFor="registerNo"
                                             className="font-medium"
@@ -444,14 +444,14 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                         <input
                                             type="text"
                                             id="registerNo"
-                                            className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                            className="md:col-span-3 xl:col-span-2 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
                                             {...register("registerNo", {
                                                 maxLength: 50,
                                             })}
                                         />
                                     </div>
 
-                                    <div className="md:grid md:grid-cols-2 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                    <div className="md:grid md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                         <label
                                             htmlFor="invoiceNo"
                                             className="font-medium"
@@ -461,21 +461,21 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                         <input
                                             type="text"
                                             id="invoiceNo"
-                                            className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                            className="md:col-span-3 xl:col-span-2 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
                                             {...register("invoiceNo", {
                                                 maxLength: 50,
                                             })}
                                         />
                                     </div>
 
-                                    <div className="md:grid md:grid-cols-2 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                    <div className="md:grid md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                         <label
                                             htmlFor="currency"
                                             className="font-medium"
                                         >
                                             Toplam Fiyat
                                         </label>
-                                        <div className="flex flex-row md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full h-10 gap-1">
+                                        <div className="flex flex-row md:col-span-3 xl:col-span-2 my-1 sm:my-0 w-full h-10 gap-1">
                                             <input
                                                 disabled
                                                 value={totalPrice.toLocaleString(
@@ -510,7 +510,7 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                         </div>
                                     </div>
 
-                                    <div className="md:grid md:grid-cols-2 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                    <div className="md:grid md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                         <label
                                             htmlFor="boughtAt"
                                             className="font-medium"
@@ -520,12 +520,12 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                         <input
                                             type="date"
                                             id="boughtAt"
-                                            className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                            className="md:col-span-3 xl:col-span-2 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
                                             {...register("boughtAt")}
                                         />
                                     </div>
 
-                                    <div className="md:grid md:grid-cols-2 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                    <div className="md:grid md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                         <label
                                             htmlFor="soldAt"
                                             className="font-medium"
@@ -535,7 +535,7 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                         <input
                                             type="date"
                                             id="soldAt"
-                                            className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                            className="md:col-span-3 xl:col-span-2 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
                                             {...register("soldAt")}
                                         />
                                     </div>
@@ -552,7 +552,7 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
 
                             <CardBody className="gap-3">
                                 <div className="divide-y divide-zinc-200">
-                                    <div className="md:grid md:grid-cols-2 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                    <div className="md:grid md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                         <label
                                             htmlFor="paymentPlan"
                                             className="font-medium"
@@ -562,12 +562,12 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                         <input
                                             type="text"
                                             id="paymentPlan"
-                                            className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                            className="md:col-span-3 xl:col-span-2 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
                                             {...register("paymentPlan")}
                                         />
                                     </div>
 
-                                    <div className="md:grid md:grid-cols-2 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                    <div className="md:grid md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                         <label
                                             htmlFor="cusName"
                                             className="font-medium after:content-['*'] after:ml-0.5"
@@ -578,14 +578,14 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                             type="text"
                                             id="cusName"
                                             placeholder="Müşteri seçimi yapılmayacaksa bu alanı doldurunuz!"
-                                            className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                            className="md:col-span-3 xl:col-span-2 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
                                             {...register("cusName", {
                                                 maxLength: 250,
                                             })}
                                         />
                                     </div>
 
-                                    <div className="md:grid md:grid-cols-2 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                    <div className="md:grid md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                         <label
                                             htmlFor="customerId"
                                             className="font-medium"
@@ -602,13 +602,13 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                                     onChange={onChange}
                                                     value={value}
                                                     data={customers || []}
-                                                    className="md:col-span-2 xl:col-span-1 my-1 sm:my-0"
+                                                    className="md:col-span-3 xl:col-span-2 my-1 sm:my-0"
                                                 />
                                             )}
                                         />
                                     </div>
 
-                                    <div className="md:grid md:grid-cols-2 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                    <div className="md:grid md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                         <label
                                             htmlFor="dealerId"
                                             className="font-medium"
@@ -646,13 +646,13 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                                     }}
                                                     value={value}
                                                     data={dealers || []}
-                                                    className="md:col-span-2 xl:col-span-1 my-1 sm:my-0"
+                                                    className="md:col-span-3 xl:col-span-2 my-1 sm:my-0"
                                                 />
                                             )}
                                         />
                                     </div>
 
-                                    <div className="md:grid md:grid-cols-2 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                    <div className="md:grid md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                         <label
                                             htmlFor="subDealerId"
                                             className="font-medium"
@@ -669,13 +669,13 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                                     onChange={onChange}
                                                     value={value}
                                                     data={dealers || []}
-                                                    className="md:col-span-2 xl:col-span-1 my-1 sm:my-0"
+                                                    className="md:col-span-3 xl:col-span-2 my-1 sm:my-0"
                                                 />
                                             )}
                                         />
                                     </div>
 
-                                    <div className="md:grid md:grid-cols-2 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                    <div className="md:grid md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                         <label
                                             htmlFor="supplierId"
                                             className="font-medium"
@@ -692,13 +692,13 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                                     onChange={onChange}
                                                     value={value}
                                                     data={suppliers || []}
-                                                    className="md:col-span-2 xl:col-span-1 my-1 sm:my-0"
+                                                    className="md:col-span-3 xl:col-span-2 my-1 sm:my-0"
                                                 />
                                             )}
                                         />
                                     </div>
 
-                                    <div className="md:grid md:grid-cols-2 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                    <div className="md:grid md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                         <label
                                             htmlFor="invoiceCurrentId"
                                             className="font-medium"
@@ -718,13 +718,13 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                                         ...(customers || []),
                                                         ...(dealers || []),
                                                     ]}
-                                                    className="md:col-span-2 xl:col-span-1 my-1 sm:my-0"
+                                                    className="md:col-span-3 xl:col-span-2 my-1 sm:my-0"
                                                 />
                                             )}
                                         />
                                     </div>
 
-                                    <div className="md:grid md:grid-cols-2 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                    <div className="md:grid md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                         <label
                                             htmlFor="address"
                                             className="font-medium"
@@ -734,7 +734,7 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                         <textarea
                                             id="address"
                                             rows={4}
-                                            className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                            className="md:col-span-3 xl:col-span-2 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
                                             {...register("address", {
                                                 maxLength: 500,
                                             })}
@@ -827,14 +827,14 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                     {data.type === "standard" ||
                                     data.license?.applianceId ? (
                                         <>
-                                            <div className="md:grid md:grid-cols-2 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                            <div className="md:grid md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                                 <label className="font-medium">
                                                     Cihaz Seri No
                                                 </label>
                                                 <input
                                                     disabled
                                                     type="text"
-                                                    className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                                    className="md:col-span-3 xl:col-span-2 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
                                                     value={
                                                         data.appliance
                                                             ?.serialNo ||
@@ -844,11 +844,11 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                                 />
                                             </div>
 
-                                            <div className="md:grid md:grid-cols-2 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                            <div className="md:grid md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                                 <label className="font-medium">
                                                     Cihaz
                                                 </label>
-                                                <div className="flex flex-row gap-1 md:col-span-2 xl:col-span-1 my-1 sm:my-0">
+                                                <div className="flex flex-row gap-1 md:col-span-3 xl:col-span-2 my-1 sm:my-0">
                                                     <input
                                                         disabled
                                                         type="text"
@@ -870,14 +870,14 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                                 </div>
                                             </div>
 
-                                            <div className="md:grid md:grid-cols-2 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                            <div className="md:grid md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                                 <label
                                                     htmlFor="appliancePrice"
                                                     className="font-medium"
                                                 >
                                                     Cihaz Fiyatı
                                                 </label>
-                                                <div className="flex flex-row md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full h-10 gap-1">
+                                                <div className="flex flex-row md:col-span-3 xl:col-span-2 my-1 sm:my-0 w-full h-10 gap-1">
                                                     <Controller
                                                         control={control}
                                                         name="appliancePrice"
@@ -1066,7 +1066,7 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                 <div className="divide-y divide-zinc-200">
                                     {data.licenseId && (
                                         <>
-                                            <div className="md:grid md:grid-cols-2 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                            <div className="md:grid md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                                 <label
                                                     htmlFor="licenseSerialNo"
                                                     className="font-medium"
@@ -1076,7 +1076,7 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                                 <input
                                                     disabled={!data.licenseId}
                                                     type="text"
-                                                    className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                                    className="md:col-span-3 xl:col-span-2 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
                                                     {...register(
                                                         "licenseSerialNo",
                                                         {
@@ -1086,7 +1086,7 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                                 />
                                             </div>
 
-                                            <div className="md:grid md:grid-cols-2 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                            <div className="md:grid md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                                 <label
                                                     htmlFor="licenseTypeId"
                                                     className="font-medium"
@@ -1110,13 +1110,13 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                                                 licenseTypes ||
                                                                 []
                                                             }
-                                                            className="md:col-span-2 xl:col-span-1 my-1 sm:my-0"
+                                                            className="md:col-span-3 xl:col-span-2 my-1 sm:my-0"
                                                         />
                                                     )}
                                                 />
                                             </div>
 
-                                            <div className="md:grid md:grid-cols-2 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                            <div className="md:grid md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                                 <label
                                                     htmlFor="licenseBoughtTypeId"
                                                     className="font-medium"
@@ -1139,7 +1139,7 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                                                 boughtTypes ||
                                                                 []
                                                             }
-                                                            className="md:col-span-2 xl:col-span-1 my-1 sm:my-0"
+                                                            className="md:col-span-3 xl:col-span-2 my-1 sm:my-0"
                                                         />
                                                     )}
                                                 />
@@ -1172,7 +1172,7 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                         </>
                                     )}
 
-                                    <div className="md:grid md:grid-cols-2 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                    <div className="md:grid md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                         <label
                                             htmlFor="licenseStartDate"
                                             className="font-medium"
@@ -1183,12 +1183,12 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                             disabled={!data.licenseId}
                                             type="date"
                                             id="licenseStartDate"
-                                            className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                            className="md:col-span-3 xl:col-span-2 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
                                             {...register("licenseStartDate")}
                                         />
                                     </div>
 
-                                    <div className="md:grid md:grid-cols-2 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                    <div className="md:grid md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                         <label
                                             htmlFor="licenseExpiryDate"
                                             className="font-medium"
@@ -1199,19 +1199,19 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                             disabled={!data.licenseId}
                                             type="date"
                                             id="licenseExpiryDate"
-                                            className="md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
+                                            className="md:col-span-3 xl:col-span-2 my-1 sm:my-0 w-full rounded-md border-0 px-3.5 py-2 text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6 outline-none"
                                             {...register("licenseExpiryDate")}
                                         />
                                     </div>
 
-                                    <div className="md:grid md:grid-cols-2 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                    <div className="md:grid md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                         <label
                                             htmlFor="licensePrice"
                                             className="font-medium"
                                         >
                                             Lisans Fiyatı
                                         </label>
-                                        <div className="flex flex-row md:col-span-2 xl:col-span-1 my-1 sm:my-0 w-full h-10 gap-1">
+                                        <div className="flex flex-row md:col-span-3 xl:col-span-2 my-1 sm:my-0 w-full h-10 gap-1">
                                             <Controller
                                                 control={control}
                                                 name="licensePrice"
@@ -1253,7 +1253,7 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                             </CardHeader>
                             <CardBody className="gap-3">
                                 <div className="divide-y divide-zinc-200">
-                                    <div className="md:grid md:grid-cols-2 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                    <div className="md:grid md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                         <label
                                             htmlFor="invoiceUserId"
                                             className="font-medium"
@@ -1270,13 +1270,13 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                                     onChange={onChange}
                                                     value={value}
                                                     data={users || []}
-                                                    className="md:col-span-2 xl:col-span-1 my-1 sm:my-0"
+                                                    className="md:col-span-3 xl:col-span-2 my-1 sm:my-0"
                                                 />
                                             )}
                                         />
                                     </div>
 
-                                    <div className="md:grid md:grid-cols-2 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                    <div className="md:grid md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                         <label
                                             htmlFor="salesUserId"
                                             className="font-medium"
@@ -1293,13 +1293,13 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                                     onChange={onChange}
                                                     value={value}
                                                     data={users || []}
-                                                    className="md:col-span-2 xl:col-span-1 my-1 sm:my-0"
+                                                    className="md:col-span-3 xl:col-span-2 my-1 sm:my-0"
                                                 />
                                             )}
                                         />
                                     </div>
 
-                                    <div className="md:grid md:grid-cols-2 w-full text-base text-zinc-500 py-1 px-2 items-center">
+                                    <div className="md:grid md:grid-cols-3 w-full text-base text-zinc-500 py-1 px-2 items-center">
                                         <label
                                             htmlFor="licenseUserId"
                                             className="font-medium"
@@ -1316,7 +1316,7 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                                                     onChange={onChange}
                                                     value={value}
                                                     data={users || []}
-                                                    className="md:col-span-2 xl:col-span-1 my-1 sm:my-0"
+                                                    className="md:col-span-3 xl:col-span-2 my-1 sm:my-0"
                                                 />
                                             )}
                                         />
